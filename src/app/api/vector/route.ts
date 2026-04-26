@@ -1,0 +1,89 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { supabase } from '@/lib/supabase';
+import { GeminiBrain } from '@/lib/gemini';
+
+export async function POST(request: NextRequest) {
+    try {
+        const body = await request.json();
+        const { action, userId, text, moduleId, queryText } = body;
+
+        if (!userId) {
+            return NextResponse.json({ message: "userId required." }, { status: 400 });
+        }
+
+        if (action === 'index') {
+            if (!text) return NextResponse.json({ message: "text required for indexing." }, { status: 400 });
+
+            // Note: In client-side code, GeminiBrain.embedText might fetch from /api/gemini/embed
+            // But we can call the logic directly if we want to avoid double API calls.
+            // For simplicity in this sprint, we'll assume the client-side VectorBrain passes the embedding or we fetch it here.
+
+            // Directly getting embedding via the same logic to avoid extra hop if keys are available
+            const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+            let embedding;
+
+            if (GEMINI_API_KEY) {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        model: "models/text-embedding-004",
+                        content: { parts: [{ text }] }
+                    })
+                });
+                const data = await response.json();
+                embedding = data.embedding.values;
+            } else {
+                embedding = new Array(768).fill(0);
+            }
+
+            const { error } = await supabase.from('knowledge_embeddings').insert({
+                student_id: userId,
+                module_id: moduleId,
+                content: text,
+                embedding,
+                metadata: { source: 'neural-ingestion', timestamp: new Date().toISOString() }
+            });
+
+            if (error) throw error;
+            return NextResponse.json({ success: true });
+        }
+
+        if (action === 'search') {
+            if (!queryText) return NextResponse.json({ message: "queryText required for search." }, { status: 400 });
+
+            const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+            let embedding;
+
+            if (GEMINI_API_KEY) {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        model: "models/text-embedding-004",
+                        content: { parts: [{ text: queryText }] }
+                    })
+                });
+                const data = await response.json();
+                embedding = data.embedding.values;
+            } else {
+                embedding = new Array(768).fill(0);
+            }
+
+            const { data, error } = await supabase.rpc('match_knowledge', {
+                query_embedding: embedding,
+                match_threshold: 0.3, // Lowered threshold for broader matching in educational context
+                match_count: 5,
+                p_student_id: userId
+            });
+
+            if (error) throw error;
+            return NextResponse.json({ results: data });
+        }
+
+        return NextResponse.json({ message: "Invalid action." }, { status: 400 });
+    } catch (error: any) {
+        console.error('Vector API Error:', error);
+        return NextResponse.json({ message: "Vector operation failed.", error: error.message }, { status: 500 });
+    }
+}

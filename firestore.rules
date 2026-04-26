@@ -1,0 +1,108 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if user owns the resource (used when doc ID is userId)
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Helper to check ownership on create (when resource does not exist yet)
+    function isCreatingOwnedResource() {
+      return isAuthenticated() && request.resource.data.userId == request.auth.uid;
+    }
+
+    // Helper to check ownership on existing resource (when resource already exists)
+    function isExistingOwnedResource() {
+      return isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
+    // User Accounts - Core collection used by Auth and Onboarding
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+
+      // Lab Submissions — subcollection under users, owner-only access
+      match /submissions/{submissionId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      // Notifications — subcollection under users, owner-only access
+      match /notifications/{notificationId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // User Profiles - Users can only read/write their own profile
+    match /profiles/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Students - Users can read/write their own student doc
+    // Admin users (checked by custom claims) can read all students if implemented
+    match /students/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+    
+    // Sessions - Users can only access their own sessions
+    match /sessions/{sessionId} {
+      allow create: if isCreatingOwnedResource();
+      allow read, update, delete: if isExistingOwnedResource();
+    }
+    
+    // Roadmaps - Users can only access their own roadmaps
+    match /roadmaps/{roadmapId} {
+      allow create: if isCreatingOwnedResource();
+      allow read, update, delete: if isExistingOwnedResource();
+    }
+    
+    // Leaderboard - Read-only for all authenticated users
+    match /leaderboard/{entry} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Managed by Cloud Functions only
+    }
+
+    // Certificates — authenticated users can create their own; owner can update/delete
+    match /certificates/{certId} {
+      allow read: if isAuthenticated();
+      allow create: if isCreatingOwnedResource();
+      allow update, delete: if isExistingOwnedResource();
+    }
+
+    // Academic Brains (knowledge graph) — students can read/write their own brain doc
+    match /academic_brains/{userId} {
+      allow read, write: if isOwner(userId);
+
+      // Academic Brains ingestions subcollection — owner-only
+      match /ingestions/{ingestionId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // Added 4 new rules as requested
+    match /users/{userId}/submissions/{submissionId} {
+      allow read, write: if request.auth.uid == userId;
+    }
+    match /certificates/{certId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow write: if request.auth.uid == resource.data.userId;
+    }
+    match /users/{userId}/notifications/{notificationId} {
+      allow read, write: if request.auth.uid == userId;
+    }
+    match /academic_brains/{userId} {
+      allow read, write: if request.auth.uid == userId;
+    }
+
+    // Deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
