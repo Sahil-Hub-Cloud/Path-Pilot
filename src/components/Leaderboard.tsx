@@ -41,21 +41,22 @@ export default function Leaderboard({ users, currentUserId, isLoading }: Leaderb
     };
 
     return (
-        <div className="bg-[#050911] border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl">
-            <div className="p-8 border-b border-white/5 bg-white/[0.02]">
-                <div className="flex justify-between items-end">
+        <div className="bg-[#050911] border border-white/5 rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden shadow-2xl">
+            <div className="p-5 md:p-8 border-b border-white/5 bg-white/[0.02]">
+                <div className="flex justify-between items-center md:items-end">
                     <div>
-                        <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30 mb-2">Global Hierarchy</h3>
-                        <h2 className="text-xl font-black italic tracking-tight text-white">PILOT LEADERBOARD</h2>
+                        <h3 className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.4em] text-white/30 mb-1 md:mb-2">Global Hierarchy</h3>
+                        <h2 className="text-lg md:text-xl font-black italic tracking-tight text-white uppercase">PILOT LEADERBOARD</h2>
                     </div>
-                    <div className="text-[9px] font-black text-cyan-400 uppercase tracking-widest bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20">
-                        Top {users.length} Active
+                    <div className="text-[8px] md:text-[9px] font-black text-cyan-400 uppercase tracking-widest bg-cyan-500/10 px-2.5 py-1 rounded-full border border-cyan-500/20">
+                        Top {users.length}
                     </div>
                 </div>
             </div>
 
-            <div className="overflow-x-auto">
-                <table className="w-full text-left min-w-[800px]">
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-left">
                     <thead>
                         <tr className="text-[9px] font-black uppercase tracking-widest text-white/20 border-b border-white/5">
                             <th className="py-6 pl-8">Rank</th>
@@ -76,7 +77,7 @@ export default function Leaderboard({ users, currentUserId, isLoading }: Leaderb
                         ) : users.length === 0 ? (
                             <tr>
                                 <td colSpan={6} className="py-20 text-center text-white/20 font-black uppercase tracking-widest text-xs">
-                                    No data available in this sector
+                                    No pilots detected in this sector
                                 </td>
                             </tr>
                         ) : (
@@ -143,8 +144,56 @@ export default function Leaderboard({ users, currentUserId, isLoading }: Leaderb
                 </table>
             </div>
 
-            <div className="p-6 bg-white/[0.01] border-t border-white/5 text-center">
-                <p className="text-[8px] font-black uppercase tracking-[0.4em] text-white/10">
+            {/* Mobile Card View */}
+            <div className="md:hidden">
+                {isLoading ? (
+                    <div className="py-16 text-center">
+                        <div className="inline-block w-6 h-6 border-2 border-cyan-500/20 border-t-cyan-500 rounded-full animate-spin" />
+                    </div>
+                ) : users.length === 0 ? (
+                    <div className="py-12 text-center text-white/20 font-black uppercase tracking-widest text-[10px]">
+                        No pilots detected
+                    </div>
+                ) : (
+                    <div className="flex flex-col">
+                        {users.map((user, idx) => {
+                            const isSelf = user.uid === currentUserId;
+                            const badge = getBadgeStyle(user.employabilityLevel);
+                            return (
+                                <motion.div
+                                    key={user.uid}
+                                    ref={isSelf ? activeRowRef : null}
+                                    className={`p-5 flex items-center gap-4 border-b border-white/5 last:border-b-0 ${isSelf ? 'bg-cyan-500/10 border-l-4 border-l-cyan-500' : ''}`}
+                                >
+                                    <div className="flex-shrink-0 w-8">
+                                        <span className={`text-xs font-black ${idx === 0 ? 'text-cyan-400' : idx === 1 ? 'text-amber-400' : idx === 2 ? 'text-slate-400' : 'text-white/20'}`}>
+                                            {(idx + 1).toString().padStart(2, '0')}
+                                        </span>
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="text-[11px] font-black uppercase text-white truncate">{user.displayName}</div>
+                                        <div className="text-[8px] font-bold text-white/30 truncate uppercase mt-0.5">{user.college || 'Universal Academy'}</div>
+                                    </div>
+                                    <div className="text-right">
+                                        <div className="text-[11px] font-black text-cyan-400">{user.xp?.toLocaleString()}<span className="text-[7px] ml-0.5">XP</span></div>
+                                        <div className="mt-1">
+                                            <span style={{ 
+                                                display: 'inline-block', padding: '2px 6px', borderRadius: '3px', border: `1px solid ${badge.border}`, 
+                                                background: badge.bg, color: badge.text, fontSize: '7px', fontWeight: 900, textTransform: 'uppercase' 
+                                            }}>
+                                                {user.employabilityLevel}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            );
+                        })}
+                    </div>
+                )}
+            </div>
+
+            <div className="p-5 md:p-6 bg-white/[0.01] border-t border-white/5 text-center">
+                <p className="text-[7px] md:text-[8px] font-black uppercase tracking-[0.4em] text-white/10">
                     System Registry Updated Real-time
                 </p>
             </div>

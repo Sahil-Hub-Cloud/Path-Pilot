@@ -13,18 +13,24 @@ import { toast } from '@/lib/toast';
 
 // ─── TRACKS ───────────────────────────────────────────────────────────────────
 const TRACKS = [
-  { id: 'mern',     emoji: '⚡', label: 'MERN Stack',              desc: 'MongoDB · Express · React · Node' },
-  { id: 'frontend', emoji: '🎨', label: 'Frontend Dev',             desc: 'HTML · CSS · React · Next.js' },
-  { id: 'backend',  emoji: '🛠️', label: 'Backend Dev',              desc: 'Node.js · Databases · APIs · Docker' },
-  { id: 'ai',       emoji: '🤖', label: 'AI Engineering',           desc: 'ML · LLMs · RAG · Vector DBs' },
-  { id: 'prompt',   emoji: '✍️', label: 'Prompt Engineering',       desc: 'GPT · Claude · Fine-tuning · Chains' },
-  { id: 'cyber',    emoji: '🔐', label: 'Cybersecurity',            desc: 'Pentesting · OWASP · CTFs · SOC' },
-  { id: 'cloud',    emoji: '☁️', label: 'Cloud & DevOps',           desc: 'AWS · GCP · Docker · Kubernetes' },
-  { id: 'cloudsec', emoji: '🛡️', label: 'Cloud Security',           desc: 'IAM · Zero Trust · SIEM · CSPM' },
-  { id: 'android',  emoji: '📱', label: 'Android Dev',              desc: 'Kotlin · Jetpack Compose · Firebase' },
-  { id: 'ios',      emoji: '🍎', label: 'iOS Dev',                  desc: 'Swift · SwiftUI · Xcode · Core Data' },
-  { id: 'flutter',  emoji: '💙', label: 'Flutter / Cross-Platform', desc: 'Flutter · Dart · Android + iOS' },
-  { id: 'dsa',      emoji: '🧠', label: 'DSA & Interviews',         desc: 'Algo · Data Structures · System Design' },
+  { id: 'frontend',    emoji: '⚛️', label: 'Frontend Dev',             desc: 'React · Next.js · TypeScript · CSS' },
+  { id: 'backend',     emoji: '🚀', label: 'Backend Dev',              desc: 'Node.js · Express · Databases · APIs' },
+  { id: 'mern',        emoji: '📚', label: 'MERN Stack',               desc: 'MongoDB · Express · React · Node' },
+  { id: 'dsa',         emoji: '🧠', label: 'DSA & Interviews',         desc: 'Algorithms · Data Structures · LeetCode' },
+  { id: 'ai',          emoji: '💬', label: 'AI Engineering NLP',       desc: 'NLP · LLMs · RAG · Transformers' },
+  { id: 'ml',          emoji: '🤖', label: 'Machine Learning Engineer',desc: 'Scikit-learn · PyTorch · Model Deployment' },
+  { id: 'data-science',emoji: '📊', label: 'Data Science Python',      desc: 'Pandas · NumPy · Matplotlib · SQL' },
+  { id: 'python',      emoji: '🐍', label: 'Python Beginners',         desc: 'Variables · Loops · Functions · Projects' },
+  { id: 'flutter',     emoji: '🦋', label: 'Flutter / Cross-Platform', desc: 'Dart · Flutter · Android + iOS' },
+  { id: 'ios',         emoji: '📱', label: 'React Native Dev',         desc: 'React Native · Expo · Navigation · Hooks' },
+  { id: 'android',     emoji: '🤖', label: 'Android Dev Kotlin',       desc: 'Kotlin · Jetpack Compose · Firebase' },
+  { id: 'django',      emoji: '🐍', label: 'Backend Django Python',    desc: 'Python · Django · DRF · PostgreSQL' },
+  { id: 'vue',         emoji: '🟢', label: 'Frontend Vue Dev',         desc: 'Vue 3 · Composition API · Pinia · Vite' },
+  { id: 'cloud',       emoji: '🐳', label: 'Docker Kubernetes DevOps', desc: 'Docker · Kubernetes · CI/CD · YAML' },
+  { id: 'cyber',       emoji: '🔐', label: 'Cybersecurity Ethical Hacking', desc: 'Pentesting · OWASP · CTFs · Security+' },
+  { id: 'blockchain',  emoji: '⛓️', label: 'Blockchain Dev',           desc: 'Solidity · Web3.js · Ethereum · DeFi' },
+  { id: 'javascript',  emoji: '🟨', label: 'JavaScript Mastery',       desc: 'V8 Engine · Closures · Async · Patterns' },
+  { id: 'aws',         emoji: '☁️', label: 'DevOps with AWS Cloud',    desc: 'EC2 · S3 · Lambda · Terraform · CI/CD' },
 ];
 
 const LEVELS = [

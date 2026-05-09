@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FiAward, FiFilter, FiUser, FiZap, FiTarget,
-  FiHome, FiTrendingUp, FiSettings
+  FiHome, FiTrendingUp, FiSettings, FiXCircle
 } from 'react-icons/fi';
 import { useAuth } from '@/hooks/useAuth';
 import { db } from '@/lib/firebase';
@@ -34,6 +34,7 @@ export default function LeaderboardPage() {
   const [pilots, setPilots] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [userProfile, setUserProfile] = useState<any>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // 1. Fetch current user profile to get filtering metadata
   useEffect(() => {
@@ -113,93 +114,76 @@ export default function LeaderboardPage() {
   ];
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: S.bg, display: 'flex' }}>
+    <div className="min-h-screen bg-[#FDF6EC] flex flex-col md:flex-row">
       
       {/* ─── SIDEBAR ─── */}
-      <aside style={{
-        position: 'fixed', left: 0, top: 0, height: '100%', width: 240,
-        background: 'linear-gradient(180deg, #FFF8EE 0%, #F5E8D4 100%)',
-        borderRight: `2px solid ${S.border}`,
-        display: 'flex', flexDirection: 'column', zIndex: 100
-      }}>
-        <div style={{ padding: '28px 24px', display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{
-            width: 36, height: 36,
-            background: 'linear-gradient(135deg, #006B7A, #2E7D52)',
-            borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: '#fff', fontWeight: 900, fontSize: 18,
-            boxShadow: '0 4px 12px rgba(0,107,122,0.35)'
-          }}>P</div>
-          <span style={{ fontWeight: 900, fontSize: 16, color: S.text }}>Path Pilot</span>
-        </div>
+      <AnimatePresence>
+        {(isMenuOpen || typeof window !== 'undefined' && window.innerWidth >= 768) && (
+          <motion.aside 
+            initial={{ x: -240 }}
+            animate={{ x: 0 }}
+            exit={{ x: -240 }}
+            className="fixed md:sticky top-0 left-0 h-full w-[240px] bg-gradient-to-b from-[#FFF8EE] to-[#F5E8D4] border-r-2 border-[#B48C5A]/20 flex flex-col z-[100] shadow-2xl md:shadow-none"
+          >
+            <div className="p-7 flex items-center gap-3">
+              <div className="w-9 h-9 bg-gradient-to-br from-[#006B7A] to-[#2E7D52] rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg shadow-[#006B7A]/30">P</div>
+              <span className="font-black text-[17px] text-[#2C1A0E] tracking-tight">Path Pilot</span>
+              <button className="md:hidden ml-auto p-1.5 text-[#5C3D1E]/50" onClick={() => setIsMenuOpen(false)}><FiXCircle size={20} /></button>
+            </div>
 
-        <nav style={{ flex: 1, padding: '8px 12px', display: 'flex', flexDirection: 'column', gap: 4 }}>
-          {sidebarNavItems.map(item => (
-            <button key={item.id} onClick={item.action} style={{
-              width: '100%', display: 'flex', alignItems: 'center', gap: 12,
-              padding: '12px 14px', borderRadius: 12, border: 'none', cursor: 'pointer',
-              fontWeight: 700, fontSize: 14, textAlign: 'left',
-              transition: 'all 0.2s ease',
-              background: item.id === 'leaderboard' ? 'linear-gradient(135deg, #006B7A, #2E7D52)' : 'transparent',
-              color: item.id === 'leaderboard' ? '#fff' : S.sub,
-              boxShadow: item.id === 'leaderboard' ? '0 4px 14px rgba(0,107,122,0.35), inset 0 1px 0 rgba(255,255,255,0.2)' : 'none'
-            }}>
-              <span style={{ fontSize: 18 }}>{item.icon}</span>
-              {item.label}
-            </button>
-          ))}
-        </nav>
-      </aside>
+            <nav className="flex-1 px-3 py-2 flex flex-col gap-1">
+              {sidebarNavItems.map(item => (
+                <button key={item.id} onClick={() => { item.action(); setIsMenuOpen(false); }} className={`
+                  w-full flex items-center gap-3.5 px-4 py-3 rounded-xl border-none cursor-pointer font-bold text-sm text-left transition-all
+                  ${item.id === 'leaderboard' 
+                    ? 'bg-gradient-to-br from-[#006B7A] to-[#2E7D52] text-white shadow-lg shadow-[#006B7A]/25 ring-1 ring-white/10' 
+                    : 'bg-transparent text-[#5C3D1E] hover:bg-[#B48C5A]/10'}
+                `}>
+                  <span className="text-xl">{item.icon}</span>
+                  {item.label}
+                </button>
+              ))}
+            </nav>
+          </motion.aside>
+        )}
+      </AnimatePresence>
+
+      {/* Backdrop for mobile */}
+      {isMenuOpen && <div className="fixed inset-0 bg-[#2C1A0E]/40 backdrop-blur-[2px] z-[90] md:hidden" onClick={() => setIsMenuOpen(false)} />}
 
       {/* ─── MAIN CONTENT ─── */}
-      <main style={{ flex: 1, marginLeft: 240, padding: '48px 64px' }}>
-        <div style={{ maxWidth: 1000, margin: '0 auto' }}>
+      <main className="flex-1 p-5 md:p-12 lg:p-16 overflow-x-hidden">
+        <div className="max-w-[1100px] mx-auto">
           
-          <header style={{ marginBottom: 40, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <div>
-              <h1 style={{ fontSize: 32, fontWeight: 900, color: S.text, letterSpacing: '-0.04em', marginBottom: 8 }}>Hierarchy & Ranks</h1>
-              <p style={{ color: S.sub, fontWeight: 500 }}>Compare your terminal output against the top pilots in the sector.</p>
+          <header className="mb-10 flex flex-col md:flex-row justify-between items-start gap-6 md:items-center">
+            <div className="flex items-center gap-4 w-full md:w-auto">
+              <button className="md:hidden p-2 text-[#5C3D1E] bg-white border-2 border-[#B48C5A]/20 rounded-xl shadow-sm" onClick={() => setIsMenuOpen(true)}>
+                <FiFilter size={20} />
+              </button>
+              <div>
+                <h1 className="text-2xl md:text-4xl font-black text-[#2C1A0E] tracking-tight mb-1.5 md:mb-2">Hierarchy & Ranks</h1>
+                <p className="text-sm md:text-base text-[#5C3D1E] font-medium opacity-80">Compare your performance against the top pilots.</p>
+              </div>
             </div>
             
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <div className="flex items-center gap-3 md:gap-5 w-full md:w-auto justify-between md:justify-end">
               {user && <NotificationBell uid={user.uid} />}
-              <button 
-                onClick={handleMyRankScroll}
-                className="clay-btn"
-                style={{
-                  background: 'linear-gradient(180deg, #F07A3E 0%, #D95F2B 50%, #B04A1E 100%)',
-                  color: '#fff', padding: '12px 24px', borderRadius: 14, fontSize: 13,
-                  fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em',
-                  boxShadow: '0 6px 20px rgba(217,95,43,0.3)', cursor: 'pointer', border: 'none'
-                }}
-              >
-                <FiTarget style={{ marginRight: 8 }} /> My Rank Point
+              <button onClick={handleMyRankScroll} className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-b from-[#F07A3E] to-[#D95F2B] text-white rounded-2xl text-[11px] md:text-xs font-black uppercase tracking-widest shadow-xl shadow-[#D95F2B]/30 hover:-translate-y-0.5 active:translate-y-0 transition-all">
+                <FiTarget size={16} /> <span className="whitespace-nowrap">My Rank Point</span>
               </button>
             </div>
           </header>
 
           {/* TAB BAR */}
-          <div style={{ 
-            display: 'flex', gap: 12, marginBottom: 32, padding: 6, 
-            background: 'rgba(180,140,90,0.05)', borderRadius: 16, border: `1.5px solid ${S.border}`,
-            width: 'fit-content'
-          }}>
+          <div className="flex flex-wrap gap-2 md:gap-3 mb-8 p-1.5 bg-[#B48C5A]/5 rounded-[18px] border-2 border-[#B48C5A]/15 w-full md:w-fit">
             {[
               { id: 'overall', label: 'Overall', icon: <FiZap /> },
               { id: 'college', label: 'My College', icon: <FiHome /> },
               { id: 'track',   label: 'My Track',   icon: <FiTarget /> },
             ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as Tab)}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 10,
-                  padding: '10px 20px', borderRadius: 12, border: 'none', cursor: 'pointer',
-                  fontSize: 13, fontWeight: 800, transition: 'all 0.2s',
-                  background: activeTab === tab.id ? '#FFF' : 'transparent',
-                  color: activeTab === tab.id ? S.teal : S.sub,
-                  boxShadow: activeTab === tab.id ? '0 4px 12px rgba(140,90,40,0.1)' : 'none'
-                }}
+              <button key={tab.id} onClick={() => setActiveTab(tab.id as Tab)}
+                className={`flex-1 md:flex-none flex items-center justify-center gap-2.5 px-6 py-3 rounded-xl border-none cursor-pointer text-xs font-black transition-all
+                  ${activeTab === tab.id ? 'bg-white text-[#006B7A] shadow-md' : 'bg-transparent text-[#5C3D1E] opacity-70 hover:opacity-100'}`}
               >
                 {tab.icon} {tab.label}
               </button>

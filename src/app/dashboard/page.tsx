@@ -3,11 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FiHome, FiBook, FiTerminal, FiCpu,
   FiTrendingUp, FiUser, FiLogOut, FiZap,
-  FiAward, FiExternalLink, FiActivity, FiArrowRight, FiSettings
+  FiAward, FiExternalLink, FiActivity, FiArrowRight, FiSettings,
+  FiMenu, FiX
 } from 'react-icons/fi';
 import { useAuth } from '@/hooks/useAuth';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
@@ -43,6 +44,7 @@ export default function DashboardPage() {
   const [profileLoading, setProfileLoading] = useState(true);
   const [streakDays, setStreakDays] = useState(0);
   const [inactiveGap, setInactiveGap] = useState(0);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // ── Streak sync helper ────────────────────────────────────────────────────
   // Returns today's date as a YYYY-MM-DD string (local timezone, consistent)
@@ -182,19 +184,29 @@ export default function DashboardPage() {
 
   const empColor = employabilityLevel.includes('High') ? '#10B981' : employabilityLevel === 'Medium' ? '#F59E0B' : '#EF4444';
 
-  // Map the human-readable learningPath to a valid courseId URL slug
+  // Map Firestore learningPath label → URL slug matching COURSE_SLUG_MAP keys
   const getCourseId = (path: string | null): string => {
-    if (!path) return 'frontend-basics';
-    const normalized = path.toLowerCase();
-    if (normalized.includes('cloud') || normalized.includes('devops')) return 'cloud-devops';
-    if (normalized.includes('frontend') || normalized.includes('front-end')) return 'frontend-basics';
-    if (normalized.includes('fullstack') || normalized.includes('full stack') || normalized.includes('full-stack') || normalized.includes('mern')) return 'fullstack';
-    if (normalized.includes('data science') || normalized.includes('data-science') || normalized.includes('machine learning') || normalized.includes('ml')) return 'data-science';
-    if (normalized.includes('mobile') || normalized.includes('android') || normalized.includes('ios') || normalized.includes('flutter')) return 'mobile-dev';
-    if (normalized.includes('backend') || normalized.includes('back-end')) return 'backend';
-    if (normalized.includes('dsa') || normalized.includes('algorithm') || normalized.includes('interview')) return 'dsa';
-    if (normalized.includes('ai') || normalized.includes('nlp')) return 'ai';
-    return 'frontend-basics';
+    if (!path) return 'frontend-react';
+    const p = path.toLowerCase();
+    if (p.includes('flutter'))                                                    return 'flutter';
+    if (p.includes('android') || p.includes('kotlin'))                            return 'android-kotlin';
+    if (p.includes('react native'))                                               return 'react-native';
+    if (p.includes('mern') || p.includes('full stack') || p.includes('fullstack')) return 'fullstack-mern';
+    if (p.includes('devops') || p.includes('aws'))                               return 'devops-aws';
+    if (p.includes('docker') || p.includes('kubernetes') || p.includes('cloud')) return 'docker-kubernetes';
+    if (p.includes('cybersecurity') || p.includes('cyber') || p.includes('security')) return 'cybersecurity';
+    if (p.includes('blockchain'))                                                 return 'blockchain';
+    if (p.includes('machine learning') || p.includes('ml engineer'))             return 'machine-learning';
+    if (p.includes('data science') || p.includes('data analyst'))                return 'data-science';
+    if (p.includes('nlp') || p.includes('natural language') || p.includes('ai engineering') || p.includes('prompt')) return 'nlp';
+    if (p.includes('dsa') || p.includes('algorithm') || p.includes('interview')) return 'dsa-interviews';
+    if (p.includes('django'))                                                     return 'backend-django';
+    if (p.includes('vue'))                                                        return 'frontend-vue';
+    if (p.includes('javascript mastery'))                                         return 'javascript-mastery';
+    if (p.includes('python beginner'))                                            return 'python-beginners';
+    if (p.includes('backend') || p.includes('node'))                             return 'backend-nodejs';
+    if (p.includes('frontend') || p.includes('react'))                           return 'frontend-react';
+    return 'frontend-react';
   };
   const courseId = getCourseId(learningPath);
 
@@ -217,81 +229,97 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#FDF6EC', display: 'flex' }}>
+    <div className="min-h-screen bg-[#FDF6EC] flex flex-col md:flex-row relative">
       
-      {/* ─── SIDEBAR ─── */}
-      <aside style={{
-        position: 'fixed', left: 0, top: 0, height: '100%', width: 240,
-        background: 'linear-gradient(180deg, #FFF8EE 0%, #F5E8D4 100%)',
-        borderRight: '2px solid rgba(180,140,90,0.25)',
-        display: 'flex', flexDirection: 'column', zIndex: 100,
-        boxShadow: '4px 0 24px rgba(140,90,40,0.08)'
-      }}>
-        <div style={{ padding: '28px 24px', display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{
-            width: 36, height: 36,
-            background: 'linear-gradient(135deg, #006B7A, #2E7D52)',
-            borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            overflow: 'hidden',
-            boxShadow: '0 4px 12px rgba(0,107,122,0.35)'
-          }}>
-            <Image src="/logo.png" alt="Path Pilot" width={36} height={36} style={{ objectFit: 'contain' }} />
+      {/* ─── MOBILE TOP BAR ─── */}
+      <header className="md:hidden sticky top-0 z-[110] bg-[#FFF8EE]/90 backdrop-blur-md border-b-2 border-[#B48C5A]/15 px-5 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 bg-gradient-to-br from-[#006B7A] to-[#2E7D52] rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
+             <Image src="/logo.png" alt="Path Pilot" width={32} height={32} className="object-contain" />
           </div>
-          <span style={{ fontWeight: 900, fontSize: 16, color: '#2C1A0E', letterSpacing: '-0.02em' }}>Path Pilot</span>
+          <span className="font-black text-lg text-[#2C1A0E] tracking-tight">Path Pilot</span>
+        </div>
+        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 text-[#5C3D1E] hover:bg-[#B48C5A]/10 rounded-lg transition-colors">
+          {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+        </button>
+      </header>
+
+      {/* Overlay */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsMenuOpen(false)}
+            className="fixed inset-0 bg-[#2C1A0E]/40 backdrop-blur-sm z-[100] md:hidden"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* ─── SIDEBAR ─── */}
+      <aside 
+        className={`
+          fixed md:sticky left-0 top-0 h-full w-[260px] 
+          bg-gradient-to-b from-[#FFF8EE] to-[#F5E8D4] 
+          border-r-2 border-[#B48C5A]/25 
+          flex flex-col z-[105] 
+          transition-transform duration-300 ease-in-out
+          ${isMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+          shadow-xl md:shadow-none
+        `}
+      >
+        <div className="hidden md:flex p-7 px-6 items-center gap-3">
+          <div className="w-9 h-9 bg-gradient-to-br from-[#006B7A] to-[#2E7D52] rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
+            <Image src="/logo.png" alt="Path Pilot" width={36} height={36} className="object-contain" />
+          </div>
+          <span className="font-black text-base text-[#2C1A0E] tracking-tight">Path Pilot</span>
         </div>
 
         {/* User avatar */}
-        <div style={{ padding: '0 16px 20px', borderBottom: '1.5px solid rgba(180,140,90,0.2)', margin: '0 12px', marginBottom: 12 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 8px', background: 'rgba(255,255,255,0.6)', borderRadius: 12, border: '1.5px solid rgba(180,140,90,0.15)' }}>
-            <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'linear-gradient(135deg, #006B7A, #2E7D52)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 14, flexShrink: 0 }}>
+        <div className="px-4 pb-5 border-b-1.5 border-[#B48C5A]/20 mx-3 mb-3">
+          <div className="flex items-center gap-3 p-2.5 bg-white/60 rounded-xl border-1.5 border-[#B48C5A]/15 shadow-sm">
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#006B7A] to-[#2E7D52] flex items-center justify-center text-white font-extrabold text-sm flex-shrink-0">
               {firstName[0]?.toUpperCase()}
             </div>
-            <div style={{ overflow: 'hidden' }}>
-              <div style={{ fontWeight: 700, fontSize: 13, color: '#2C1A0E', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{firstName}</div>
-              <div style={{ fontSize: 10, color: '#8B6E52', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{profile?.role || 'Student'}</div>
+            <div className="overflow-hidden">
+              <div className="font-bold text-sm text-[#2C1A0E] truncate">{firstName}</div>
+              <div className="text-[10px] text-[#8B6E52] font-semibold uppercase tracking-wider">{profile?.role || 'Student'}</div>
             </div>
           </div>
         </div>
 
-        <nav style={{ flex: 1, padding: '8px 12px', display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <nav className="flex-1 px-3 py-2 flex flex-col gap-1 overflow-y-auto">
           {navItems.map(item => (
-            <button key={item.id} onClick={() => { setActiveNav(item.id); item.action(); }} style={{
-              width: '100%', display: 'flex', alignItems: 'center', gap: 12,
-              padding: '12px 14px', borderRadius: 12, border: 'none', cursor: 'pointer',
-              fontWeight: 700, fontSize: 14, textAlign: 'left',
-              transition: 'all 0.2s ease',
-              background: activeNav === item.id ? 'linear-gradient(135deg, #006B7A, #2E7D52)' : 'transparent',
-              color: activeNav === item.id ? '#fff' : '#5C3D1E',
-              boxShadow: activeNav === item.id ? '0 4px 14px rgba(0,107,122,0.35), inset 0 1px 0 rgba(255,255,255,0.2)' : 'none'
-            }}>
-              <span style={{ fontSize: 18 }}>{item.icon}</span>
+            <button key={item.id} onClick={() => { setActiveNav(item.id); setIsMenuOpen(false); item.action(); }} 
+              className={`
+                w-full flex items-center gap-3 px-4 py-3 rounded-xl border-none cursor-pointer
+                font-bold text-sm text-left transition-all duration-200
+                ${activeNav === item.id 
+                  ? 'bg-gradient-to-br from-[#006B7A] to-[#2E7D52] text-white shadow-lg shadow-[#006B7A]/30' 
+                  : 'text-[#5C3D1E] hover:bg-[#B48C5A]/10'}
+              `}
+            >
+              <span className="text-lg">{item.icon}</span>
               {item.label}
             </button>
           ))}
         </nav>
 
-        <div style={{ padding: '16px 12px' }}>
-          <button onClick={() => signOut()} style={{
-            width: '100%', display: 'flex', alignItems: 'center', gap: 12,
-            padding: '12px 14px', borderRadius: 12, border: 'none', cursor: 'pointer',
-            fontWeight: 700, fontSize: 14, background: 'transparent',
-            color: '#D95F2B', transition: 'all 0.2s',
-          }}
-          onMouseEnter={e => (e.currentTarget.style.background = 'rgba(217,95,43,0.1)')}
-          onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-          >
+        <div className="p-4 px-3">
+          <button onClick={() => signOut()} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border-none cursor-pointer font-bold text-sm text-[#D95F2B] hover:bg-[#D95F2B]/10 transition-colors">
             <FiLogOut size={18} /> Sign Out
           </button>
         </div>
       </aside>
 
       {/* ─── MAIN ─── */}
-      <main style={{ marginLeft: 240, flex: 1, padding: '40px 40px 80px' }}>
+      <main className="flex-1 p-6 md:p-10 lg:p-12 overflow-x-hidden min-w-0">
         
         {/* GREETING */}
-        <div style={{ marginBottom: 32, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div className="mb-8 flex flex-col md:flex-row justify-between items-start gap-4">
           <div>
-            <h1 style={{ fontSize: 28, fontWeight: 900, color: '#2C1A0E', letterSpacing: '-0.03em', marginBottom: 4 }}>
+            <h1 className="text-2xl md:text-3xl font-black text-[#2C1A0E] tracking-tight mb-1">
               {greeting}, {firstName} 👋
             </h1>
             <p style={{ color: '#8B6E52', fontSize: 14, fontWeight: 500 }}>
@@ -309,53 +337,24 @@ export default function DashboardPage() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            style={{
-              background: 'linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%)',
-              border: '2px solid #FDE68A',
-              borderRadius: 20,
-              padding: '24px 28px',
-              marginBottom: 32,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              boxShadow: '0 4px 20px rgba(245,158,11,0.15)'
-            }}
+            className="flex flex-col md:flex-row items-start md:items-center justify-between bg-gradient-to-br from-[#FFFBEB] to-[#FEF3C7] border-2 border-[#FDE68A] rounded-[20px] p-6 md:p-7 mb-8 gap-6 shadow-md shadow-amber-500/10"
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-              <div style={{
-                width: 54, height: 54, background: '#fef9c3', border: '2px solid #fde047',
-                borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 26, boxShadow: '0 4px 12px rgba(250,204,21,0.25)'
-              }}>
+            <div className="flex items-center gap-5">
+              <div className="w-12 h-12 md:w-14 md:h-14 bg-[#fef9c3] border-2 border-[#fde047] rounded-full flex items-center justify-center text-2xl shadow-md shadow-yellow-400/25 flex-shrink-0">
                 ⚠️
               </div>
               <div>
-                <h3 style={{ margin: 0, fontSize: 18, fontWeight: 900, color: '#92400e', letterSpacing: '-0.02em' }}>
+                <h3 className="m-0 text-lg md:text-xl font-black text-[#92400e] tracking-tight leading-tight">
                   You have not practiced in {inactiveGap} days. Your streak is at risk!
                 </h3>
-                <p style={{ margin: '6px 0 0 0', fontSize: 14, color: '#b45309', fontWeight: 600 }}>
+                <p className="m-0 mt-1 text-sm text-[#b45309] font-semibold">
                   Pick up where you left off.
                 </p>
               </div>
             </div>
             <button
               onClick={() => router.push(`/learn/${courseId}`)}
-              style={{
-                background: 'linear-gradient(135deg, #d97706, #b45309)',
-                color: '#fff',
-                border: 'none',
-                padding: '12px 24px',
-                borderRadius: 12,
-                fontWeight: 800,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 10,
-                boxShadow: '0 4px 14px rgba(217,119,6,0.3)',
-                transition: 'all 0.2s ease',
-              }}
-              onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-              onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+              className="w-full md:w-auto bg-gradient-to-br from-[#d97706] to-[#b45309] text-white border-none py-3 px-6 rounded-xl font-extrabold cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-amber-600/30 transition-transform active:scale-95"
             >
               Resume Path <FiArrowRight />
             </button>
@@ -363,7 +362,7 @@ export default function DashboardPage() {
         )}
 
         {/* STAT CARDS */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 20, marginBottom: 28 }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
           {[
             { 
               label: 'AI Skill Score', 
@@ -415,37 +414,24 @@ export default function DashboardPage() {
         {/* WEEKLY SUMMARY BANNER */}
         <motion.div
            onClick={() => router.push('/progress/weekly')}
-           style={{
-             background: 'rgba(255,255,255,0.7)',
-             border: '1.5px solid rgba(180,140,90,0.2)',
-             borderRadius: 20,
-             padding: '20px 24px',
-             marginBottom: 28,
-             display: 'flex',
-             alignItems: 'center',
-             justifyContent: 'space-between',
-             cursor: 'pointer',
-             boxShadow: '0 4px 14px rgba(140,90,40,0.05)',
-             backdropFilter: 'blur(12px)'
-           }}
-           whileHover={{ y: -2, background: 'rgba(255,255,255,0.9)' }}
+           className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white/70 border-1.5 border-[#B48C5A]/20 rounded-[20px] p-5 md:p-6 mb-8 cursor-pointer shadow-sm shadow-stone-800/5 backdrop-blur-md hover:bg-white/90 hover:-translate-y-0.5 transition-all gap-4"
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <div style={{ width: 48, height: 48, background: '#006B7A15', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#006B7A' }}>
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-[#006B7A15] rounded-xl flex items-center justify-center text-[#006B7A] flex-shrink-0">
                <FiTrendingUp size={24} />
             </div>
             <div>
-              <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: '#2C1A0E', letterSpacing: '-0.02em' }}>Weekly Summary</h2>
-              <p style={{ margin: '4px 0 0 0', fontSize: 13, color: '#8B6E52', fontWeight: 600 }}>See your 7-day progress and streak insights.</p>
+              <h2 className="m-0 text-lg font-extrabold text-[#2C1A0E] tracking-tight">Weekly Summary</h2>
+              <p className="m-0 mt-1 text-[13px] text-[#8B6E52] font-semibold">See your 7-day progress and streak insights.</p>
             </div>
           </div>
-          <div style={{ color: '#006B7A', fontWeight: 700, fontSize: 14, display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div className="text-[#006B7A] font-bold text-sm flex items-center gap-2 self-end sm:self-auto">
             View Report <FiArrowRight />
           </div>
         </motion.div>
 
         {/* MIDDLE ROW */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 20, marginBottom: 28 }}>
+        <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-5 mb-8">
           {/* Learning Path / CTA */}
           <div style={{
             background: '#FFFFFF', borderRadius: 20, border: '2px solid rgba(180,140,90,0.25)',
@@ -505,71 +491,63 @@ export default function DashboardPage() {
             {skillScore > 0 ? (
               <SkillGraph />
             ) : (
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '20px 0' }}>
-                <div style={{ fontSize: 36, marginBottom: 12 }}>📊</div>
-                <p style={{ fontSize: 13, fontWeight: 700, color: '#5C3D1E', marginBottom: 6 }}>No skill data yet</p>
-                <p style={{ fontSize: 12, color: '#B89A7E', fontWeight: 500, lineHeight: 1.5 }}>Complete your first lab to see your skills breakdown here.</p>
+              <div className="flex flex-col items-center justify-center py-6">
+                <div className="text-3xl mb-2">📊</div>
+                <p className="text-sm font-bold text-[#5C3D1E] mb-1">No skill data yet</p>
+                <p className="text-xs text-[#B89A7E]">Complete labs to unlock your spectrum</p>
               </div>
             )}
           </div>
         </div>
 
         {/* BOTTOM ROW */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           {/* Account Info */}
-          <div style={{
-            background: '#FFFFFF', borderRadius: 20, border: '2px solid rgba(180,140,90,0.25)',
-            padding: '28px', boxShadow: '0 2px 0 rgba(255,255,255,0.9) inset, 0 8px 24px rgba(140,90,40,0.1)',
-          }}>
-            <div style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#8B6E52', marginBottom: 20 }}>Your Profile</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <div className="bg-white rounded-[20px] border-2 border-[#B48C5A]/25 p-7 shadow-sm shadow-stone-800/5">
+            <div className="text-[10px] font-extrabold uppercase tracking-widest text-[#8B6E52] mb-5">Your Profile</div>
+            <div className="flex flex-col gap-3.5">
               {[
                 { label: 'Full Name', value: displayName, icon: <FiUser size={14} /> },
                 { label: 'Email', value: user?.email || '—', icon: <FiActivity size={14} /> },
                 { label: 'Learning Path', value: learningPath || 'Not set yet', icon: <FiBook size={14} /> },
                 { label: 'Level', value: proficiencyLevel || 'Not set yet', icon: <FiTrendingUp size={14} /> },
               ].map((item, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', background: '#FDF6EC', borderRadius: 12, border: '1.5px solid rgba(180,140,90,0.2)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <span style={{ color: '#8B6E52' }}>{item.icon}</span>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: '#8B6E52' }}>{item.label}</span>
+                <div key={i} className="flex items-center justify-between p-3.5 bg-[#FDF6EC] rounded-xl border-1.5 border-[#B48C5A]/20">
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-[#8B6E52]">{item.icon}</span>
+                    <span className="text-[12px] font-bold text-[#8B6E52]">{item.label}</span>
                   </div>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: '#2C1A0E', maxWidth: '55%', textAlign: 'right', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.value}</span>
+                  <span className="text-[13px] font-bold text-[#2C1A0E] max-w-[55%] text-right truncate">{item.value}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Quick Actions */}
-          <div style={{
-            background: '#FFFFFF', borderRadius: 20, border: '2px solid rgba(180,140,90,0.25)',
-            padding: '28px', boxShadow: '0 2px 0 rgba(255,255,255,0.9) inset, 0 8px 24px rgba(140,90,40,0.1)',
-          }}>
-            <div style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#8B6E52', marginBottom: 20 }}>Quick Actions</div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <div className="bg-white rounded-[20px] border-2 border-[#B48C5A]/25 p-7 shadow-sm shadow-stone-800/5">
+            <div className="text-[10px] font-extrabold uppercase tracking-widest text-[#8B6E52] mb-5">Quick Actions</div>
+            <div className="grid grid-cols-2 gap-3">
               {[
                 { label: 'Open IDE', icon: <FiTerminal />, color: '#2E7D52', action: () => router.push(`/labs/${firstLabId}`) },
                 { label: 'Ask AI Tutor', icon: <FiCpu />, color: '#006B7A', action: () => router.push('/chat') },
                 { label: 'My Certificate', icon: <FiAward />, color: '#D95F2B', action: () => router.push('/certificate/cert-001') },
                 { label: 'GitHub', icon: <FiExternalLink />, color: '#7A4B2A', action: () => window.open('https://github.com', '_blank') },
               ].map((action, i) => (
-                <button key={i} onClick={action.action} style={{
-                  padding: '18px 16px', borderRadius: 14, border: `2px solid ${action.color}20`,
-                  background: `${action.color}08`,
-                  cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
-                  transition: 'all 0.2s ease', color: action.color,
-                }}
-                onMouseEnter={e => { e.currentTarget.style.background = `${action.color}15`; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = `${action.color}08`; e.currentTarget.style.transform = 'none'; }}
+                <button key={i} onClick={action.action} 
+                  className="p-4 px-4 rounded-2xl border-2 cursor-pointer flex flex-col items-center gap-2 transition-all hover:-translate-y-0.5 active:scale-95"
+                  style={{
+                    borderColor: `${action.color}20`,
+                    background: `${action.color}08`,
+                    color: action.color,
+                  }}
                 >
-                  <span style={{ fontSize: 22 }}>{action.icon}</span>
-                  <span style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#5C3D1E' }}>{action.label}</span>
+                  <span className="text-2xl">{action.icon}</span>
+                  <span className="text-[10px] font-black uppercase tracking-wider text-[#5C3D1E]">{action.label}</span>
                 </button>
               ))}
             </div>
           </div>
         </div>
-
       </main>
     </div>
   );

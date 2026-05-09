@@ -204,12 +204,16 @@ export default function LabPage() {
     try {
       const res = await executeCode(activeFile.language, activeFile.content);
       setExecTime(((performance.now() - t0) / 1000).toFixed(2) + 's');
-      const out = res.run.output || '(no output)';
-      const err = res.run.stderr;
-      setOutput((err ? '[stderr]\n' + err + '\n\n[stdout]\n' : '') + out);
+      
+      if (res.run.code !== 0) {
+        setOutput(`[ERROR] Execution failed with status: ${res.run.signal}\n\n${res.run.output}`);
+      } else {
+        const out = res.run.output || '(no output)';
+        setOutput(out);
+      }
       setStat(p => p + 1);
     } catch (e: any) {
-      setOutput('Execution failed: ' + e.message);
+      setOutput('[ERROR] System Failure\n' + e.message);
     } finally {
       setIsRunning(false);
     }
@@ -291,6 +295,13 @@ export default function LabPage() {
     setOutput('⚡ Running test suite...\n');
     try {
       const res = await executeCode(activeFile.language, activeFile.content);
+      
+      if (res.run.code !== 0) {
+        setOutput(`[ERROR] Tests failed to run.\nStatus: ${res.run.signal}\n\n${res.run.output}`);
+        setIsSub(false);
+        return;
+      }
+
       const out = res.run.output?.trim() || '';
       // Simple pass/fail based on expected output presence
       const results = LAB.tests.map(t => ({ label: t.label, pass: out.length > 0 && !res.run.stderr }));
@@ -316,7 +327,7 @@ export default function LabPage() {
       // Always save to Firestore after submission (even partial pass → partial skill score)
       await saveLabResultToFirestore(passedCount, results.length, elapsedSeconds);
     } catch (e: any) {
-      setOutput('Submission failed: ' + e.message);
+      setOutput('[ERROR] Submission Failed\n' + e.message);
     } finally {
       setIsSub(false);
     }
@@ -500,115 +511,133 @@ Rules:
         )}
       </AnimatePresence>
 
-      {/* ══ TOP BAR ══ */}
-      <header style={{ height: 48, background: C.panel, borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', flexShrink: 0, gap: 12 }}>
-
-        {/* Left */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <button onClick={() => router.push('/dashboard')} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '5px 10px', background: 'rgba(255,255,255,0.05)', border: `1px solid ${C.border}`, borderRadius: 7, cursor: 'pointer', color: C.sub, fontSize: 11, fontWeight: 600 }}>
-            <FiArrowLeft size={12} /> Dashboard
+      {/* ══ HEADER ══ */}
+      <header className="h-14 md:h-16 bg-[#13131A] border-b border-white/10 flex items-center justify-between px-4 md:px-6 flex-shrink-0 z-50">
+        <div className="flex items-center gap-3 md:gap-5 overflow-hidden">
+          <button onClick={() => router.push('/dashboard')} className="flex items-center gap-2 px-2 md:px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg cursor-pointer text-[#888899] text-[10px] md:text-xs font-bold hover:bg-white/10 transition-all flex-shrink-0">
+            <FiArrowLeft size={13} /> <span className="hidden sm:inline">Dashboard</span>
           </button>
-          <div style={{ height: 16, width: 1, background: C.border }} />
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{ width: 8, height: 8, borderRadius: '50%', background: C.accent }} />
-            <span style={{ fontSize: 13, fontWeight: 800, color: C.text }}>{LAB.title}</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginLeft: 12, padding: '4px 8px', background: 'rgba(255,255,255,0.03)', borderRadius: 6, border: `1px solid ${C.border}` }}>
-               <FiClock size={12} color={C.muted} />
-               <span style={{ fontSize: 11, fontWeight: 700, color: C.sub, fontFamily: 'monospace' }}>{formatTime(elapsedSeconds)}</span>
+          <div className="hidden sm:block h-5 w-px bg-white/10" />
+          <div className="flex items-center gap-2.5 overflow-hidden">
+            <div className="w-7 h-7 bg-white/5 rounded-lg flex items-center justify-center flex-shrink-0">
+              <span className="text-sm">🧪</span>
             </div>
-            <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', background: 'rgba(59,130,246,0.15)', color: C.blue, borderRadius: 6, border: `1px solid rgba(59,130,246,0.3)` }}>{LAB.category}</span>
-            <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', background: 'rgba(245,158,11,0.15)', color: C.amber, borderRadius: 6, border: `1px solid rgba(245,158,11,0.3)` }}>{LAB.difficulty}</span>
-            <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', background: 'rgba(124,58,237,0.15)', color: '#A78BFA', borderRadius: 6, border: `1px solid rgba(124,58,237,0.3)` }}>+{LAB.xp} XP</span>
+            <div className="overflow-hidden">
+              <h1 className="text-xs md:text-sm font-black text-[#E2E2EE] truncate tracking-tight">{LAB.title}</h1>
+              <div className="flex items-center gap-3 text-[9px] font-extrabold text-[#10B981] uppercase tracking-widest mt-0.5">
+                <span>{LAB.xp} XP Available</span>
+                <span className="text-[#888899] flex items-center gap-1"><FiClock size={10} /> {formatTime(elapsedSeconds)}</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Actions */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          {/* Save */}
-          <button onClick={saveAll} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px', background: 'rgba(255,255,255,0.05)', border: `1px solid ${C.border}`, borderRadius: 8, cursor: 'pointer', fontSize: 11, fontWeight: 700, color: C.sub }}>
-            <FiSave size={12} /> Save
-          </button>
-
-          {/* Run */}
+        <div className="flex items-center gap-2 md:gap-4 ml-2">
+          {/* Main actions (Run/Submit) */}
           <button onClick={handleRun} disabled={isRunning || isSubmitting}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 14px', background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.3)', borderRadius: 8, cursor: 'pointer', fontSize: 11, fontWeight: 800, color: C.green, opacity: isRunning ? 0.6 : 1 }}>
-            <FiPlay size={12} /> {isRunning ? 'Running...' : 'Run'}
+            className="flex items-center gap-2 px-3 md:px-4 py-1.5 bg-white/5 border border-white/15 rounded-lg cursor-pointer text-xs font-extrabold text-[#E2E2EE] hover:bg-white/10 disabled:opacity-50 shadow-lg shadow-black/20"
+          >
+            <FiPlay size={12} className={isRunning ? 'animate-pulse' : ''} /> <span className="hidden sm:inline">{isRunning ? 'Running...' : 'Run'}</span>
           </button>
-
-          {/* Submit */}
+          
           <button onClick={handleSubmit} disabled={isRunning || isSubmitting}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 16px', background: `linear-gradient(135deg, ${C.accent}, #A855F7)`, border: 'none', borderRadius: 8, cursor: 'pointer', fontSize: 11, fontWeight: 800, color: '#fff', opacity: isSubmitting ? 0.6 : 1, boxShadow: '0 4px 14px rgba(124,58,237,0.3)' }}>
-            <FiZap size={12} /> {isSubmitting ? 'Submitting...' : 'Submit'}
+            className="flex items-center gap-2 px-3 md:px-4 py-1.5 bg-gradient-to-br from-[#7C3AED] to-[#A855F7] border-none rounded-lg cursor-pointer text-xs font-extrabold text-white opacity-100 hover:opacity-90 disabled:opacity-50 shadow-lg shadow-[#7C3AED]/30"
+          >
+            <FiZap size={12} /> <span className="hidden sm:inline">{isSubmitting ? 'Submitting...' : 'Submit'}</span>
           </button>
 
-          <div style={{ height: 16, width: 1, background: C.border }} />
+          <div className="hidden md:block h-4 w-px bg-white/10" />
 
-          {/* Analyze toggle */}
-          <button onClick={() => { handleAnalyze(); setRight('analyzer'); }}
-            style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px', background: rightPanel === 'analyzer' ? 'rgba(59,130,246,0.15)' : 'rgba(255,255,255,0.05)', border: `1px solid ${rightPanel === 'analyzer' ? 'rgba(59,130,246,0.4)' : C.border}`, borderRadius: 8, cursor: 'pointer', fontSize: 11, fontWeight: 700, color: rightPanel === 'analyzer' ? C.blue : C.sub }}>
-            <FiSearch size={12} /> Analyze
-          </button>
+          {/* Panel toggles - hidden on mobile, shown on md+ */}
+          <div className="hidden md:flex items-center gap-3">
+            <button onClick={() => { handleAnalyze(); setRight('analyzer'); }}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg cursor-pointer text-[11px] font-bold transition-all ${rightPanel === 'analyzer' ? 'bg-blue-500/15 border border-blue-500/40 text-blue-400' : 'bg-white/5 border border-white/10 text-[#888899] hover:bg-white/10'}`}
+            >
+              <FiSearch size={12} /> Analyze
+            </button>
 
-          {/* AI assistant toggle */}
-          <button onClick={() => setRight(p => p === 'ai' ? 'none' : 'ai')}
-            style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px', background: rightPanel === 'ai' ? 'rgba(124,58,237,0.15)' : 'rgba(255,255,255,0.05)', border: `1px solid ${rightPanel === 'ai' ? 'rgba(124,58,237,0.4)' : C.border}`, borderRadius: 8, cursor: 'pointer', fontSize: 11, fontWeight: 700, color: rightPanel === 'ai' ? '#A78BFA' : C.sub }}>
-            <FiCpu size={12} /> AI Assist
+            <button onClick={() => setRight(p => p === 'ai' ? 'none' : 'ai')}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg cursor-pointer text-[11px] font-bold transition-all ${rightPanel === 'ai' ? 'bg-[#7C3AED]/15 border border-[#7C3AED]/40 text-[#A78BFA]' : 'bg-white/5 border border-white/10 text-[#888899] hover:bg-white/10'}`}
+            >
+              <FiCpu size={12} /> AI Assist
+            </button>
+          </div>
+          
+          {/* Mobile Panel Toggle */}
+          <button className="md:hidden p-2 text-[#888899] bg-white/5 border border-white/10 rounded-lg" onClick={() => setRight(p => p === 'ai' ? 'none' : 'ai')}>
+             <FiCpu size={18} />
           </button>
         </div>
       </header>
 
       {/* ══ BODY ══ */}
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
 
-        {/* ─ LEFT: Problem panel (320px) ─ */}
-        <aside style={{ width: 320, background: C.panel, borderRight: `1px solid ${C.border}`, display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
+        {/* ─ LEFT: Problem panel ─ */}
+        <aside className={`
+          fixed md:static inset-y-0 left-0 z-40
+          w-[300px] md:w-[320px] bg-[#13131A] border-r border-white/10 flex flex-col flex-shrink-0
+          transition-transform duration-300 ease-in-out
+          ${left === 'problem' || left === 'tests' ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+          md:translate-x-0
+        `}>
+          {/* Mobile Back button for panels */}
+          <div className="md:hidden p-4 border-b border-white/10 flex justify-between items-center">
+            <span className="text-xs font-black text-white/50 uppercase tracking-widest">Lab Info</span>
+            <button onClick={() => setLeft('problem')} className="p-2 text-white/50"><FiX size={18} /></button>
+          </div>
+
           {/* Tabs */}
-          <div style={{ display: 'flex', borderBottom: `1px solid ${C.border}`, padding: '0 8px' }}>
+          <div className="flex border-b border-white/10 px-2">
             {(['problem', 'tests'] as const).map(t => (
-              <button key={t} onClick={() => setLeft(t)} style={{ flex: 1, padding: '12px 0', border: 'none', background: 'transparent', cursor: 'pointer', fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: left === t ? C.accent : C.muted, borderBottom: `2px solid ${left === t ? C.accent : 'transparent'}`, transition: 'all 0.15s', marginBottom: -1 }}>
+              <button key={t} onClick={() => setLeft(t)} 
+                className={`flex-1 py-3.5 border-none bg-transparent cursor-pointer text-[10px] font-black uppercase tracking-[0.12em] transition-all
+                ${left === t ? 'text-[#7C3AED] border-b-2 border-[#7C3AED]' : 'text-[#444455] hover:text-[#888899]'}`}
+              >
                 {t}
               </button>
             ))}
           </div>
 
-          <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
+          <div className="flex-1 overflow-y-auto p-5 md:p-6">
             {left === 'problem' ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              <div className="flex flex-col gap-6">
                 <div>
-                  <div style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.18em', color: C.muted, marginBottom: 12 }}>Problem Statement</div>
-                  <p style={{ fontSize: 13, color: C.sub, lineHeight: 1.75, fontWeight: 500, whiteSpace: 'pre-line' }}>{LAB.problem}</p>
+                  <div className="text-[9px] font-black uppercase tracking-[0.18em] text-[#444455] mb-3">Problem Statement</div>
+                  <p className="text-sm text-[#888899] leading-relaxed font-medium whitespace-pre-line">{LAB.problem}</p>
                 </div>
                 <div>
-                  <div style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.18em', color: C.muted, marginBottom: 8 }}>Expected Output</div>
-                  <div style={{ padding: '12px 16px', background: 'rgba(255,255,255,0.04)', border: `1px solid ${C.border}`, borderRadius: 10, fontFamily: 'monospace', fontSize: 13, color: C.green }}>{LAB.expected}</div>
+                  <div className="text-[9px] font-black uppercase tracking-[0.18em] text-[#444455] mb-2">Expected Output</div>
+                  <div className="p-3 bg-white/[0.03] border border-white/10 rounded-xl font-mono text-xs text-[#10B981]">{LAB.expected}</div>
                 </div>
                 {/* Hint */}
                 <div>
-                  <button onClick={handleShowHint} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '10px', background: hintUsed ? 'rgba(245,158,11,0.04)' : 'rgba(245,158,11,0.08)', border: `1px solid ${hintUsed ? 'rgba(245,158,11,0.15)' : 'rgba(245,158,11,0.25)'}`, borderRadius: 10, cursor: 'pointer', fontSize: 11, fontWeight: 700, color: C.amber }}>
-                    <FiHelpCircle size={13} /> {showHint ? 'Hide Hint' : hintUsed ? 'Show Hint (already used)' : 'Show Hint (−5 XP)'}
+                  <button onClick={handleShowHint} className={`w-full flex items-center justify-center gap-2.5 p-3 rounded-xl cursor-pointer text-[10px] font-bold transition-all
+                    ${hintUsed ? 'bg-amber-500/5 border border-amber-500/20 text-amber-500/70' : 'bg-amber-500/10 border border-amber-500/30 text-amber-500 hover:bg-amber-500/15'}`}>
+                    <FiHelpCircle size={13} /> {showHint ? 'Hide Hint' : hintUsed ? 'Show Hint' : 'Show Hint (−5 XP)'}
                   </button>
                   {showHint && (
                     <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
-                      style={{ marginTop: 10, padding: '14px', background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: 10, fontSize: 12, color: '#FCD34D', lineHeight: 1.65 }}>
+                      className="mt-3 p-4 bg-amber-500/5 border border-amber-500/20 rounded-xl text-xs text-amber-200/80 leading-relaxed shadow-lg">
                       💡 {LAB.hint}
                     </motion.div>
                   )}
                 </div>
               </div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                <div style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.18em', color: C.muted, marginBottom: 4 }}>Test Cases</div>
+              <div className="flex flex-col gap-3">
+                <div className="text-[9px] font-black uppercase tracking-[0.18em] text-[#444455] mb-1">Test Cases</div>
                 {LAB.tests.map((t, i) => {
                   const result = testResults[i];
                   return (
-                    <div key={i} style={{ padding: '14px 16px', background: 'rgba(255,255,255,0.03)', border: `1px solid ${result ? (result.pass ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)') : C.border}`, borderRadius: 10 }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                        <span style={{ fontSize: 10, fontWeight: 800, color: C.sub, textTransform: 'uppercase' }}>Case {String(i + 1).padStart(2, '0')}</span>
-                        {result ? (result.pass ? <FiCheckCircle size={14} color={C.green} /> : <FiXCircle size={14} color={C.red} />) : <div style={{ width: 8, height: 8, borderRadius: '50%', background: C.muted }} />}
+                    <div key={i} className={`p-4 bg-white/[0.02] border rounded-xl transition-all ${result ? (result.pass ? 'border-green-500/30 bg-green-500/[0.02]' : 'border-red-500/30 bg-red-500/[0.02]') : 'border-white/10'}`}>
+                      <div className="flex justify-between items-center mb-2.5">
+                        <span className="text-[9px] font-black text-[#555566] uppercase tracking-wider">Case {String(i + 1).padStart(2, '0')}</span>
+                        {result ? (result.pass ? <FiCheckCircle size={14} className="text-[#10B981]" /> : <FiXCircle size={14} className="text-[#EF4444]" />) : <div className="w-1.5 h-1.5 rounded-full bg-[#444455]" />}
                       </div>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: C.text, marginBottom: 6 }}>{t.label}</div>
-                      <div style={{ fontSize: 11, color: C.sub, fontFamily: 'monospace' }}>{t.input}</div>
-                      <div style={{ fontSize: 11, color: C.green, fontFamily: 'monospace', marginTop: 4 }}>→ {t.expected}</div>
+                      <div className="text-[13px] font-bold text-[#E2E2EE] mb-1.5">{t.label}</div>
+                      <div className="text-[11px] text-[#888899] font-mono opacity-80">{t.input}</div>
+                      <div className="text-[11px] text-[#10B981] font-mono mt-1">→ {t.expected}</div>
                     </div>
                   );
                 })}
@@ -618,45 +647,37 @@ Rules:
         </aside>
 
         {/* ─ CENTER: Editor + Terminal ─ */}
-        <main style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
+        <main className="flex-1 flex flex-col overflow-hidden min-w-0 bg-[#0D0D0F]">
 
           {/* File tabs bar */}
-          <div style={{ height: 38, background: C.panel, borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', overflowX: 'auto', flexShrink: 0 }}>
+          <div className="h-10 bg-[#13131A] border-b border-white/10 flex items-center overflow-x-auto flex-shrink-0 no-scrollbar">
             {files.map(f => (
-              <button key={f.id} onClick={() => setActive(f.id)} style={{
-                display: 'flex', alignItems: 'center', gap: 8, padding: '0 14px',
-                height: '100%', border: 'none', borderRight: `1px solid ${C.border}`,
-                background: activeFileId === f.id ? C.bg : 'transparent',
-                cursor: 'pointer', fontSize: 12, fontWeight: 600,
-                color: activeFileId === f.id ? C.text : C.muted,
-                whiteSpace: 'nowrap', flexShrink: 0,
-                borderBottom: activeFileId === f.id ? `2px solid ${C.accent}` : '2px solid transparent',
-              }}>
-                <FiFile size={11} />
+              <button key={f.id} onClick={() => setActive(f.id)} 
+                className={`flex items-center gap-2.5 px-4 h-full border-none border-r border-white/10 cursor-pointer text-xs font-bold transition-all flex-shrink-0
+                ${activeFileId === f.id ? 'bg-[#0D0D0F] text-[#E2E2EE] border-b-2 border-[#7C3AED]' : 'bg-transparent text-[#444455] hover:text-[#888899]'}`}
+              >
+                <FiFile size={11} className="opacity-70" />
                 {f.name}
-                {!f.saved && <div style={{ width: 6, height: 6, borderRadius: '50%', background: C.amber, marginLeft: 2 }} />}
+                {!f.saved && <div className="w-1.5 h-1.5 rounded-full bg-amber-500 ml-1 shadow-sm shadow-amber-500/50" />}
                 {files.length > 1 && (
-                  <span onClick={e => { e.stopPropagation(); removeFile(f.id); }} style={{ marginLeft: 4, cursor: 'pointer', color: C.muted, display: 'flex', alignItems: 'center' }}>
-                    <FiX size={11} />
-                  </span>
+                  <span onClick={e => { e.stopPropagation(); removeFile(f.id); }} className="ml-2 hover:text-[#EF4444] transition-colors"><FiX size={11} /></span>
                 )}
               </button>
             ))}
 
             {/* Add file */}
-            <button onClick={() => setShowNF(p => !p)} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '0 14px', height: '100%', border: 'none', borderRight: `1px solid ${C.border}`, background: 'transparent', cursor: 'pointer', color: C.muted, flexShrink: 0 }}>
-              <FiPlus size={13} />
+            <button onClick={() => setShowNF(p => !p)} className="flex items-center gap-1 px-4 h-full border-none border-r border-white/10 bg-transparent cursor-pointer text-[#444455] hover:text-[#888899] transition-colors flex-shrink-0">
+              <FiPlus size={14} />
             </button>
 
-            {/* Language selector for active file */}
-            <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6, padding: '0 12px', borderLeft: `1px solid ${C.border}`, height: '100%', flexShrink: 0 }}>
-              <FiCode size={11} color={C.sub} />
+            {/* Language selector for active file - hidden on very small screens */}
+            <div className="hidden sm:flex ml-auto items-center gap-2 px-4 border-l border-white/10 h-full flex-shrink-0 bg-white/5">
+              <FiCode size={11} className="text-[#888899]" />
               <select value={activeFile?.language || 'python'}
-                onChange={e => {
-                  setFiles(p => p.map(f => f.id === activeFileId ? { ...f, language: e.target.value } : f));
-                }}
-                style={{ background: 'transparent', border: 'none', outline: 'none', color: C.sub, fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
-                {Object.entries(LANGS).map(([k, v]) => <option key={k} value={k} style={{ background: '#1A1A24' }}>{v.label}</option>)}
+                onChange={e => setFiles(p => p.map(f => f.id === activeFileId ? { ...f, language: e.target.value } : f))}
+                className="bg-transparent border-none outline-none text-[#888899] text-[10px] font-black uppercase tracking-wider cursor-pointer"
+              >
+                {Object.entries(LANGS).map(([k, v]) => <option key={k} value={k} className="bg-[#1A1A24]">{v.label}</option>)}
               </select>
             </div>
           </div>
@@ -708,27 +729,27 @@ Rules:
           </div>
 
           {/* Terminal */}
-          <div style={{ height: 200, background: '#0A0A0E', borderTop: `1px solid ${C.border}`, display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
-            <div style={{ height: 34, borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', flexShrink: 0 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <FiTerminal size={11} color='#2DD4BF' />
-                <span style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.12em', color: C.muted }}>Terminal Output</span>
+          <div className="h-48 md:h-64 bg-[#0A0A0E] border-t border-white/10 flex flex-col flex-shrink-0 shadow-[0_-8px_30px_rgb(0,0,0,0.5)]">
+            <div className="h-9 border-b border-white/10 flex items-center justify-between px-4 flex-shrink-0 bg-black/40">
+              <div className="flex items-center gap-2.5">
+                <FiTerminal size={11} className="text-[#2DD4BF]" />
+                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#444455]">Terminal Output</span>
               </div>
-              {execTime && <span style={{ fontSize: 10, fontWeight: 700, color: C.muted }}>⏱ {execTime}</span>}
+              {execTime && <span className="text-[9px] font-bold text-[#444455] bg-white/5 px-2 py-0.5 rounded-full">⏱ {execTime}</span>}
             </div>
-            <div style={{ flex: 1, padding: '12px 16px', fontFamily: 'JetBrains Mono, Consolas, monospace', fontSize: 12, color: output.includes('[ERROR]') || output.includes('failed') ? C.red : '#A7E3C4', overflowY: 'auto', whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
-              {output || <span style={{ color: C.muted }}>$ awaiting execution...</span>}
+            <div className={`flex-1 p-4 font-mono text-[11px] md:text-xs overflow-y-auto whitespace-pre-wrap leading-relaxed ${output.includes('[ERROR]') || output.includes('failed') ? 'text-[#EF4444]' : 'text-[#A7E3C4]'}`}>
+              {output || <span className="text-[#444455]">$ awaiting execution...</span>}
               <AnimatePresence>
                 {submitBadge && (
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    transition={{ type: 'spring', stiffness: 350, damping: 20 }}
-                    style={{ marginTop: 16, display: 'flex' }}
+                    initial={{ opacity: 0, scale: 0.9, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                    className="mt-5 flex"
                   >
-                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 14px', background: `${submitBadge.color}15`, border: `1px solid ${submitBadge.color}40`, borderRadius: 8 }}>
-                      <span style={{ fontSize: 13, fontWeight: 800, color: submitBadge.color, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{submitBadge.tier}</span>
-                      <span style={{ fontSize: 11, fontWeight: 700, color: submitBadge.color }}>({submitBadge.pass}/{submitBadge.total} tests passed)</span>
+                    <div className="inline-flex items-center gap-3 px-4 py-2.5 bg-black/40 border-2 rounded-xl backdrop-blur-md shadow-xl" style={{ borderColor: `${submitBadge.color}40` }}>
+                      <span className="text-xs font-black uppercase tracking-widest" style={{ color: submitBadge.color }}>{submitBadge.tier}</span>
+                      <div className="w-px h-3 bg-white/10" />
+                      <span className="text-[10px] font-bold opacity-80" style={{ color: submitBadge.color }}>{submitBadge.pass}/{submitBadge.total} PASSED</span>
                     </div>
                   </motion.div>
                 )}

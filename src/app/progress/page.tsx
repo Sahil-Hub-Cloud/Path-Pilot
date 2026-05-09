@@ -22,68 +22,113 @@ interface UserProfile {
 }
 
 const ROADMAP_STAGES: Record<string, { title: string; modules: string[] }[]> = {
-  // ── AI / Machine Learning ────────────────────────────────────────────────────────────────
-  'AI': [
-    { title: 'Python Foundations',  modules: ['Variables & Types', 'Functions & Loops', 'Lists & Dicts', 'File I/O'] },
-    { title: 'Data & ML Basics',    modules: ['NumPy & Pandas', 'Data Visualization', 'Scikit-learn Intro', 'Train/Test Split'] },
-    { title: 'Deep Learning',       modules: ['Neural Networks', 'CNNs & RNNs', 'Transformers', 'Fine-tuning LLMs'] },
-    { title: 'AI Engineering',      modules: ['Prompt Engineering', 'RAG Systems', 'LLM APIs', 'Vector Databases'] },
-  ],
-
-  // ── Frontend ──────────────────────────────────────────────────────────────────────
   'Frontend': [
-    { title: 'HTML & CSS',          modules: ['Semantic HTML', 'Flexbox & Grid', 'Responsive Design', 'CSS Animations'] },
-    { title: 'JavaScript Core',     modules: ['ES6+ Syntax', 'DOM Manipulation', 'Async/Await', 'Closures & Scope'] },
-    { title: 'React & Next.js',     modules: ['Components & Props', 'State & Hooks', 'Routing', 'Server Components'] },
-    { title: 'Production Skills',   modules: ['Testing (Vitest)', 'Performance', 'Deployment', 'CI/CD Basics'] },
+    { title: 'HTML & CSS',        modules: ['Semantic HTML', 'Flexbox & Grid', 'Responsive Design', 'CSS Animations'] },
+    { title: 'JavaScript Core',   modules: ['ES6+ Syntax', 'DOM Manipulation', 'Async/Await', 'Closures & Scope'] },
+    { title: 'React & Next.js',   modules: ['Components & Props', 'State & Hooks', 'Routing', 'Server Components'] },
+    { title: 'Production Skills', modules: ['Testing (Vitest)', 'Performance', 'Deployment', 'CI/CD Basics'] },
   ],
-
-  // ── Backend ───────────────────────────────────────────────────────────────────────
   'Backend': [
-    { title: 'Node.js Basics',      modules: ['Modules & npm', 'HTTP Servers', 'Express.js', 'Middleware'] },
-    { title: 'Databases',           modules: ['SQL Fundamentals', 'PostgreSQL', 'MongoDB', 'ORMs (Prisma)'] },
-    { title: 'APIs & Auth',         modules: ['REST Design', 'JWT & OAuth', 'Rate Limiting', 'WebSockets'] },
-    { title: 'DevOps & Scale',      modules: ['Docker Basics', 'Redis Caching', 'AWS/GCP Intro', 'System Design'] },
+    { title: 'Node.js Basics',   modules: ['Modules & npm', 'HTTP Servers', 'Express.js', 'Middleware'] },
+    { title: 'Databases',        modules: ['SQL Fundamentals', 'PostgreSQL', 'MongoDB', 'ORMs (Prisma)'] },
+    { title: 'APIs & Auth',      modules: ['REST Design', 'JWT & OAuth', 'Rate Limiting', 'WebSockets'] },
+    { title: 'DevOps & Scale',   modules: ['Docker Basics', 'Redis Caching', 'AWS/GCP Intro', 'System Design'] },
   ],
-
-  // ── Cloud & DevOps ────────────────────────────────────────────────────────────────
-  'Cloud': [
-    { title: 'Linux Basics',        modules: ['Shell Commands', 'File Permissions', 'Bash Scripting', 'Cron Jobs'] },
-    { title: 'Docker & Containers', modules: ['Images & Containers', 'Dockerfile', 'Docker Compose', 'Networking'] },
-    { title: 'CI/CD Pipelines',     modules: ['GitHub Actions', 'Build & Test Stages', 'Deployment Gates', 'Rollback Strategies'] },
-    { title: 'AWS Cloud Fundamentals', modules: ['EC2 & VPC', 'S3 & IAM', 'Lambda (Serverless)', 'CloudWatch & Logging'] },
-  ],
-
-  // ── DSA & Interviews ───────────────────────────────────────────────────────────────
-  'DSA': [
-    { title: 'Arrays & Strings',    modules: ['Two Pointers', 'Sliding Window', 'Prefix Sums', 'String Manipulation'] },
-    { title: 'Recursion & Trees',   modules: ['Recursion Patterns', 'Binary Trees', 'BST Operations', 'Tree Traversals'] },
-    { title: 'Graphs & DP',         modules: ['BFS & DFS', 'Shortest Paths', 'Memoisation', 'Tabulation'] },
-    { title: 'Mock Interviews',     modules: ['Timed LeetCode', 'Communication Skills', 'Whiteboard Practice', 'Offer Negotiation'] },
-  ],
-
-  // ── MERN Stack (Full Stack) ──────────────────────────────────────────────────────────
   'MERN': [
-    { title: 'MongoDB Basics',      modules: ['Documents & Collections', 'CRUD Operations', 'Indexing', 'Aggregation Pipeline'] },
-    { title: 'Express APIs',        modules: ['Routing & Middleware', 'REST Conventions', 'Error Handling', 'Auth (JWT)'] },
-    { title: 'React Frontend',      modules: ['Component Architecture', 'useState & useEffect', 'React Query', 'Form Handling'] },
-    { title: 'Node Backend',        modules: ['Event Loop', 'Streams & Buffers', 'WebSockets', 'Deployment (Railway)'] },
+    { title: 'MongoDB Basics',   modules: ['Documents & Collections', 'CRUD Operations', 'Indexing', 'Aggregation Pipeline'] },
+    { title: 'Express APIs',     modules: ['Routing & Middleware', 'REST Conventions', 'Error Handling', 'Auth (JWT)'] },
+    { title: 'React Frontend',   modules: ['Component Architecture', 'useState & useEffect', 'React Query', 'Form Handling'] },
+    { title: 'Node Backend',     modules: ['Event Loop', 'Streams & Buffers', 'WebSockets', 'Deployment (Railway)'] },
   ],
-
-  // ── Mobile — Android ────────────────────────────────────────────────────────────────
-  'Android': [
-    { title: 'Kotlin Basics',       modules: ['Variables & Null Safety', 'Functions & Lambdas', 'Classes & Data Classes', 'Coroutines'] },
-    { title: 'UI & Layouts',        modules: ['Jetpack Compose', 'Layouts & Modifiers', 'Navigation', 'Material Design 3'] },
-    { title: 'Firebase Integration',modules: ['Auth (Google Sign-In)', 'Firestore Realtime', 'Cloud Storage', 'Push Notifications'] },
-    { title: 'Play Store Publishing', modules: ['App Signing', 'Build Variants', 'Store Listing', 'Release Tracks'] },
+  'DSA': [
+    { title: 'Arrays & Strings',  modules: ['Two Pointers', 'Sliding Window', 'Prefix Sums', 'String Manipulation'] },
+    { title: 'Recursion & Trees', modules: ['Recursion Patterns', 'Binary Trees', 'BST Operations', 'Tree Traversals'] },
+    { title: 'Graphs & DP',       modules: ['BFS & DFS', 'Shortest Paths', 'Memoisation', 'Tabulation'] },
+    { title: 'Mock Interviews',   modules: ['Timed LeetCode', 'Communication Skills', 'Whiteboard Practice', 'Offer Negotiation'] },
   ],
-
-  // ── Mobile — Flutter ─────────────────────────────────────────────────────────────────
+  'NLP': [
+    { title: 'Python & Text',    modules: ['Python for Data', 'Tokenization', 'Regex & NLP', 'spaCy Basics'] },
+    { title: 'Embeddings & NN',  modules: ['Word2Vec / GloVe', 'RNNs & LSTMs', 'Attention Mechanism', 'Seq2Seq'] },
+    { title: 'Transformers',     modules: ['BERT Architecture', 'HuggingFace', 'Fine-tuning', 'Sentiment & NER'] },
+    { title: 'LLMs & GenAI',     modules: ['GPT Architecture', 'Prompt Engineering', 'RAG Systems', 'RLHF'] },
+  ],
+  'MachineLearning': [
+    { title: 'Supervised Learning', modules: ['Linear Regression', 'Logistic Regression', 'Decision Trees', 'Random Forests'] },
+    { title: 'Unsupervised & CV',   modules: ['K-Means Clustering', 'PCA', 'SVMs', 'Model Evaluation'] },
+    { title: 'Deep Learning',       modules: ['Neural Networks', 'CNNs', 'Transfer Learning', 'PyTorch Basics'] },
+    { title: 'MLOps & Deploy',      modules: ['Experiment Tracking', 'Model Serving', 'Docker for ML', 'CI/CD Pipelines'] },
+  ],
+  'DataScience': [
+    { title: 'Data Foundations',  modules: ['Python for DS', 'NumPy Computation', 'Pandas Deep Dive', 'Data Cleaning'] },
+    { title: 'Viz & Statistics',  modules: ['Matplotlib & Seaborn', 'Descriptive Stats', 'Inferential Stats', 'A/B Testing'] },
+    { title: 'SQL & Databases',   modules: ['SQL Queries', 'Joins & Aggregations', 'Window Functions', 'Database Design'] },
+    { title: 'ML for DS',         modules: ['Regression Models', 'Classification', 'Feature Engineering', 'Dashboards'] },
+  ],
+  'PythonBeginners': [
+    { title: 'Coding Foundations', modules: ['Variables & Types', 'Control Flow', 'Loops & Iteration', 'Functions'] },
+    { title: 'Data & Files',       modules: ['Lists & Dicts', 'File I/O', 'Error Handling', 'Modules & Packages'] },
+    { title: 'Mini Projects',      modules: ['Calculator', 'To-Do App', 'Quiz Game', 'Web Scraper Intro'] },
+    { title: 'AI Fluency',         modules: ['Prompt Engineering 101', 'Reading AI Code', 'AI Ethics', 'Tools Overview'] },
+  ],
   'Flutter': [
-    { title: 'Dart Basics',         modules: ['Types & Null Safety', 'Functions & Closures', 'async/await & Futures', 'Collections'] },
-    { title: 'Widget Tree',         modules: ['Stateless vs Stateful', 'Material Widgets', 'Custom Painting', 'Animations'] },
-    { title: 'State Management',    modules: ['setState', 'Provider', 'Riverpod', 'Bloc Pattern'] },
-    { title: 'App Deployment',      modules: ['Build Config', 'iOS & Android Signing', 'Play Store & App Store', 'CI/CD with Codemagic'] },
+    { title: 'Dart Basics',      modules: ['Types & Null Safety', 'Functions & Closures', 'async/await', 'Collections'] },
+    { title: 'Widget Tree',      modules: ['Stateless vs Stateful', 'Material Widgets', 'Custom Painting', 'Animations'] },
+    { title: 'State Management', modules: ['setState', 'Provider', 'Riverpod', 'Bloc Pattern'] },
+    { title: 'App Deployment',   modules: ['Build Config', 'iOS & Android Signing', 'Play Store & App Store', 'CI/CD with Codemagic'] },
+  ],
+  'ReactNative': [
+    { title: 'RN Essentials',    modules: ['Core Components', 'Flexbox & Styling', 'React Navigation', 'Expo Workflow'] },
+    { title: 'Native Features',  modules: ['Camera & Location', 'Push Notifications', 'Async Storage', 'Native Modules'] },
+    { title: 'State & Data',     modules: ['Redux Toolkit', 'React Query', 'Firebase Integration', 'REST APIs'] },
+    { title: 'Publishing',       modules: ['App Signing', 'Play Store Release', 'App Store Review', 'OTA Updates'] },
+  ],
+  'Android': [
+    { title: 'Kotlin Basics',        modules: ['Variables & Null Safety', 'Functions & Lambdas', 'Classes & Data Classes', 'Coroutines'] },
+    { title: 'UI & Layouts',         modules: ['Jetpack Compose', 'Layouts & Modifiers', 'Navigation', 'Material Design 3'] },
+    { title: 'Firebase Integration', modules: ['Auth (Google Sign-In)', 'Firestore Realtime', 'Cloud Storage', 'Push Notifications'] },
+    { title: 'Play Store',           modules: ['App Signing', 'Build Variants', 'Store Listing', 'Release Tracks'] },
+  ],
+  'Django': [
+    { title: 'Django Foundations', modules: ['MTV Architecture', 'Models & Admin', 'Views & Templates', 'URL Routing'] },
+    { title: 'Django REST',        modules: ['Serializers', 'ViewSets & Routers', 'Authentication (JWT)', 'Permissions'] },
+    { title: 'Databases & ORM',    modules: ['PostgreSQL Setup', 'Migrations', 'Querysets', 'Indexes & Performance'] },
+    { title: 'Production Deploy',  modules: ['Gunicorn & Nginx', 'Docker Compose', 'AWS EC2 / Railway', 'CI/CD'] },
+  ],
+  'Vue': [
+    { title: 'Vue Foundations',  modules: ['Template Syntax', 'Reactivity System', 'Composition API', 'ref & reactive'] },
+    { title: 'Ecosystem',        modules: ['Vue Router', 'Pinia State', 'Vite Build', 'Component Libraries'] },
+    { title: 'Advanced Vue',     modules: ['Custom Directives', 'Composables', 'Teleport', 'Server-Side Rendering'] },
+    { title: 'Production',       modules: ['Testing (Vitest)', 'Deployment (Vercel)', 'Performance', 'Accessibility'] },
+  ],
+  'Cloud': [
+    { title: 'Linux & Shell',    modules: ['Shell Commands', 'File Permissions', 'Bash Scripting', 'Cron Jobs'] },
+    { title: 'Docker',           modules: ['Images & Containers', 'Dockerfile', 'Docker Compose', 'Networking'] },
+    { title: 'Kubernetes',       modules: ['Pods & Deployments', 'Services & Ingress', 'ConfigMaps', 'Helm Charts'] },
+    { title: 'CI/CD Pipelines',  modules: ['GitHub Actions', 'Build & Test Stages', 'Deployment Gates', 'Rollback Strategies'] },
+  ],
+  'Cybersecurity': [
+    { title: 'Security Foundations', modules: ['CIA Triad', 'Network Security', 'Cryptography Basics', 'OWASP Top 10'] },
+    { title: 'Ethical Hacking',      modules: ['Reconnaissance', 'Vulnerability Scanning', 'Exploitation (Metasploit)', 'Web App Pentesting'] },
+    { title: 'Defensive Security',   modules: ['Firewalls & IDS/IPS', 'SOC & SIEM', 'Incident Response', 'Log Analysis'] },
+    { title: 'Certifications',       modules: ['CompTIA Security+', 'CEH Prep', 'CTF Practice', 'Report Writing'] },
+  ],
+  'Blockchain': [
+    { title: 'Web3 Foundations', modules: ['How Blockchain Works', 'Consensus Mechanisms', 'Wallets & Keys', 'Ethereum Basics'] },
+    { title: 'Solidity',         modules: ['Syntax & Variables', 'Functions & Modifiers', 'Events & Errors', 'Inheritance'] },
+    { title: 'dApp Development', modules: ['Hardhat & Foundry', 'Web3.js / Ethers.js', 'IPFS & Storage', 'DeFi Protocols'] },
+    { title: 'Deployment',       modules: ['Testnet Deploy', 'Security Auditing', 'Mainnet Launch', 'NFT & Token Standards'] },
+  ],
+  'JavaScript': [
+    { title: 'Engine Room',       modules: ['Execution Context', 'Scope & Closures', 'Event Loop', 'V8 Internals'] },
+    { title: 'Advanced Patterns', modules: ['Prototypes & Classes', 'Functional Programming', 'Design Patterns', 'Metaprogramming'] },
+    { title: 'Async Mastery',     modules: ['Promises Deep Dive', 'Async Generators', 'Observable Streams', 'Web Workers'] },
+    { title: 'Tooling & Build',   modules: ['Module Bundlers', 'TypeScript Integration', 'Testing Strategies', 'Custom Framework'] },
+  ],
+  'AWS': [
+    { title: 'AWS Core',         modules: ['EC2 & VPC', 'S3 & IAM', 'Lambda (Serverless)', 'CloudWatch & Logging'] },
+    { title: 'Containers',       modules: ['ECS & EKS', 'Fargate', 'ECR Registry', 'Load Balancing'] },
+    { title: 'IaC & Automation', modules: ['Terraform Basics', 'CloudFormation', 'AWS CDK', 'Parameter Store'] },
+    { title: 'CI/CD on AWS',     modules: ['CodePipeline', 'CodeBuild', 'Blue/Green Deploy', 'Cost Optimisation'] },
   ],
 };
 
@@ -152,19 +197,28 @@ export default function ProgressPage() {
     ? new Date(profile.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
     : 'Recently joined';
 
-  // Map learningPath (whatever onboarding saved) → a ROADMAP_STAGES key
+  // Map learningPath label (Firestore) → ROADMAP_STAGES key
   const getLearningPathKey = (path: string | null): string | null => {
     if (!path) return null;
     const p = path.toLowerCase();
-    // Order matters: check most-specific first to avoid false positives
-    if (p.includes('flutter'))                                           return 'Flutter';
-    if (p.includes('android') || p.includes('kotlin'))                  return 'Android';
-    if (p.includes('mern') || p.includes('full stack') || p.includes('fullstack')) return 'MERN';
-    if (p.includes('cloud') || p.includes('devops') || p.includes('aws') || p.includes('docker')) return 'Cloud';
-    if (p.includes('dsa') || p.includes('algorithm') || p.includes('interview'))   return 'DSA';
-    if (p.includes('ai') || p.includes('machine learning') || p.includes('nlp'))   return 'AI';
-    if (p.includes('backend') || p.includes('back-end') || p.includes('node') || p.includes('django')) return 'Backend';
-    if (p.includes('frontend') || p.includes('front-end') || p.includes('react') || p.includes('vue'))  return 'Frontend';
+    if (p.includes('flutter'))                                                        return 'Flutter';
+    if (p.includes('react native'))                                                   return 'ReactNative';
+    if (p.includes('android') || p.includes('kotlin'))                               return 'Android';
+    if (p.includes('django'))                                                         return 'Django';
+    if (p.includes('vue'))                                                            return 'Vue';
+    if (p.includes('mern') || p.includes('full stack') || p.includes('fullstack'))   return 'MERN';
+    if (p.includes('docker') || p.includes('kubernetes'))                            return 'Cloud';
+    if (p.includes('devops') || p.includes('aws'))                                   return 'AWS';
+    if (p.includes('cybersecurity') || p.includes('cyber') || p.includes('security')) return 'Cybersecurity';
+    if (p.includes('blockchain'))                                                     return 'Blockchain';
+    if (p.includes('machine learning') || p.includes('ml engineer'))                 return 'MachineLearning';
+    if (p.includes('data science'))                                                   return 'DataScience';
+    if (p.includes('nlp') || p.includes('natural language') || p.includes('ai engineering')) return 'NLP';
+    if (p.includes('dsa') || p.includes('algorithm') || p.includes('interview'))     return 'DSA';
+    if (p.includes('javascript mastery'))                                             return 'JavaScript';
+    if (p.includes('python beginner'))                                                return 'PythonBeginners';
+    if (p.includes('backend') || p.includes('node'))                                 return 'Backend';
+    if (p.includes('frontend') || p.includes('react'))                               return 'Frontend';
     return null;
   };
 
