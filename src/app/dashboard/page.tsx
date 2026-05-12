@@ -8,7 +8,7 @@ import {
   FiHome, FiBook, FiTerminal, FiCpu,
   FiTrendingUp, FiUser, FiLogOut, FiZap,
   FiAward, FiExternalLink, FiActivity, FiArrowRight, FiSettings,
-  FiMenu, FiX, FiBriefcase
+  FiMenu, FiX, FiBriefcase, FiGrid
 } from 'react-icons/fi';
 import { useAuth } from '@/hooks/useAuth';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
@@ -224,17 +224,35 @@ export default function DashboardPage() {
     return 'Good Evening';
   };
 
-  const navItems = [
-    { id: 'home',     label: 'Home',     icon: <FiHome />,      action: () => {} },
-    { id: 'learn',    label: 'Learn',    icon: <FiBook />,      action: () => router.push(`/learn/${courseId}`) },
-    { id: 'labs',     label: 'Labs',     icon: <FiTerminal />,  action: () => router.push(`/labs/${firstLabId}`) },
-    { id: 'tutor',    label: 'AI Tutor', icon: <FiCpu />,       action: () => router.push('/chat') },
-    { id: 'progress', label: 'Progress', icon: <FiTrendingUp />, action: () => router.push('/progress') },
-    { id: 'profile',  label: 'Profile',  icon: <FiUser />,      action: () => router.push('/profile') },
-    { id: 'leaderboard', label: 'Leaderboard', icon: <FiAward />, action: () => router.push('/leaderboard') },
-    { id: 'company', label: 'Company Hub', icon: <FiBriefcase />, action: () => router.push('/company/dashboard') },
-    { id: 'settings', label: 'Settings', icon: <FiSettings />,  action: () => router.push('/settings') },
+  const userRole = profile?.role || 'student';
+
+  // Base nav items visible to all students
+  const baseNavItems = [
+    { id: 'home',        label: 'Home',        icon: <FiHome />,       action: () => {} },
+    { id: 'learn',       label: 'Learn',       icon: <FiBook />,       action: () => router.push(`/learn/${courseId}`) },
+    { id: 'labs',        label: 'Labs',        icon: <FiTerminal />,   action: () => router.push(`/labs/${firstLabId}`) },
+    { id: 'tutor',       label: 'AI Tutor',    icon: <FiCpu />,        action: () => router.push('/chat') },
+    { id: 'progress',    label: 'Progress',    icon: <FiTrendingUp />, action: () => router.push('/progress') },
+    { id: 'profile',     label: 'Profile',     icon: <FiUser />,       action: () => router.push('/profile') },
+    { id: 'leaderboard', label: 'Leaderboard', icon: <FiAward />,      action: () => router.push('/leaderboard') },
+    { id: 'settings',    label: 'Settings',    icon: <FiSettings />,   action: () => router.push('/settings') },
   ];
+
+  // Company Hub — only visible to company or admin users
+  if (userRole === 'company' || userRole === 'admin') {
+    baseNavItems.splice(7, 0, {
+      id: 'company', label: 'Company Hub', icon: <FiBriefcase />, action: () => router.push('/company/dashboard')
+    });
+  }
+
+  // Admin Dashboard link — only for admins
+  if (userRole === 'admin') {
+    baseNavItems.splice(baseNavItems.length - 1, 0, {
+      id: 'admin', label: 'Admin Dashboard', icon: <FiGrid />, action: () => router.push('/admin/dashboard')
+    });
+  }
+
+  const navItems = baseNavItems;
 
   return (
     <div className="min-h-screen bg-[#FDF6EC] flex flex-col md:flex-row relative">
