@@ -137,10 +137,12 @@ export default function NotificationBell({ uid }: NotificationBellProps) {
                       <div>
                         <div style={{ fontWeight: 800, fontSize: 13, color: '#2C1A0E', marginBottom: 2 }}>{notif.title}</div>
                         <div style={{ fontSize: 11, color: '#5C3D1E', fontWeight: 500, lineHeight: 1.5 }}>{notif.message}</div>
-                        {notif.timestamp && (
+                        {notif.timestamp ? (
                           <div style={{ fontSize: 9, color: '#8B6E52', fontWeight: 700, marginTop: 6, textTransform: 'uppercase' }}>
                             {notif.timestamp.toDate ? new Intl.DateTimeFormat('en-US', { hour: '2-digit', minute: '2-digit' }).format(notif.timestamp.toDate()) : 'Now'}
                           </div>
+                        ) : (
+                          <div style={{ fontSize: 9, color: '#8B6E52', fontWeight: 700, marginTop: 6, textTransform: 'uppercase' }}>Now</div>
                         )}
                       </div>
                     </div>

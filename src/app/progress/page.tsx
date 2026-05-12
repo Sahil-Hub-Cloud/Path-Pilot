@@ -194,9 +194,15 @@ export default function ProgressPage() {
   const labsCompleted = profile?.labsCompleted ?? localStats?.labsCompleted ?? 0;
   const streak = profile?.streak ?? localStats?.streak ?? 0;
   const onboardingComplete = profile?.onboardingComplete ?? false;
-  const memberSince = profile?.createdAt
-    ? new Date(profile.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
-    : 'Recently joined';
+  const memberSince = (() => {
+    if (!profile?.createdAt) return 'Recently joined';
+    try {
+      const date = (profile.createdAt as any).toDate ? (profile.createdAt as any).toDate() : new Date(profile.createdAt);
+      return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+    } catch (e) {
+      return 'Recently joined';
+    }
+  })();
 
   // Map learningPath label (Firestore) → ROADMAP_STAGES key
   const getLearningPathKey = (path: string | null): string | null => {

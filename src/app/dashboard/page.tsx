@@ -8,7 +8,7 @@ import {
   FiHome, FiBook, FiTerminal, FiCpu,
   FiTrendingUp, FiUser, FiLogOut, FiZap,
   FiAward, FiExternalLink, FiActivity, FiArrowRight, FiSettings,
-  FiMenu, FiX
+  FiMenu, FiX, FiBriefcase
 } from 'react-icons/fi';
 import { useAuth } from '@/hooks/useAuth';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
@@ -180,7 +180,9 @@ export default function DashboardPage() {
   const streak = streakDays > 0 ? streakDays : ((profile as any)?.streakDays ?? profile?.streak ?? 0);
   const employabilityScore = profile?.employabilityScore ?? 0;
   const employabilityLevel = profile?.employabilityLevel ?? 'Unrated';
-  const memberSince = profile?.createdAt ? new Date(profile.createdAt).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }) : null;
+  const memberSince = profile?.createdAt
+    ? new Date(profile.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
+    : 'Recently joined';
 
   const empColor = employabilityLevel.includes('High') ? '#10B981' : employabilityLevel === 'Medium' ? '#F59E0B' : '#EF4444';
 
@@ -214,8 +216,13 @@ export default function DashboardPage() {
   const firstLabId = TRACK_DEFAULT_LAB[learningPath || ''] ?? 'lab-001';
 
   // Greeting based on time of day
-  const hour = new Date().getHours();
-  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  const getGreeting = () => {
+    if (typeof window === 'undefined') return 'Welcome';
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good Morning';
+    if (hour < 17) return 'Good Afternoon';
+    return 'Good Evening';
+  };
 
   const navItems = [
     { id: 'home',     label: 'Home',     icon: <FiHome />,      action: () => {} },
@@ -320,8 +327,8 @@ export default function DashboardPage() {
         {/* GREETING */}
         <div className="mb-8 flex flex-col md:flex-row justify-between items-start gap-4">
           <div>
-            <h1 className="text-2xl md:text-3xl font-black text-[#2C1A0E] tracking-tight mb-1">
-              {greeting}, {firstName} 👋
+            <h1 className="text-xl md:text-3xl font-black text-[#2C1A0E] tracking-tight mb-1">
+              {getGreeting()}, {firstName}!
             </h1>
             <p style={{ color: '#8B6E52', fontSize: 14, fontWeight: 500 }}>
               {learningPath

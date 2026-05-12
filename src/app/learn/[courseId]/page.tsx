@@ -211,7 +211,14 @@ export default function LearningPage() {
     setCompletedIds(new Set());
     setActiveTopic(null);
     const saved = localStorage.getItem(storageKey);
-    const ids = saved ? new Set<string>(JSON.parse(saved)) : new Set<string>();
+    let ids = new Set<string>();
+    if (saved) {
+      try {
+        ids = new Set<string>(JSON.parse(saved));
+      } catch (e) {
+        console.warn('Failed to parse progress', e);
+      }
+    }
     setCompletedIds(ids);
     const first = allTopics.find(t => !ids.has(t.id)) || allTopics[0];
     setActiveTopic(first || null);
