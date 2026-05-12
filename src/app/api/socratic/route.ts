@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
@@ -69,3 +70,4 @@ ANTI-CHEAT: If the student pastes large blocks of AI-generated code, ask:
         );
     }
 }
+

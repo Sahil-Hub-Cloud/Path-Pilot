@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { SkillMetricsService } from '@/lib/services/skill-metrics';
 
@@ -37,3 +38,4 @@ export async function GET() {
         );
     }
 }
+

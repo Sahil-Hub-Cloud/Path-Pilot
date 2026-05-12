@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 
 const languageMap: Record<string, number> = {
@@ -66,3 +67,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: `Internal Server Error: ${error.message}` }, { status: 500 });
   }
 }
+

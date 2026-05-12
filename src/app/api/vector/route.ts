@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { GeminiBrain } from '@/lib/gemini';
@@ -87,3 +88,4 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ message: "Vector operation failed.", error: error.message }, { status: 500 });
     }
 }
+

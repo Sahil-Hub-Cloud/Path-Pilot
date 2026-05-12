@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
@@ -36,3 +37,4 @@ export async function POST(req: Request) {
     }, { status: 500 });
   }
 }
+

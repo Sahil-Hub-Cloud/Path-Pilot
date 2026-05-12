@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import vm from 'vm';
 
@@ -35,3 +36,4 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ output: `System Error: ${error.message}` }, { status: 500 });
     }
 }
+

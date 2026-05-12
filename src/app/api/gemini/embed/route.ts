@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -35,3 +36,4 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ message: "Embedding failed.", error: error.message }, { status: 500 });
     }
 }
+

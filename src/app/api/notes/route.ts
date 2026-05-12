@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const runtime = 'edge';
@@ -91,3 +92,4 @@ Keep it under 250 words. Be direct and practical.`;
     );
   }
 }
+

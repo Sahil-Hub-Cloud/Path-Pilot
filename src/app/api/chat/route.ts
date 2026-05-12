@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit } from '@/lib/rate-limit';
 
@@ -112,3 +113,4 @@ Respond as the ${personalityMode} persona. Keep responses concise (under 300 wor
         return NextResponse.json({ message: "Neural Link Interference.", error: error.message }, { status: 500 });
     }
 }
+

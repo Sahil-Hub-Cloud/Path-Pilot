@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRole, assignRole } from '@/lib/rbac';
 import { CohortService } from '@/lib/services/cohort-service';
@@ -127,3 +128,4 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
+
