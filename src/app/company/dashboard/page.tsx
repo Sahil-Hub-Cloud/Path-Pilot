@@ -8,7 +8,7 @@ import {
   FiUsers, FiTrendingUp, FiSettings, FiLogOut, FiSearch, 
   FiXCircle, FiBriefcase, FiPieChart, FiUser, 
   FiActivity, FiFilter, FiExternalLink, FiMapPin, 
-  FiShield, FiAward, FiBook, FiCheckCircle, FiArchive, FiInfo, FiChevronDown, FiStar, FiChevronRight
+  FiShield, FiAward, FiBook, FiCheckCircle, FiArchive, FiInfo, FiChevronDown, FiStar, FiChevronRight, FiGithub
 } from 'react-icons/fi';
 import { useAuth } from '@/hooks/useAuth';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
@@ -89,7 +89,8 @@ export default function CompanyDashboard() {
             email: data.email || '',
             isPublic: data.isPublicProfile !== false,
             certificates: data.certificates || [],
-            xp: data.total_xp || 0
+            xp: data.total_xp || 0,
+            githubUsername: data.githubUsername || null
           };
         }).filter(s => s.isPublic);
 
@@ -308,6 +309,11 @@ export default function CompanyDashboard() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                       <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, #006B7A, #2E7D52)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 12, fontWeight: 900 }}>{s.name[0]}</div>
                       <div style={{ fontWeight: 800, color: '#2C1A0E', fontSize: 14 }}>{s.name}</div>
+                      {s.githubUsername && (
+                        <a href={`https://github.com/${s.githubUsername}`} target="_blank" rel="noopener noreferrer" style={{ color: '#333', display: 'flex', alignItems: 'center' }}>
+                           <FiGithub size={16} />
+                        </a>
+                      )}
                     </div>
                   </td>
                   <td style={tdStyle}>{s.college}</td>
@@ -529,7 +535,14 @@ export default function CompanyDashboard() {
                    <div style={{ width: 90, height: 90, borderRadius: 28, background: 'linear-gradient(135deg, #006B7A, #2E7D52)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, fontWeight: 900, color: '#fff', marginBottom: 20, boxShadow: '0 10px 20px rgba(0,107,122,0.2)' }}>
                      {selectedStudent.name[0]}
                    </div>
-                   <h2 style={{ fontSize: 26, fontWeight: 900, color: '#2C1A0E', letterSpacing: '-0.02em', marginBottom: 8 }}>{selectedStudent.name}</h2>
+                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                     <h2 style={{ fontSize: 26, fontWeight: 900, color: '#2C1A0E', letterSpacing: '-0.02em', margin: 0 }}>{selectedStudent.name}</h2>
+                     {selectedStudent.githubUsername && (
+                        <a href={`https://github.com/${selectedStudent.githubUsername}`} target="_blank" rel="noopener noreferrer" style={{ color: '#333', background: '#F3F4F6', padding: '6px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <FiGithub size={18} />
+                        </a>
+                     )}
+                   </div>
                    <p style={{ color: '#8B6E52', fontSize: 15, fontWeight: 600, marginBottom: 4 }}>{selectedStudent.college}</p>
                    <p style={{ color: '#B89A7E', fontSize: 13, display: 'flex', alignItems: 'center', gap: 6, marginBottom: 24, fontWeight: 600 }}><FiMapPin /> {selectedStudent.city}</p>
                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -585,7 +598,15 @@ function FeaturedCard({ student, onOpen }: { student: any, onOpen: () => void })
          </div>
       </div>
       <div><h3 style={{ fontSize: 18, fontWeight: 900, color: '#2C1A0E', marginBottom: 2 }}>{student.name}</h3><p style={{ fontSize: 12, color: '#8B6E52', fontWeight: 700 }}>{student.college}</p></div>
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}><span style={{ fontSize: 10, fontWeight: 800, padding: '4px 10px', borderRadius: 8, background: '#E0F2F1', color: '#006B7A' }}>{student.track}</span><span style={{ fontSize: 10, fontWeight: 800, padding: '4px 10px', borderRadius: 8, background: `${student.levelColor}15`, color: student.levelColor }}>{student.level}</span></div>
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+        <span style={{ fontSize: 10, fontWeight: 800, padding: '4px 10px', borderRadius: 8, background: '#E0F2F1', color: '#006B7A' }}>{student.track}</span>
+        <span style={{ fontSize: 10, fontWeight: 800, padding: '4px 10px', borderRadius: 8, background: `${student.levelColor}15`, color: student.levelColor }}>{student.level}</span>
+        {student.githubUsername && (
+            <a href={`https://github.com/${student.githubUsername}`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', color: '#333', padding: '4px', background: '#F3F4F6', borderRadius: 8 }}>
+                <FiGithub size={14} />
+            </a>
+        )}
+      </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', borderTop: '1.5px solid rgba(180,140,90,0.1)', paddingTop: 16 }}><div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#8B6E52', fontSize: 12, fontWeight: 700 }}><FiBook size={14} /> {student.labs} Labs</div><button onClick={onOpen} style={engageBtnStyle}>Engage Talent</button></div>
     </motion.div>
   );

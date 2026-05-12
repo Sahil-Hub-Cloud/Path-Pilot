@@ -13,6 +13,8 @@ import {
   FiChevronRight, FiAward, FiMessageSquare, FiArrowRight,
   FiXCircle, FiX
 } from 'react-icons/fi';
+import { db } from '@/lib/firebase';
+import { doc, updateDoc, arrayUnion, increment } from 'firebase/firestore';
 
 // ─── TYPES ───────────────────────────────────────────────────────────────────
 type Block =
@@ -238,12 +240,26 @@ export default function LearningPage() {
     return 'locked';
   };
 
-  const markComplete = () => {
+  const markComplete = async () => {
     if (!activeTopic) return;
     const updated = new Set(completedIds);
     updated.add(activeTopic.id);
     setCompletedIds(updated);
     localStorage.setItem(storageKey, JSON.stringify([...updated]));
+
+    // Firestore sync
+    if (user) {
+      try {
+        const userRef = doc(db, 'users', user.uid);
+        await updateDoc(userRef, {
+          completedTopics: arrayUnion(activeTopic.id),
+          xp: increment(10)
+        });
+      } catch (e) {
+        console.error("Firestore sync failed", e);
+      }
+    }
+
     const idx = allTopics.findIndex(t => t.id === activeTopic.id);
     if (idx < allTopics.length - 1) { setActiveTopic(allTopics[idx + 1]); setActiveTab('notes'); }
   };

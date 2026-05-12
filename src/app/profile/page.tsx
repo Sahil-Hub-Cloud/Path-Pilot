@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { motion } from 'framer-motion';
 import { db } from '@/lib/firebase';
 import NotificationBell from '@/components/NotificationBell';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { fetchResilient } from '@/lib/firestore-resilience';
 
 export default function ProfilePage() {
@@ -16,7 +16,11 @@ export default function ProfilePage() {
     const [studentName, setStudentName] = useState('');
     const [courseName, setCourseName] = useState('');
     const [completedLevels, setCompletedLevels] = useState<string[]>([]);
-    const [githubConnected, setGithubConnected] = useState(false);
+    const [githubUsernameInput, setGithubUsernameInput] = useState('');
+    const [githubUsername, setGithubUsername] = useState('');
+    const [githubData, setGithubData] = useState<any>(null);
+    const [githubRepos, setGithubRepos] = useState<any[]>([]);
+    const [loadingGithub, setLoadingGithub] = useState(false);
     const [employabilityLevel, setEmployabilityLevel] = useState<string>('Unrated');
 
     useEffect(() => {
@@ -47,14 +51,63 @@ export default function ProfilePage() {
                         if (data.displayName) setStudentName(data.displayName);
                         if (data.learningPath) setCourseName(data.learningPath);
                         if (data.employabilityLevel) setEmployabilityLevel(data.employabilityLevel);
+                        if (data.githubUsername) {
+                            setGithubUsername(data.githubUsername);
+                            fetchGithubData(data.githubUsername);
+                        }
                     }
                 }
             } catch { }
         };
+
+        const fetchGithubData = async (username: string) => {
+            try {
+                setLoadingGithub(true);
+                const userRes = await fetch(`https://api.github.com/users/${username}`);
+                if (userRes.ok) {
+                    const userData = await userRes.json();
+                    setGithubData(userData);
+                }
+                const reposRes = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=3`);
+                if (reposRes.ok) {
+                    const reposData = await reposRes.json();
+                    setGithubRepos(reposData);
+                }
+            } catch (e) {
+                console.error(e);
+            } finally {
+                setLoadingGithub(false);
+            }
+        };
+
         fetchData();
     }, [user, loading, router]);
 
     if (!mounted || loading) return null;
+
+    const handleConnectGithub = async () => {
+        if (!githubUsernameInput.trim() || !user) return;
+        try {
+            setLoadingGithub(true);
+            await updateDoc(doc(db, 'users', user.uid), {
+                githubUsername: githubUsernameInput.trim()
+            });
+            setGithubUsername(githubUsernameInput.trim());
+            // Fetch github data
+            const userRes = await fetch(`https://api.github.com/users/${githubUsernameInput.trim()}`);
+            if (userRes.ok) {
+                setGithubData(await userRes.json());
+            }
+            const reposRes = await fetch(`https://api.github.com/users/${githubUsernameInput.trim()}/repos?sort=updated&per_page=3`);
+            if (reposRes.ok) {
+                setGithubRepos(await reposRes.json());
+            }
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setLoadingGithub(false);
+        }
+    };
 
     // Read real skill metrics
     let skills = { syntax: 0, logic: 0, debug: 0 };
@@ -113,10 +166,27 @@ export default function ProfilePage() {
                         </div>
                         <div className="flex items-center gap-3">
                             {user && <NotificationBell uid={user.uid} />}
-                            <button onClick={() => setGithubConnected(!githubConnected)}
-                                className={`clay-btn clay-btn-sm ${githubConnected ? 'clay-btn-success' : 'clay-btn-primary'}`}>
-                                {githubConnected ? '✓ GitHub Connected' : '🔗 Connect GitHub'}
-                            </button>
+                            {!githubUsername ? (
+                                <div className="flex items-center gap-2">
+                                    <input 
+                                        type="text" 
+                                        placeholder="GitHub Username" 
+                                        className="clay-input w-40 text-sm"
+                                        value={githubUsernameInput}
+                                        onChange={(e) => setGithubUsernameInput(e.target.value)}
+                                        onKeyDown={(e) => e.key === 'Enter' && handleConnectGithub()}
+                                    />
+                                    <button onClick={handleConnectGithub} disabled={loadingGithub}
+                                        className="clay-btn clay-btn-sm clay-btn-primary">
+                                        {loadingGithub ? '...' : '🔗 Connect'}
+                                    </button>
+                                </div>
+                            ) : (
+                                <button onClick={() => window.open(`https://github.com/${githubUsername}`, '_blank')}
+                                    className="clay-btn clay-btn-sm clay-btn-success">
+                                    ✓ GitHub Connected
+                                </button>
+                            )}
                         </div>
                     </div>
                 </motion.div>
@@ -155,9 +225,9 @@ export default function ProfilePage() {
                                         <span className="badge-low">Completed</span>
                                     </div>
                                     <p className="text-xs mb-3" style={{ color: 'var(--text-tertiary)' }}>From {courseName || 'your learning path'}</p>
-                                    {githubConnected && (
-                                        <button className="clay-btn clay-btn-secondary clay-btn-sm w-full">
-                                            📤 Publish to GitHub
+                                    {githubUsername && (
+                                        <button className="clay-btn clay-btn-secondary clay-btn-sm w-full" onClick={() => window.open(`https://github.com/${githubUsername}`, '_blank')}>
+                                            📤 View on GitHub
                                         </button>
                                     )}
                                 </div>
@@ -176,6 +246,57 @@ export default function ProfilePage() {
                         </div>
                     )}
                 </motion.div>
+
+                {/* GitHub Integration Section */}
+                {githubUsername && githubData && (
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="mb-8">
+                        <h2 className="text-xs font-extrabold uppercase tracking-widest mb-4" style={{ color: 'var(--text-tertiary)' }}>GitHub Profile</h2>
+                        <div className="skeu-card p-6">
+                            <div className="flex flex-col md:flex-row gap-6">
+                                {/* Github User Info */}
+                                <div className="flex flex-col items-center text-center md:w-1/3 border-b md:border-b-0 md:border-r border-gray-700/30 pb-6 md:pb-0 md:pr-6">
+                                    <img src={githubData.avatar_url} alt={githubUsername} className="w-24 h-24 rounded-full shadow-lg mb-4" />
+                                    <h3 className="font-bold text-lg">{githubData.name || githubUsername}</h3>
+                                    <p className="text-sm mb-3 text-gray-400">{githubData.bio || 'No bio available.'}</p>
+                                    
+                                    <div className="flex gap-4 mb-4 text-xs">
+                                        <div><span className="font-bold">{githubData.public_repos}</span> Repos</div>
+                                        <div><span className="font-bold">{githubData.followers}</span> Followers</div>
+                                        <div><span className="font-bold">{githubData.following}</span> Following</div>
+                                    </div>
+                                    <button onClick={() => window.open(githubData.html_url, '_blank')} className="clay-btn clay-btn-secondary clay-btn-sm w-full">
+                                        View Profile
+                                    </button>
+                                </div>
+                                
+                                {/* Recent Repos */}
+                                <div className="md:w-2/3">
+                                    <h3 className="font-bold text-sm mb-4 text-gray-300">Recently Updated Repositories</h3>
+                                    {githubRepos.length > 0 ? (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            {githubRepos.map(repo => (
+                                                <div key={repo.id} className="p-4 rounded-xl" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-medium)' }}>
+                                                    <a href={repo.html_url} target="_blank" rel="noopener noreferrer" className="font-bold text-sm text-teal-400 hover:underline block mb-1 truncate">
+                                                        {repo.name}
+                                                    </a>
+                                                    <p className="text-xs text-gray-400 mb-3 line-clamp-2" style={{ minHeight: '2rem' }}>
+                                                        {repo.description || 'No description'}
+                                                    </p>
+                                                    <div className="flex items-center justify-between text-xs font-semibold text-gray-500">
+                                                        <span>{repo.language || 'Unknown'}</span>
+                                                        <span className="flex items-center gap-1">⭐ {repo.stargazers_count}</span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="text-sm text-gray-400">No public repositories found.</p>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
 
                 {/* Skill History */}
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="skeu-card p-8">

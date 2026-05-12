@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { toast } from '@/lib/toast';
 
 interface LeaderboardUser {
     uid: string;
@@ -21,12 +22,17 @@ interface LeaderboardProps {
 }
 
 export default function Leaderboard({ users, currentUserId, isLoading }: LeaderboardProps) {
-    const activeRowRef = useRef<HTMLTableRowElement>(null);
+    const activeRowRef = useRef<HTMLElement | null>(null);
+    const [scrolledOnce, setScrolledOnce] = useState(false);
 
-    // Provide a way for parent to trigger scroll
     useEffect(() => {
         const handleScrollRequest = () => {
-           activeRowRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+           if (activeRowRef.current) {
+               activeRowRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+               toast.success("Position locked.");
+           } else {
+               toast.info("Your rank is currently beyond the visible horizon.");
+           }
         };
         window.addEventListener('scroll-to-my-rank', handleScrollRequest);
         return () => window.removeEventListener('scroll-to-my-rank', handleScrollRequest);
@@ -88,7 +94,7 @@ export default function Leaderboard({ users, currentUserId, isLoading }: Leaderb
                                 return (
                                     <motion.tr
                                         key={user.uid}
-                                        ref={isSelf ? activeRowRef : null}
+                                        ref={isSelf ? (el => { activeRowRef.current = el; }) : null}
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         whileHover={{ backgroundColor: 'rgba(255,255,255,0.01)' }}
@@ -162,7 +168,7 @@ export default function Leaderboard({ users, currentUserId, isLoading }: Leaderb
                             return (
                                 <motion.div
                                     key={user.uid}
-                                    ref={isSelf ? activeRowRef : null}
+                                    ref={isSelf ? (el => { activeRowRef.current = el; }) : null}
                                     className={`p-5 flex items-center gap-4 border-b border-white/5 last:border-b-0 ${isSelf ? 'bg-cyan-500/10 border-l-4 border-l-cyan-500' : ''}`}
                                 >
                                     <div className="flex-shrink-0 w-8">

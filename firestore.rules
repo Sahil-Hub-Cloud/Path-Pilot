@@ -25,7 +25,8 @@ service cloud.firestore {
 
     // User Accounts - Core collection used by Auth and Onboarding
     match /users/{userId} {
-      allow read, write: if isOwner(userId);
+      allow read, list: if isAuthenticated();
+      allow write: if isOwner(userId);
 
       // Lab Submissions — subcollection under users, owner-only access
       match /submissions/{submissionId} {
@@ -84,20 +85,10 @@ service cloud.firestore {
       }
     }
 
-    // Added 4 new rules as requested
-    match /users/{userId}/submissions/{submissionId} {
-      allow read, write: if request.auth.uid == userId;
-    }
-    match /certificates/{certId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null;
-      allow write: if request.auth.uid == resource.data.userId;
-    }
-    match /users/{userId}/notifications/{notificationId} {
-      allow read, write: if request.auth.uid == userId;
-    }
-    match /academic_brains/{userId} {
-      allow read, write: if request.auth.uid == userId;
+    // Hiring Requests — companies can create, companies/students can read
+    match /hiring_requests/{requestId} {
+      allow create: if isAuthenticated();
+      allow read, update, delete: if isAuthenticated();
     }
 
     // Deny all other access

@@ -9,6 +9,7 @@ import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { fetchResilient } from '@/lib/firestore-resilience';
+import SkillGraph from '@/components/SkillGraph';
 
 interface UserProfile {
   displayName?: string;
@@ -320,6 +321,16 @@ export default function ProgressPage() {
             View Report <FiArrowRight />
           </div>
         </motion.div>
+
+        {/* SKILL GRAPH */}
+        <div style={{ marginBottom: 32 }}>
+           <div style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', color: S.teal, marginBottom: 16 }}>Skill Architecture</div>
+           <SkillGraph modules={[
+              { id: 1, title: 'Concept Mastery', energy_cost: 20, difficulty: 'Beginner' },
+              { id: 2, title: 'Neural Logic', energy_cost: 35, difficulty: 'Intermediate' },
+              { id: 3, title: 'Scale Architect', energy_cost: 50, difficulty: 'Hard' }
+           ]} />
+        </div>
 
         {/* ROADMAP */}
         {roadmap ? (

@@ -225,6 +225,7 @@ export default function DashboardPage() {
     { id: 'progress', label: 'Progress', icon: <FiTrendingUp />, action: () => router.push('/progress') },
     { id: 'profile',  label: 'Profile',  icon: <FiUser />,      action: () => router.push('/profile') },
     { id: 'leaderboard', label: 'Leaderboard', icon: <FiAward />, action: () => router.push('/leaderboard') },
+    { id: 'company', label: 'Company Hub', icon: <FiBriefcase />, action: () => router.push('/company/dashboard') },
     { id: 'settings', label: 'Settings', icon: <FiSettings />,  action: () => router.push('/settings') },
   ];
 
@@ -489,7 +490,12 @@ export default function DashboardPage() {
           }}>
             <div style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#8B6E52', marginBottom: 16, alignSelf: 'flex-start' }}>Proficiency Spectrum</div>
             {skillScore > 0 ? (
-              <SkillGraph />
+              <SkillGraph modules={[
+                { id: 1, title: 'Foundations', energy_cost: 10, difficulty: 'Beginner' },
+                { id: 2, title: 'Core Logic', energy_cost: 25, difficulty: 'Intermediate' },
+                { id: 3, title: 'Advanced Systems', energy_cost: 40, difficulty: 'Hard' },
+                { id: 4, title: 'Optimization', energy_cost: 55, difficulty: 'Expert' }
+              ]} />
             ) : (
               <div className="flex flex-col items-center justify-center py-6">
                 <div className="text-3xl mb-2">📊</div>
