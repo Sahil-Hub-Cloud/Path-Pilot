@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, Suspense } from 'react';
+import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiMail, FiLock, FiUser, FiEye, FiEyeOff, FiLoader } from 'react-icons/fi';
@@ -306,13 +307,7 @@ function AuthForm() {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 32 }}>
-          <div style={{
-            width: 40, height: 40,
-            background: 'linear-gradient(135deg, #006B7A, #2E7D52)',
-            borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: '#fff', fontWeight: 900, fontSize: 18,
-            boxShadow: '0 4px 12px rgba(0,107,122,0.35)'
-          }}>P</div>
+          <Image src="/logo.webp" alt="Path Pilot" width={40} height={40} className="object-contain" />
           <span style={{ fontWeight: 900, fontSize: 18, color: '#2C1A0E' }}>Path Pilot</span>
         </div>
 

@@ -15,6 +15,14 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "Path Pilot — Learn. Code. Get Hired.",
   description: "India's smartest learning platform for Tier 2 & 3 engineering students.",
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon.png', sizes: '180x180', type: 'image/png' },
+    ],
+    apple: '/favicon.png',
+    shortcut: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({

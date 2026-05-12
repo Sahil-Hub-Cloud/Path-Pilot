@@ -152,7 +152,7 @@ export default function CertificatePage() {
             <nav className="skeu-navbar px-6 py-4">
                 <div className="max-w-4xl mx-auto flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <img src="/logo.png" alt="Path Pilot" className="w-9 h-9 rounded-xl object-cover" />
+                        <img src="/logo.webp" alt="Path Pilot" className="w-9 h-9 rounded-xl object-cover" />
                         <div>
                             <span className="font-bold tracking-tight text-sm">Path<span className="gradient-text">Pilot</span></span>
                             <p className="text-[9px] font-bold uppercase tracking-widest" style={{ color: 'var(--text-tertiary)' }}>Certificate</p>
@@ -181,7 +181,7 @@ export default function CertificatePage() {
 
                     {/* Header */}
                     <div className="text-center mb-10">
-                        <img src="/logo.png" alt="Path Pilot" className="w-16 h-16 rounded-2xl mx-auto mb-4 object-cover" />
+                        <img src="/logo.webp" alt="Path Pilot" className="w-16 h-16 rounded-2xl mx-auto mb-4 object-cover" />
                         <h2 className="text-sm font-bold uppercase tracking-[0.3em] mb-2" style={{ color: 'var(--accent-primary)' }}>
                             Path Pilot Academy
                         </h2>

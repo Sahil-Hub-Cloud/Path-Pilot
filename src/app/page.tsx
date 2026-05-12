@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/components/AuthProvider';
@@ -56,16 +57,8 @@ export default function SplashScreen() {
           style={{ zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center' }}
         >
           {/* Logo element */}
-          <div style={{
-            width: 88, height: 88,
-            background: 'linear-gradient(135deg, #006B7A, #2E7D52)',
-            borderRadius: 24,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: '#fff', fontWeight: 900, fontSize: 44,
-            boxShadow: '0 16px 40px rgba(0,107,122,0.25)',
-            marginBottom: 28
-          }}>
-            P
+          <div style={{ marginBottom: 28 }}>
+             <Image src="/logo.webp" alt="Path Pilot" width={88} height={88} className="object-contain" />
           </div>
 
           <h1 style={{ 

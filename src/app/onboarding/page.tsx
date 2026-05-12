@@ -166,8 +166,8 @@ export default function OnboardingPage() {
           <div style={{ padding: '18px 28px', borderBottom: `1.5px solid ${S.border}`, background: S.bg, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               {/* Logo */}
-              <div style={{ width: 38, height: 38, borderRadius: 10, overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: `linear-gradient(135deg, ${S.teal}, ${S.green})` }}>
-                <Image src="/logo.png" alt="Path Pilot" width={38} height={38} style={{ objectFit: 'contain' }} onError={() => {}} />
+              <div style={{ width: 38, height: 38, overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Image src="/logo.webp" alt="Path Pilot" width={38} height={38} style={{ objectFit: 'contain' }} onError={() => {}} />
               </div>
               <div>
                 <div style={{ fontSize: 13, fontWeight: 900, color: S.text, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Skill Calibration</div>
@@ -201,8 +201,8 @@ export default function OnboardingPage() {
               {step === 0 && (
                 <motion.div key="intro" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}>
                   <div style={{ padding: '48px 40px', textAlign: 'center' }}>
-                    <div style={{ width: 80, height: 80, margin: '0 auto 24px', borderRadius: 20, overflow: 'hidden', background: `linear-gradient(135deg, ${S.teal}, ${S.green})`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 12px 32px rgba(0,107,122,0.3)` }}>
-                      <Image src="/logo.png" alt="Path Pilot" width={80} height={80} style={{ objectFit: 'contain' }} />
+                    <div style={{ width: 80, height: 80, margin: '0 auto 24px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Image src="/logo.webp" alt="Path Pilot" width={80} height={80} style={{ objectFit: 'contain' }} />
                     </div>
                     <h2 style={{ fontSize: 26, fontWeight: 900, color: S.text, letterSpacing: '-0.03em', margin: '0 0 12px' }}>Welcome to Path Pilot</h2>
                     <p style={{ fontSize: 15, color: S.sub, lineHeight: 1.7, maxWidth: 400, margin: '0 auto 36px', fontWeight: 500 }}>

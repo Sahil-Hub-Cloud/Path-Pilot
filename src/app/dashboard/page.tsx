@@ -160,7 +160,7 @@ export default function DashboardPage() {
       <div style={{ minHeight: '100vh', backgroundColor: '#FDF6EC', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ width: 40, height: 40, background: 'linear-gradient(135deg, #006B7A, #2E7D52)', borderRadius: 10, margin: '0 auto 16px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-            <Image src="/logo.png" alt="Path Pilot" width={40} height={40} style={{ objectFit: 'contain' }} />
+            <Image src="/logo.webp" alt="Path Pilot" width={40} height={40} style={{ objectFit: 'contain' }} />
           </div>
           <div style={{ fontWeight: 700, color: '#8B6E52', fontSize: 14 }}>Loading your dashboard...</div>
         </div>
@@ -260,8 +260,8 @@ export default function DashboardPage() {
       {/* ─── MOBILE TOP BAR ─── */}
       <header className="md:hidden sticky top-0 z-[110] bg-[#FFF8EE]/90 backdrop-blur-md border-b-2 border-[#B48C5A]/15 px-5 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-gradient-to-br from-[#006B7A] to-[#2E7D52] rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
-             <Image src="/logo.png" alt="Path Pilot" width={32} height={32} className="object-contain" />
+          <div className="w-9 h-9 flex items-center justify-center overflow-hidden">
+             <Image src="/logo.webp" alt="Path Pilot" width={32} height={32} className="object-contain" />
           </div>
           <span className="font-black text-lg text-[#2C1A0E] tracking-tight">Path Pilot</span>
         </div>
@@ -296,8 +296,8 @@ export default function DashboardPage() {
         `}
       >
         <div className="hidden md:flex p-7 px-6 items-center gap-3">
-          <div className="w-9 h-9 bg-gradient-to-br from-[#006B7A] to-[#2E7D52] rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
-            <Image src="/logo.png" alt="Path Pilot" width={36} height={36} className="object-contain" />
+          <div className="w-9 h-9 flex items-center justify-center overflow-hidden">
+            <Image src="/logo.webp" alt="Path Pilot" width={36} height={36} className="object-contain" />
           </div>
           <span className="font-black text-base text-[#2C1A0E] tracking-tight">Path Pilot</span>
         </div>
