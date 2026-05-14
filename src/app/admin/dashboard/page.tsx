@@ -469,6 +469,11 @@ export default function AdminDashboard() {
         { id: 'copilot', label: 'Exam Engine', icon: '⚙️', desc: 'AI Assessment' },
     ];
 
+    // Add a specialized link for Syllabus Upload
+    const handleSyllabusUploadClick = () => {
+        router.push('/admin/syllabus-upload');
+    };
+
     return (
         <div className="min-h-screen" style={{ background: 'var(--bg-base)' }}>
             {/* Decorative background elements */}
@@ -545,6 +550,22 @@ export default function AdminDashboard() {
                                 )}
                             </button>
                         ))}
+
+                        <div className="pt-4 mt-4 border-t border-slate-100">
+                            <button
+                                onClick={handleSyllabusUploadClick}
+                                className="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl text-[13px] font-bold transition-all duration-300 group hover:bg-slate-100"
+                                style={{ color: '#64748B' }}
+                            >
+                                <span className="text-xl group-hover:scale-110 transition-transform">📄</span>
+                                <div className="text-left">
+                                    <div className="leading-none mb-1 text-indigo-600">Syllabus Upload</div>
+                                    <div className="text-[10px] font-medium uppercase tracking-tighter text-slate-400 group-hover:text-slate-500">
+                                        Custom Roadmap Engine
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
                     </nav>
 
                     {/* Sidebar Footer */}

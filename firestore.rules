@@ -91,6 +91,17 @@ service cloud.firestore {
       allow read, update, delete: if isAuthenticated();
     }
 
+    // College Syllabi - For B2B Admin feature
+    match /college_syllabi/{collegeId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated(); 
+      
+      // If it's a collection, allow access to sub-documents
+      match /{allPaths=**} {
+        allow read, write: if isAuthenticated();
+      }
+    }
+
     // Deny all other access
     match /{document=**} {
       allow read, write: if false;
