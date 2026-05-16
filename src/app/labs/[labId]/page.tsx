@@ -71,7 +71,7 @@ export default function LabPage() {
   const labId  = (params?.labId as string) || 'lab-001';
   const LAB    = LABS[labId] ?? null;                          // null = unrecognised
   // Key by userId+labId — isolates each user's code on the same machine
-  const labStorageKey = `pp_lab_${user?.uid || 'guest'}_${labId}`;
+  const labStorageKey = `pp_lab_code_${user?.uid || 'guest'}_${labId}`;
 
   // File system
   const [files, setFiles]           = useState<FileTab[]>([newFile('python', 'solution.py')]);
@@ -119,6 +119,7 @@ export default function LabPage() {
   const [activeMobileTab, setActiveMobileTab] = useState<'problem' | 'code'>('problem');
   const [isMobile, setIsMobile] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
+  const [showOnlineToast, setShowOnlineToast] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -128,7 +129,8 @@ export default function LabPage() {
     // Online/Offline detection
     const handleOnline = () => {
       setIsOffline(false);
-      toast.success("Back online! You can now run and submit your code.");
+      setShowOnlineToast(true);
+      setTimeout(() => setShowOnlineToast(false), 3000);
     };
     const handleOffline = () => {
       setIsOffline(true);
@@ -557,6 +559,26 @@ Rules:
             <span style={{ fontSize: 16 }}>💡</span>
             <span style={{ fontSize: 13, fontWeight: 700, color: '#FCD34D' }}>−5 XP deducted</span>
             <span style={{ fontSize: 11, color: 'rgba(252,211,77,0.6)', fontWeight: 500 }}>hint revealed</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Online Toast ── */}
+      <AnimatePresence>
+        {showOnlineToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            style={{
+              position: 'fixed', bottom: 80, left: '50%', transform: 'translateX(-50%)',
+              zIndex: 9999, background: '#10B981', color: '#fff',
+              padding: '12px 24px', borderRadius: '12px', fontWeight: 700,
+              display: 'flex', alignItems: 'center', gap: 10, boxShadow: '0 10px 25px -5px rgba(16, 185, 129, 0.4)'
+            }}
+          >
+            <FiCheckCircle size={18} />
+            <span>Back online! You can now run your code.</span>
           </motion.div>
         )}
       </AnimatePresence>
