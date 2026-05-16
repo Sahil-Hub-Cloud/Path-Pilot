@@ -118,13 +118,42 @@ export default function LabPage() {
   // Mobile state
   const [activeMobileTab, setActiveMobileTab] = useState<'problem' | 'code'>('problem');
   const [isMobile, setIsMobile] = useState(false);
+  const [isOffline, setIsOffline] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+
+    // Online/Offline detection
+    const handleOnline = () => {
+      setIsOffline(false);
+      toast.success("Back online! You can now run and submit your code.");
+    };
+    const handleOffline = () => {
+      setIsOffline(true);
+    };
+
+    setIsOffline(!navigator.onLine);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
   }, []);
+
+  // 30s Auto-save
+  useEffect(() => {
+    const saver = setInterval(() => {
+      if (files.length > 0) {
+        localStorage.setItem(labStorageKey, JSON.stringify(files));
+      }
+    }, 30000);
+    return () => clearInterval(saver);
+  }, [files, labStorageKey]);
 
   useEffect(() => {
     const timer = setInterval(() => setElapsedSeconds(p => p + 1), 1000);
@@ -211,11 +240,13 @@ export default function LabPage() {
     if (!activeFile) return;
     setIsRunning(true);
     setSubmitBadge(null);
+    setExecTime(null);
     setOutput('▶ Running ' + activeFile.name + '...\n');
     const t0 = performance.now();
     try {
       const res = await executeCode(activeFile.language, activeFile.content);
-      setExecTime(((performance.now() - t0) / 1000).toFixed(2) + 's');
+      const duration = ((performance.now() - t0) / 1000).toFixed(2);
+      setExecTime(duration + 's');
       
       if (res.run.code !== 0) {
         setOutput(`[ERROR] Execution failed with status: ${res.run.signal}\n\n${res.run.output}`);
@@ -307,9 +338,13 @@ export default function LabPage() {
     if (!activeFile) return;
     setIsSub(true);
     setSubmitBadge(null);
+    setExecTime(null);
     setOutput('⚡ Running test suite...\n');
+    const t0 = performance.now();
     try {
       const res = await executeCode(activeFile.language, activeFile.content);
+      const duration = ((performance.now() - t0) / 1000).toFixed(2);
+      setExecTime(duration + 's');
       
       if (res.run.code !== 0) {
         setOutput(`[ERROR] Tests failed to run.\nStatus: ${res.run.signal}\n\n${res.run.output}`);
@@ -336,7 +371,7 @@ export default function LabPage() {
       setOutput(
         res.run.output + '\n\n' +
         (allPass
-          ? `✅ All tests passed!\n⏱️ Completed in ${formatTimeVerbose(elapsedSeconds)}\n🏆 +${LAB.xp} XP awarded to your profile.`
+          ? `✅ All tests passed!\n⏱️ Completed in ${formatTimeVerbose(elapsedSeconds)}\n🚀 Executed in ${duration}s\n🏆 +${LAB.xp} XP awarded to your profile.`
           : `⚠️ ${passedCount}/${results.length} tests passed. Review your logic and try again.`)
       );
       // Always save to Firestore after submission (even partial pass → partial skill score)
@@ -525,24 +560,36 @@ Rules:
           </motion.div>
         )}
       </AnimatePresence>
+      {/* ── Offline Banner ── */}
+      <AnimatePresence>
+        {isOffline && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="bg-amber-500/10 border-b border-amber-500/20 px-4 py-2 flex items-center justify-center gap-3 overflow-hidden"
+          >
+            <FiAlertTriangle className="text-amber-500" size={14} />
+            <span className="text-[10px] md:text-xs font-bold text-amber-200 tracking-wide">
+              You are offline. Your code is being saved locally. Connect to internet to run and submit.
+            </span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ══ HEADER ══ */}
-      <header className="h-14 md:h-16 bg-[#13131A] border-b border-white/10 flex items-center justify-between px-3 md:px-6 flex-shrink-0 z-50">
+      <header className="h-14 bg-[#13131A] border-b border-white/10 flex items-center justify-between px-3 md:px-6 flex-shrink-0 z-50">
         <div className="flex items-center gap-2 md:gap-5 overflow-hidden flex-1">
-          <button onClick={() => router.push('/dashboard')} className="flex items-center justify-center w-9 h-9 md:w-auto md:h-auto md:px-3 md:py-1.5 bg-white/5 border border-white/10 rounded-lg cursor-pointer text-[#888899] hover:bg-white/10 transition-all flex-shrink-0">
-            <FiArrowLeft size={16} /> <span className="hidden md:inline ml-2 text-xs font-bold">Dashboard</span>
+          <button onClick={() => router.push('/dashboard')} className="flex items-center justify-center w-8 h-8 md:w-auto md:h-auto md:px-3 md:py-1.5 bg-white/5 border border-white/10 rounded-lg cursor-pointer text-[#888899] hover:bg-white/10 transition-all flex-shrink-0">
+            <FiArrowLeft size={14} />
           </button>
           
-          <div className="flex items-center gap-2.5 overflow-hidden">
-            <div className="hidden sm:flex w-7 h-7 bg-white/5 rounded-lg items-center justify-center flex-shrink-0">
-              <span className="text-sm">🧪</span>
-            </div>
-            <div className="overflow-hidden">
-              <h1 className="text-[11px] md:text-sm font-black text-[#E2E2EE] truncate tracking-tight">{LAB.title}</h1>
-              <div className="flex items-center gap-2.5 text-[9px] font-extrabold uppercase tracking-widest mt-0.5">
-                <span className="text-[#10B981] whitespace-nowrap">{LAB.xp} XP</span>
-                <span className="text-[#888899] flex items-center gap-1 whitespace-nowrap"><FiClock size={10} /> {formatTime(elapsedSeconds)}</span>
-              </div>
+          <div className="flex items-center gap-2 md:gap-4 overflow-hidden">
+            <h1 className="text-[11px] md:text-sm font-black text-[#E2E2EE] truncate tracking-tight uppercase max-w-[100px] md:max-w-none">{LAB.title.split('—')[0]}</h1>
+            <div className="flex items-center gap-2 text-[10px] font-extrabold tracking-widest">
+              <span className="text-[#10B981] whitespace-nowrap">{LAB.xp} XP</span>
+              <span className="text-[#444455]">|</span>
+              <span className="text-[#888899] flex items-center gap-1 whitespace-nowrap"><FiClock size={10} /> {formatTime(elapsedSeconds)}</span>
             </div>
           </div>
         </div>
@@ -550,20 +597,18 @@ Rules:
         <div className="flex items-center gap-2 md:gap-4 ml-2">
           {/* Desktop actions (Run/Submit) */}
           <div className="hidden md:flex items-center gap-2">
-            <button onClick={handleRun} disabled={isRunning || isSubmitting}
+            <button onClick={handleRun} disabled={isRunning || isSubmitting || isOffline}
               className="flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-white/15 rounded-lg cursor-pointer text-xs font-extrabold text-[#E2E2EE] hover:bg-white/10 disabled:opacity-50 shadow-lg shadow-black/20"
             >
               <FiPlay size={12} className={isRunning ? 'animate-pulse' : ''} /> <span>{isRunning ? 'Running...' : 'Run'}</span>
             </button>
             
-            <button onClick={handleSubmit} disabled={isRunning || isSubmitting}
+            <button onClick={handleSubmit} disabled={isRunning || isSubmitting || isOffline}
               className="flex items-center gap-2 px-4 py-1.5 bg-gradient-to-br from-[#7C3AED] to-[#A855F7] border-none rounded-lg cursor-pointer text-xs font-extrabold text-white opacity-100 hover:opacity-90 disabled:opacity-50 shadow-lg shadow-[#7C3AED]/30"
             >
               <FiZap size={12} /> <span>{isSubmitting ? 'Submitting...' : 'Submit'}</span>
             </button>
           </div>
-
-          <div className="hidden md:block h-4 w-px bg-white/10" />
 
           {/* Panel toggles */}
           <div className="hidden md:flex items-center gap-3">
@@ -582,24 +627,24 @@ Rules:
           
           {/* Mobile AI Toggle */}
           <button className="md:hidden p-2 text-[#888899] bg-white/5 border border-white/10 rounded-lg" onClick={() => setRight(p => p === 'ai' ? 'none' : 'ai')}>
-             <FiCpu size={18} />
+             <FiCpu size={16} />
           </button>
         </div>
       </header>
 
       {/* ── MOBILE TABS ── */}
-      <div className="md:hidden flex bg-[#13131A] border-b border-white/10 h-12 flex-shrink-0 z-40">
+      <div className="md:hidden flex bg-[#13131A] border-b border-white/10 h-11 flex-shrink-0 z-40">
         <button 
           onClick={() => setActiveMobileTab('problem')}
-          className={`flex-1 flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.15em] transition-all ${activeMobileTab === 'problem' ? 'text-[#7C3AED] border-b-2 border-[#7C3AED] bg-white/[0.02]' : 'text-[#444455]'}`}
+          className={`flex-1 flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all ${activeMobileTab === 'problem' ? 'text-[#7C3AED] border-b-2 border-[#7C3AED] bg-white/[0.02]' : 'text-[#555566]'}`}
         >
-          <FiFile size={14} /> Problem
+          <FiFile size={12} /> Problem
         </button>
         <button 
           onClick={() => setActiveMobileTab('code')}
-          className={`flex-1 flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.15em] transition-all ${activeMobileTab === 'code' ? 'text-[#7C3AED] border-b-2 border-[#7C3AED] bg-white/[0.02]' : 'text-[#444455]'}`}
+          className={`flex-1 flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all ${activeMobileTab === 'code' ? 'text-[#7C3AED] border-b-2 border-[#7C3AED] bg-white/[0.02]' : 'text-[#555566]'}`}
         >
-          <FiCode size={14} /> Code
+          <FiCode size={12} /> Code
         </button>
       </div>
 
@@ -610,82 +655,56 @@ Rules:
         <aside className={`
           ${isMobile ? (activeMobileTab === 'problem' ? 'flex' : 'hidden') : 'flex'}
           w-full md:w-[320px] bg-[#13131A] md:border-r border-white/10 flex-col flex-shrink-0
-          overflow-hidden
+          overflow-hidden h-full
         `}>
-          {/* Mobile Back button for panels */}
-          <div className="md:hidden p-4 border-b border-white/10 flex justify-between items-center">
-            <span className="text-xs font-black text-white/50 uppercase tracking-widest">Lab Description</span>
-            <button onClick={() => setActiveMobileTab('code')} className="flex items-center gap-2 text-[#7C3AED] text-[10px] font-black uppercase tracking-wider bg-[#7C3AED]/10 px-3 py-1.5 rounded-lg">
-              Start Coding <FiArrowLeft className="rotate-180" />
-            </button>
-          </div>
+          <div className="flex-1 overflow-y-auto p-5 md:p-6 no-scrollbar pb-16 md:pb-6">
+            <div className="flex flex-col gap-8 mb-10">
+              <section>
+                <div className="text-[9px] font-black uppercase tracking-[0.2em] text-[#444455] mb-3">01. Problem Statement</div>
+                <p className="text-sm text-[#888899] leading-relaxed font-medium whitespace-pre-line">{LAB.problem}</p>
+              </section>
+              
+              <section>
+                <div className="text-[9px] font-black uppercase tracking-[0.2em] text-[#444455] mb-3">02. Expected Output</div>
+                <div className="p-4 bg-white/[0.03] border border-white/10 rounded-xl font-mono text-xs text-[#10B981] shadow-inner">{LAB.expected}</div>
+              </section>
 
-          {/* Sub-tabs - hidden on mobile */}
-          <div className="hidden md:flex border-b border-white/10 px-2">
-            {(['problem', 'tests'] as const).map(t => (
-              <button key={t} onClick={() => setLeft(t)} 
-                className={`flex-1 py-3.5 border-none bg-transparent cursor-pointer text-[10px] font-black uppercase tracking-[0.12em] transition-all
-                ${left === t ? 'text-[#7C3AED] border-b-2 border-[#7C3AED]' : 'text-[#444455] hover:text-[#888899]'}`}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
+              <section>
+                <div className="text-[9px] font-black uppercase tracking-[0.2em] text-[#444455] mb-3">03. Support & Hints</div>
+                <button onClick={handleShowHint} className={`w-full flex items-center justify-center gap-2.5 p-3.5 rounded-xl cursor-pointer text-[10px] font-bold transition-all shadow-lg
+                  ${hintUsed ? 'bg-amber-500/5 border border-amber-500/20 text-amber-500/70' : 'bg-amber-500/10 border border-amber-500/30 text-amber-500 hover:bg-amber-500/15'}`}>
+                  <FiHelpCircle size={14} /> {showHint ? 'Hide Hint' : hintUsed ? 'Show Hint' : 'Show Hint (−5 XP)'}
+                </button>
+                <AnimatePresence>
+                  {showHint && (
+                    <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
+                      className="mt-4 p-5 bg-amber-500/5 border border-amber-500/20 rounded-xl text-xs text-amber-200/80 leading-relaxed shadow-xl backdrop-blur-sm">
+                      <span className="font-black text-amber-500 mr-2">HINT:</span> {LAB.hint}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </section>
+            </div>
 
-          <div className="flex-1 overflow-y-auto p-5 md:p-6 no-scrollbar">
-            {/* PROBLEM DESCRIPTION SECTION */}
-            {(isMobile || left === 'problem') && (
-              <div className="flex flex-col gap-8 mb-10">
-                <section>
-                  <div className="text-[9px] font-black uppercase tracking-[0.2em] text-[#444455] mb-3">01. Problem Statement</div>
-                  <p className="text-sm text-[#888899] leading-relaxed font-medium whitespace-pre-line">{LAB.problem}</p>
-                </section>
-                
-                <section>
-                  <div className="text-[9px] font-black uppercase tracking-[0.2em] text-[#444455] mb-3">02. Expected Output</div>
-                  <div className="p-4 bg-white/[0.03] border border-white/10 rounded-xl font-mono text-xs text-[#10B981] shadow-inner">{LAB.expected}</div>
-                </section>
-
-                <section>
-                  <div className="text-[9px] font-black uppercase tracking-[0.2em] text-[#444455] mb-3">03. Support & Hints</div>
-                  <button onClick={handleShowHint} className={`w-full flex items-center justify-center gap-2.5 p-3.5 rounded-xl cursor-pointer text-[10px] font-bold transition-all shadow-lg
-                    ${hintUsed ? 'bg-amber-500/5 border border-amber-500/20 text-amber-500/70' : 'bg-amber-500/10 border border-amber-500/30 text-amber-500 hover:bg-amber-500/15'}`}>
-                    <FiHelpCircle size={14} /> {showHint ? 'Hide Hint' : hintUsed ? 'Show Hint' : 'Show Hint (−5 XP)'}
-                  </button>
-                  <AnimatePresence>
-                    {showHint && (
-                      <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
-                        className="mt-4 p-5 bg-amber-500/5 border border-amber-500/20 rounded-xl text-xs text-amber-200/80 leading-relaxed shadow-xl backdrop-blur-sm">
-                        <span className="font-black text-amber-500 mr-2">HINT:</span> {LAB.hint}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </section>
-              </div>
-            )}
-
-            {/* TEST CASES SECTION */}
-            {(isMobile || left === 'tests') && (
-              <div className="flex flex-col gap-4 pb-12">
-                <div className="text-[9px] font-black uppercase tracking-[0.2em] text-[#444455] mb-2">{isMobile ? '04. Verification Cases' : 'Test Cases'}</div>
-                {LAB.tests.map((t, i) => {
-                  const result = testResults[i];
-                  return (
-                    <div key={i} className={`p-4 bg-white/[0.02] border rounded-xl transition-all duration-300 ${result ? (result.pass ? 'border-green-500/30 bg-green-500/[0.03]' : 'border-red-500/30 bg-red-500/[0.03]') : 'border-white/10'}`}>
-                      <div className="flex justify-between items-center mb-3">
-                        <span className="text-[9px] font-black text-[#555566] uppercase tracking-wider">Scenario {String(i + 1).padStart(2, '0')}</span>
-                        {result ? (result.pass ? <FiCheckCircle size={14} className="text-[#10B981]" /> : <FiXCircle size={14} className="text-[#EF4444]" />) : <div className="w-1.5 h-1.5 rounded-full bg-[#444455]" />}
-                      </div>
-                      <div className="text-[13px] font-bold text-[#E2E2EE] mb-2">{t.label}</div>
-                      <div className="bg-black/20 p-2.5 rounded-lg border border-white/5 font-mono">
-                        <div className="text-[10px] text-[#888899] opacity-70 mb-1 flex justify-between"><span>Input:</span> <span className="text-[#3B82F6]">{t.input}</span></div>
-                        <div className="text-[10px] text-[#10B981] flex justify-between"><span>Expect:</span> <span>{t.expected}</span></div>
-                      </div>
+            <div className="flex flex-col gap-4 pb-12">
+              <div className="text-[9px] font-black uppercase tracking-[0.2em] text-[#444455] mb-2">04. Verification Cases</div>
+              {LAB.tests.map((t, i) => {
+                const result = testResults[i];
+                return (
+                  <div key={i} className={`p-4 bg-white/[0.02] border rounded-xl transition-all duration-300 ${result ? (result.pass ? 'border-green-500/30 bg-green-500/[0.03]' : 'border-red-500/30 bg-red-500/[0.03]') : 'border-white/10'}`}>
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-[9px] font-black text-[#555566] uppercase tracking-wider">Scenario {String(i + 1).padStart(2, '0')}</span>
+                      {result ? (result.pass ? <FiCheckCircle size={14} className="text-[#10B981]" /> : <FiXCircle size={14} className="text-[#EF4444]" />) : <div className="w-1.5 h-1.5 rounded-full bg-[#444455]" />}
                     </div>
-                  );
-                })}
-              </div>
-            )}
+                    <div className="text-[13px] font-bold text-[#E2E2EE] mb-2">{t.label}</div>
+                    <div className="bg-black/20 p-2.5 rounded-lg border border-white/5 font-mono">
+                      <div className="text-[10px] text-[#888899] opacity-70 mb-1 flex justify-between"><span>Input:</span> <span className="text-[#3B82F6]">{t.input}</span></div>
+                      <div className="text-[10px] text-[#10B981] flex justify-between"><span>Expect:</span> <span>{t.expected}</span></div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </aside>
 
@@ -746,7 +765,7 @@ Rules:
           </AnimatePresence>
 
           {/* Monaco Editor */}
-          <div className={isMobile ? 'h-[55vh]' : 'flex-1'} style={{ overflow: 'hidden' }}>
+          <div className={`${isMobile ? 'h-[60vh]' : 'flex-1'} relative overflow-hidden bg-[#0D0D0F]`}>
             {activeFile && (
               <Editor
                 key={activeFile.id}
@@ -756,8 +775,9 @@ Rules:
                 value={activeFile.content}
                 onChange={v => updateFile(activeFile.id, v || '')}
                 options={{
-                  fontSize: isMobile ? 14 : 14, padding: { top: 16 },
-                  minimap: { enabled: !isMobile },
+                  fontSize: 14,
+                  padding: { top: 16 },
+                  minimap: { enabled: false },
                   fontFamily: "'JetBrains Mono', 'Fira Code', Consolas, monospace",
                   renderLineHighlight: 'all',
                   cursorBlinking: 'phase',
@@ -769,6 +789,10 @@ Rules:
                   autoClosingBrackets: 'always',
                   formatOnPaste: true,
                   tabSize: 4,
+                  scrollbar: {
+                    vertical: 'hidden',
+                    horizontal: 'hidden'
+                  }
                 }}
               />
             )}
@@ -783,8 +807,23 @@ Rules:
               </div>
               {execTime && <span className="text-[9px] font-bold text-[#444455] bg-white/5 px-2 py-0.5 rounded-full">⏱ {execTime}</span>}
             </div>
-            <div className={`flex-1 p-4 font-mono text-[11px] md:text-xs overflow-y-auto whitespace-pre-wrap leading-relaxed ${output.includes('[ERROR]') || output.includes('failed') ? 'text-[#EF4444]' : 'text-[#A7E3C4]'}`}>
-              {output || <span className="text-[#444455]">$ awaiting execution...</span>}
+            <div className={`flex-1 p-4 font-mono text-[11px] md:text-xs overflow-y-auto whitespace-pre-wrap leading-relaxed ${(output.includes('[ERROR]') || output.includes('failed')) ? 'text-[#EF4444]' : 'text-[#A7E3C4]'}`}>
+              {(isRunning || isSubmitting) ? (
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2 text-[#444455]">
+                    <motion.div
+                      animate={{ opacity: [0.4, 1, 0.4] }}
+                      transition={{ repeat: Infinity, duration: 1.5 }}
+                    >
+                      $
+                    </motion.div>
+                    <span className="animate-pulse">Initializing execution environment...</span>
+                  </div>
+                  <div className="text-[#888899] text-[10px]">Checking Judge0 clusters...</div>
+                </div>
+              ) : (
+                output || <span className="text-[#444455]">$ awaiting execution...</span>
+              )}
               <AnimatePresence>
                 {submitBadge && (
                   <motion.div
@@ -806,20 +845,22 @@ Rules:
 
         {/* ─ MOBILE BOTTOM BAR ─ */}
         {isMobile && activeMobileTab === 'code' && (
-          <div className="fixed bottom-0 left-0 right-0 h-[52px] bg-[#13131A] border-t border-white/10 flex z-50">
+          <div className="fixed bottom-0 left-0 right-0 h-[52px] bg-[#13131A] border-t border-white/10 flex z-[100]">
             <button 
               onClick={handleRun}
-              disabled={isRunning || isSubmitting}
-              className="flex-1 flex items-center justify-center gap-2 bg-white/5 text-white text-[11px] font-black uppercase tracking-widest disabled:opacity-50"
+              disabled={isRunning || isSubmitting || isOffline}
+              className="flex-1 flex items-center justify-center gap-2 bg-transparent text-[#E2E2EE] text-xs font-black uppercase tracking-widest disabled:opacity-50 border-r border-white/10"
             >
-              <FiPlay size={14} className={isRunning ? 'animate-pulse' : ''} /> Run
+              <FiPlay size={14} className={isRunning ? 'animate-pulse' : ''} />
+              {isRunning ? '...' : 'Run'}
             </button>
             <button 
               onClick={handleSubmit}
-              disabled={isRunning || isSubmitting}
-              className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-br from-[#7C3AED] to-[#A855F7] text-white text-[11px] font-black uppercase tracking-widest disabled:opacity-50"
+              disabled={isRunning || isSubmitting || isOffline}
+              className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-[#7C3AED] to-[#A855F7] text-white text-xs font-black uppercase tracking-widest disabled:opacity-50"
             >
-              <FiZap size={14} /> Submit
+              <FiZap size={14} />
+              {isSubmitting ? '...' : 'Submit'}
             </button>
           </div>
         )}

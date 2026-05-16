@@ -306,17 +306,34 @@ export default function LearningPage() {
 
   useEffect(() => { setShowTopics(false); setShowChat(false); }, [activeTopic]);
 
-  // Fetch Gemini notes whenever the active topic changes
+  // Fetch Gemini notes whenever the active topic changes (with localStorage caching)
   useEffect(() => {
     if (!activeTopic) return;
+    
+    const cacheKey = `notes_${courseIdParam}_${activeTopic.id}`;
+    const cached = localStorage.getItem(cacheKey);
+    
+    if (cached) {
+      setGeminiNotes(cached);
+      setNotesLoading(false);
+      return;
+    }
+
     setGeminiNotes('');
     setNotesLoading(true);
     fetch(`/api/notes?topic=${encodeURIComponent(activeTopic.title)}&course=${encodeURIComponent(courseIdParam)}`)
       .then(r => r.json())
-      .then(d => setGeminiNotes(d.notes || ''))
+      .then(d => {
+        if (d.notes) {
+          setGeminiNotes(d.notes);
+          localStorage.setItem(cacheKey, d.notes);
+        } else {
+          setGeminiNotes('');
+        }
+      })
       .catch(() => setGeminiNotes(''))
       .finally(() => setNotesLoading(false));
-  }, [activeTopic?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [activeTopic?.id, courseIdParam]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => { if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight; }, [messages]);
 

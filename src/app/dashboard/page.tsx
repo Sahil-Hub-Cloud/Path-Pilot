@@ -50,64 +50,92 @@ export default function DashboardPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // ── Streak sync helper ────────────────────────────────────────────────────
-  // Returns today's date as a YYYY-MM-DD string (local timezone, consistent)
-  const todayStr = () => {
-    const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  // Returns today's date as a YYYY-MM-DD string in IST (UTC+5:30)
+  const getTodayIST = () => {
+    // Current time in IST (UTC+5:30)
+    const options = { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' } as const;
+    const parts = new Intl.DateTimeFormat('en-IN', options).formatToParts(new Date());
+    const day = parts.find(p => p.type === 'day')?.value;
+    const month = parts.find(p => p.type === 'month')?.value;
+    const year = parts.find(p => p.type === 'year')?.value;
+    return `${year}-${month}-${day}`;
   };
 
-  const syncStreak = async (uid: string, existingStreak: number, lastActive: string | undefined) => {
-    const today = todayStr();
-    let newStreak = existingStreak;
-    let milestoneMessage = '';
+  const sendEmail = async (to: string, subject: string, html: string) => {
+    try {
+      await fetch('/api/email/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ to, subject, html })
+      });
+    } catch (err) {
+      console.warn('Email send failed:', err);
+    }
+  };
 
-    if (!lastActive) {
-      // First ever visit — start streak at 1
+  const syncStreak = async (uid: string, existingStreak: number, lastActiveDate: string | undefined) => {
+    const today = getTodayIST();
+    let newStreak = existingStreak;
+
+    if (!lastActiveDate) {
+      // 1. If lastActiveDate is null or undefined: set streakDays to 1, set lastActiveDate to today
       newStreak = 1;
-    } else if (lastActive === today) {
-      // Already logged in today — do nothing, keep current streak
+    } else if (lastActiveDate === today) {
+      // 2. If lastActiveDate is TODAY: do nothing, streak stays same
       setStreakDays(existingStreak);
       return;
     } else {
-      // Calculate how many calendar days ago lastActive was
-      const last = new Date(lastActive + 'T00:00:00');  // force midnight local
-      const now  = new Date(today   + 'T00:00:00');
-      const diffDays = Math.round((now.getTime() - last.getTime()) / 86_400_000);
-      setInactiveGap(diffDays);
+      // Calculate diff in calendar days using IST strings
+      const yesterdayDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+      yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+      const yesterdayStr = yesterdayDate.toISOString().split('T')[0];
+      
+      // Simpler calendar diff logic
+      const lastDate = new Date(lastActiveDate);
+      const todayDate = new Date(today);
+      const diffTime = Math.abs(todayDate.getTime() - lastDate.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
       if (diffDays === 1) {
-        // Visited yesterday → extend streak
+        // 3. If lastActiveDate is YESTERDAY: increment streakDays by 1
         newStreak = existingStreak + 1;
-        // Check for milestones
-        if ([3, 7, 14, 30].includes(newStreak)) {
-          milestoneMessage = `🔥 Outstanding! You've hit a ${newStreak}-day streak. The sector is watching.`;
+        
+        // Milestone notifications
+        if ([3, 7, 14, 30, 50, 100].includes(newStreak)) {
+          const msg = `🔥 Outstanding! You've hit a ${newStreak}-day streak. The sector is watching.`;
+          await addNotification(uid, 'streak', 'Streak Milestone', msg);
         }
       } else {
-        // Gap of 2+ days → reset
+        // 4. If lastActiveDate is 2 or more days ago: reset streakDays to 1
         newStreak = 1;
-        if (diffDays >= 2) {
-          await addNotification(uid, 'inactivity', 'Sector Offline', `You were offline for ${diffDays} days. Data synchronization resumed.`);
+        await addNotification(uid, 'inactivity', 'Sector Offline', `You were offline for ${diffDays} days. Streak has been reset, but your progress is safe.`);
+        
+        if (user?.email) {
+          sendEmail(user.email, 'Welcome back to Path Pilot! 🚀', `
+            <div style="font-family: sans-serif; color: #2C1A0E;">
+              <h2>The Cockpit is Active!</h2>
+              <p>It's been <b>${diffDays} days</b> since your last session. Your streak has reset to 1, but your hard-earned progress remains intact.</p>
+              <p>Ready to resume your mission?</p>
+              <a href="https://pathpilot.dev/dashboard" style="background: #006B7A; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 12px; display: inline-block; font-weight: 700;">Resume Training</a>
+            </div>
+          `);
         }
       }
-    }
-    
-    if (milestoneMessage) {
-      await addNotification(uid, 'streak', 'Streak Milestone', milestoneMessage);
     }
 
     setStreakDays(newStreak);
 
-    // Write back to Firestore — non-blocking, never breaks the dashboard
+    // Update Firestore with new streak and today's date
     try {
       if (db) {
         await updateDoc(doc(db, 'users', uid), {
-          streakDays:  newStreak,
-          lastActive:  today,           // ISO date string YYYY-MM-DD
-          lastActiveTs: serverTimestamp(), // server timestamp for admin queries
+          streakDays:      newStreak,
+          lastActiveDate:  today,           // YYYY-MM-DD in IST
+          lastActiveTs:    serverTimestamp(),
         });
       }
     } catch (err) {
-      console.warn('Dashboard: streak write failed (offline?):', err);
+      console.warn('Dashboard: streak update failed:', err);
     }
   };
 
@@ -135,11 +163,10 @@ export default function DashboardPage() {
             // Clear the UID-scoped localStorage cache once Firestore is available
             localStorage.removeItem('pp_profile_' + user.uid);
 
-            // ── Sync streak on every dashboard load ──
-            // streakDays / lastActive may use legacy field name 'streak' — handle both
+            // streakDays / lastActiveDate handle migration
             const existingStreak = (data as any).streakDays ?? (data as any).streak ?? 0;
-            const lastActive     = (data as any).lastActive as string | undefined;
-            await syncStreak(user.uid, existingStreak, lastActive);
+            const lastActiveDate = (data as any).lastActiveDate ?? (data as any).lastActive;
+            await syncStreak(user.uid, existingStreak, lastActiveDate);
           } else {
             // Doc doesn't exist yet — first load after sign-up
             setStreakDays(1);
@@ -160,7 +187,7 @@ export default function DashboardPage() {
   // Show loading skeleton while auth resolves or redirect is pending
   if (!isReady) {
     return (
-      <div style={{ minHeight: '100vh', backgroundColor: '#FDF6EC', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-cream)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ width: 40, height: 40, background: 'linear-gradient(135deg, #006B7A, #2E7D52)', borderRadius: 10, margin: '0 auto 16px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
             <Image src="/logo.webp" alt="Path Pilot" width={40} height={40} style={{ objectFit: 'contain' }} />
@@ -258,10 +285,10 @@ export default function DashboardPage() {
   const navItems = baseNavItems;
 
   return (
-    <div className="min-h-screen bg-[#FDF6EC] flex flex-col md:flex-row relative">
+    <div className="min-h-screen bg-[var(--bg-cream)] text-[var(--text-dark)] flex flex-col md:flex-row relative transition-colors duration-300">
       
       {/* ─── MOBILE TOP BAR ─── */}
-      <header className="md:hidden sticky top-0 z-[110] bg-[#FFF8EE]/90 backdrop-blur-md border-b-2 border-[#B48C5A]/15 px-5 py-3 flex items-center justify-between">
+      <header className="md:hidden sticky top-0 z-[110] bg-[var(--bg-cream-light)]/90 backdrop-blur-md border-b-2 border-[var(--border-clay)] px-5 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 flex items-center justify-center overflow-hidden">
              <Image src="/logo.webp" alt="Path Pilot" width={32} height={32} className="object-contain" />
@@ -307,7 +334,7 @@ export default function DashboardPage() {
 
         {/* User avatar */}
         <div className="px-4 pb-5 border-b-1.5 border-[#B48C5A]/20 mx-3 mb-3">
-          <div className="flex items-center gap-3 p-2.5 bg-white/60 rounded-xl border-1.5 border-[#B48C5A]/15 shadow-sm">
+          <div className="flex items-center gap-3 p-2.5 bg-[var(--surface-raised)]/60 rounded-xl border-1.5 border-[var(--border-clay)] shadow-sm">
             <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#006B7A] to-[#2E7D52] flex items-center justify-center text-white font-extrabold text-sm flex-shrink-0">
               {firstName[0]?.toUpperCase()}
             </div>
@@ -404,7 +431,7 @@ export default function DashboardPage() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col md:flex-row items-start md:items-center justify-between bg-gradient-to-br from-[#FFFBEB] to-[#FEF3C7] border-2 border-[#FDE68A] rounded-[20px] p-6 md:p-7 mb-8 gap-6 shadow-md shadow-amber-500/10"
+            className="flex flex-col md:flex-row items-start md:items-center justify-between bg-[var(--surface-raised)] border-2 border-[var(--border-clay)] rounded-[20px] p-6 md:p-7 mb-8 gap-6 shadow-md shadow-amber-500/10"
           >
             <div className="flex items-center gap-5">
               <div className="w-12 h-12 md:w-14 md:h-14 bg-[#fef9c3] border-2 border-[#fde047] rounded-full flex items-center justify-center text-2xl shadow-md shadow-yellow-400/25 flex-shrink-0">
@@ -457,9 +484,9 @@ export default function DashboardPage() {
             },
           ].map((s, i) => (
             <motion.div key={i} whileHover={{ y: -4 }} style={{
-              background: '#FFFFFF', borderRadius: 20,
-              border: '2px solid rgba(180,140,90,0.25)', padding: '24px 22px',
-              boxShadow: '0 2px 0 rgba(255,255,255,0.9) inset, 0 8px 24px rgba(140,90,40,0.1)',
+              background: 'var(--surface-raised)', borderRadius: 20,
+              border: '2px solid var(--border-clay)', padding: '24px 22px',
+              boxShadow: '0 2px 0 rgba(255,255,255,0.1) inset, 0 8px 24px var(--shadow-clay)',
             }}>
               <div style={{
                 width: 40, height: 40,

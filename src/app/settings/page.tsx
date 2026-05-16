@@ -72,7 +72,7 @@ export default function SettingsPage() {
       const savedTheme = localStorage.getItem('pathpilot_theme');
       if (savedTheme === 'dark') {
         setIsDarkMode(true);
-        document.body.classList.add('dark-mode');
+        document.documentElement.classList.add('dark');
       }
     }
   }, [user, loading, router]);
@@ -142,10 +142,10 @@ export default function SettingsPage() {
     const newVal = !isDarkMode;
     setIsDarkMode(newVal);
     if (newVal) {
-      document.body.classList.add('dark-mode');
+      document.documentElement.classList.add('dark');
       localStorage.setItem('pathpilot_theme', 'dark');
     } else {
-      document.body.classList.remove('dark-mode');
+      document.documentElement.classList.remove('dark');
       localStorage.setItem('pathpilot_theme', 'light');
     }
   };
@@ -211,7 +211,7 @@ export default function SettingsPage() {
   ];
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-cream)', display: 'flex' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-cream)', color: 'var(--text-dark)', display: 'flex' }}>
       
       {/* ─── SIDEBAR ─── */}
       <aside className="clay-sidebar" style={{
@@ -467,7 +467,7 @@ export default function SettingsPage() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 30 }}
               className="clay-card"
-              style={{ position: 'relative', width: '100%', maxWidth: 440, padding: 48, zIndex: 1, background: '#fff' }}
+              style={{ position: 'relative', width: '100%', maxWidth: 440, padding: 48, zIndex: 1, background: 'var(--surface-raised)' }}
             >
               <div style={{ width: 64, height: 64, borderRadius: 20, background: 'rgba(217,95,43,0.1)', color: '#D95F2B', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, marginBottom: 24 }}>
                 <FiTrash2 />
@@ -487,7 +487,7 @@ export default function SettingsPage() {
                       onChange={e => setDeletePassword(e.target.value)}
                       placeholder="Enter current password"
                       className="sku-input"
-                      style={{ background: '#fff' }}
+                      style={{ background: 'var(--surface-sunken)' }}
                     />
                   </div>
                 ) : (
@@ -535,7 +535,7 @@ export default function SettingsPage() {
 
       <style jsx global>{`
         .clay-sidebar { background: var(--bg-cream-deep) !important; color: var(--text-dark); }
-        .dark-mode .sku-input { background: var(--surface-sunken) !important; color: var(--text-dark); }
+        .dark .sku-input { background: var(--surface-sunken) !important; color: var(--text-dark); }
       `}</style>
 
     </div>

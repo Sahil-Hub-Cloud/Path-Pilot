@@ -11,8 +11,9 @@ import { useAuth } from '@/hooks/useAuth';
 import { db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import QRCode from 'qrcode';
-import { ROADMAPS, COURSE_SLUG_MAP } from '@/lib/data/roadmaps';
-import Image from 'next/image';
+import { COURSES, getCourseIdFromLabel, getRoadmapKey } from '@/lib/data/course-map';
+
+import { ROADMAPS } from '@/lib/data/roadmaps';
 
 export default function CertificatePage() {
   const params = useParams();
@@ -26,31 +27,6 @@ export default function CertificatePage() {
   const [qrDataUrl, setQrDataUrl] = useState('');
   const [courseData, setCourseData] = useState<any>(null);
 
-  // Map learningPath → URL slug (consistent with Dashboard)
-  const getCourseId = (path: string | null): string => {
-    if (!path) return 'frontend-react';
-    const p = path.toLowerCase();
-    if (p.includes('flutter')) return 'flutter';
-    if (p.includes('android') || p.includes('kotlin')) return 'android-kotlin';
-    if (p.includes('react native')) return 'react-native';
-    if (p.includes('mern') || p.includes('full stack')) return 'fullstack-mern';
-    if (p.includes('devops')) return 'devops-aws';
-    if (p.includes('docker') || p.includes('kubernetes')) return 'docker-kubernetes';
-    if (p.includes('cybersecurity')) return 'cybersecurity';
-    if (p.includes('blockchain')) return 'blockchain';
-    if (p.includes('machine learning')) return 'machine-learning';
-    if (p.includes('data science')) return 'data-science';
-    if (p.includes('nlp') || p.includes('ai engineering')) return 'nlp';
-    if (p.includes('dsa') || p.includes('interview')) return 'dsa-interviews';
-    if (p.includes('django')) return 'backend-django';
-    if (p.includes('vue')) return 'frontend-vue';
-    if (p.includes('javascript mastery')) return 'javascript-mastery';
-    if (p.includes('python beginner')) return 'python-beginners';
-    if (p.includes('backend') || p.includes('node')) return 'backend-nodejs';
-    if (p.includes('frontend') || p.includes('react')) return 'frontend-react';
-    return 'frontend-react';
-  };
-
   useEffect(() => {
     if (!user) return;
 
@@ -62,19 +38,18 @@ export default function CertificatePage() {
           const data = snap.data();
           setProfile(data);
           
-          const courseId = getCourseId(data.learningPath);
-          const roadmapId = COURSE_SLUG_MAP[courseId] || courseId;
+          const courseId = getCourseIdFromLabel(data.learningPath);
+          const roadmapId = getRoadmapKey(courseId);
           const roadmap = ROADMAPS[roadmapId];
           setCourseData(roadmap);
 
           if (roadmap) {
-            const allTopics = roadmap.chapters.flatMap(ch => ch.topics);
-            const totalTopics = allTopics.length;
+            const allTopics = roadmap.chapters.flatMap((ch: any) => ch.topics);
             const completedTopics = data.completedTopics || [];
             
             // Check if all roadmap topics are in the completed list
             const completedSet = new Set(completedTopics);
-            const incomplete = allTopics.filter(t => !completedSet.has(t.id));
+            const incomplete = allTopics.filter((t: any) => !completedSet.has(t.id));
             
             setRemainingTopics(incomplete.length);
             setIsComplete(incomplete.length === 0);
@@ -158,7 +133,7 @@ export default function CertificatePage() {
                    <div className="text-sm font-black">{profile?.employabilityScore || 0}/100</div>
                  </div>
                </div>
-               <button onClick={() => router.push(`/learn/${getCourseId(profile?.learningPath)}`)} className="px-4 py-2 bg-[#7C3AED] hover:bg-[#6D28D9] rounded-lg text-[10px] font-black uppercase tracking-widest transition-all">
+               <button onClick={() => router.push(`/learn/${getCourseIdFromLabel(profile?.learningPath)}`)} className="px-4 py-2 bg-[#7C3AED] hover:bg-[#6D28D9] rounded-lg text-[10px] font-black uppercase tracking-widest transition-all">
                   Resume Path
                </button>
             </div>

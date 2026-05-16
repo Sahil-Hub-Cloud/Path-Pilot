@@ -134,11 +134,11 @@ const ROADMAP_STAGES: Record<string, { title: string; modules: string[] }[]> = {
 };
 
 const S = {
-  bg:      '#FDF6EC',
-  card:    '#FFFFFF',
-  border:  'rgba(180,140,90,0.25)',
-  primary: '#2C1A0E',
-  sub:     '#8B6E52',
+  bg:      'var(--bg-cream)',
+  card:    'var(--surface-raised)',
+  border:  'var(--border-clay)',
+  primary: 'var(--text-dark)',
+  sub:     'var(--text-muted)',
   teal:    '#006B7A',
   green:   '#2E7D52',
   orange:  '#D95F2B',
@@ -239,10 +239,10 @@ export default function ProgressPage() {
   ];
 
   return (
-    <div style={{ minHeight: '100vh', background: S.bg }}>
+    <div style={{ minHeight: '100vh', background: S.bg, color: S.primary }} className="transition-colors duration-300">
 
       {/* HEADER */}
-      <div style={{ padding: '20px 32px', borderBottom: `2px solid ${S.border}`, background: '#FFF8EE', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 4px 16px rgba(140,90,40,0.07)' }}>
+      <div style={{ padding: '20px 32px', borderBottom: `2px solid ${S.border}`, background: 'var(--bg-cream-deep)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 4px 16px var(--shadow-clay)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <button onClick={() => router.push('/dashboard')} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px', background: 'rgba(0,107,122,0.08)', border: `1.5px solid ${S.border}`, borderRadius: 10, cursor: 'pointer', fontWeight: 700, fontSize: 13, color: S.teal }}>
             <FiArrowLeft size={14} /> Dashboard

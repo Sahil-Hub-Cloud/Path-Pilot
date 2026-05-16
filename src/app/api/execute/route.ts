@@ -41,9 +41,9 @@ export async function POST(req: NextRequest) {
     const { token } = await submitResponse.json();
 
     // 2. Poll for results
-    let retries = 15; // Increased retries for slower executions
+    let retries = 13; // ~10 seconds total wait (13 * 800ms)
     while (retries > 0) {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 800));
       const resultResponse = await fetch(`https://ce.judge0.com/submissions/${token}?base64_encoded=false&fields=stdout,stderr,status,compile_output`);
       
       if (resultResponse.ok) {
@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
       retries--;
     }
 
-    return NextResponse.json({ error: 'Code execution timed out on Judge0.' }, { status: 504 });
+    return NextResponse.json({ error: 'Code execution timed out. Try again or simplify your code.' }, { status: 504 });
 
   } catch (error: any) {
     console.error('API Execute Error:', error);

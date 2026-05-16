@@ -7,6 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 import QRCode from 'qrcode';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { ROADMAPS } from '@/lib/data/roadmaps';
 
 // Maps the learningPath stored by onboarding → a display-friendly course title
 const LEARNING_PATH_LABELS: Record<string, string> = {
@@ -55,80 +56,80 @@ export default function CertificatePage() {
     const router = useRouter();
     const { user } = useAuth();
 
+    const [loading, setLoading] = useState(true);
+    const [isComplete, setIsComplete] = useState(false);
+    const [remainingCount, setRemainingCount] = useState(0);
+    const [employabilityScore, setEmployabilityScore] = useState(0);
     const [studentName, setStudentName] = useState('');
-    const [courseName, setCourseName]   = useState('');
-    const [certId, setCertId]           = useState('');
-    const [certDate, setCertDate]       = useState('');
-    const [qrCodeUrl, setQrCodeUrl]     = useState('');
+    const [courseName, setCourseName] = useState('');
+    const [certId, setCertId] = useState('');
+    const [qrCodeUrl, setQrCodeUrl] = useState('');
+    const [certDate, setCertDate] = useState('');
 
     useEffect(() => {
-        if (!user) return;
+        if (!user || !db) return;
 
-        let name = '';
-        let pathName = '';
-
-        const raw = localStorage.getItem('pp_profile_' + user.uid);
-        if (raw) {
+        const checkCompletion = async () => {
+            setLoading(true);
             try {
-                const profile = JSON.parse(raw);
-                name = profile.displayName || user.displayName || user.email?.split('@')[0] || 'Student';
-                const path = profile.learningPath || '';
-                pathName = LEARNING_PATH_LABELS[path] || path || 'Path Pilot Course';
-            } catch { /* fall through to Firebase auth fallback */ }
-        }
+                const userRef = doc(db, 'users', user.uid);
+                const userSnap = await getDoc(userRef);
+                
+                if (userSnap.exists()) {
+                    const userData = userSnap.data();
+                    const name = userData.displayName || user.displayName || 'Path Pilot Student';
+                    const pathId = userData.learningPathId || userData.learningPath || 'frontend_react';
+                    const roadmap = ROADMAPS[pathId] || ROADMAPS.frontend_react;
+                    const allTopicIds = roadmap.chapters.flatMap(ch => ch.topics).map(t => t.id);
+                    const completedIds = userData.completedTopics || [];
+                    
+                    const completedCount = allTopicIds.filter(id => completedIds.includes(id)).length;
+                    const totalCount = allTopicIds.length;
+                    const isFullyComplete = completedCount >= totalCount;
 
-        if (!name) {
-            name = user.displayName || user.email?.split('@')[0] || 'Student';
-            pathName = 'Path Pilot Course';
-        }
+                    setStudentName(name);
+                    setCourseName(roadmap.title);
+                    setEmployabilityScore(userData.employabilityScore || 0);
+                    setIsComplete(isFullyComplete);
+                    setRemainingCount(totalCount - completedCount);
 
-        setStudentName(name);
-        setCourseName(pathName);
+                    if (isFullyComplete) {
+                        const uniqueCertId = `PP-${user.uid.slice(0, 6).toUpperCase()}-${roadmap.title.replace(/[^a-zA-Z]/g, '').slice(0, 4).toUpperCase()}`;
+                        setCertId(uniqueCertId);
 
-        const generateCert = async () => {
-            if (!db) return;
-            const uniqueCertId = `PP-${user.uid.slice(0,6).toUpperCase()}-${pathName.replace(/[^a-zA-Z]/g, '').slice(0,4).toUpperCase()}`;
-            setCertId(uniqueCertId);
-            
-            try {
-                const url = await QRCode.toDataURL(`https://pathpilot.app/api/certificate/${uniqueCertId}`);
-                setQrCodeUrl(url);
-            } catch (e) {
-                console.error("QR Generate Error", e);
-            }
+                        // Generate QR
+                        const url = await QRCode.toDataURL(`https://pathpilot.app/verify/${uniqueCertId}`);
+                        setQrCodeUrl(url);
 
-            try {
-                const certRef = doc(db, 'certificates', uniqueCertId);
-                const snap = await getDoc(certRef);
+                        // Sync Certificate Record
+                        const certRef = doc(db, 'certificates', uniqueCertId);
+                        const certSnap = await getDoc(certRef);
 
-                if (!snap.exists()) {
-                   let empScore = 0;
-                   const userDoc = await getDoc(doc(db, 'users', user.uid));
-                   if (userDoc.exists()) {
-                      empScore = userDoc.data().employabilityScore || 0;
-                   }
-                   
-                   const dateString = new Date().toISOString();
-                   await setDoc(certRef, {
-                      certId: uniqueCertId,
-                      studentName: name,
-                      courseName: pathName,
-                      trackName: pathName,
-                      completionDate: dateString,
-                      employabilityScore: empScore,
-                      userId: user.uid
-                   });
-                   setCertDate(new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }));
-                } else {
-                   setCertDate(new Date(snap.data().completionDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }));
+                        if (!certSnap.exists()) {
+                            const dateString = new Date().toISOString();
+                            await setDoc(certRef, {
+                                certId: uniqueCertId,
+                                studentName: name,
+                                courseName: roadmap.title,
+                                trackName: roadmap.title,
+                                completionDate: dateString,
+                                employabilityScore: userData.employabilityScore || 0,
+                                userId: user.uid
+                            });
+                            setCertDate(new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }));
+                        } else {
+                            setCertDate(new Date(certSnap.data().completionDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }));
+                        }
+                    }
                 }
-            } catch (e) {
-                console.error("Firestore error", e);
-                setCertDate(new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }));
+            } catch (err) {
+                console.error("Certificate load error:", err);
+            } finally {
+                setLoading(false);
             }
         };
 
-        generateCert();
+        checkCompletion();
     }, [user]);
 
     const certRef = useRef<HTMLDivElement>(null);
@@ -146,6 +147,33 @@ export default function CertificatePage() {
         window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}&title=${title}&summary=${summary}`, '_blank');
     };
 
+    if (loading) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center bg-[#0A0A0E] text-white">
+                <div className="w-12 h-12 border-4 border-[#7C3AED]/30 border-t-[#7C3AED] rounded-full animate-spin mb-4" />
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-[#555566]">Validating Course Completion...</p>
+            </div>
+        );
+    }
+
+    if (!isComplete) {
+        return (
+            <div className="min-h-screen bg-[#0A0A0E] flex flex-col items-center justify-center p-6 text-center">
+                <div className="w-24 h-24 bg-white/5 rounded-[32px] border border-white/10 flex items-center justify-center text-4xl mb-8 shadow-2xl">🔒</div>
+                <h2 className="text-2xl md:text-4xl font-black text-white mb-4 tracking-tight">Certificate Locked</h2>
+                <p className="text-[#888899] text-sm md:text-base max-w-md mb-8 leading-relaxed">
+                    Complete your course to unlock your certificate. You have <span className="text-[#7C3AED] font-bold">{remainingCount} topics</span> remaining in your learning path.
+                </p>
+                <button 
+                    onClick={() => router.push('/dashboard')}
+                    className="px-8 py-4 bg-gradient-to-br from-[#7C3AED] to-[#A855F7] rounded-2xl text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-[#7C3AED]/20 hover:scale-105 transition-transform"
+                >
+                    Resume Learning
+                </button>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen" style={{ background: 'var(--bg-base)' }}>
             {/* Navbar */}
@@ -158,8 +186,8 @@ export default function CertificatePage() {
                             <p className="text-[9px] font-bold uppercase tracking-widest" style={{ color: 'var(--text-tertiary)' }}>Certificate</p>
                         </div>
                     </div>
-                    <button onClick={() => router.push('/library')} className="clay-btn clay-btn-secondary clay-btn-sm">
-                        ← Back to Library
+                    <button onClick={() => router.push('/dashboard')} className="clay-btn clay-btn-secondary clay-btn-sm">
+                        ← Back to Dashboard
                     </button>
                 </div>
             </nav>
@@ -199,6 +227,14 @@ export default function CertificatePage() {
                         <div className="skeu-inset inline-block px-8 py-4 rounded-2xl mb-6">
                             <h3 className="text-xl font-black" style={{ color: 'var(--accent-primary)' }}>{courseName}</h3>
                         </div>
+                        
+                        <div className="flex justify-center gap-8 mb-6">
+                            <div className="text-center">
+                                <p className="text-[10px] font-black uppercase text-[#888899] mb-1">Employability Score</p>
+                                <p className="text-xl font-black text-[#10B981]">{employabilityScore}/100</p>
+                            </div>
+                        </div>
+
                         <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                             with all projects and assessments completed through hands-on, project-based learning.
                         </p>
@@ -238,8 +274,8 @@ export default function CertificatePage() {
                     <button onClick={handleShareLinkedIn} className="clay-btn clay-btn-secondary">
                         🔗 Share on LinkedIn
                     </button>
-                    <button onClick={() => router.push('/library')} className="clay-btn clay-btn-secondary">
-                        📚 Continue Learning
+                    <button onClick={() => router.push('/dashboard')} className="clay-btn clay-btn-secondary">
+                        📊 Dashboard
                     </button>
                 </motion.div>
 
@@ -248,10 +284,10 @@ export default function CertificatePage() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.8 }}
-                    className="text-center mt-12"
+                    className="text-center mt-12 pb-20"
                 >
                     <p className="text-5xl mb-4">🎉</p>
-                    <h3 className="text-xl font-black mb-2">Congratulations!</h3>
+                    <h3 className="text-xl font-black mb-2 text-white">Congratulations!</h3>
                     <p className="text-sm max-w-md mx-auto" style={{ color: 'var(--text-secondary)' }}>
                         You&apos;ve proven your skills through real projects and hands-on coding.
                         Share this achievement with the world!

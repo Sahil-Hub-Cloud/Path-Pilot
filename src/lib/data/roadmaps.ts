@@ -14,7 +14,7 @@ export interface Topic {
     title: string
     difficulty: 'Beginner' | 'Intermediate' | 'Hard'
     duration: string
-    youtubeUrl?: string
+    videoUrl?: string
     pdfs?: { name: string; url: string }[]
 }
 
