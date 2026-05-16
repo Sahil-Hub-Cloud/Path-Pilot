@@ -254,11 +254,11 @@ export default function LabPage() {
         setOutput(`[ERROR] Execution failed with status: ${res.run.signal}\n\n${res.run.output}`);
       } else {
         const out = res.run.output || '(no output)';
-        setOutput(out);
+        setOutput(out + `\n\n[SUCCESS] Executed in ${duration}s`);
       }
       setStat(p => p + 1);
     } catch (e: any) {
-      setOutput('[ERROR] System Failure\n' + e.message);
+      setOutput(`[ERROR] Execution timeout. Try again or simplify your code.\n\n${e.message}`);
     } finally {
       setIsRunning(false);
     }
@@ -374,7 +374,7 @@ export default function LabPage() {
         res.run.output + '\n\n' +
         (allPass
           ? `✅ All tests passed!\n⏱️ Completed in ${formatTimeVerbose(elapsedSeconds)}\n🚀 Executed in ${duration}s\n🏆 +${LAB.xp} XP awarded to your profile.`
-          : `⚠️ ${passedCount}/${results.length} tests passed. Review your logic and try again.`)
+          : `⚠️ ${passedCount}/${results.length} tests passed. Executed in ${duration}s. Review your logic and try again.`)
       );
       // Always save to Firestore after submission (even partial pass → partial skill score)
       await saveLabResultToFirestore(passedCount, results.length, elapsedSeconds);
@@ -839,9 +839,23 @@ Rules:
                     >
                       $
                     </motion.div>
-                    <span className="animate-pulse">Initializing execution environment...</span>
+                    <span className="flex items-center gap-1">
+                      Running
+                      <motion.span
+                        animate={{ opacity: [0, 1, 0] }}
+                        transition={{ repeat: Infinity, duration: 1, times: [0, 0.5, 1] }}
+                      >.</motion.span>
+                      <motion.span
+                        animate={{ opacity: [0, 1, 0] }}
+                        transition={{ repeat: Infinity, duration: 1, delay: 0.2, times: [0, 0.5, 1] }}
+                      >.</motion.span>
+                      <motion.span
+                        animate={{ opacity: [0, 1, 0] }}
+                        transition={{ repeat: Infinity, duration: 1, delay: 0.4, times: [0, 0.5, 1] }}
+                      >.</motion.span>
+                    </span>
                   </div>
-                  <div className="text-[#888899] text-[10px]">Checking Judge0 clusters...</div>
+                  <div className="text-[#888899] text-[10px]">Processing via Judge0 cluster...</div>
                 </div>
               ) : (
                 output || <span className="text-[#444455]">$ awaiting execution...</span>
