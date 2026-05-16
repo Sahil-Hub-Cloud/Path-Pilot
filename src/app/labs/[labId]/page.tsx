@@ -12,7 +12,8 @@ import {
 import { executeCode } from '@/lib/piston';
 import { useAuth } from '@/hooks/useAuth';
 import { db } from '@/lib/firebase';
-import { doc, getDoc, setDoc, updateDoc, increment, serverTimestamp, collection } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, increment, collection, addDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { calculateTopicPriority } from '@/lib/services/recommendation';
 import { fetchResilient } from '@/lib/firestore-resilience';
 import { addNotification } from '@/lib/notifications';
 import { LABS } from '@/lib/data/labs';
@@ -113,6 +114,17 @@ export default function LabPage() {
 
   // Timer
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+
+  // Mobile state
+  const [activeMobileTab, setActiveMobileTab] = useState<'problem' | 'code'>('problem');
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => setElapsedSeconds(p => p + 1), 1000);
@@ -262,6 +274,9 @@ export default function LabPage() {
           employabilityLevel,
           lastActive:    serverTimestamp(),
         });
+
+        // Trigger adaptive recommendation logic
+        await calculateTopicPriority(user.uid);
 
         // Trigger notifications
         await addNotification(user.uid, 'lab', 'Mission Success', `Lab "${LAB.title}" completed. +${LAB.xp} XP archived.`);
@@ -512,43 +527,45 @@ Rules:
       </AnimatePresence>
 
       {/* ══ HEADER ══ */}
-      <header className="h-14 md:h-16 bg-[#13131A] border-b border-white/10 flex items-center justify-between px-4 md:px-6 flex-shrink-0 z-50">
-        <div className="flex items-center gap-3 md:gap-5 overflow-hidden">
-          <button onClick={() => router.push('/dashboard')} className="flex items-center gap-2 px-2 md:px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg cursor-pointer text-[#888899] text-[10px] md:text-xs font-bold hover:bg-white/10 transition-all flex-shrink-0">
-            <FiArrowLeft size={13} /> <span className="hidden sm:inline">Dashboard</span>
+      <header className="h-14 md:h-16 bg-[#13131A] border-b border-white/10 flex items-center justify-between px-3 md:px-6 flex-shrink-0 z-50">
+        <div className="flex items-center gap-2 md:gap-5 overflow-hidden flex-1">
+          <button onClick={() => router.push('/dashboard')} className="flex items-center justify-center w-9 h-9 md:w-auto md:h-auto md:px-3 md:py-1.5 bg-white/5 border border-white/10 rounded-lg cursor-pointer text-[#888899] hover:bg-white/10 transition-all flex-shrink-0">
+            <FiArrowLeft size={16} /> <span className="hidden md:inline ml-2 text-xs font-bold">Dashboard</span>
           </button>
-          <div className="hidden sm:block h-5 w-px bg-white/10" />
+          
           <div className="flex items-center gap-2.5 overflow-hidden">
-            <div className="w-7 h-7 bg-white/5 rounded-lg flex items-center justify-center flex-shrink-0">
+            <div className="hidden sm:flex w-7 h-7 bg-white/5 rounded-lg items-center justify-center flex-shrink-0">
               <span className="text-sm">🧪</span>
             </div>
             <div className="overflow-hidden">
-              <h1 className="text-xs md:text-sm font-black text-[#E2E2EE] truncate tracking-tight">{LAB.title}</h1>
-              <div className="flex items-center gap-3 text-[9px] font-extrabold text-[#10B981] uppercase tracking-widest mt-0.5">
-                <span>{LAB.xp} XP Available</span>
-                <span className="text-[#888899] flex items-center gap-1"><FiClock size={10} /> {formatTime(elapsedSeconds)}</span>
+              <h1 className="text-[11px] md:text-sm font-black text-[#E2E2EE] truncate tracking-tight">{LAB.title}</h1>
+              <div className="flex items-center gap-2.5 text-[9px] font-extrabold uppercase tracking-widest mt-0.5">
+                <span className="text-[#10B981] whitespace-nowrap">{LAB.xp} XP</span>
+                <span className="text-[#888899] flex items-center gap-1 whitespace-nowrap"><FiClock size={10} /> {formatTime(elapsedSeconds)}</span>
               </div>
             </div>
           </div>
         </div>
 
         <div className="flex items-center gap-2 md:gap-4 ml-2">
-          {/* Main actions (Run/Submit) */}
-          <button onClick={handleRun} disabled={isRunning || isSubmitting}
-            className="flex items-center gap-2 px-3 md:px-4 py-1.5 bg-white/5 border border-white/15 rounded-lg cursor-pointer text-xs font-extrabold text-[#E2E2EE] hover:bg-white/10 disabled:opacity-50 shadow-lg shadow-black/20"
-          >
-            <FiPlay size={12} className={isRunning ? 'animate-pulse' : ''} /> <span className="hidden sm:inline">{isRunning ? 'Running...' : 'Run'}</span>
-          </button>
-          
-          <button onClick={handleSubmit} disabled={isRunning || isSubmitting}
-            className="flex items-center gap-2 px-3 md:px-4 py-1.5 bg-gradient-to-br from-[#7C3AED] to-[#A855F7] border-none rounded-lg cursor-pointer text-xs font-extrabold text-white opacity-100 hover:opacity-90 disabled:opacity-50 shadow-lg shadow-[#7C3AED]/30"
-          >
-            <FiZap size={12} /> <span className="hidden sm:inline">{isSubmitting ? 'Submitting...' : 'Submit'}</span>
-          </button>
+          {/* Desktop actions (Run/Submit) */}
+          <div className="hidden md:flex items-center gap-2">
+            <button onClick={handleRun} disabled={isRunning || isSubmitting}
+              className="flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-white/15 rounded-lg cursor-pointer text-xs font-extrabold text-[#E2E2EE] hover:bg-white/10 disabled:opacity-50 shadow-lg shadow-black/20"
+            >
+              <FiPlay size={12} className={isRunning ? 'animate-pulse' : ''} /> <span>{isRunning ? 'Running...' : 'Run'}</span>
+            </button>
+            
+            <button onClick={handleSubmit} disabled={isRunning || isSubmitting}
+              className="flex items-center gap-2 px-4 py-1.5 bg-gradient-to-br from-[#7C3AED] to-[#A855F7] border-none rounded-lg cursor-pointer text-xs font-extrabold text-white opacity-100 hover:opacity-90 disabled:opacity-50 shadow-lg shadow-[#7C3AED]/30"
+            >
+              <FiZap size={12} /> <span>{isSubmitting ? 'Submitting...' : 'Submit'}</span>
+            </button>
+          </div>
 
           <div className="hidden md:block h-4 w-px bg-white/10" />
 
-          {/* Panel toggles - hidden on mobile, shown on md+ */}
+          {/* Panel toggles */}
           <div className="hidden md:flex items-center gap-3">
             <button onClick={() => { handleAnalyze(); setRight('analyzer'); }}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-lg cursor-pointer text-[11px] font-bold transition-all ${rightPanel === 'analyzer' ? 'bg-blue-500/15 border border-blue-500/40 text-blue-400' : 'bg-white/5 border border-white/10 text-[#888899] hover:bg-white/10'}`}
@@ -563,32 +580,48 @@ Rules:
             </button>
           </div>
           
-          {/* Mobile Panel Toggle */}
+          {/* Mobile AI Toggle */}
           <button className="md:hidden p-2 text-[#888899] bg-white/5 border border-white/10 rounded-lg" onClick={() => setRight(p => p === 'ai' ? 'none' : 'ai')}>
              <FiCpu size={18} />
           </button>
         </div>
       </header>
 
+      {/* ── MOBILE TABS ── */}
+      <div className="md:hidden flex bg-[#13131A] border-b border-white/10 h-12 flex-shrink-0 z-40">
+        <button 
+          onClick={() => setActiveMobileTab('problem')}
+          className={`flex-1 flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.15em] transition-all ${activeMobileTab === 'problem' ? 'text-[#7C3AED] border-b-2 border-[#7C3AED] bg-white/[0.02]' : 'text-[#444455]'}`}
+        >
+          <FiFile size={14} /> Problem
+        </button>
+        <button 
+          onClick={() => setActiveMobileTab('code')}
+          className={`flex-1 flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.15em] transition-all ${activeMobileTab === 'code' ? 'text-[#7C3AED] border-b-2 border-[#7C3AED] bg-white/[0.02]' : 'text-[#444455]'}`}
+        >
+          <FiCode size={14} /> Code
+        </button>
+      </div>
+
       {/* ══ BODY ══ */}
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
 
         {/* ─ LEFT: Problem panel ─ */}
         <aside className={`
-          fixed md:static inset-y-0 left-0 z-40
-          w-[300px] md:w-[320px] bg-[#13131A] border-r border-white/10 flex flex-col flex-shrink-0
-          transition-transform duration-300 ease-in-out
-          ${left === 'problem' || left === 'tests' ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-          md:translate-x-0
+          ${isMobile ? (activeMobileTab === 'problem' ? 'flex' : 'hidden') : 'flex'}
+          w-full md:w-[320px] bg-[#13131A] md:border-r border-white/10 flex-col flex-shrink-0
+          overflow-hidden
         `}>
           {/* Mobile Back button for panels */}
           <div className="md:hidden p-4 border-b border-white/10 flex justify-between items-center">
-            <span className="text-xs font-black text-white/50 uppercase tracking-widest">Lab Info</span>
-            <button onClick={() => setLeft('problem')} className="p-2 text-white/50"><FiX size={18} /></button>
+            <span className="text-xs font-black text-white/50 uppercase tracking-widest">Lab Description</span>
+            <button onClick={() => setActiveMobileTab('code')} className="flex items-center gap-2 text-[#7C3AED] text-[10px] font-black uppercase tracking-wider bg-[#7C3AED]/10 px-3 py-1.5 rounded-lg">
+              Start Coding <FiArrowLeft className="rotate-180" />
+            </button>
           </div>
 
-          {/* Tabs */}
-          <div className="flex border-b border-white/10 px-2">
+          {/* Sub-tabs - hidden on mobile */}
+          <div className="hidden md:flex border-b border-white/10 px-2">
             {(['problem', 'tests'] as const).map(t => (
               <button key={t} onClick={() => setLeft(t)} 
                 className={`flex-1 py-3.5 border-none bg-transparent cursor-pointer text-[10px] font-black uppercase tracking-[0.12em] transition-all
@@ -599,45 +632,55 @@ Rules:
             ))}
           </div>
 
-          <div className="flex-1 overflow-y-auto p-5 md:p-6">
-            {left === 'problem' ? (
-              <div className="flex flex-col gap-6">
-                <div>
-                  <div className="text-[9px] font-black uppercase tracking-[0.18em] text-[#444455] mb-3">Problem Statement</div>
+          <div className="flex-1 overflow-y-auto p-5 md:p-6 no-scrollbar">
+            {/* PROBLEM DESCRIPTION SECTION */}
+            {(isMobile || left === 'problem') && (
+              <div className="flex flex-col gap-8 mb-10">
+                <section>
+                  <div className="text-[9px] font-black uppercase tracking-[0.2em] text-[#444455] mb-3">01. Problem Statement</div>
                   <p className="text-sm text-[#888899] leading-relaxed font-medium whitespace-pre-line">{LAB.problem}</p>
-                </div>
-                <div>
-                  <div className="text-[9px] font-black uppercase tracking-[0.18em] text-[#444455] mb-2">Expected Output</div>
-                  <div className="p-3 bg-white/[0.03] border border-white/10 rounded-xl font-mono text-xs text-[#10B981]">{LAB.expected}</div>
-                </div>
-                {/* Hint */}
-                <div>
-                  <button onClick={handleShowHint} className={`w-full flex items-center justify-center gap-2.5 p-3 rounded-xl cursor-pointer text-[10px] font-bold transition-all
+                </section>
+                
+                <section>
+                  <div className="text-[9px] font-black uppercase tracking-[0.2em] text-[#444455] mb-3">02. Expected Output</div>
+                  <div className="p-4 bg-white/[0.03] border border-white/10 rounded-xl font-mono text-xs text-[#10B981] shadow-inner">{LAB.expected}</div>
+                </section>
+
+                <section>
+                  <div className="text-[9px] font-black uppercase tracking-[0.2em] text-[#444455] mb-3">03. Support & Hints</div>
+                  <button onClick={handleShowHint} className={`w-full flex items-center justify-center gap-2.5 p-3.5 rounded-xl cursor-pointer text-[10px] font-bold transition-all shadow-lg
                     ${hintUsed ? 'bg-amber-500/5 border border-amber-500/20 text-amber-500/70' : 'bg-amber-500/10 border border-amber-500/30 text-amber-500 hover:bg-amber-500/15'}`}>
-                    <FiHelpCircle size={13} /> {showHint ? 'Hide Hint' : hintUsed ? 'Show Hint' : 'Show Hint (−5 XP)'}
+                    <FiHelpCircle size={14} /> {showHint ? 'Hide Hint' : hintUsed ? 'Show Hint' : 'Show Hint (−5 XP)'}
                   </button>
-                  {showHint && (
-                    <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
-                      className="mt-3 p-4 bg-amber-500/5 border border-amber-500/20 rounded-xl text-xs text-amber-200/80 leading-relaxed shadow-lg">
-                      💡 {LAB.hint}
-                    </motion.div>
-                  )}
-                </div>
+                  <AnimatePresence>
+                    {showHint && (
+                      <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
+                        className="mt-4 p-5 bg-amber-500/5 border border-amber-500/20 rounded-xl text-xs text-amber-200/80 leading-relaxed shadow-xl backdrop-blur-sm">
+                        <span className="font-black text-amber-500 mr-2">HINT:</span> {LAB.hint}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </section>
               </div>
-            ) : (
-              <div className="flex flex-col gap-3">
-                <div className="text-[9px] font-black uppercase tracking-[0.18em] text-[#444455] mb-1">Test Cases</div>
+            )}
+
+            {/* TEST CASES SECTION */}
+            {(isMobile || left === 'tests') && (
+              <div className="flex flex-col gap-4 pb-12">
+                <div className="text-[9px] font-black uppercase tracking-[0.2em] text-[#444455] mb-2">{isMobile ? '04. Verification Cases' : 'Test Cases'}</div>
                 {LAB.tests.map((t, i) => {
                   const result = testResults[i];
                   return (
-                    <div key={i} className={`p-4 bg-white/[0.02] border rounded-xl transition-all ${result ? (result.pass ? 'border-green-500/30 bg-green-500/[0.02]' : 'border-red-500/30 bg-red-500/[0.02]') : 'border-white/10'}`}>
-                      <div className="flex justify-between items-center mb-2.5">
-                        <span className="text-[9px] font-black text-[#555566] uppercase tracking-wider">Case {String(i + 1).padStart(2, '0')}</span>
+                    <div key={i} className={`p-4 bg-white/[0.02] border rounded-xl transition-all duration-300 ${result ? (result.pass ? 'border-green-500/30 bg-green-500/[0.03]' : 'border-red-500/30 bg-red-500/[0.03]') : 'border-white/10'}`}>
+                      <div className="flex justify-between items-center mb-3">
+                        <span className="text-[9px] font-black text-[#555566] uppercase tracking-wider">Scenario {String(i + 1).padStart(2, '0')}</span>
                         {result ? (result.pass ? <FiCheckCircle size={14} className="text-[#10B981]" /> : <FiXCircle size={14} className="text-[#EF4444]" />) : <div className="w-1.5 h-1.5 rounded-full bg-[#444455]" />}
                       </div>
-                      <div className="text-[13px] font-bold text-[#E2E2EE] mb-1.5">{t.label}</div>
-                      <div className="text-[11px] text-[#888899] font-mono opacity-80">{t.input}</div>
-                      <div className="text-[11px] text-[#10B981] font-mono mt-1">→ {t.expected}</div>
+                      <div className="text-[13px] font-bold text-[#E2E2EE] mb-2">{t.label}</div>
+                      <div className="bg-black/20 p-2.5 rounded-lg border border-white/5 font-mono">
+                        <div className="text-[10px] text-[#888899] opacity-70 mb-1 flex justify-between"><span>Input:</span> <span className="text-[#3B82F6]">{t.input}</span></div>
+                        <div className="text-[10px] text-[#10B981] flex justify-between"><span>Expect:</span> <span>{t.expected}</span></div>
+                      </div>
                     </div>
                   );
                 })}
@@ -647,7 +690,10 @@ Rules:
         </aside>
 
         {/* ─ CENTER: Editor + Terminal ─ */}
-        <main className="flex-1 flex flex-col overflow-hidden min-w-0 bg-[#0D0D0F]">
+        <main className={`
+          ${isMobile ? (activeMobileTab === 'code' ? 'flex' : 'hidden') : 'flex'}
+          flex-1 flex-col overflow-hidden min-w-0 bg-[#0D0D0F] pb-[52px] md:pb-0
+        `}>
 
           {/* File tabs bar */}
           <div className="h-10 bg-[#13131A] border-b border-white/10 flex items-center overflow-x-auto flex-shrink-0 no-scrollbar">
@@ -700,7 +746,7 @@ Rules:
           </AnimatePresence>
 
           {/* Monaco Editor */}
-          <div style={{ flex: 1, overflow: 'hidden' }}>
+          <div className={isMobile ? 'h-[55vh]' : 'flex-1'} style={{ overflow: 'hidden' }}>
             {activeFile && (
               <Editor
                 key={activeFile.id}
@@ -710,8 +756,8 @@ Rules:
                 value={activeFile.content}
                 onChange={v => updateFile(activeFile.id, v || '')}
                 options={{
-                  fontSize: 14, padding: { top: 16 },
-                  minimap: { enabled: true },
+                  fontSize: isMobile ? 14 : 14, padding: { top: 16 },
+                  minimap: { enabled: !isMobile },
                   fontFamily: "'JetBrains Mono', 'Fira Code', Consolas, monospace",
                   renderLineHighlight: 'all',
                   cursorBlinking: 'phase',
@@ -729,7 +775,7 @@ Rules:
           </div>
 
           {/* Terminal */}
-          <div className="h-48 md:h-64 bg-[#0A0A0E] border-t border-white/10 flex flex-col flex-shrink-0 shadow-[0_-8px_30px_rgb(0,0,0,0.5)]">
+          <div className={`${isMobile ? 'h-[30vh]' : 'h-48 md:h-64'} bg-[#0A0A0E] border-t border-white/10 flex flex-col flex-shrink-0 shadow-[0_-8px_30px_rgb(0,0,0,0.5)]`}>
             <div className="h-9 border-b border-white/10 flex items-center justify-between px-4 flex-shrink-0 bg-black/40">
               <div className="flex items-center gap-2.5">
                 <FiTerminal size={11} className="text-[#2DD4BF]" />
@@ -757,6 +803,26 @@ Rules:
             </div>
           </div>
         </main>
+
+        {/* ─ MOBILE BOTTOM BAR ─ */}
+        {isMobile && activeMobileTab === 'code' && (
+          <div className="fixed bottom-0 left-0 right-0 h-[52px] bg-[#13131A] border-t border-white/10 flex z-50">
+            <button 
+              onClick={handleRun}
+              disabled={isRunning || isSubmitting}
+              className="flex-1 flex items-center justify-center gap-2 bg-white/5 text-white text-[11px] font-black uppercase tracking-widest disabled:opacity-50"
+            >
+              <FiPlay size={14} className={isRunning ? 'animate-pulse' : ''} /> Run
+            </button>
+            <button 
+              onClick={handleSubmit}
+              disabled={isRunning || isSubmitting}
+              className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-br from-[#7C3AED] to-[#A855F7] text-white text-[11px] font-black uppercase tracking-widest disabled:opacity-50"
+            >
+              <FiZap size={14} /> Submit
+            </button>
+          </div>
+        )}
 
         {/* ─ RIGHT: AI/Analyzer panel ─ */}
         <AnimatePresence>

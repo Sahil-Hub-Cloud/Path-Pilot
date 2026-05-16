@@ -19,6 +19,7 @@ import { addNotification } from '@/lib/notifications';
 import SkillGraph from '@/components/dashboard/SkillGraph';
 import NotificationBell from '@/components/NotificationBell';
 import { TRACK_DEFAULT_LAB } from '@/lib/data/labs';
+import { ROADMAPS, COURSE_SLUG_MAP } from '@/lib/data/roadmaps';
 
 interface UserProfile {
   displayName?: string;
@@ -33,6 +34,8 @@ interface UserProfile {
   skillScore?: number;
   employabilityScore?: number;
   employabilityLevel?: string;
+  nextRecommendedTopic?: string;
+  recommendationReason?: string;
 }
 
 export default function DashboardPage() {
@@ -357,6 +360,44 @@ export default function DashboardPage() {
           </div>
           {user && <NotificationBell uid={user.uid} />}
         </div>
+
+        {/* YOUR NEXT MISSION */}
+        {profile?.nextRecommendedTopic && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            onClick={() => router.push(`/learn/${courseId}`)}
+            className="group relative overflow-hidden bg-gradient-to-br from-[#006B7A] to-[#2E7D52] rounded-[24px] p-8 mb-8 cursor-pointer shadow-xl shadow-[#006B7A]/25"
+          >
+            {/* Decoration */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+            
+            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="flex items-center gap-6">
+                <div className="w-16 h-16 bg-white/15 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl shadow-lg border border-white/20">
+                  🚀
+                </div>
+                <div>
+                  <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70 mb-2">Your Next Mission</div>
+                  <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight leading-tight mb-2">
+                    {(() => {
+                      const roadmap = ROADMAPS[courseId];
+                      const topic = roadmap?.chapters.flatMap(ch => ch.topics).find(t => t.id === profile.nextRecommendedTopic);
+                      return topic?.title || 'Next Module';
+                    })()}
+                  </h2>
+                  <p className="text-white/80 font-bold text-sm flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 bg-yellow-400 rounded-full animate-pulse" />
+                    {profile.recommendationReason}
+                  </p>
+                </div>
+              </div>
+              <button className="bg-white text-[#006B7A] px-8 py-3.5 rounded-xl font-black text-sm uppercase tracking-wider shadow-lg group-hover:scale-105 transition-all">
+                Launch Mission
+              </button>
+            </div>
+          </motion.div>
+        )}
 
         {/* NUDGE CARD */}
         {inactiveGap > 1 && (
