@@ -102,6 +102,12 @@ service cloud.firestore {
       }
     }
 
+    // Colleges collection
+    match /colleges/{collegeId} {
+      allow create: if request.resource.data.keys().hasAll(['collegeName', 'collegeCode', 'adminName', 'email']);
+      allow read: if request.auth != null;
+    }
+
     // Deny all other access
     match /{document=**} {
       allow read, write: if false;
