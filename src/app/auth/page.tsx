@@ -15,7 +15,7 @@ import {
   GoogleAuthProvider
 } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
-import { setDoc, doc, getDoc } from 'firebase/firestore';
+import { setDoc, doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { fetchResilient } from '@/lib/firestore-resilience';
 
 function AuthForm() {
@@ -30,6 +30,8 @@ function AuthForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({ email: '', password: '', name: '', companyName: '' });
+  const [isEnrolledInCollege, setIsEnrolledInCollege] = useState(false);
+  const [collegeCode, setCollegeCode] = useState('');
 
   // Handle post-auth Firestore writes & redirect — resilient to Firestore being offline
   const handlePostAuth = async (firebaseUser: any, uid: string) => {
@@ -94,7 +96,9 @@ function AuthForm() {
   // Check for a pending redirect result on mount (only relevant after signInWithRedirect)
   useEffect(() => {
     const r = searchParams.get('role');
+    const t = searchParams.get('type');
     if (r === 'company') setRole('company');
+    if (t === 'student') setRole('student');
 
     if (!auth) return;
 
@@ -173,20 +177,44 @@ function AuthForm() {
 
         router.push(targetPath);
       } else {
+        let collegeId = '';
+        if (role === 'student' && isEnrolledInCollege) {
+          if (!collegeCode) {
+            throw { code: 'custom/invalid-college-code', message: 'Please enter a college code.' };
+          }
+          if (db) {
+            const collegesRef = collection(db, 'colleges');
+            const q = query(collegesRef, where('collegeCode', '==', collegeCode));
+            const querySnapshot = await getDocs(q);
+            
+            if (querySnapshot.empty) {
+              throw { code: 'custom/invalid-college-code', message: 'Invalid college code. Ask your college admin for the correct code.' };
+            }
+            collegeId = querySnapshot.docs[0].id;
+          }
+        }
+
         const result = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
         
         // Write profile — with timeout to prevent hanging the UI
         if (db) {
           try {
             const firestoreTimeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), 8000));
+            
+            const userData: any = {
+              displayName: role === 'company' ? formData.companyName : formData.name,
+              email: formData.email,
+              role,
+              onboardingComplete: false,
+              createdAt: new Date().toISOString()
+            };
+            if (role === 'student' && isEnrolledInCollege && collegeId) {
+              userData.collegeCode = collegeCode;
+              userData.collegeId = collegeId;
+            }
+
             await Promise.race([
-              setDoc(doc(db, 'users', result.user.uid), {
-                displayName: role === 'company' ? formData.companyName : formData.name,
-                email: formData.email,
-                role,
-                onboardingComplete: false,
-                createdAt: new Date().toISOString()
-              }),
+              setDoc(doc(db, 'users', result.user.uid), userData),
               firestoreTimeout
             ]);
           } catch (firestoreErr) {
@@ -201,6 +229,7 @@ function AuthForm() {
       
       const msg =
         err.code === 'custom/role-mismatch' ? err.message
+        : err.code === 'custom/invalid-college-code' ? err.message
         : err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential' ? 'Incorrect email or password for this role.'
         : err.code === 'auth/user-not-found' ? 'No account with this email. Create one below.'
         : err.code === 'auth/email-already-in-use' ? 'Email already registered. Try switching to Sign In mode.'
@@ -355,6 +384,34 @@ function AuthForm() {
                     style={inputStyle}
                   />
                 </div>
+
+                {role === 'student' && (
+                  <div style={{ marginTop: 16 }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#2C1A0E', fontWeight: 600, cursor: 'pointer' }}>
+                      <input 
+                        type="checkbox" 
+                        checked={isEnrolledInCollege}
+                        onChange={(e) => setIsEnrolledInCollege(e.target.checked)}
+                        style={{ width: 16, height: 16, cursor: 'pointer', accentColor: '#006B7A' }}
+                      />
+                      I am enrolled in a college using Path Pilot
+                    </label>
+                    <AnimatePresence>
+                      {isEnrolledInCollege && (
+                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1, marginTop: 12 }} exit={{ height: 0, opacity: 0 }}>
+                          <input 
+                            type="text" 
+                            placeholder="Enter your College Code" 
+                            required={isEnrolledInCollege}
+                            value={collegeCode}
+                            onChange={e => setCollegeCode(e.target.value)}
+                            style={inputStyle}
+                          />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
