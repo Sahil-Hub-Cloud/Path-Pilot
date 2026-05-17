@@ -104,8 +104,12 @@ service cloud.firestore {
 
     // Colleges collection
     match /colleges/{collegeId} {
-      allow create: if request.resource.data.keys().hasAll(['collegeName', 'collegeCode', 'adminName', 'email']);
       allow read: if request.auth != null;
+      allow create: if request.resource.data.keys().hasAll(['collegeName', 'collegeCode', 'adminName', 'email']) 
+        && request.resource.data.collegeCode is string
+        && request.resource.data.collegeCode.size() >= 6
+        && request.resource.data.collegeCode.size() <= 10;
+      allow update, delete: if request.auth != null && request.auth.uid == resource.data.adminUid;
     }
 
     // Deny all other access

@@ -148,6 +148,12 @@ export default function CollegeSignupPage() {
         createdAt: new Date().toISOString()
       });
 
+      console.log('SUCCESS: College and User documents created successfully!', {
+        collegeId: newCollegeDoc.id,
+        userId: result.user.uid,
+        role: 'college'
+      });
+
       router.push('/college/dashboard');
     } catch (err: any) {
       console.error("College Signup Error:", err);
