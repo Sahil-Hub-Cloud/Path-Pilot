@@ -52,12 +52,12 @@
   --surface-raised:  #1E1E2E;
   --surface-sunken:  #050508;
 
-  --text-dark:       #E2E2F0;
-  --text-medium:     #A0A0B8;
-  --text-muted:      #707088;
-  --text-light:      #4A4A60;
+  --text-dark:       #F3F4F6;
+  --text-medium:     #D1D5DB;
+  --text-muted:      #9CA3AF;
+  --text-light:      #9CA3AF;
 
-  --border-clay:     rgba(255, 255, 255, 0.08);
+  --border-clay:     #374151;
   --shadow-clay:     rgba(0, 0, 0, 0.4);
 }
 

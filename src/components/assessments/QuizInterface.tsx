@@ -142,7 +142,7 @@ export default function QuizInterface() {
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="max-w-2xl w-full bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-purple-500/30 text-center"
+                    className="max-w-2xl w-full bg-white dark:bg-gray-800/10 backdrop-blur-sm rounded-2xl p-8 border border-purple-500/30 text-center"
                 >
                     <div className="text-8xl mb-4">{passed ? '🎉' : '😕'}</div>
                     <h2 className="text-4xl font-bold text-white mb-2">
@@ -159,17 +159,17 @@ export default function QuizInterface() {
                     )}
 
                     <div className="grid grid-cols-3 gap-4 mb-8">
-                        <div className="p-4 bg-white/5 rounded-xl">
+                        <div className="p-4 bg-white dark:bg-gray-800/5 rounded-xl">
                             <p className="text-purple-300 text-sm">Questions</p>
                             <p className="text-2xl font-bold text-white">{quiz.questions.length}</p>
                         </div>
-                        <div className="p-4 bg-white/5 rounded-xl">
+                        <div className="p-4 bg-white dark:bg-gray-800/5 rounded-xl">
                             <p className="text-purple-300 text-sm">Time Taken</p>
                             <p className="text-2xl font-bold text-white">
                                 {formatTime((quiz.time_limit || 0) - timeLeft)}
                             </p>
                         </div>
-                        <div className="p-4 bg-white/5 rounded-xl">
+                        <div className="p-4 bg-white dark:bg-gray-800/5 rounded-xl">
                             <p className="text-purple-300 text-sm">Passing Score</p>
                             <p className="text-2xl font-bold text-white">{quiz.passing_score}%</p>
                         </div>
@@ -180,7 +180,7 @@ export default function QuizInterface() {
                             Review Answers
                         </button>
                         {!passed && (
-                            <button className="px-8 py-3 bg-white/10 text-white rounded-lg font-semibold hover:bg-white/20 transition-all border border-white/30">
+                            <button className="px-8 py-3 bg-white dark:bg-gray-800/10 text-white rounded-lg font-semibold hover:bg-white dark:bg-gray-800/20 transition-all border border-white/30">
                                 Retake Quiz
                             </button>
                         )}
@@ -220,7 +220,7 @@ export default function QuizInterface() {
                                     ? 'bg-green-500'
                                     : index === currentQuestion
                                         ? 'bg-purple-500'
-                                        : 'bg-white/20'
+                                        : 'bg-white dark:bg-gray-800/20'
                                 }`}
                         />
                     ))}
@@ -233,7 +233,7 @@ export default function QuizInterface() {
                     key={currentQuestion}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-purple-500/30"
+                    className="bg-white dark:bg-gray-800/10 backdrop-blur-sm rounded-2xl p-8 border border-purple-500/30"
                 >
                     <div className="mb-6">
                         <span className="text-purple-300 text-sm font-semibold">
@@ -266,12 +266,12 @@ export default function QuizInterface() {
                                     }}
                                     className={`w-full p-4 rounded-xl text-left transition-all ${isSelected
                                             ? 'bg-purple-600 text-white border-2 border-purple-400'
-                                            : 'bg-white/5 text-white hover:bg-white/10 border-2 border-transparent'
+                                            : 'bg-white dark:bg-gray-800/5 text-white hover:bg-white dark:bg-gray-800/10 border-2 border-transparent'
                                         }`}
                                 >
                                     <div className="flex items-center gap-3">
                                         <div
-                                            className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-white bg-white' : 'border-purple-300'
+                                            className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-white bg-white dark:bg-gray-800' : 'border-purple-300'
                                                 }`}
                                         >
                                             {isSelected && <div className="w-3 h-3 rounded-full bg-purple-600"></div>}
@@ -288,7 +288,7 @@ export default function QuizInterface() {
                         <button
                             onClick={() => setCurrentQuestion((prev) => Math.max(0, prev - 1))}
                             disabled={currentQuestion === 0}
-                            className="px-6 py-3 bg-white/10 text-white rounded-lg font-semibold hover:bg-white/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-6 py-3 bg-white dark:bg-gray-800/10 text-white rounded-lg font-semibold hover:bg-white dark:bg-gray-800/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             ← Previous
                         </button>

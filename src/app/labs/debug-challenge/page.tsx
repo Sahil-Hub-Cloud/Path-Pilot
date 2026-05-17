@@ -109,7 +109,7 @@ export default function DebugChallengePage() {
             <div className="h-16 border-b border-white/5 bg-[#050911]/80 backdrop-blur-xl px-8 flex items-center justify-between">
                 <div className="flex items-center gap-6">
                     <button onClick={() => router.back()} className="text-white/30 hover:text-white transition-all text-sm">EXIT_DEBUG</button>
-                    <div className="w-[1px] h-4 bg-white/10" />
+                    <div className="w-[1px] h-4 bg-white dark:bg-gray-800/10" />
                     <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 text-xs font-black">🐛</div>
                         <div>
@@ -126,7 +126,7 @@ export default function DebugChallengePage() {
                     <select
                         value={difficultyFilter || ''}
                         onChange={(e) => setDifficultyFilter(e.target.value as any || undefined)}
-                        className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-[9px] uppercase tracking-widest text-white/60"
+                        className="bg-white dark:bg-gray-800/5 border border-white/10 rounded-lg px-3 py-1.5 text-[9px] uppercase tracking-widest text-white/60"
                     >
                         <option value="">All Levels</option>
                         <option value="Easy">Easy</option>
@@ -136,7 +136,7 @@ export default function DebugChallengePage() {
                     <select
                         value={languageFilter || ''}
                         onChange={(e) => setLanguageFilter(e.target.value as any || undefined)}
-                        className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-[9px] uppercase tracking-widest text-white/60"
+                        className="bg-white dark:bg-gray-800/5 border border-white/10 rounded-lg px-3 py-1.5 text-[9px] uppercase tracking-widest text-white/60"
                     >
                         <option value="">All Languages</option>
                         <option value="javascript">JavaScript</option>
@@ -146,7 +146,7 @@ export default function DebugChallengePage() {
                     <button
                         onClick={runCode}
                         disabled={isRunning}
-                        className={`px-8 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all ${isRunning ? 'bg-white/5 text-white/20' : 'bg-red-500 text-white hover:bg-red-400'}`}
+                        className={`px-8 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all ${isRunning ? 'bg-white dark:bg-gray-800/5 text-white/20' : 'bg-red-500 text-white hover:bg-red-400'}`}
                     >
                         {isRunning ? 'TESTING...' : 'TEST_FIX'}
                     </button>

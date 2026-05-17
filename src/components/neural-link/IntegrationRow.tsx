@@ -13,7 +13,7 @@ export default function IntegrationRow({ id, name, icon, description, isConnecte
     return (
         <motion.div
             layout
-            className={`flex items-center justify-between p-4 rounded-xl border transition-all duration-300 ${isConnected ? 'bg-cyan-900/10 border-cyan-500/30' : 'bg-white/5 border-white/5'}`}
+            className={`flex items-center justify-between p-4 rounded-xl border transition-all duration-300 ${isConnected ? 'bg-cyan-900/10 border-cyan-500/30' : 'bg-white dark:bg-gray-800/5 border-white/5'}`}
         >
             <div className="flex items-center gap-4">
                 <div className={`text-2xl ${isConnected ? 'opacity-100' : 'opacity-50 grayscale'}`}>

@@ -102,7 +102,7 @@ export default function XPSystem({ userId, currentXP = 0, currentLevel = 1 }: XP
                         ].map((gain, index) => (
                             <div
                                 key={index}
-                                className="flex items-center justify-between p-2 bg-white/5 rounded-lg"
+                                className="flex items-center justify-between p-2 bg-white dark:bg-gray-800/5 rounded-lg"
                             >
                                 <span className="text-sm text-purple-200">{gain.source}</span>
                                 <span className="text-green-400 font-bold">+{gain.amount} XP</span>

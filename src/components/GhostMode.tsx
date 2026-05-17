@@ -49,7 +49,7 @@ export default function GhostMode({ isActive, onDeactivate }: GhostModeProps) {
                             Neural Shield // Focus Lock // 1.5x Efficiency
                         </p>
 
-                        <div className="bg-white/5 border border-white/5 p-6 rounded-2xl space-y-4">
+                        <div className="bg-white dark:bg-gray-800/5 border border-white/5 p-6 rounded-2xl space-y-4">
                             <div className="flex justify-between items-center">
                                 <span className="text-[9px] font-black uppercase tracking-widest text-white/20">Distraction Block</span>
                                 <span className="text-[9px] font-black uppercase tracking-widest text-emerald-400">Locked</span>
@@ -72,7 +72,7 @@ export default function GhostMode({ isActive, onDeactivate }: GhostModeProps) {
                     {/* Action Button */}
                     <button
                         onClick={onDeactivate}
-                        className="mt-12 px-12 py-4 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-purple-500/50 transition-all rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] text-white/40 hover:text-white"
+                        className="mt-12 px-12 py-4 bg-white dark:bg-gray-800/5 border border-white/10 hover:bg-white dark:bg-gray-800/10 hover:border-purple-500/50 transition-all rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] text-white/40 hover:text-white"
                     >
                         Terminate Protocol
                     </button>

@@ -74,19 +74,19 @@ export default function DiscussionForum() {
             </div>
 
             {/* Search & Filter */}
-            <div className="max-w-6xl mx-auto mb-8 bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+            <div className="max-w-6xl mx-auto mb-8 bg-white dark:bg-gray-800/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                     <input
                         type="text"
                         placeholder="Search topics..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="md:col-span-2 px-4 py-2 bg-white/10 text-white placeholder-purple-300 border border-purple-500/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        className="md:col-span-2 px-4 py-2 bg-white dark:bg-gray-800/10 text-white placeholder-purple-300 border border-purple-500/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                     <select
                         value={sortBy}
                         onChange={(e) => setSortBy(e.target.value as any)}
-                        className="px-4 py-2 bg-white/10 text-white border border-purple-500/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        className="px-4 py-2 bg-white dark:bg-gray-800/10 text-white border border-purple-500/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                     >
                         <option value="recent">Most Recent</option>
                         <option value="popular">Most Popular</option>
@@ -99,7 +99,7 @@ export default function DiscussionForum() {
                     <span className="text-purple-300 text-sm self-center">Tags:</span>
                     <button
                         onClick={() => setSelectedTag(null)}
-                        className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${!selectedTag ? 'bg-purple-600 text-white' : 'bg-white/10 text-purple-300 hover:bg-white/20'
+                        className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${!selectedTag ? 'bg-purple-600 text-white' : 'bg-white dark:bg-gray-800/10 text-purple-300 hover:bg-white dark:bg-gray-800/20'
                             }`}
                     >
                         All
@@ -110,7 +110,7 @@ export default function DiscussionForum() {
                             onClick={() => setSelectedTag(tag)}
                             className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${selectedTag === tag
                                     ? 'bg-purple-600 text-white'
-                                    : 'bg-white/10 text-purple-300 hover:bg-white/20'
+                                    : 'bg-white dark:bg-gray-800/10 text-purple-300 hover:bg-white dark:bg-gray-800/20'
                                 }`}
                         >
                             {tag}
@@ -134,7 +134,7 @@ export default function DiscussionForum() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.05 }}
-                        className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-6 hover:bg-white/15 transition-all cursor-pointer"
+                        className="bg-white dark:bg-gray-800/10 backdrop-blur-sm border border-white/20 rounded-xl p-6 hover:bg-white dark:bg-gray-800/15 transition-all cursor-pointer"
                     >
                         <div className="flex items-start gap-4">
                             {/* Vote Section */}
@@ -176,7 +176,7 @@ export default function DiscussionForum() {
                                 {/* Tags */}
                                 <div className="flex flex-wrap gap-2 mb-3">
                                     {topic.tags.map((tag) => (
-                                        <span key={tag} className="px-2 py-1 bg-white/10 rounded text-xs text-purple-300">
+                                        <span key={tag} className="px-2 py-1 bg-white dark:bg-gray-800/10 rounded text-xs text-purple-300">
                                             {tag}
                                         </span>
                                     ))}

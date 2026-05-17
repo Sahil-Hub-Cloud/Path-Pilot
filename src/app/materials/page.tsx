@@ -40,33 +40,33 @@ export default function MaterialsListPage() {
   }, [isReady, user, router]);
 
   if (!isReady || loading) {
-    return <div className="min-h-screen bg-[#FDF6EC] flex items-center justify-center font-bold text-[#8B6E52]">Loading Materials...</div>;
+    return <div className="min-h-screen bg-[#FDF6EC] flex items-center justify-center font-bold text-gray-600 dark:text-gray-400">Loading Materials...</div>;
   }
 
   return (
     <div className="min-h-screen bg-[#FDF6EC] p-8 md:p-12">
       <div className="max-w-5xl mx-auto">
-        <button onClick={() => router.push('/dashboard')} className="mb-6 bg-white border-2 border-[#B48C5A]/30 w-10 h-10 rounded-xl flex items-center justify-center text-[#8B6E52] hover:bg-[#F5E8D4] transition-colors">
+        <button onClick={() => router.push('/dashboard')} className="mb-6 bg-white dark:bg-gray-800 border-2 border-[#B48C5A]/30 dark:border-gray-700 w-10 h-10 rounded-xl flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-[#F5E8D4] transition-colors">
           <FiArrowLeft />
         </button>
-        <h1 className="text-3xl font-black text-[#2C1A0E] mb-2">College Materials</h1>
-        <p className="text-[#8B6E52] font-semibold mb-8">Access AI-generated flashcards, formulas, and quizzes for your coursework.</p>
+        <h1 className="text-3xl font-black text-gray-900 dark:text-gray-100 mb-2">College Materials</h1>
+        <p className="text-gray-600 dark:text-gray-400 font-semibold mb-8">Access AI-generated flashcards, formulas, and quizzes for your coursework.</p>
 
         {subjects.length === 0 ? (
-          <div className="bg-white border-2 border-[#B48C5A]/30 rounded-2xl p-10 text-center text-[#8B6E52] font-bold">
+          <div className="bg-white dark:bg-gray-800 border-2 border-[#B48C5A]/30 dark:border-gray-700 rounded-2xl p-10 text-center text-gray-600 dark:text-gray-400 font-bold">
             No materials have been uploaded by your college yet.
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {subjects.map((sub, i) => (
               <motion.div key={sub.id} whileHover={{ y: -4 }} onClick={() => router.push(`/materials/${sub.id}`)}
-                className="bg-white border-2 border-[#B48C5A]/25 rounded-2xl p-6 cursor-pointer shadow-sm hover:shadow-xl transition-all"
+                className="bg-white dark:bg-gray-800 border-2 border-[#B48C5A]/25 dark:border-gray-700 rounded-2xl p-6 cursor-pointer shadow-sm hover:shadow-xl transition-all"
               >
                 <div className="w-12 h-12 bg-gradient-to-br from-[#006B7A] to-[#2E7D52] rounded-xl flex items-center justify-center text-white mb-4 shadow-md">
                   <FiBook size={20} />
                 </div>
-                <h3 className="font-black text-xl text-[#2C1A0E] leading-tight mb-2">{sub.subjectName}</h3>
-                <div className="flex items-center gap-4 text-xs font-bold text-[#8B6E52]">
+                <h3 className="font-black text-xl text-gray-900 dark:text-gray-100 leading-tight mb-2">{sub.subjectName}</h3>
+                <div className="flex items-center gap-4 text-xs font-bold text-gray-600 dark:text-gray-400">
                   <span className="flex items-center gap-1 bg-[#F5E8D4] px-2 py-1 rounded-md"><FiLayers /> Sem {sub.semester}</span>
                   <span className="flex items-center gap-1 bg-[#F5E8D4] px-2 py-1 rounded-md"><FiClock /> {sub.totalTopics} Topics</span>
                 </div>

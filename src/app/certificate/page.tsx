@@ -159,7 +159,7 @@ export default function CertificatePage() {
     if (!isComplete) {
         return (
             <div className="min-h-screen bg-[#0A0A0E] flex flex-col items-center justify-center p-6 text-center">
-                <div className="w-24 h-24 bg-white/5 rounded-[32px] border border-white/10 flex items-center justify-center text-4xl mb-8 shadow-2xl">🔒</div>
+                <div className="w-24 h-24 bg-white dark:bg-gray-800/5 rounded-[32px] border border-white/10 flex items-center justify-center text-4xl mb-8 shadow-2xl">🔒</div>
                 <h2 className="text-2xl md:text-4xl font-black text-white mb-4 tracking-tight">Certificate Locked</h2>
                 <p className="text-[#888899] text-sm md:text-base max-w-md mb-8 leading-relaxed">
                     Complete your course to unlock your certificate. You have <span className="text-[#7C3AED] font-bold">{remainingCount} topics</span> remaining in your learning path.

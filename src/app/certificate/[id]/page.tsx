@@ -106,7 +106,7 @@ export default function CertificatePage() {
 
         <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="max-w-md w-full space-y-8">
           <div className="flex justify-center">
-            <div className="w-24 h-24 bg-white/5 rounded-[2rem] border-2 border-white/10 flex items-center justify-center relative">
+            <div className="w-24 h-24 bg-white dark:bg-gray-800/5 rounded-[2rem] border-2 border-white/10 flex items-center justify-center relative">
               <FiLock className="text-4xl text-[#555566]" />
               <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-[#7C3AED] rounded-full flex items-center justify-center shadow-lg border-4 border-[#0D0D0D]">
                 <FiCpu className="text-white text-xs" />
@@ -122,7 +122,7 @@ export default function CertificatePage() {
             </p>
           </div>
 
-          <div className="p-1 bg-white/5 rounded-2xl border border-white/10">
+          <div className="p-1 bg-white dark:bg-gray-800/5 rounded-2xl border border-white/10">
             <div className="flex items-center justify-between p-4 bg-black/40 rounded-xl">
                <div className="flex items-center gap-3">
                  <div className="w-8 h-8 rounded-lg bg-[#10B981]/10 flex items-center justify-center text-[#10B981]">
@@ -181,7 +181,7 @@ export default function CertificatePage() {
 
            <div className="space-y-4">
               <div className="flex justify-center mb-8">
-                 <div className="w-20 h-20 bg-white/5 rounded-2xl flex items-center justify-center relative">
+                 <div className="w-20 h-20 bg-white dark:bg-gray-800/5 rounded-2xl flex items-center justify-center relative">
                     <FiAward className="text-4xl text-[#7C3AED]" />
                     <div className="absolute -top-2 -right-2 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center border-4 border-[#111]">
                        <FiCheckCircle className="text-white text-[10px]" />
@@ -199,7 +199,7 @@ export default function CertificatePage() {
 
            <div className="space-y-4">
               <p className="text-[#888899] font-medium text-xs md:text-sm">for mastering the comprehensive curriculum and technical labs of</p>
-              <h3 className="text-xl md:text-3xl font-black text-white px-8 py-4 bg-white/5 inline-block rounded-2xl border border-white/5 shadow-inner">
+              <h3 className="text-xl md:text-3xl font-black text-white px-8 py-4 bg-white dark:bg-gray-800/5 inline-block rounded-2xl border border-white/5 shadow-inner">
                  {courseName}
               </h3>
            </div>
@@ -222,7 +222,7 @@ export default function CertificatePage() {
 
            {/* QR Section */}
            <div className="flex justify-center pt-8">
-              <div className="p-3 bg-white/5 border border-white/10 rounded-2xl">
+              <div className="p-3 bg-white dark:bg-gray-800/5 border border-white/10 rounded-2xl">
                  {qrDataUrl && <img src={qrDataUrl} alt="Verification" className="w-16 h-16 opacity-80" />}
               </div>
            </div>
@@ -230,13 +230,13 @@ export default function CertificatePage() {
 
         {/* ACTION BUTTONS */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 mb-20 print:hidden">
-           <button onClick={handleDownload} className="flex items-center justify-center gap-3 bg-white text-black py-5 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-[#7C3AED] hover:text-white transition-all shadow-xl shadow-white/5">
+           <button onClick={handleDownload} className="flex items-center justify-center gap-3 bg-white dark:bg-gray-800 text-black py-5 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-[#7C3AED] hover:text-white transition-all shadow-xl shadow-white/5">
               <FiDownload size={18} /> Download Credentials
            </button>
-           <button onClick={shareLinkedIn} className="flex items-center justify-center gap-3 bg-white/5 border border-white/10 py-5 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-[#0077B5] hover:border-[#0077B5] transition-all">
+           <button onClick={shareLinkedIn} className="flex items-center justify-center gap-3 bg-white dark:bg-gray-800/5 border border-white/10 py-5 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-[#0077B5] hover:border-[#0077B5] transition-all">
               <FiLinkedin size={18} /> Add to Profile
            </button>
-           <button className="flex items-center justify-center gap-3 bg-white/5 border border-white/10 py-5 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-[#24292F] transition-all">
+           <button className="flex items-center justify-center gap-3 bg-white dark:bg-gray-800/5 border border-white/10 py-5 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-[#24292F] transition-all">
               <FiGithub size={18} /> GitHub Verification
            </button>
         </div>
@@ -257,9 +257,9 @@ export default function CertificatePage() {
           .text-white { color: black !important; }
           .text-[#888899], .text-[#555566], .text-muted { color: #444 !important; }
           .text-[#A78BFA] { color: #000 !important; font-weight: 900 !important; }
-          .bg-white\/5 { background: #fff !important; border: 1px solid #ddd !important; }
+          .bg-white dark:bg-gray-800\/5 { background: #fff !important; border: 1px solid #ddd !important; }
           .w-24.h-1 { background: #000 !important; }
-          .bg-white { color: black !important; }
+          .bg-white dark:bg-gray-800 { color: black !important; }
           button { display: none !important; }
           .border-t { border-top: 1px solid #000 !important; }
           .border { border: 1px solid #000 !important; }

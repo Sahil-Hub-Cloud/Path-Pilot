@@ -144,8 +144,8 @@ export default function SkillGraph({ modules }: SkillGraphProps) {
             <div className="absolute bottom-6 right-8">
                 <div className="flex gap-2">
                     <div className="w-2 h-2 rounded-full bg-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.5)]" />
-                    <div className="w-2 h-2 rounded-full bg-white/10" />
-                    <div className="w-2 h-2 rounded-full bg-white/10" />
+                    <div className="w-2 h-2 rounded-full bg-white dark:bg-gray-800/10" />
+                    <div className="w-2 h-2 rounded-full bg-white dark:bg-gray-800/10" />
                 </div>
             </div>
         </div>

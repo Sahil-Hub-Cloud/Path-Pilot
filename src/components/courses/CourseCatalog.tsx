@@ -122,7 +122,7 @@ export default function CourseCatalog({ onCourseSelect }: Props) {
             </div>
 
             {/* Filters */}
-            <div className="max-w-7xl mx-auto mb-8 bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+            <div className="max-w-7xl mx-auto mb-8 bg-white dark:bg-gray-800/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     {/* Search */}
                     <div className="md:col-span-2">
@@ -131,7 +131,7 @@ export default function CourseCatalog({ onCourseSelect }: Props) {
                             placeholder="Search courses..."
                             value={filters.search}
                             onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-                            className="w-full px-4 py-2 bg-white/10 text-white placeholder-purple-300 border border-purple-500/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            className="w-full px-4 py-2 bg-white dark:bg-gray-800/10 text-white placeholder-purple-300 border border-purple-500/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                         />
                     </div>
 
@@ -142,7 +142,7 @@ export default function CourseCatalog({ onCourseSelect }: Props) {
                             onChange={(e) =>
                                 setFilters({ ...filters, sort_by: e.target.value as any })
                             }
-                            className="w-full px-4 py-2 bg-white/10 text-white border border-purple-500/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            className="w-full px-4 py-2 bg-white dark:bg-gray-800/10 text-white border border-purple-500/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                         >
                             <option value="popularity">Most Popular</option>
                             <option value="rating">Highest Rated</option>
@@ -157,7 +157,7 @@ export default function CourseCatalog({ onCourseSelect }: Props) {
                             onClick={() => setViewMode('grid')}
                             className={`flex-1 py-2 rounded-lg ${viewMode === 'grid'
                                 ? 'bg-purple-600 text-white'
-                                : 'bg-white/10 text-purple-300'
+                                : 'bg-white dark:bg-gray-800/10 text-purple-300'
                                 }`}
                         >
                             Grid
@@ -166,7 +166,7 @@ export default function CourseCatalog({ onCourseSelect }: Props) {
                             onClick={() => setViewMode('list')}
                             className={`flex-1 py-2 rounded-lg ${viewMode === 'list'
                                 ? 'bg-purple-600 text-white'
-                                : 'bg-white/10 text-purple-300'
+                                : 'bg-white dark:bg-gray-800/10 text-purple-300'
                                 }`}
                         >
                             List
@@ -183,7 +183,7 @@ export default function CourseCatalog({ onCourseSelect }: Props) {
                             onClick={() => toggleDifficultyFilter(diff)}
                             className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${filters.difficulty?.includes(diff)
                                 ? 'bg-purple-600 text-white'
-                                : 'bg-white/10 text-purple-300 hover:bg-white/20'
+                                : 'bg-white dark:bg-gray-800/10 text-purple-300 hover:bg-white dark:bg-gray-800/20'
                                 }`}
                         >
                             {diff}
@@ -207,7 +207,7 @@ export default function CourseCatalog({ onCourseSelect }: Props) {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.05 }}
-                            className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl overflow-hidden hover:bg-white/20 transition-all cursor-pointer group"
+                            className="bg-white dark:bg-gray-800/10 backdrop-blur-sm border border-white/20 rounded-xl overflow-hidden hover:bg-white dark:bg-gray-800/20 transition-all cursor-pointer group"
                             onClick={() => onCourseSelect(course)}
                         >
                             {/* Thumbnail */}
@@ -258,7 +258,7 @@ export default function CourseCatalog({ onCourseSelect }: Props) {
                                     {course.tags?.slice(0, 3).map((tag) => (
                                         <span
                                             key={tag}
-                                            className="px-2 py-1 bg-white/10 rounded text-xs text-white"
+                                            className="px-2 py-1 bg-white dark:bg-gray-800/10 rounded text-xs text-white"
                                         >
                                             {tag}
                                         </span>

@@ -44,7 +44,7 @@ export default function NeuralLinkModal({ isOpen, onClose, onReboot }: NeuralLin
                         className="relative w-full max-w-2xl bg-[#0f1623]/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_0_80px_rgba(6,182,212,0.15)] overflow-hidden"
                     >
                         {/* Header */}
-                        <div className="px-6 py-5 border-b border-white/5 flex justify-between items-center bg-white/5 relative overflow-hidden">
+                        <div className="px-6 py-5 border-b border-white/5 flex justify-between items-center bg-white dark:bg-gray-800/5 relative overflow-hidden">
                             {/* Top Highlight */}
                             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent opacity-50" />
 
@@ -60,7 +60,7 @@ export default function NeuralLinkModal({ isOpen, onClose, onReboot }: NeuralLin
                             </div>
                             <button
                                 onClick={onClose}
-                                className="p-2 -mr-2 hover:bg-white/10 rounded-full text-slate-400 hover:text-white transition-colors"
+                                className="p-2 -mr-2 hover:bg-white dark:bg-gray-800/10 rounded-full text-slate-400 hover:text-white transition-colors"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                             </button>

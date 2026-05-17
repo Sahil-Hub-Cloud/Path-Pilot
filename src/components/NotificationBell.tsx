@@ -104,7 +104,7 @@ export default function NotificationBell({ uid }: NotificationBellProps) {
             initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            className="clay-card fixed md:absolute top-16 md:top-14 right-4 md:right-0 w-[calc(100vw-32px)] md:w-80 max-h-[440px] overflow-hidden flex flex-col z-[1000] bg-white border-[2.5px] border-[#B48C5A]/20 shadow-2xl"
+            className="clay-card fixed md:absolute top-16 md:top-14 right-4 md:right-0 w-[calc(100vw-32px)] md:w-80 max-h-[440px] overflow-hidden flex flex-col z-[1000] bg-white dark:bg-gray-800 border-[2.5px] border-[#B48C5A]/20 dark:border-gray-700 shadow-2xl"
           >
             <div style={{ padding: '20px 24px', borderBottom: '1.5px solid rgba(180,140,90,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h3 style={{ fontSize: 13, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#2C1A0E' }}>Notifications</h3>

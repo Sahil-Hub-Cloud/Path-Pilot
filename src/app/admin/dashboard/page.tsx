@@ -576,7 +576,7 @@ export default function AdminDashboard() {
                     </nav>
 
                     {/* Sidebar Footer */}
-                    <div className="mt-12 p-6 rounded-3xl bg-white border border-slate-100 shadow-sm relative overflow-hidden">
+                    <div className="mt-12 p-6 rounded-3xl bg-white dark:bg-gray-800 border border-slate-100 shadow-sm relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-16 h-16 bg-indigo-50 opacity-30 rounded-bl-full" />
                         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600 mb-2">Corporate Insight</p>
                         <p className="text-[11px] font-medium leading-relaxed text-slate-500">
@@ -601,7 +601,7 @@ export default function AdminDashboard() {
                                     {/* Executive Onboarding Guide (Visible when empty) */}
                                     {cohorts.length === 0 && (
                                         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} 
-                                            className="p-10 rounded-[48px] bg-white border-2 border-dashed border-indigo-100 mb-10 text-center relative overflow-hidden group">
+                                            className="p-10 rounded-[48px] bg-white dark:bg-gray-800 border-2 border-dashed border-indigo-100 mb-10 text-center relative overflow-hidden group">
                                             <div className="absolute inset-0 bg-indigo-50/30 opacity-0 group-hover:opacity-100 transition-opacity" />
                                             <div className="relative z-10 max-w-2xl mx-auto">
                                                 <div className="w-20 h-20 rounded-3xl bg-indigo-600 text-white flex items-center justify-center text-3xl mx-auto mb-8 shadow-2xl shadow-indigo-200">
@@ -616,10 +616,10 @@ export default function AdminDashboard() {
                                                         { step: '02', title: 'Upload Assets', desc: 'Populate your repository with PDFs or Videos.', icon: '📁', action: () => setActiveTab('content') },
                                                         { step: '03', title: 'Invite Interns', desc: 'Securely onboard staff via corporate email.', icon: '👥', action: () => setActiveTab('students') },
                                                     ].map((step, i) => (
-                                                        <div key={i} onClick={step.action} className="p-6 rounded-[32px] bg-slate-50 border border-slate-100 cursor-pointer hover:bg-white hover:border-indigo-200 hover:shadow-xl transition-all group/step">
+                                                        <div key={i} onClick={step.action} className="p-6 rounded-[32px] bg-slate-50 border border-slate-100 cursor-pointer hover:bg-white dark:bg-gray-800 hover:border-indigo-200 hover:shadow-xl transition-all group/step">
                                                             <div className="flex items-center justify-between mb-4">
                                                                 <span className="text-2xl">{step.icon}</span>
-                                                                <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest bg-white px-2 py-1 rounded-md border border-indigo-50">Step {step.step}</span>
+                                                                <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest bg-white dark:bg-gray-800 px-2 py-1 rounded-md border border-indigo-50">Step {step.step}</span>
                                                             </div>
                                                             <h4 className="font-black text-slate-900 mb-1 group-hover/step:text-indigo-600 transition-colors">{step.title}</h4>
                                                             <p className="text-[11px] text-slate-500 font-medium leading-tight">{step.desc}</p>
@@ -639,7 +639,7 @@ export default function AdminDashboard() {
                                             { label: 'Seat Allocation', value: `${users.length}/50`, icon: '💺', color: '#7C3AED' },
                                         ].map((stat, i) => (
                                             <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
-                                                className="p-8 rounded-[32px] bg-white border border-slate-100 shadow-[0_10px_35px_rgba(15,23,42,0.03)] group hover:shadow-xl transition-all border-b-4"
+                                                className="p-8 rounded-[32px] bg-white dark:bg-gray-800 border border-slate-100 shadow-[0_10px_35px_rgba(15,23,42,0.03)] group hover:shadow-xl transition-all border-b-4"
                                                 style={{ borderBottomColor: stat.color }}>
                                                 <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-xl mb-6 bg-slate-50 border border-slate-100 group-hover:scale-110 transition-transform" style={{ color: stat.color }}>
                                                     {stat.icon}
@@ -666,15 +666,15 @@ export default function AdminDashboard() {
                                             ) : (
                                                 <div className="space-y-3">
                                                     {cohorts.slice(0, 4).map(c => (
-                                                        <div key={c.id} className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 transition-all hover:bg-white hover:shadow-sm">
+                                                        <div key={c.id} className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 transition-all hover:bg-white dark:bg-gray-800 hover:shadow-sm">
                                                             <div className="flex items-center gap-4">
-                                                                <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-sm">🏢</div>
+                                                                <div className="w-10 h-10 rounded-xl bg-white dark:bg-gray-800 border border-slate-100 flex items-center justify-center text-sm">🏢</div>
                                                                 <div>
                                                                     <p className="font-bold text-xs text-slate-900">{c.name}</p>
                                                                     <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mt-0.5">LMS Space Operational</p>
                                                                 </div>
                                                             </div>
-                                                            <span className="text-[10px] px-3 py-1.5 rounded-lg font-black uppercase tracking-widest bg-white border border-slate-100 text-indigo-600">Active</span>
+                                                            <span className="text-[10px] px-3 py-1.5 rounded-lg font-black uppercase tracking-widest bg-white dark:bg-gray-800 border border-slate-100 text-indigo-600">Active</span>
                                                         </div>
                                                     ))}
                                                 </div>
@@ -733,7 +733,7 @@ export default function AdminDashboard() {
                                     </div>
 
                                     {/* Deployment Console (Create) */}
-                                    <div className="p-8 rounded-[32px] bg-white border border-slate-100 shadow-sm mb-10">
+                                    <div className="p-8 rounded-[32px] bg-white dark:bg-gray-800 border border-slate-100 shadow-sm mb-10">
                                         <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600 mb-6">Unit Deployment</h3>
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                             <div className="space-y-1.5">
@@ -770,7 +770,7 @@ export default function AdminDashboard() {
                                     </div>
 
                                     {/* Active Units Inventory */}
-                                    <div className="p-8 rounded-[32px] bg-white border border-slate-100 shadow-sm">
+                                    <div className="p-8 rounded-[32px] bg-white dark:bg-gray-800 border border-slate-100 shadow-sm">
                                         <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600 mb-6">Active Unit Inventory</h3>
                                         {cohorts.length === 0 ? (
                                             <div className="py-20 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-200">
@@ -779,7 +779,7 @@ export default function AdminDashboard() {
                                         ) : (
                                             <div className="space-y-4">
                                                 {cohorts.map(c => (
-                                                    <div key={c.id} className="flex items-center justify-between p-6 rounded-2xl border border-slate-50 bg-white hover:border-indigo-100 transition-all group">
+                                                    <div key={c.id} className="flex items-center justify-between p-6 rounded-2xl border border-slate-50 bg-white dark:bg-gray-800 hover:border-indigo-100 transition-all group">
                                                         <div className="flex items-center gap-6">
                                                             <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-xl bg-slate-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all">
                                                                 🏢
@@ -825,7 +825,7 @@ export default function AdminDashboard() {
                                     </div>
 
                                     {/* Asset Ingestion (Upload) */}
-                                    <div className="p-8 rounded-[32px] bg-white border border-slate-100 shadow-sm mb-10">
+                                    <div className="p-8 rounded-[32px] bg-white dark:bg-gray-800 border border-slate-100 shadow-sm mb-10">
                                         <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600 mb-6">Asset Ingestion</h3>
                                         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                                             <div className="space-y-1.5 col-span-1 md:col-span-1">
@@ -869,7 +869,7 @@ export default function AdminDashboard() {
                                     </div>
 
                                     {/* Secure Repository Flow */}
-                                    <div className="p-8 rounded-[32px] bg-white border border-slate-100 shadow-sm">
+                                    <div className="p-8 rounded-[32px] bg-white dark:bg-gray-800 border border-slate-100 shadow-sm">
                                         <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600 mb-6">Archive Vault ({content.length} Assets)</h3>
                                         {content.length === 0 ? (
                                             <div className="py-20 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-200">
@@ -878,7 +878,7 @@ export default function AdminDashboard() {
                                         ) : (
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 {content.map(c => (
-                                                    <div key={c.id} className="flex items-center justify-between p-5 rounded-2xl border border-slate-50 bg-white hover:border-indigo-100 transition-all group">
+                                                    <div key={c.id} className="flex items-center justify-between p-5 rounded-2xl border border-slate-50 bg-white dark:bg-gray-800 hover:border-indigo-100 transition-all group">
                                                         <div className="flex items-center gap-5">
                                                             <div className="w-12 h-12 rounded-xl flex items-center justify-center text-xl bg-slate-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all">
                                                                 {c.content_type === 'pdf' ? '📄' : c.content_type === 'video' ? '🎬' : '🔗'}
@@ -921,7 +921,7 @@ export default function AdminDashboard() {
                                     </div>
 
                                     {/* Bulk Ingestion Console */}
-                                    <div className="p-8 rounded-[32px] bg-white border border-slate-100 shadow-sm mb-10">
+                                    <div className="p-8 rounded-[32px] bg-white dark:bg-gray-800 border border-slate-100 shadow-sm mb-10">
                                         <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600 mb-6">Bulk Ingestion Protocol</h3>
                                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 ml-1">
                                             Format: <span className="font-mono text-indigo-600">Full Name, Corporate Email</span> (One entry per line)
@@ -966,7 +966,7 @@ export default function AdminDashboard() {
                                     </div>
 
                                     {/* Personnel Registry */}
-                                    <div className="p-8 rounded-[32px] bg-white border border-slate-100 shadow-sm overflow-hidden">
+                                    <div className="p-8 rounded-[32px] bg-white dark:bg-gray-800 border border-slate-100 shadow-sm overflow-hidden">
                                         <div className="flex items-center justify-between mb-8">
                                             <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600">Personnel Registry</h3>
                                             <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 bg-slate-100 text-slate-500 rounded-lg">
@@ -1179,13 +1179,13 @@ export default function AdminDashboard() {
                                                     value={copilotTopic}
                                                     onChange={e => setCopilotTopic(e.target.value)}
                                                     placeholder="e.g. Memory Management"
-                                                    className="w-full px-5 py-4 rounded-xl bg-white/5 border border-white/10 text-white text-sm font-bold outline-none focus:ring-1 focus:ring-indigo-500/50 transition-all"
+                                                    className="w-full px-5 py-4 rounded-xl bg-white dark:bg-gray-800/5 border border-white/10 text-white text-sm font-bold outline-none focus:ring-1 focus:ring-indigo-500/50 transition-all"
                                                 />
                                             </div>
                                             <div className="space-y-1.5">
                                                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Complexity Level</p>
                                                 <select value={copilotDifficulty} onChange={e => setCopilotDifficulty(e.target.value)} 
-                                                    className="w-full px-5 py-4 rounded-xl bg-white/5 border border-white/10 text-white text-sm font-bold outline-none focus:ring-1 focus:ring-indigo-500/50 transition-all appearance-none"
+                                                    className="w-full px-5 py-4 rounded-xl bg-white dark:bg-gray-800/5 border border-white/10 text-white text-sm font-bold outline-none focus:ring-1 focus:ring-indigo-500/50 transition-all appearance-none"
                                                 >
                                                     <option value="easy">Level: Foundation</option>
                                                     <option value="medium">Level: Intermediate</option>
@@ -1213,7 +1213,7 @@ export default function AdminDashboard() {
 
                                     {/* Generation Output Terminal */}
                                     {copilotResult && (
-                                        <div className="p-8 rounded-[40px] bg-white border border-slate-100 shadow-sm">
+                                        <div className="p-8 rounded-[40px] bg-white dark:bg-gray-800 border border-slate-100 shadow-sm">
                                             <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600 mb-8">Generated Logic Stream</h3>
                                             {Array.isArray(copilotResult) ? (
                                                 <div className="space-y-6">
@@ -1228,7 +1228,7 @@ export default function AdminDashboard() {
                                                             {q.options && (
                                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4 ml-9">
                                                                     {q.options.map((opt: string, j: number) => (
-                                                                        <div key={j} className="px-4 py-2 bg-white rounded-lg border border-slate-200 text-xs font-medium text-slate-600">
+                                                                        <div key={j} className="px-4 py-2 bg-white dark:bg-gray-800 rounded-lg border border-slate-200 text-xs font-medium text-slate-600">
                                                                             {opt}
                                                                         </div>
                                                                     ))}
@@ -1271,7 +1271,7 @@ export default function AdminDashboard() {
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                            className="relative w-full max-w-md bg-white rounded-[40px] shadow-2xl border border-slate-100 overflow-hidden"
+                            className="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-[40px] shadow-2xl border border-slate-100 overflow-hidden"
                         >
                             <div className="p-8">
                                 <div className="flex items-center gap-4 mb-8">

@@ -46,7 +46,7 @@ export default function CertificateGenerator({ certificateData, onShare, onDownl
             <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="relative bg-white rounded-2xl shadow-2xl overflow-hidden"
+                className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden"
                 style={{
                     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                 }}
@@ -133,7 +133,7 @@ export default function CertificateGenerator({ certificateData, onShare, onDownl
                 </button>
                 <button
                     onClick={onShare}
-                    className="px-8 py-3 bg-white/10 text-white rounded-lg font-semibold hover:bg-white/20 transition-all border border-white/30"
+                    className="px-8 py-3 bg-white dark:bg-gray-800/10 text-white rounded-lg font-semibold hover:bg-white dark:bg-gray-800/20 transition-all border border-white/30"
                 >
                     🔗 Copy Link
                 </button>

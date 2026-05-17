@@ -186,7 +186,7 @@ export default function ExamSchedulePage() {
   };
 
   if (!isReady || loading) {
-    return <div className="min-h-screen bg-[#FDF6EC] flex items-center justify-center font-bold text-[#8B6E52]">Loading...</div>;
+    return <div className="min-h-screen bg-[#FDF6EC] flex items-center justify-center font-bold text-gray-600 dark:text-gray-400">Loading...</div>;
   }
 
   const Sidebar = () => (
@@ -258,52 +258,52 @@ export default function ExamSchedulePage() {
 
          <div className="grid grid-cols-1 xl:grid-cols-[1fr_1.2fr] gap-8">
            {/* CREATE EXAM FORM */}
-           <div className="bg-white border-2 border-[#B48C5A]/25 rounded-[24px] p-8 shadow-sm h-fit">
-             <h2 className="text-xl font-black text-[#2C1A0E] mb-6">Schedule New Exam</h2>
+           <div className="bg-white dark:bg-gray-800 border-2 border-[#B48C5A]/25 dark:border-gray-700 rounded-[24px] p-8 shadow-sm h-fit">
+             <h2 className="text-xl font-black text-gray-900 dark:text-gray-100 mb-6">Schedule New Exam</h2>
              <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                <div>
-                 <label className="block text-sm font-bold text-[#5C3D1E] mb-2">Exam Name</label>
+                 <label className="block text-sm font-bold text-gray-800 dark:text-gray-300 mb-2">Exam Name</label>
                  <input type="text" placeholder="e.g. Mid Term 1 - Data Structures" required
                    value={examName} onChange={e => setExamName(e.target.value)}
-                   className="w-full bg-[#FDF6EC] border-2 border-[#B48C5A]/20 p-3.5 rounded-xl outline-none font-semibold text-[#2C1A0E] focus:border-[#006B7A] transition-colors"
+                   className="w-full bg-[#FDF6EC] border-2 border-[#B48C5A]/20 dark:border-gray-700 p-3.5 rounded-xl outline-none font-semibold text-gray-900 dark:text-gray-100 focus:border-[#006B7A] transition-colors"
                  />
                </div>
 
                <div className="grid grid-cols-2 gap-4">
                  <div>
-                   <label className="block text-sm font-bold text-[#5C3D1E] mb-2">Subject Material</label>
-                   <select required value={selectedSubjectId} onChange={handleSubjectChange} className="w-full bg-[#FDF6EC] border-2 border-[#B48C5A]/20 p-3.5 rounded-xl outline-none font-semibold text-[#2C1A0E] cursor-pointer">
+                   <label className="block text-sm font-bold text-gray-800 dark:text-gray-300 mb-2">Subject Material</label>
+                   <select required value={selectedSubjectId} onChange={handleSubjectChange} className="w-full bg-[#FDF6EC] border-2 border-[#B48C5A]/20 dark:border-gray-700 p-3.5 rounded-xl outline-none font-semibold text-gray-900 dark:text-gray-100 cursor-pointer">
                      <option value="" disabled>Select PDF Subject...</option>
                      {subjects.map(s => <option key={s.id} value={s.id}>{s.subjectName}</option>)}
                    </select>
                  </div>
                  <div>
-                   <label className="block text-sm font-bold text-[#5C3D1E] mb-2">Target Batch</label>
+                   <label className="block text-sm font-bold text-gray-800 dark:text-gray-300 mb-2">Target Batch</label>
                    <input type="text" required
                      value={batch} onChange={e => setBatch(e.target.value)}
-                     className="w-full bg-[#FDF6EC] border-2 border-[#B48C5A]/20 p-3.5 rounded-xl outline-none font-semibold text-[#2C1A0E]"
+                     className="w-full bg-[#FDF6EC] border-2 border-[#B48C5A]/20 dark:border-gray-700 p-3.5 rounded-xl outline-none font-semibold text-gray-900 dark:text-gray-100"
                    />
                  </div>
                </div>
 
                <div>
-                 <label className="block text-sm font-bold text-[#5C3D1E] mb-2">Exam Date & Time</label>
+                 <label className="block text-sm font-bold text-gray-800 dark:text-gray-300 mb-2">Exam Date & Time</label>
                  <input type="datetime-local" required
                    value={examDate} onChange={e => setExamDate(e.target.value)}
-                   className="w-full bg-[#FDF6EC] border-2 border-[#B48C5A]/20 p-3.5 rounded-xl outline-none font-semibold text-[#2C1A0E]"
+                   className="w-full bg-[#FDF6EC] border-2 border-[#B48C5A]/20 dark:border-gray-700 p-3.5 rounded-xl outline-none font-semibold text-gray-900 dark:text-gray-100"
                  />
                </div>
 
                {selectedSubject && (
                  <div className="mt-2">
-                   <label className="block text-sm font-bold text-[#5C3D1E] mb-3">Topics Covered (Select to include)</label>
-                   <div className="bg-[#FDF6EC] border-2 border-[#B48C5A]/20 rounded-xl p-4 max-h-60 overflow-y-auto flex flex-col gap-2">
+                   <label className="block text-sm font-bold text-gray-800 dark:text-gray-300 mb-3">Topics Covered (Select to include)</label>
+                   <div className="bg-[#FDF6EC] border-2 border-[#B48C5A]/20 dark:border-gray-700 rounded-xl p-4 max-h-60 overflow-y-auto flex flex-col gap-2">
                      {selectedSubject.topics?.map((t: any, i: number) => (
                        <label key={i} className="flex items-center gap-3 cursor-pointer group">
-                         <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${selectedTopics.includes(t.topicName) ? 'bg-[#006B7A] border-[#006B7A]' : 'border-[#B48C5A]/40 bg-white group-hover:border-[#006B7A]/50'}`}>
+                         <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${selectedTopics.includes(t.topicName) ? 'bg-[#006B7A] border-[#006B7A]' : 'border-[#B48C5A]/40 bg-white dark:bg-gray-800 group-hover:border-[#006B7A]/50'}`}>
                            {selectedTopics.includes(t.topicName) && <FiCheckSquare color="white" size={12} />}
                          </div>
-                         <span className="text-sm font-semibold text-[#2C1A0E]">{t.topicName}</span>
+                         <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">{t.topicName}</span>
                        </label>
                      ))}
                    </div>
@@ -317,10 +317,10 @@ export default function ExamSchedulePage() {
            </div>
 
            {/* EXAM LIST */}
-           <div className="bg-white border-2 border-[#B48C5A]/25 rounded-[24px] p-8 shadow-sm flex flex-col h-full">
+           <div className="bg-white dark:bg-gray-800 border-2 border-[#B48C5A]/25 dark:border-gray-700 rounded-[24px] p-8 shadow-sm flex flex-col h-full">
              <div className="flex justify-between items-center mb-6">
-               <h2 className="text-xl font-black text-[#2C1A0E]">Scheduled Exams</h2>
-               <div className="flex items-center gap-4 text-[11px] font-bold uppercase tracking-wider text-[#8B6E52]">
+               <h2 className="text-xl font-black text-gray-900 dark:text-gray-100">Scheduled Exams</h2>
+               <div className="flex items-center gap-4 text-[11px] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400">
                  <span className="flex items-center gap-1"><div className="w-2.5 h-2.5 rounded-full bg-[#10B981]" /> {'>'} 7 Days</span>
                  <span className="flex items-center gap-1"><div className="w-2.5 h-2.5 rounded-full bg-[#F59E0B]" /> 3-7 Days</span>
                  <span className="flex items-center gap-1"><div className="w-2.5 h-2.5 rounded-full bg-[#EF4444]" /> {'<'} 3 Days</span>
@@ -329,7 +329,7 @@ export default function ExamSchedulePage() {
 
              <div className="flex flex-col gap-4 flex-1 overflow-y-auto pr-2">
                {exams.length === 0 ? (
-                 <div className="text-center py-12 text-[#8B6E52] font-semibold">No exams scheduled yet.</div>
+                 <div className="text-center py-12 text-gray-600 dark:text-gray-400 font-semibold">No exams scheduled yet.</div>
                ) : (
                  exams.map(exam => {
                    const status = getExamStatus(exam.examDate);
@@ -337,22 +337,22 @@ export default function ExamSchedulePage() {
                    return (
                      <div key={exam.id} className="border-2 border-[#B48C5A]/15 rounded-2xl p-5 flex items-start justify-between bg-gradient-to-r from-transparent to-[#FDF6EC]/30">
                        <div>
-                         <h3 className="font-black text-[#2C1A0E] text-lg mb-1">{exam.examName}</h3>
-                         <div className="text-sm font-semibold text-[#8B6E52] flex items-center gap-2 mb-3">
+                         <h3 className="font-black text-gray-900 dark:text-gray-100 text-lg mb-1">{exam.examName}</h3>
+                         <div className="text-sm font-semibold text-gray-600 dark:text-gray-400 flex items-center gap-2 mb-3">
                            <FiFileText /> {exam.subjectName} • {exam.batch}
                          </div>
                          <div className="flex flex-wrap gap-2">
                            {exam.topics?.slice(0, 3).map((t: string) => (
-                             <span key={t} className="bg-[#F5E8D4] text-[#5C3D1E] text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider truncate max-w-[120px]">{t}</span>
+                             <span key={t} className="bg-[#F5E8D4] text-gray-800 dark:text-gray-300 text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider truncate max-w-[120px]">{t}</span>
                            ))}
-                           {exam.topics?.length > 3 && <span className="text-xs font-bold text-[#8B6E52]">+{exam.topics.length - 3} more</span>}
+                           {exam.topics?.length > 3 && <span className="text-xs font-bold text-gray-600 dark:text-gray-400">+{exam.topics.length - 3} more</span>}
                          </div>
                        </div>
                        <div className="flex flex-col items-end gap-2">
-                         <div className="text-sm font-black text-[#2C1A0E]">
+                         <div className="text-sm font-black text-gray-900 dark:text-gray-100">
                            {dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                          </div>
-                         <div className="text-xs font-bold text-[#8B6E52] bg-white border border-[#B48C5A]/20 px-2 py-1 rounded-md shadow-sm">
+                         <div className="text-xs font-bold text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800 border border-[#B48C5A]/20 dark:border-gray-700 px-2 py-1 rounded-md shadow-sm">
                            {dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                          </div>
                          {status.days >= 0 && (

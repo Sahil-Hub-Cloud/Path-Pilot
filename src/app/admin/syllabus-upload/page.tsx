@@ -165,7 +165,7 @@ export default function SyllabusUploadPage() {
     return (
         <div className="min-h-screen bg-[#F8FAFC] pb-20">
             {/* Header */}
-            <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
+            <header className="bg-white dark:bg-gray-800 border-b border-slate-200 sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <button 
@@ -197,7 +197,7 @@ export default function SyllabusUploadPage() {
                     
                     {/* Left Column: Form & Upload */}
                     <div className="space-y-8">
-                        <section className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100">
+                        <section className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-sm border border-slate-100">
                             <div className="flex items-center gap-3 mb-8">
                                 <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
                                     <FiUploadCloud size={20} />
@@ -287,7 +287,7 @@ export default function SyllabusUploadPage() {
                                     </div>
                                 ) : (
                                     <div className="space-y-4">
-                                        <div className="w-16 h-16 rounded-2xl bg-white border border-slate-200 text-slate-400 flex items-center justify-center mx-auto shadow-sm">
+                                        <div className="w-16 h-16 rounded-2xl bg-white dark:bg-gray-800 border border-slate-200 text-slate-400 flex items-center justify-center mx-auto shadow-sm">
                                             <FiUploadCloud size={32} />
                                         </div>
                                         <div>
@@ -342,7 +342,7 @@ export default function SyllabusUploadPage() {
                                     animate={{ opacity: 1, y: 0 }}
                                     className="mt-6 p-6 rounded-2xl bg-emerald-500 text-white shadow-xl shadow-emerald-100 flex items-center gap-4"
                                 >
-                                    <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                                    <div className="w-10 h-10 rounded-full bg-white dark:bg-gray-800/20 flex items-center justify-center">
                                         <FiCheckCircle size={24} />
                                     </div>
                                     <p className="text-sm font-black leading-tight">{successMessage}</p>
@@ -357,7 +357,7 @@ export default function SyllabusUploadPage() {
                                     initial={{ opacity: 0, scale: 0.98 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     exit={{ opacity: 0, scale: 0.98 }}
-                                    className="bg-white rounded-[40px] p-10 shadow-2xl border border-slate-100 overflow-hidden relative"
+                                    className="bg-white dark:bg-gray-800 rounded-[40px] p-10 shadow-2xl border border-slate-100 overflow-hidden relative"
                                 >
                                     {/* Decorative mesh */}
                                     <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50 rounded-full blur-[100px] opacity-60 -mr-20 -mt-20" />
@@ -383,9 +383,9 @@ export default function SyllabusUploadPage() {
 
                                         <div className="space-y-6">
                                             {curriculum.weeks.map((week, idx) => (
-                                                <div key={idx} className="group p-6 rounded-[32px] bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-xl hover:border-indigo-100 transition-all duration-300">
+                                                <div key={idx} className="group p-6 rounded-[32px] bg-slate-50 border border-slate-100 hover:bg-white dark:bg-gray-800 hover:shadow-xl hover:border-indigo-100 transition-all duration-300">
                                                     <div className="flex items-start gap-6">
-                                                        <div className="w-14 h-14 rounded-2xl bg-white border border-slate-200 flex flex-col items-center justify-center flex-shrink-0 group-hover:bg-indigo-600 group-hover:border-indigo-600 group-hover:text-white transition-colors shadow-sm">
+                                                        <div className="w-14 h-14 rounded-2xl bg-white dark:bg-gray-800 border border-slate-200 flex flex-col items-center justify-center flex-shrink-0 group-hover:bg-indigo-600 group-hover:border-indigo-600 group-hover:text-white transition-colors shadow-sm">
                                                             <span className="text-[10px] font-black uppercase leading-none mb-1 opacity-60">Week</span>
                                                             <span className="text-xl font-black leading-none">{week.weekNumber}</span>
                                                         </div>
@@ -405,7 +405,7 @@ export default function SyllabusUploadPage() {
                                                                         ))}
                                                                     </ul>
                                                                 </div>
-                                                                <div className="bg-white/50 p-5 rounded-2xl border border-slate-100">
+                                                                <div className="bg-white dark:bg-gray-800/50 p-5 rounded-2xl border border-slate-100">
                                                                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">Learning Objectives</p>
                                                                     <div className="flex flex-wrap gap-2">
                                                                         {week.learningGoals.map((g, i) => (
@@ -433,7 +433,7 @@ export default function SyllabusUploadPage() {
                                                     {curriculum.examDates.map((exam, i) => (
                                                         <div key={i} className="p-5 rounded-2xl bg-indigo-50/50 border border-indigo-100 flex items-center justify-between">
                                                             <div className="flex items-center gap-4">
-                                                                <div className="w-10 h-10 rounded-xl bg-white border border-indigo-100 flex items-center justify-center text-indigo-600 text-lg">
+                                                                <div className="w-10 h-10 rounded-xl bg-white dark:bg-gray-800 border border-indigo-100 flex items-center justify-center text-indigo-600 text-lg">
                                                                     <FiCalendar />
                                                                 </div>
                                                                 <div>
@@ -482,7 +482,7 @@ export default function SyllabusUploadPage() {
                             </div>
                         </div>
 
-                        <div className="p-8 rounded-[32px] bg-white border border-slate-100 shadow-sm">
+                        <div className="p-8 rounded-[32px] bg-white dark:bg-gray-800 border border-slate-100 shadow-sm">
                             <h3 className="text-xs font-black uppercase tracking-widest text-slate-900 mb-4">Guidelines</h3>
                             <ul className="space-y-4">
                                 <li className="text-[11px] font-bold text-slate-500 leading-relaxed">

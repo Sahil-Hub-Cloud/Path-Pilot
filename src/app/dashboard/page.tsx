@@ -306,9 +306,9 @@ export default function DashboardPage() {
           <div className="w-9 h-9 flex items-center justify-center overflow-hidden">
              <Image src="/logo.webp" alt="Path Pilot" width={32} height={32} className="object-contain" />
           </div>
-          <span className="font-black text-lg text-[#2C1A0E] tracking-tight">Path Pilot</span>
+          <span className="font-black text-lg text-gray-900 dark:text-gray-100 tracking-tight">Path Pilot</span>
         </div>
-        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 text-[#5C3D1E] hover:bg-[#B48C5A]/10 rounded-lg transition-colors">
+        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 text-gray-800 dark:text-gray-300 hover:bg-[#B48C5A]/10 rounded-lg transition-colors">
           {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
         </button>
       </header>
@@ -331,7 +331,7 @@ export default function DashboardPage() {
         className={`
           fixed md:sticky left-0 top-0 h-full w-[260px] 
           bg-gradient-to-b from-[#FFF8EE] to-[#F5E8D4] 
-          border-r-2 border-[#B48C5A]/25 
+          border-r-2 border-[#B48C5A]/25 dark:border-gray-700 
           flex flex-col z-[105] 
           transition-transform duration-300 ease-in-out
           ${isMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
@@ -342,18 +342,18 @@ export default function DashboardPage() {
           <div className="w-9 h-9 flex items-center justify-center overflow-hidden">
             <Image src="/logo.webp" alt="Path Pilot" width={36} height={36} className="object-contain" />
           </div>
-          <span className="font-black text-base text-[#2C1A0E] tracking-tight">Path Pilot</span>
+          <span className="font-black text-base text-gray-900 dark:text-gray-100 tracking-tight">Path Pilot</span>
         </div>
 
         {/* User avatar */}
-        <div className="px-4 pb-5 border-b-1.5 border-[#B48C5A]/20 mx-3 mb-3">
+        <div className="px-4 pb-5 border-b-1.5 border-[#B48C5A]/20 dark:border-gray-700 mx-3 mb-3">
           <div className="flex items-center gap-3 p-2.5 bg-[var(--surface-raised)]/60 rounded-xl border-1.5 border-[var(--border-clay)] shadow-sm">
             <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#006B7A] to-[#2E7D52] flex items-center justify-center text-white font-extrabold text-sm flex-shrink-0">
               {firstName[0]?.toUpperCase()}
             </div>
             <div className="overflow-hidden">
-              <div className="font-bold text-sm text-[#2C1A0E] truncate">{firstName}</div>
-              <div className="text-[10px] text-[#8B6E52] font-semibold uppercase tracking-wider">{profile?.role || 'Student'}</div>
+              <div className="font-bold text-sm text-gray-900 dark:text-gray-100 truncate">{firstName}</div>
+              <div className="text-[10px] text-gray-600 dark:text-gray-400 font-semibold uppercase tracking-wider">{profile?.role || 'Student'}</div>
             </div>
           </div>
         </div>
@@ -366,7 +366,7 @@ export default function DashboardPage() {
                 font-bold text-sm text-left transition-all duration-200
                 ${activeNav === item.id 
                   ? 'bg-gradient-to-br from-[#006B7A] to-[#2E7D52] text-white shadow-lg shadow-[#006B7A]/30' 
-                  : 'text-[#5C3D1E] hover:bg-[#B48C5A]/10'}
+                  : 'text-gray-800 dark:text-gray-300 hover:bg-[#B48C5A]/10'}
               `}
             >
               <span className="text-lg">{item.icon}</span>
@@ -388,7 +388,7 @@ export default function DashboardPage() {
         {/* GREETING */}
         <div className="mb-8 flex flex-col md:flex-row justify-between items-start gap-4">
           <div>
-            <h1 className="text-xl md:text-3xl font-black text-[#2C1A0E] tracking-tight mb-1">
+            <h1 className="text-xl md:text-3xl font-black text-gray-900 dark:text-gray-100 tracking-tight mb-1">
               {getGreeting()}, {firstName}!
             </h1>
             <p style={{ color: '#8B6E52', fontSize: 14, fontWeight: 500 }}>
@@ -410,11 +410,11 @@ export default function DashboardPage() {
             className="group relative overflow-hidden bg-gradient-to-br from-[#006B7A] to-[#2E7D52] rounded-[24px] p-8 mb-8 cursor-pointer shadow-xl shadow-[#006B7A]/25"
           >
             {/* Decoration */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white dark:bg-gray-800/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
             
             <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
               <div className="flex items-center gap-6">
-                <div className="w-16 h-16 bg-white/15 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl shadow-lg border border-white/20">
+                <div className="w-16 h-16 bg-white dark:bg-gray-800/15 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl shadow-lg border border-white/20">
                   🚀
                 </div>
                 <div>
@@ -432,7 +432,7 @@ export default function DashboardPage() {
                   </p>
                 </div>
               </div>
-              <button className="bg-white text-[#006B7A] px-8 py-3.5 rounded-xl font-black text-sm uppercase tracking-wider shadow-lg group-hover:scale-105 transition-all">
+              <button className="bg-white dark:bg-gray-800 text-[#006B7A] px-8 py-3.5 rounded-xl font-black text-sm uppercase tracking-wider shadow-lg group-hover:scale-105 transition-all">
                 Launch Mission
               </button>
             </div>
@@ -471,7 +471,7 @@ export default function DashboardPage() {
         {/* MY EXAMS (COLLEGE STUDENTS ONLY) */}
         {profile?.collegeId && exams.length > 0 && (
           <div className="mb-8">
-            <h2 className="text-xl font-black text-[#2C1A0E] mb-4 flex items-center gap-2">
+            <h2 className="text-xl font-black text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
               <FiCalendar /> Upcoming Exams
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -481,10 +481,10 @@ export default function DashboardPage() {
                 const color = diffDays < 3 ? '#EF4444' : diffDays <= 7 ? '#F59E0B' : '#10B981';
                 
                 return (
-                  <div key={exam.id} className="bg-white rounded-[20px] border-2 border-[#B48C5A]/25 p-6 shadow-sm flex flex-col justify-between hover:-translate-y-1 transition-transform">
+                  <div key={exam.id} className="bg-white dark:bg-gray-800 rounded-[20px] border-2 border-[#B48C5A]/25 dark:border-gray-700 p-6 shadow-sm flex flex-col justify-between hover:-translate-y-1 transition-transform">
                     <div>
                       <div className="flex justify-between items-start mb-3">
-                        <div className="text-[10px] font-black uppercase tracking-wider bg-[#FDF6EC] text-[#8B6E52] px-2 py-1 rounded-md border border-[#B48C5A]/20">
+                        <div className="text-[10px] font-black uppercase tracking-wider bg-[#FDF6EC] text-gray-600 dark:text-gray-400 px-2 py-1 rounded-md border border-[#B48C5A]/20 dark:border-gray-700">
                           {exam.subjectName}
                         </div>
                         <div className="flex items-center gap-1 text-[11px] font-black px-2 py-1 rounded-md bg-opacity-10" style={{ color, backgroundColor: `${color}15` }}>
@@ -492,14 +492,14 @@ export default function DashboardPage() {
                           {diffDays <= 0 ? 'Today' : `${diffDays} Days`}
                         </div>
                       </div>
-                      <h3 className="font-black text-[#2C1A0E] text-lg leading-tight mb-2">{exam.examName}</h3>
-                      <div className="text-[#8B6E52] font-semibold text-xs flex items-center gap-2 mb-4">
+                      <h3 className="font-black text-gray-900 dark:text-gray-100 text-lg leading-tight mb-2">{exam.examName}</h3>
+                      <div className="text-gray-600 dark:text-gray-400 font-semibold text-xs flex items-center gap-2 mb-4">
                         <FiClock /> {eDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} at {eDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                       </div>
                     </div>
                     <button 
                       onClick={() => router.push(`/materials/${exam.subjectId}`)} 
-                      className="w-full bg-[#FDF6EC] hover:bg-[#F5E8D4] text-[#5C3D1E] border-2 border-[#B48C5A]/20 py-3 rounded-xl font-black text-sm flex items-center justify-center gap-2 transition-colors"
+                      className="w-full bg-[#FDF6EC] hover:bg-[#F5E8D4] text-gray-800 dark:text-gray-300 border-2 border-[#B48C5A]/20 dark:border-gray-700 py-3 rounded-xl font-black text-sm flex items-center justify-center gap-2 transition-colors"
                     >
                       Start Revision <FiArrowRight />
                     </button>
@@ -563,15 +563,15 @@ export default function DashboardPage() {
         {/* WEEKLY SUMMARY BANNER */}
         <motion.div
            onClick={() => router.push('/progress/weekly')}
-           className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white/70 border-1.5 border-[#B48C5A]/20 rounded-[20px] p-5 md:p-6 mb-8 cursor-pointer shadow-sm shadow-stone-800/5 backdrop-blur-md hover:bg-white/90 hover:-translate-y-0.5 transition-all gap-4"
+           className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white dark:bg-gray-800/70 border-1.5 border-[#B48C5A]/20 dark:border-gray-700 rounded-[20px] p-5 md:p-6 mb-8 cursor-pointer shadow-sm shadow-stone-800/5 backdrop-blur-md hover:bg-white dark:bg-gray-800/90 hover:-translate-y-0.5 transition-all gap-4"
         >
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-[#006B7A15] rounded-xl flex items-center justify-center text-[#006B7A] flex-shrink-0">
                <FiTrendingUp size={24} />
             </div>
             <div>
-              <h2 className="m-0 text-lg font-extrabold text-[#2C1A0E] tracking-tight">Weekly Summary</h2>
-              <p className="m-0 mt-1 text-[13px] text-[#8B6E52] font-semibold">See your 7-day progress and streak insights.</p>
+              <h2 className="m-0 text-lg font-extrabold text-gray-900 dark:text-gray-100 tracking-tight">Weekly Summary</h2>
+              <p className="m-0 mt-1 text-[13px] text-gray-600 dark:text-gray-400 font-semibold">See your 7-day progress and streak insights.</p>
             </div>
           </div>
           <div className="text-[#006B7A] font-bold text-sm flex items-center gap-2 self-end sm:self-auto">
@@ -642,7 +642,7 @@ export default function DashboardPage() {
             ) : (
               <div className="flex flex-col items-center justify-center py-6">
                 <div className="text-3xl mb-2">📊</div>
-                <p className="text-sm font-bold text-[#5C3D1E] mb-1">No skill data yet</p>
+                <p className="text-sm font-bold text-gray-800 dark:text-gray-300 mb-1">No skill data yet</p>
                 <p className="text-xs text-[#B89A7E]">Complete labs to unlock your spectrum</p>
               </div>
             )}
@@ -652,8 +652,8 @@ export default function DashboardPage() {
         {/* BOTTOM ROW */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           {/* Account Info */}
-          <div className="bg-white rounded-[20px] border-2 border-[#B48C5A]/25 p-7 shadow-sm shadow-stone-800/5">
-            <div className="text-[10px] font-extrabold uppercase tracking-widest text-[#8B6E52] mb-5">Your Profile</div>
+          <div className="bg-white dark:bg-gray-800 rounded-[20px] border-2 border-[#B48C5A]/25 dark:border-gray-700 p-7 shadow-sm shadow-stone-800/5">
+            <div className="text-[10px] font-extrabold uppercase tracking-widest text-gray-600 dark:text-gray-400 mb-5">Your Profile</div>
             <div className="flex flex-col gap-3.5">
               {[
                 { label: 'Full Name', value: displayName, icon: <FiUser size={14} /> },
@@ -661,20 +661,20 @@ export default function DashboardPage() {
                 { label: 'Learning Path', value: learningPath || 'Not set yet', icon: <FiBook size={14} /> },
                 { label: 'Level', value: proficiencyLevel || 'Not set yet', icon: <FiTrendingUp size={14} /> },
               ].map((item, i) => (
-                <div key={i} className="flex items-center justify-between p-3.5 bg-[#FDF6EC] rounded-xl border-1.5 border-[#B48C5A]/20">
+                <div key={i} className="flex items-center justify-between p-3.5 bg-[#FDF6EC] rounded-xl border-1.5 border-[#B48C5A]/20 dark:border-gray-700">
                   <div className="flex items-center gap-2.5">
-                    <span className="text-[#8B6E52]">{item.icon}</span>
-                    <span className="text-[12px] font-bold text-[#8B6E52]">{item.label}</span>
+                    <span className="text-gray-600 dark:text-gray-400">{item.icon}</span>
+                    <span className="text-[12px] font-bold text-gray-600 dark:text-gray-400">{item.label}</span>
                   </div>
-                  <span className="text-[13px] font-bold text-[#2C1A0E] max-w-[55%] text-right truncate">{item.value}</span>
+                  <span className="text-[13px] font-bold text-gray-900 dark:text-gray-100 max-w-[55%] text-right truncate">{item.value}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Quick Actions */}
-          <div className="bg-white rounded-[20px] border-2 border-[#B48C5A]/25 p-7 shadow-sm shadow-stone-800/5">
-            <div className="text-[10px] font-extrabold uppercase tracking-widest text-[#8B6E52] mb-5">Quick Actions</div>
+          <div className="bg-white dark:bg-gray-800 rounded-[20px] border-2 border-[#B48C5A]/25 dark:border-gray-700 p-7 shadow-sm shadow-stone-800/5">
+            <div className="text-[10px] font-extrabold uppercase tracking-widest text-gray-600 dark:text-gray-400 mb-5">Quick Actions</div>
             <div className="grid grid-cols-2 gap-3">
               {[
                 { label: 'Open IDE', icon: <FiTerminal />, color: '#2E7D52', action: () => router.push(`/labs/${firstLabId}`) },
@@ -691,7 +691,7 @@ export default function DashboardPage() {
                   }}
                 >
                   <span className="text-2xl">{action.icon}</span>
-                  <span className="text-[10px] font-black uppercase tracking-wider text-[#5C3D1E]">{action.label}</span>
+                  <span className="text-[10px] font-black uppercase tracking-wider text-gray-800 dark:text-gray-300">{action.label}</span>
                 </button>
               ))}
             </div>

@@ -48,7 +48,7 @@ export default function Leaderboard({ users, currentUserId, isLoading }: Leaderb
 
     return (
         <div className="bg-[#050911] border border-white/5 rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden shadow-2xl">
-            <div className="p-5 md:p-8 border-b border-white/5 bg-white/[0.02]">
+            <div className="p-5 md:p-8 border-b border-white/5 bg-white dark:bg-gray-800/[0.02]">
                 <div className="flex justify-between items-center md:items-end">
                     <div>
                         <h3 className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.4em] text-white/30 mb-1 md:mb-2">Global Hierarchy</h3>
@@ -198,7 +198,7 @@ export default function Leaderboard({ users, currentUserId, isLoading }: Leaderb
                 )}
             </div>
 
-            <div className="p-5 md:p-6 bg-white/[0.01] border-t border-white/5 text-center">
+            <div className="p-5 md:p-6 bg-white dark:bg-gray-800/[0.01] border-t border-white/5 text-center">
                 <p className="text-[7px] md:text-[8px] font-black uppercase tracking-[0.4em] text-white/10">
                     System Registry Updated Real-time
                 </p>

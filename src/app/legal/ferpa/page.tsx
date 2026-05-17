@@ -57,7 +57,7 @@ export default function FERPAPage() {
                 </div>
 
                 {/* Signature Block */}
-                <div className="flex flex-col md:flex-row items-center justify-between p-6 bg-white/5 rounded-xl border border-white/10 gap-4">
+                <div className="flex flex-col md:flex-row items-center justify-between p-6 bg-white dark:bg-gray-800/5 rounded-xl border border-white/10 gap-4">
                     <div>
                         <h4 className="font-bold text-white">Download Signed DPA</h4>
                         <p className="text-xs text-slate-400">Version 2.4 | Updated Jan 2026</p>

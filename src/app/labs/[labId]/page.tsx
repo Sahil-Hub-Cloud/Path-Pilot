@@ -602,7 +602,7 @@ Rules:
       {/* ══ HEADER ══ */}
       <header className="h-14 bg-[#13131A] border-b border-white/10 flex items-center justify-between px-3 md:px-6 flex-shrink-0 z-50">
         <div className="flex items-center gap-2 md:gap-5 overflow-hidden flex-1">
-          <button onClick={() => router.push('/dashboard')} className="flex items-center justify-center w-8 h-8 md:w-auto md:h-auto md:px-3 md:py-1.5 bg-white/5 border border-white/10 rounded-lg cursor-pointer text-[#888899] hover:bg-white/10 transition-all flex-shrink-0">
+          <button onClick={() => router.push('/dashboard')} className="flex items-center justify-center w-8 h-8 md:w-auto md:h-auto md:px-3 md:py-1.5 bg-white dark:bg-gray-800/5 border border-white/10 rounded-lg cursor-pointer text-[#888899] hover:bg-white dark:bg-gray-800/10 transition-all flex-shrink-0">
             <FiArrowLeft size={14} />
           </button>
           
@@ -620,7 +620,7 @@ Rules:
           {/* Desktop actions (Run/Submit) */}
           <div className="hidden md:flex items-center gap-2">
             <button onClick={handleRun} disabled={isRunning || isSubmitting || isOffline}
-              className="flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-white/15 rounded-lg cursor-pointer text-xs font-extrabold text-[#E2E2EE] hover:bg-white/10 disabled:opacity-50 shadow-lg shadow-black/20"
+              className="flex items-center gap-2 px-4 py-1.5 bg-white dark:bg-gray-800/5 border border-white/15 rounded-lg cursor-pointer text-xs font-extrabold text-[#E2E2EE] hover:bg-white dark:bg-gray-800/10 disabled:opacity-50 shadow-lg shadow-black/20"
             >
               <FiPlay size={12} className={isRunning ? 'animate-pulse' : ''} /> <span>{isRunning ? 'Running...' : 'Run'}</span>
             </button>
@@ -635,20 +635,20 @@ Rules:
           {/* Panel toggles */}
           <div className="hidden md:flex items-center gap-3">
             <button onClick={() => { handleAnalyze(); setRight('analyzer'); }}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg cursor-pointer text-[11px] font-bold transition-all ${rightPanel === 'analyzer' ? 'bg-blue-500/15 border border-blue-500/40 text-blue-400' : 'bg-white/5 border border-white/10 text-[#888899] hover:bg-white/10'}`}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg cursor-pointer text-[11px] font-bold transition-all ${rightPanel === 'analyzer' ? 'bg-blue-500/15 border border-blue-500/40 text-blue-400' : 'bg-white dark:bg-gray-800/5 border border-white/10 text-[#888899] hover:bg-white dark:bg-gray-800/10'}`}
             >
               <FiSearch size={12} /> Analyze
             </button>
 
             <button onClick={() => setRight(p => p === 'ai' ? 'none' : 'ai')}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg cursor-pointer text-[11px] font-bold transition-all ${rightPanel === 'ai' ? 'bg-[#7C3AED]/15 border border-[#7C3AED]/40 text-[#A78BFA]' : 'bg-white/5 border border-white/10 text-[#888899] hover:bg-white/10'}`}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg cursor-pointer text-[11px] font-bold transition-all ${rightPanel === 'ai' ? 'bg-[#7C3AED]/15 border border-[#7C3AED]/40 text-[#A78BFA]' : 'bg-white dark:bg-gray-800/5 border border-white/10 text-[#888899] hover:bg-white dark:bg-gray-800/10'}`}
             >
               <FiCpu size={12} /> AI Assist
             </button>
           </div>
           
           {/* Mobile AI Toggle */}
-          <button className="md:hidden p-2 text-[#888899] bg-white/5 border border-white/10 rounded-lg" onClick={() => setRight(p => p === 'ai' ? 'none' : 'ai')}>
+          <button className="md:hidden p-2 text-[#888899] bg-white dark:bg-gray-800/5 border border-white/10 rounded-lg" onClick={() => setRight(p => p === 'ai' ? 'none' : 'ai')}>
              <FiCpu size={16} />
           </button>
         </div>
@@ -658,13 +658,13 @@ Rules:
       <div className="md:hidden flex bg-[#13131A] border-b border-white/10 h-11 flex-shrink-0 z-40">
         <button 
           onClick={() => setActiveMobileTab('problem')}
-          className={`flex-1 flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all ${activeMobileTab === 'problem' ? 'text-[#7C3AED] border-b-2 border-[#7C3AED] bg-white/[0.02]' : 'text-[#555566]'}`}
+          className={`flex-1 flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all ${activeMobileTab === 'problem' ? 'text-[#7C3AED] border-b-2 border-[#7C3AED] bg-white dark:bg-gray-800/[0.02]' : 'text-[#555566]'}`}
         >
           <FiFile size={12} /> Problem
         </button>
         <button 
           onClick={() => setActiveMobileTab('code')}
-          className={`flex-1 flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all ${activeMobileTab === 'code' ? 'text-[#7C3AED] border-b-2 border-[#7C3AED] bg-white/[0.02]' : 'text-[#555566]'}`}
+          className={`flex-1 flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all ${activeMobileTab === 'code' ? 'text-[#7C3AED] border-b-2 border-[#7C3AED] bg-white dark:bg-gray-800/[0.02]' : 'text-[#555566]'}`}
         >
           <FiCode size={12} /> Code
         </button>
@@ -688,7 +688,7 @@ Rules:
               
               <section>
                 <div className="text-[9px] font-black uppercase tracking-[0.2em] text-[#444455] mb-3">02. Expected Output</div>
-                <div className="p-4 bg-white/[0.03] border border-white/10 rounded-xl font-mono text-xs text-[#10B981] shadow-inner">{LAB.expected}</div>
+                <div className="p-4 bg-white dark:bg-gray-800/[0.03] border border-white/10 rounded-xl font-mono text-xs text-[#10B981] shadow-inner">{LAB.expected}</div>
               </section>
 
               <section>
@@ -713,7 +713,7 @@ Rules:
               {LAB.tests.map((t, i) => {
                 const result = testResults[i];
                 return (
-                  <div key={i} className={`p-4 bg-white/[0.02] border rounded-xl transition-all duration-300 ${result ? (result.pass ? 'border-green-500/30 bg-green-500/[0.03]' : 'border-red-500/30 bg-red-500/[0.03]') : 'border-white/10'}`}>
+                  <div key={i} className={`p-4 bg-white dark:bg-gray-800/[0.02] border rounded-xl transition-all duration-300 ${result ? (result.pass ? 'border-green-500/30 bg-green-500/[0.03]' : 'border-red-500/30 bg-red-500/[0.03]') : 'border-white/10'}`}>
                     <div className="flex justify-between items-center mb-3">
                       <span className="text-[9px] font-black text-[#555566] uppercase tracking-wider">Scenario {String(i + 1).padStart(2, '0')}</span>
                       {result ? (result.pass ? <FiCheckCircle size={14} className="text-[#10B981]" /> : <FiXCircle size={14} className="text-[#EF4444]" />) : <div className="w-1.5 h-1.5 rounded-full bg-[#444455]" />}
@@ -758,7 +758,7 @@ Rules:
             </button>
 
             {/* Language selector for active file - hidden on very small screens */}
-            <div className="hidden sm:flex ml-auto items-center gap-2 px-4 border-l border-white/10 h-full flex-shrink-0 bg-white/5">
+            <div className="hidden sm:flex ml-auto items-center gap-2 px-4 border-l border-white/10 h-full flex-shrink-0 bg-white dark:bg-gray-800/5">
               <FiCode size={11} className="text-[#888899]" />
               <select value={activeFile?.language || 'python'}
                 onChange={e => setFiles(p => p.map(f => f.id === activeFileId ? { ...f, language: e.target.value } : f))}
@@ -827,7 +827,7 @@ Rules:
                 <FiTerminal size={11} className="text-[#2DD4BF]" />
                 <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#444455]">Terminal Output</span>
               </div>
-              {execTime && <span className="text-[9px] font-bold text-[#444455] bg-white/5 px-2 py-0.5 rounded-full">⏱ {execTime}</span>}
+              {execTime && <span className="text-[9px] font-bold text-[#444455] bg-white dark:bg-gray-800/5 px-2 py-0.5 rounded-full">⏱ {execTime}</span>}
             </div>
             <div className={`flex-1 p-4 font-mono text-[11px] md:text-xs overflow-y-auto whitespace-pre-wrap leading-relaxed ${(output.includes('[ERROR]') || output.includes('failed')) ? 'text-[#EF4444]' : 'text-[#A7E3C4]'}`}>
               {(isRunning || isSubmitting) ? (
@@ -869,7 +869,7 @@ Rules:
                   >
                     <div className="inline-flex items-center gap-3 px-4 py-2.5 bg-black/40 border-2 rounded-xl backdrop-blur-md shadow-xl" style={{ borderColor: `${submitBadge.color}40` }}>
                       <span className="text-xs font-black uppercase tracking-widest" style={{ color: submitBadge.color }}>{submitBadge.tier}</span>
-                      <div className="w-px h-3 bg-white/10" />
+                      <div className="w-px h-3 bg-white dark:bg-gray-800/10" />
                       <span className="text-[10px] font-bold opacity-80" style={{ color: submitBadge.color }}>{submitBadge.pass}/{submitBadge.total} PASSED</span>
                     </div>
                   </motion.div>

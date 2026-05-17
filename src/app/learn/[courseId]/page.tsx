@@ -123,7 +123,7 @@ function TopicNode({ topic, status, isActive, onClick, priority, onInfoClick }: 
             padding: 6, borderRadius: 8, color: S.muted, display: 'flex', 
             alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' 
           }} 
-          className="hover:text-white hover:bg-white/10"
+          className="hover:text-white hover:bg-white dark:bg-gray-800/10"
         >
           <FiInfo size={13} />
         </div>
@@ -422,27 +422,27 @@ export default function LearningPage() {
       {/* TOPBAR */}
       <header className="h-14 md:h-16 bg-[#16161E] border-b border-white/10 flex items-center justify-between px-4 md:px-6 flex-shrink-0 z-50">
         <div className="flex items-center gap-3 md:gap-5 overflow-hidden">
-          <button onClick={() => router.push('/dashboard')} className="flex items-center gap-2 px-2.5 py-1.5 bg-white/5 border border-white/10 rounded-lg cursor-pointer text-[#888899] text-[10px] md:text-xs font-bold hover:bg-white/10 transition-all">
+          <button onClick={() => router.push('/dashboard')} className="flex items-center gap-2 px-2.5 py-1.5 bg-white dark:bg-gray-800/5 border border-white/10 rounded-lg cursor-pointer text-[#888899] text-[10px] md:text-xs font-bold hover:bg-white dark:bg-gray-800/10 transition-all">
             <FiArrowLeft size={13} /> <span className="hidden sm:inline">Dashboard</span>
           </button>
           
-          <button onClick={() => setShowTopics(!showTopics)} className="lg:hidden p-2 text-[#888899] bg-white/5 border border-white/10 rounded-lg">
+          <button onClick={() => setShowTopics(!showTopics)} className="lg:hidden p-2 text-[#888899] bg-white dark:bg-gray-800/5 border border-white/10 rounded-lg">
             <FiBook size={18} />
           </button>
 
-          <div className="hidden sm:block h-5 w-px bg-white/10" />
+          <div className="hidden sm:block h-5 w-px bg-white dark:bg-gray-800/10" />
           <h1 className="text-xs md:text-sm font-black text-[#E8E8F0] truncate tracking-tight">{course?.title}</h1>
         </div>
 
         <div className="flex items-center gap-3 md:gap-5">
           <div className="hidden sm:flex items-center gap-3">
              <span className="text-[10px] md:text-xs font-bold text-[#7C3AED]">{done}/{total} topics</span>
-             <div className="w-16 md:w-24 h-1.5 bg-white/5 rounded-full overflow-hidden">
+             <div className="w-16 md:w-24 h-1.5 bg-white dark:bg-gray-800/5 rounded-full overflow-hidden">
                <motion.div animate={{ width: pct + '%' }} transition={{ duration: 0.5 }} className="h-full bg-gradient-to-r from-[#7C3AED] to-[#A855F7] rounded-full" />
              </div>
           </div>
           
-          <button onClick={() => setShowChat(!showChat)} className="lg:hidden p-2 text-[#888899] bg-white/5 border border-white/10 rounded-lg">
+          <button onClick={() => setShowChat(!showChat)} className="lg:hidden p-2 text-[#888899] bg-white dark:bg-gray-800/5 border border-white/10 rounded-lg">
             <FiMessageSquare size={18} />
           </button>
           
@@ -527,7 +527,7 @@ export default function LearningPage() {
                   {/* Key points */}
                   <div className="flex flex-wrap gap-2.5">
                     {activeTopic.keyPoints.map((kp, i) => (
-                      <div key={i} className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-[10px] md:text-xs font-bold text-[#888899] font-mono tracking-tight">{kp}</div>
+                      <div key={i} className="px-3 py-1.5 bg-white dark:bg-gray-800/5 border border-white/10 rounded-lg text-[10px] md:text-xs font-bold text-[#888899] font-mono tracking-tight">{kp}</div>
                     ))}
                   </div>
                 </div>
@@ -550,11 +550,11 @@ export default function LearningPage() {
                     <div className="flex flex-col gap-4">
                       {notesLoading ? (
                         <div className="flex flex-col gap-3 animate-pulse">
-                          <div className="h-5 bg-white/5 rounded-lg w-3/4" />
-                          <div className="h-4 bg-white/5 rounded-lg w-full" />
-                          <div className="h-4 bg-white/5 rounded-lg w-5/6" />
-                          <div className="h-4 bg-white/5 rounded-lg w-full" />
-                          <div className="h-4 bg-white/5 rounded-lg w-2/3" />
+                          <div className="h-5 bg-white dark:bg-gray-800/5 rounded-lg w-3/4" />
+                          <div className="h-4 bg-white dark:bg-gray-800/5 rounded-lg w-full" />
+                          <div className="h-4 bg-white dark:bg-gray-800/5 rounded-lg w-5/6" />
+                          <div className="h-4 bg-white dark:bg-gray-800/5 rounded-lg w-full" />
+                          <div className="h-4 bg-white dark:bg-gray-800/5 rounded-lg w-2/3" />
                           <div className="mt-2 text-[10px] font-black uppercase tracking-widest text-[#555566] flex items-center gap-2">
                             <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#7C3AED] animate-pulse" />
                             Gemini is generating your notes…
@@ -751,15 +751,15 @@ export default function LearningPage() {
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8 pt-8 border-t border-white/5">
-                        <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
+                        <div className="p-4 bg-white dark:bg-gray-800/5 rounded-2xl border border-white/10">
                           <div className="text-[9px] font-black uppercase tracking-widest text-[#555566] mb-2">Employability Boost</div>
                           <div className="text-lg font-black text-[#10B981]">+{(Math.random() * 2 + 3).toFixed(1)}%</div>
                         </div>
-                        <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
+                        <div className="p-4 bg-white dark:bg-gray-800/5 rounded-2xl border border-white/10">
                           <div className="text-[9px] font-black uppercase tracking-widest text-[#555566] mb-2">Time Commitment</div>
                           <div className="text-lg font-black text-white">{xaiTopic.duration}</div>
                         </div>
-                        <div className="p-4 bg-white/5 rounded-2xl border border-white/10 md:col-span-2">
+                        <div className="p-4 bg-white dark:bg-gray-800/5 rounded-2xl border border-white/10 md:col-span-2">
                           <div className="text-[9px] font-black uppercase tracking-widest text-[#555566] mb-2">Jobs requiring this skill</div>
                           <div className="flex flex-wrap gap-2">
                             {(() => {
@@ -781,7 +781,7 @@ export default function LearningPage() {
               </div>
               
               <div className="bg-[#1c1c28] p-5 flex justify-center">
-                 <button onClick={() => setXaiTopic(null)} className="px-10 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-black uppercase tracking-widest text-white transition-all">
+                 <button onClick={() => setXaiTopic(null)} className="px-10 py-3 bg-white dark:bg-gray-800/5 hover:bg-white dark:bg-gray-800/10 border border-white/10 rounded-xl text-xs font-black uppercase tracking-widest text-white transition-all">
                    Got it, Captain
                  </button>
               </div>

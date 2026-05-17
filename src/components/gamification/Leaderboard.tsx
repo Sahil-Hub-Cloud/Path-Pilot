@@ -64,7 +64,7 @@ export default function Leaderboard() {
                         onClick={() => setLeaderboardType(type as LeaderboardType)}
                         className={`px-4 py-2 rounded-lg font-semibold whitespace-nowrap transition-all ${leaderboardType === type
                                 ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
-                                : 'bg-white/10 text-purple-300 hover:bg-white/20'
+                                : 'bg-white dark:bg-gray-800/10 text-purple-300 hover:bg-white dark:bg-gray-800/20'
                             }`}
                     >
                         {type === 'GLOBAL' ? 'Global' : type === 'DOMAIN' ? 'Domain' : type === 'WEEKLY' ? 'This Week' : 'This Month'}
@@ -82,7 +82,7 @@ export default function Leaderboard() {
                         transition={{ delay: index * 0.05 }}
                         className={`flex items-center gap-4 p-4 rounded-xl transition-all ${entry.rank <= 3
                                 ? 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/50'
-                                : 'bg-white/5 hover:bg-white/10'
+                                : 'bg-white dark:bg-gray-800/5 hover:bg-white dark:bg-gray-800/10'
                             }`}
                     >
                         {/* Rank */}

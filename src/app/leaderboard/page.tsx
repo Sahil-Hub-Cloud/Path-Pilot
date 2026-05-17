@@ -123,12 +123,12 @@ export default function LeaderboardPage() {
             initial={{ x: -240 }}
             animate={{ x: 0 }}
             exit={{ x: -240 }}
-            className="fixed md:sticky top-0 left-0 h-full w-[240px] bg-gradient-to-b from-[#FFF8EE] to-[#F5E8D4] border-r-2 border-[#B48C5A]/20 flex flex-col z-[100] shadow-2xl md:shadow-none"
+            className="fixed md:sticky top-0 left-0 h-full w-[240px] bg-gradient-to-b from-[#FFF8EE] to-[#F5E8D4] border-r-2 border-[#B48C5A]/20 dark:border-gray-700 flex flex-col z-[100] shadow-2xl md:shadow-none"
           >
             <div className="p-7 flex items-center gap-3">
               <div className="w-9 h-9 bg-gradient-to-br from-[#006B7A] to-[#2E7D52] rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg shadow-[#006B7A]/30">P</div>
-              <span className="font-black text-[17px] text-[#2C1A0E] tracking-tight">Path Pilot</span>
-              <button className="md:hidden ml-auto p-1.5 text-[#5C3D1E]/50" onClick={() => setIsMenuOpen(false)}><FiXCircle size={20} /></button>
+              <span className="font-black text-[17px] text-gray-900 dark:text-gray-100 tracking-tight">Path Pilot</span>
+              <button className="md:hidden ml-auto p-1.5 text-gray-800 dark:text-gray-300/50" onClick={() => setIsMenuOpen(false)}><FiXCircle size={20} /></button>
             </div>
 
             <nav className="flex-1 px-3 py-2 flex flex-col gap-1">
@@ -137,7 +137,7 @@ export default function LeaderboardPage() {
                   w-full flex items-center gap-3.5 px-4 py-3 rounded-xl border-none cursor-pointer font-bold text-sm text-left transition-all
                   ${item.id === 'leaderboard' 
                     ? 'bg-gradient-to-br from-[#006B7A] to-[#2E7D52] text-white shadow-lg shadow-[#006B7A]/25 ring-1 ring-white/10' 
-                    : 'bg-transparent text-[#5C3D1E] hover:bg-[#B48C5A]/10'}
+                    : 'bg-transparent text-gray-800 dark:text-gray-300 hover:bg-[#B48C5A]/10'}
                 `}>
                   <span className="text-xl">{item.icon}</span>
                   {item.label}
@@ -157,12 +157,12 @@ export default function LeaderboardPage() {
           
           <header className="mb-10 flex flex-col md:flex-row justify-between items-start gap-6 md:items-center">
             <div className="flex items-center gap-4 w-full md:w-auto">
-              <button className="md:hidden p-2 text-[#5C3D1E] bg-white border-2 border-[#B48C5A]/20 rounded-xl shadow-sm" onClick={() => setIsMenuOpen(true)}>
+              <button className="md:hidden p-2 text-gray-800 dark:text-gray-300 bg-white dark:bg-gray-800 border-2 border-[#B48C5A]/20 dark:border-gray-700 rounded-xl shadow-sm" onClick={() => setIsMenuOpen(true)}>
                 <FiFilter size={20} />
               </button>
               <div>
-                <h1 className="text-2xl md:text-4xl font-black text-[#2C1A0E] tracking-tight mb-1.5 md:mb-2">Hierarchy & Ranks</h1>
-                <p className="text-sm md:text-base text-[#5C3D1E] font-medium opacity-80">Compare your performance against the top pilots.</p>
+                <h1 className="text-2xl md:text-4xl font-black text-gray-900 dark:text-gray-100 tracking-tight mb-1.5 md:mb-2">Hierarchy & Ranks</h1>
+                <p className="text-sm md:text-base text-gray-800 dark:text-gray-300 font-medium opacity-80">Compare your performance against the top pilots.</p>
               </div>
             </div>
             
@@ -183,7 +183,7 @@ export default function LeaderboardPage() {
             ].map((tab) => (
               <button key={tab.id} onClick={() => setActiveTab(tab.id as Tab)}
                 className={`flex-1 md:flex-none flex items-center justify-center gap-2.5 px-6 py-3 rounded-xl border-none cursor-pointer text-xs font-black transition-all
-                  ${activeTab === tab.id ? 'bg-white text-[#006B7A] shadow-md' : 'bg-transparent text-[#5C3D1E] opacity-70 hover:opacity-100'}`}
+                  ${activeTab === tab.id ? 'bg-white dark:bg-gray-800 text-[#006B7A] shadow-md' : 'bg-transparent text-gray-800 dark:text-gray-300 opacity-70 hover:opacity-100'}`}
               >
                 {tab.icon} {tab.label}
               </button>

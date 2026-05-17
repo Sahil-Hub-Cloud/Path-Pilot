@@ -189,7 +189,7 @@ export default function CorporateConsole() {
     return (
         <div className="min-h-screen bg-[#F8FAFC] flex overflow-hidden">
             {/* Sidebar Assets Panel */}
-            <div className="w-[350px] bg-white border-r border-slate-100 flex flex-col flex-shrink-0">
+            <div className="w-[350px] bg-white dark:bg-gray-800 border-r border-slate-100 flex flex-col flex-shrink-0">
                 <div className="p-8 border-b border-slate-50">
                     <div className="flex items-center gap-3 mb-8 cursor-pointer group" onClick={() => router.push('/dashboard')}>
                         <span className="text-slate-400 group-hover:text-indigo-600 transition-colors">←</span>
@@ -214,10 +214,10 @@ export default function CorporateConsole() {
                             <motion.div 
                                 key={asset.id} 
                                 onClick={() => setSelectedAsset(asset)}
-                                className={`p-5 rounded-[24px] cursor-pointer transition-all border ${selectedAsset?.id === asset.id ? 'bg-indigo-600 border-indigo-600 shadow-lg shadow-indigo-100 text-white' : 'bg-white border-slate-100 hover:border-indigo-200 hover:shadow-sm text-slate-900'}`}
+                                className={`p-5 rounded-[24px] cursor-pointer transition-all border ${selectedAsset?.id === asset.id ? 'bg-indigo-600 border-indigo-600 shadow-lg shadow-indigo-100 text-white' : 'bg-white dark:bg-gray-800 border-slate-100 hover:border-indigo-200 hover:shadow-sm text-slate-900'}`}
                             >
                                 <div className="flex items-center gap-4">
-                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg ${selectedAsset?.id === asset.id ? 'bg-white/20' : 'bg-slate-50 text-indigo-500'}`}>
+                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg ${selectedAsset?.id === asset.id ? 'bg-white dark:bg-gray-800/20' : 'bg-slate-50 text-indigo-500'}`}>
                                         {asset.content_type === 'pdf' ? '📄' : asset.content_type === 'video' ? '🎬' : '🔗'}
                                     </div>
                                     <div className="flex-1 overflow-hidden">
@@ -234,7 +234,7 @@ export default function CorporateConsole() {
             </div>
 
             {/* Main Content Area */}
-            <div className="flex-1 flex flex-col relative bg-white">
+            <div className="flex-1 flex flex-col relative bg-white dark:bg-gray-800">
                 {/* Top Nav */}
                 <div className="px-10 py-6 border-b border-slate-50 flex items-center justify-between">
                     <div>
@@ -242,8 +242,8 @@ export default function CorporateConsole() {
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="flex bg-slate-100 p-1 rounded-full">
-                             <button onClick={() => setChatMode('advisor')} className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${chatMode === 'advisor' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400'}`}>Advisor</button>
-                             <button onClick={() => setChatMode('peer')} className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${chatMode === 'peer' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400'}`}>Peer Chat</button>
+                             <button onClick={() => setChatMode('advisor')} className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${chatMode === 'advisor' ? 'bg-white dark:bg-gray-800 text-indigo-600 shadow-sm' : 'text-slate-400'}`}>Advisor</button>
+                             <button onClick={() => setChatMode('peer')} className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${chatMode === 'peer' ? 'bg-white dark:bg-gray-800 text-indigo-600 shadow-sm' : 'text-slate-400'}`}>Peer Chat</button>
                         </div>
                     </div>
                 </div>
@@ -266,7 +266,7 @@ export default function CorporateConsole() {
                                         </h3>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             {exams.map(exam => (
-                                                <div key={exam.id} className="p-6 rounded-[32px] bg-white border border-indigo-100 shadow-sm border-l-4 border-l-indigo-600">
+                                                <div key={exam.id} className="p-6 rounded-[32px] bg-white dark:bg-gray-800 border border-indigo-100 shadow-sm border-l-4 border-l-indigo-600">
                                                     <div className="flex justify-between items-start mb-3">
                                                         <span className="text-xl">📝</span>
                                                         <span className="text-[10px] font-black uppercase tracking-widest text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">Active</span>
@@ -283,7 +283,7 @@ export default function CorporateConsole() {
                                     </div>
                                 )}
 
-                                <div className="p-12 rounded-[48px] bg-white border border-slate-100 shadow-xl shadow-slate-200/50 relative overflow-hidden mb-12">
+                                <div className="p-12 rounded-[48px] bg-white dark:bg-gray-800 border border-slate-100 shadow-xl shadow-slate-200/50 relative overflow-hidden mb-12">
                                     <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/5 rounded-full blur-3xl" />
                                     <div className="relative z-10">
                                         <div className="flex items-center justify-between mb-8">
@@ -309,9 +309,9 @@ export default function CorporateConsole() {
                                           <div className="absolute top-0 right-0 p-6 text-4xl opacity-20">📝</div>
                                           <h4 className="text-xl font-bold mb-4">Exam Ready</h4>
                                           <p className="text-sm text-slate-400 mb-8 max-w-xs">Complete this training module to unlock the certification exam. Issued automatically upon passing.</p>
-                                          <button className="px-6 py-3 rounded-xl bg-white/10 border border-white/20 text-[10px] font-black uppercase tracking-widest text-white hover:bg-white/20 transition-all">Enter Assessment</button>
+                                          <button className="px-6 py-3 rounded-xl bg-white dark:bg-gray-800/10 border border-white/20 text-[10px] font-black uppercase tracking-widest text-white hover:bg-white dark:bg-gray-800/20 transition-all">Enter Assessment</button>
                                      </div>
-                                     <div className="p-10 rounded-[40px] bg-white border border-slate-100 shadow-sm flex flex-col items-center text-center justify-center">
+                                     <div className="p-10 rounded-[40px] bg-white dark:bg-gray-800 border border-slate-100 shadow-sm flex flex-col items-center text-center justify-center">
                                           <div className="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center text-3xl mb-4">🏆</div>
                                           <h4 className="text-lg font-bold text-slate-900 mb-1">Auto-Certification</h4>
                                           <p className="text-xs text-slate-500 font-medium tracking-tight">Skill verification protocol active.</p>
@@ -338,7 +338,7 @@ export default function CorporateConsole() {
                         exit={{ x: '100%' }}
                         className="w-[450px] bg-[#F8FAFC] border-l border-slate-100 flex flex-col flex-shrink-0 z-[50] shadow-2xl"
                     >
-                        <div className="p-8 border-b border-slate-100 bg-white">
+                        <div className="p-8 border-b border-slate-100 bg-white dark:bg-gray-800">
                              <div className="flex items-center justify-between mb-2">
                                 <div className="flex items-center gap-3">
                                     <span className="text-xl">{chatMode === 'advisor' ? '🧠' : '👥'}</span>
@@ -362,7 +362,7 @@ export default function CorporateConsole() {
                                         {msg.userName && msg.sender !== 'user' && (
                                             <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1 ml-2">{msg.userName}</span>
                                         )}
-                                        <div className={`p-5 rounded-[24px] text-xs font-semibold leading-relaxed shadow-sm ${msg.sender === 'user' ? 'bg-indigo-600 text-white' : msg.sender === 'peer' ? 'bg-white border border-slate-100 text-slate-700' : 'bg-slate-900 text-slate-300'}`}>
+                                        <div className={`p-5 rounded-[24px] text-xs font-semibold leading-relaxed shadow-sm ${msg.sender === 'user' ? 'bg-indigo-600 text-white' : msg.sender === 'peer' ? 'bg-white dark:bg-gray-800 border border-slate-100 text-slate-700' : 'bg-slate-900 text-slate-300'}`}>
                                             {msg.text}
                                         </div>
                                     </div>
@@ -370,7 +370,7 @@ export default function CorporateConsole() {
                             ))}
                             {isTyping && chatMode === 'advisor' && (
                                 <div className="flex justify-start">
-                                    <div className="bg-white border border-slate-100 p-4 rounded-[20px] shadow-sm flex gap-1.5">
+                                    <div className="bg-white dark:bg-gray-800 border border-slate-100 p-4 rounded-[20px] shadow-sm flex gap-1.5">
                                         <div className="w-1.5 h-1.5 bg-indigo-300 rounded-full animate-bounce" />
                                         <div className="w-1.5 h-1.5 bg-indigo-300 rounded-full animate-bounce" style={{ animationDelay: '200ms' }} />
                                         <div className="w-1.5 h-1.5 bg-indigo-300 rounded-full animate-bounce" style={{ animationDelay: '400ms' }} />
@@ -380,7 +380,7 @@ export default function CorporateConsole() {
                             <div ref={chatEndRef} />
                         </div>
 
-                        <div className="p-6 bg-white border-t border-slate-100">
+                        <div className="p-6 bg-white dark:bg-gray-800 border-t border-slate-100">
                             <div className="relative">
                                 <input 
                                     type="text" 

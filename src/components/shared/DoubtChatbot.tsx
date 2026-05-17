@@ -107,7 +107,7 @@ export default function DoubtChatbot() {
                             <div key={i} className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                                 <div className={`max-w-[85%] p-3 rounded-2xl text-xs leading-relaxed whitespace-pre-wrap ${m.sender === 'user'
                                     ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-br-sm shadow-[0_2px_10px_rgba(139,92,246,0.2)]'
-                                    : 'bg-white/[0.04] text-slate-300 border border-white/[0.06] rounded-bl-sm'
+                                    : 'bg-white dark:bg-gray-800/[0.04] text-slate-300 border border-white/[0.06] rounded-bl-sm'
                                     }`}>
                                     {m.text}
                                 </div>
@@ -115,7 +115,7 @@ export default function DoubtChatbot() {
                         ))}
                         {isTyping && (
                             <div className="flex justify-start">
-                                <div className="bg-white/[0.04] p-3.5 rounded-2xl rounded-bl-sm flex gap-1.5 items-center border border-white/[0.06]">
+                                <div className="bg-white dark:bg-gray-800/[0.04] p-3.5 rounded-2xl rounded-bl-sm flex gap-1.5 items-center border border-white/[0.06]">
                                     <div className="w-1.5 h-1.5 bg-violet-400 rounded-full animate-bounce" />
                                     <div className="w-1.5 h-1.5 bg-violet-400 rounded-full animate-bounce [animation-delay:0.15s]" />
                                     <div className="w-1.5 h-1.5 bg-violet-400 rounded-full animate-bounce [animation-delay:0.3s]" />
@@ -132,7 +132,7 @@ export default function DoubtChatbot() {
                                 onChange={(e) => setInput(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
                                 placeholder="Ask me anything..."
-                                className="flex-1 bg-white/[0.04] border border-white/[0.06] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-violet-500/50 focus:shadow-[0_0_0_3px_rgba(139,92,246,0.1)] placeholder:text-slate-600 transition-all"
+                                className="flex-1 bg-white dark:bg-gray-800/[0.04] border border-white/[0.06] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-violet-500/50 focus:shadow-[0_0_0_3px_rgba(139,92,246,0.1)] placeholder:text-slate-600 transition-all"
                             />
                             <button
                                 onClick={handleSend}
