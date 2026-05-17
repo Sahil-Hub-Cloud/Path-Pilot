@@ -308,9 +308,9 @@ export default function LearningPage() {
 
   // Fetch Gemini notes whenever the active topic changes (with localStorage caching)
   useEffect(() => {
-    if (!activeTopic) return;
+    if (!activeTopic || !course) return;
     
-    const cacheKey = `notes_${courseIdParam}_${activeTopic.id}`;
+    const cacheKey = `pp_notes_${user?.uid || 'guest'}_${activeTopic.id}`;
     const cached = localStorage.getItem(cacheKey);
     
     if (cached) {
@@ -321,19 +321,27 @@ export default function LearningPage() {
 
     setGeminiNotes('');
     setNotesLoading(true);
-    fetch(`/api/notes?topic=${encodeURIComponent(activeTopic.title)}&course=${encodeURIComponent(courseIdParam)}`)
+    
+    fetch('/api/notes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        topicName: activeTopic.title,
+        courseName: course.title,
+      })
+    })
       .then(r => r.json())
       .then(d => {
         if (d.notes) {
           setGeminiNotes(d.notes);
           localStorage.setItem(cacheKey, d.notes);
         } else {
-          setGeminiNotes('');
+          setGeminiNotes('Notes unavailable right now. Try again later.');
         }
       })
-      .catch(() => setGeminiNotes(''))
+      .catch(() => setGeminiNotes('Notes unavailable right now. Try again later.'))
       .finally(() => setNotesLoading(false));
-  }, [activeTopic?.id, courseIdParam]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [activeTopic?.id, course?.title, user?.uid]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => { if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight; }, [messages]);
 
