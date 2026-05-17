@@ -62,13 +62,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Functions",
                 estimatedHours: 13,
                 topics: [
-                    { id: "topic_1", title: "Defining functions", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_2", title: "Parameters and arguments", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_3", title: "Return values", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_4", title: "Lambda functions", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_5", title: "Scope and namespaces", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_6", title: "Practical Scope and namespaces", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_7", title: "Practical Defining functions", difficulty: "Beginner", duration: "2 hours" }
+                    { id: "topic_1", title: "Defining functions", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/aqvDxdPZiPg" /* CodeWithHarry (Hindi) */ },
+                    { id: "topic_2", title: "Parameters and arguments", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/aqvDxdPZiPg" /* CodeWithHarry (Hindi) */ },
+                    { id: "topic_3", title: "Return values", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/aqvDxdPZiPg" /* CodeWithHarry (Hindi) */ },
+                    { id: "topic_4", title: "Lambda functions", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/aqvDxdPZiPg" /* CodeWithHarry (Hindi) */ },
+                    { id: "topic_5", title: "Scope and namespaces", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/aqvDxdPZiPg" /* CodeWithHarry (Hindi) */ },
+                    { id: "topic_6", title: "Practical Scope and namespaces", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/aqvDxdPZiPg" /* CodeWithHarry (Hindi) */ },
+                    { id: "topic_7", title: "Practical Defining functions", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/aqvDxdPZiPg" /* CodeWithHarry (Hindi) */ }
                 ]
             },
             {
@@ -77,12 +77,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Control Flow",
                 estimatedHours: 14,
                 topics: [
-                    { id: "topic_8", title: "If else conditions", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_9", title: "Nested conditions", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_10", title: "For loops", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_11", title: "While loops", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_12", title: "Break continue and pass", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_13", title: "Project: For loops", difficulty: "Hard", duration: "3 hours" }
+                    { id: "topic_8", title: "If else conditions", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/aqvDxdPZiPg" /* CodeWithHarry (Hindi) */ },
+                    { id: "topic_9", title: "Nested conditions", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/aqvDxdPZiPg" /* CodeWithHarry (Hindi) */ },
+                    { id: "topic_10", title: "For loops", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/aqvDxdPZiPg" /* CodeWithHarry (Hindi) */ },
+                    { id: "topic_11", title: "While loops", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/aqvDxdPZiPg" /* CodeWithHarry (Hindi) */ },
+                    { id: "topic_12", title: "Break continue and pass", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/aqvDxdPZiPg" /* CodeWithHarry (Hindi) */ },
+                    { id: "topic_13", title: "Project: For loops", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/aqvDxdPZiPg" /* CodeWithHarry (Hindi) */ }
                 ]
             },
             {
@@ -91,12 +91,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Getting Started",
                 estimatedHours: 17,
                 topics: [
-                    { id: "topic_14", title: "Python installation and setup", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_15", title: "Variables and data types", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_16", title: "String operations and formatting", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_17", title: "User input and output", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_18", title: "Comments and code style", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_19", title: "Project: String operations and formatting", difficulty: "Beginner", duration: "1.5 hours" }
+                    { id: "topic_14", title: "Python installation and setup", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/aqvDxdPZiPg" /* CodeWithHarry (Hindi) */ },
+                    { id: "topic_15", title: "Variables and data types", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/aqvDxdPZiPg" /* CodeWithHarry (Hindi) */ },
+                    { id: "topic_16", title: "String operations and formatting", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/aqvDxdPZiPg" /* CodeWithHarry (Hindi) */ },
+                    { id: "topic_17", title: "User input and output", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/aqvDxdPZiPg" /* CodeWithHarry (Hindi) */ },
+                    { id: "topic_18", title: "Comments and code style", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/aqvDxdPZiPg" /* CodeWithHarry (Hindi) */ },
+                    { id: "topic_19", title: "Project: String operations and formatting", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/aqvDxdPZiPg" /* CodeWithHarry (Hindi) */ }
                 ]
             },
             {
@@ -105,12 +105,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Data Structures",
                 estimatedHours: 14,
                 topics: [
-                    { id: "topic_20", title: "Lists and list methods", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_21", title: "Tuples and sets", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_22", title: "Dictionaries", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_23", title: "List comprehensions", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_24", title: "Nested data structures", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_25", title: "Working with files", difficulty: "Intermediate", duration: "1.5 hours" }
+                    { id: "topic_20", title: "Lists and list methods", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/aqvDxdPZiPg" /* CodeWithHarry (Hindi) */ },
+                    { id: "topic_21", title: "Tuples and sets", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/aqvDxdPZiPg" /* CodeWithHarry (Hindi) */ },
+                    { id: "topic_22", title: "Dictionaries", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/aqvDxdPZiPg" /* CodeWithHarry (Hindi) */ },
+                    { id: "topic_23", title: "List comprehensions", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/aqvDxdPZiPg" /* CodeWithHarry (Hindi) */ },
+                    { id: "topic_24", title: "Nested data structures", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/aqvDxdPZiPg" /* CodeWithHarry (Hindi) */ },
+                    { id: "topic_25", title: "Working with files", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/aqvDxdPZiPg" /* CodeWithHarry (Hindi) */ }
                 ]
             }
         ],
@@ -536,12 +536,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Advanced Patterns",
                 estimatedHours: 11,
                 topics: [
-                    { id: "topic_26", title: "Prototypes and classes", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_27", title: "Modules ES6", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_28", title: "Iterators and generators", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_29", title: "Proxy and Reflect", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_30", title: "V8 engine internals and performance", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_31", title: "Practical V8 engine internals and performance", difficulty: "Hard", duration: "2 hours" }
+                    { id: "topic_26", title: "Prototypes and classes", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ },
+                    { id: "topic_27", title: "Modules ES6", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ },
+                    { id: "topic_28", title: "Iterators and generators", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ },
+                    { id: "topic_29", title: "Proxy and Reflect", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ },
+                    { id: "topic_30", title: "V8 engine internals and performance", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ },
+                    { id: "topic_31", title: "Practical V8 engine internals and performance", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ }
                 ]
             },
             {
@@ -550,12 +550,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Async JavaScript",
                 estimatedHours: 19,
                 topics: [
-                    { id: "topic_32", title: "Callbacks and callback hell", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_33", title: "Promises and chaining", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_34", title: "Async await", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_35", title: "Fetch API and REST calls", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_36", title: "Error handling", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_37", title: "Deep Dive: Fetch API and REST calls", difficulty: "Hard", duration: "3 hours" }
+                    { id: "topic_32", title: "Callbacks and callback hell", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ },
+                    { id: "topic_33", title: "Promises and chaining", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ },
+                    { id: "topic_34", title: "Async await", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ },
+                    { id: "topic_35", title: "Fetch API and REST calls", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ },
+                    { id: "topic_36", title: "Error handling", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ },
+                    { id: "topic_37", title: "Deep Dive: Fetch API and REST calls", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ }
                 ]
             },
             {
@@ -564,12 +564,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of The DOM",
                 estimatedHours: 17,
                 topics: [
-                    { id: "topic_38", title: "DOM manipulation", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_39", title: "Event listeners", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_40", title: "Event bubbling and delegation", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_41", title: "Forms and validation", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_42", title: "Dynamic UI updates", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_43", title: "Advanced Forms and validation", difficulty: "Hard", duration: "1.5 hours" }
+                    { id: "topic_38", title: "DOM manipulation", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ },
+                    { id: "topic_39", title: "Event listeners", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ },
+                    { id: "topic_40", title: "Event bubbling and delegation", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ },
+                    { id: "topic_41", title: "Forms and validation", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ },
+                    { id: "topic_42", title: "Dynamic UI updates", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ },
+                    { id: "topic_43", title: "Advanced Forms and validation", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ }
                 ]
             },
             {
@@ -578,12 +578,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Functions Deep Dive",
                 estimatedHours: 13,
                 topics: [
-                    { id: "topic_44", title: "Function declarations vs expressions", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_45", title: "Arrow functions", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_46", title: "Higher order functions", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_47", title: "Closures and lexical scope", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_48", title: "Currying and composition", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_49", title: "Project: Closures and lexical scope", difficulty: "Beginner", duration: "3 hours" }
+                    { id: "topic_44", title: "Function declarations vs expressions", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ },
+                    { id: "topic_45", title: "Arrow functions", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ },
+                    { id: "topic_46", title: "Higher order functions", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ },
+                    { id: "topic_47", title: "Closures and lexical scope", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ },
+                    { id: "topic_48", title: "Currying and composition", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ },
+                    { id: "topic_49", title: "Project: Closures and lexical scope", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ }
                 ]
             },
             {
@@ -592,12 +592,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of JS Foundations",
                 estimatedHours: 15,
                 topics: [
-                    { id: "topic_50", title: "How JavaScript works", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_51", title: "Variables let const var", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_52", title: "Data types and coercion", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_53", title: "Operators and expressions", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_54", title: "Control flow", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_55", title: "Interview Qs: How JavaScript works", difficulty: "Hard", duration: "3 hours" }
+                    { id: "topic_50", title: "How JavaScript works", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ },
+                    { id: "topic_51", title: "Variables let const var", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ },
+                    { id: "topic_52", title: "Data types and coercion", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ },
+                    { id: "topic_53", title: "Operators and expressions", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ },
+                    { id: "topic_54", title: "Control flow", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ },
+                    { id: "topic_55", title: "Interview Qs: How JavaScript works", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/PkZNo7MFNFg" /* freeCodeCamp (English) */ }
                 ]
             }
         ],
@@ -1103,13 +1103,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Advanced React",
                 estimatedHours: 15,
                 topics: [
-                    { id: "topic_56", title: "useReducer and useRef", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_57", title: "Custom hooks", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_58", title: "React Router v6", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_59", title: "Code splitting and lazy loading", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_60", title: "Performance optimization with useMemo and useCallback", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_61", title: "Project: Custom hooks", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_62", title: "Interview Qs: React Router v6", difficulty: "Hard", duration: "3 hours" }
+                    { id: "topic_56", title: "useReducer and useRef", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_57", title: "Custom hooks", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_58", title: "React Router v6", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_59", title: "Code splitting and lazy loading", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_60", title: "Performance optimization with useMemo and useCallback", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_61", title: "Project: Custom hooks", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_62", title: "Interview Qs: React Router v6", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ }
                 ]
             },
             {
@@ -1118,12 +1118,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Intermediate React",
                 estimatedHours: 11,
                 topics: [
-                    { id: "topic_63", title: "Conditional rendering", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_64", title: "Lists and keys", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_65", title: "Forms and controlled components", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_66", title: "Component lifecycle", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_67", title: "Context API", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_68", title: "Interview Qs: Context API", difficulty: "Intermediate", duration: "1.5 hours" }
+                    { id: "topic_63", title: "Conditional rendering", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_64", title: "Lists and keys", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_65", title: "Forms and controlled components", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_66", title: "Component lifecycle", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_67", title: "Context API", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_68", title: "Interview Qs: Context API", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ }
                 ]
             },
             {
@@ -1132,12 +1132,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of React Basics",
                 estimatedHours: 10,
                 topics: [
-                    { id: "topic_69", title: "Create React App and Vite setup", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_70", title: "JSX syntax", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_71", title: "Components and props", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_72", title: "useState hook", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_73", title: "useEffect hook", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_74", title: "Practical JSX syntax", difficulty: "Intermediate", duration: "2 hours" }
+                    { id: "topic_69", title: "Create React App and Vite setup", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_70", title: "JSX syntax", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_71", title: "Components and props", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_72", title: "useState hook", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_73", title: "useEffect hook", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_74", title: "Practical JSX syntax", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ }
                 ]
             },
             {
@@ -1146,12 +1146,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Web Foundations",
                 estimatedHours: 10,
                 topics: [
-                    { id: "topic_75", title: "HTML5 semantic elements", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_76", title: "CSS3 flexbox and grid", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_77", title: "Responsive design", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_78", title: "CSS variables and animations", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_79", title: "Introduction to JavaScript for React", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_80", title: "Deep Dive: HTML5 semantic elements", difficulty: "Hard", duration: "2 hours" }
+                    { id: "topic_75", title: "HTML5 semantic elements", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_76", title: "CSS3 flexbox and grid", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_77", title: "Responsive design", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_78", title: "CSS variables and animations", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_79", title: "Introduction to JavaScript for React", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_80", title: "Deep Dive: HTML5 semantic elements", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ }
                 ]
             },
             {
@@ -1160,12 +1160,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Final Projects",
                 estimatedHours: 15,
                 topics: [
-                    { id: "topic_81", title: "Portfolio website", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_82", title: "E-commerce product page", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_83", title: "Real time dashboard", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_84", title: "Deep Dive: Real time dashboard", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_85", title: "Advanced Real time dashboard", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_86", title: "Project: E-commerce product page", difficulty: "Hard", duration: "1.5 hours" }
+                    { id: "topic_81", title: "Portfolio website", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_82", title: "E-commerce product page", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_83", title: "Real time dashboard", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_84", title: "Deep Dive: Real time dashboard", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_85", title: "Advanced Real time dashboard", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_86", title: "Project: E-commerce product page", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ }
                 ]
             },
             {
@@ -1174,13 +1174,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of State Management",
                 estimatedHours: 10,
                 topics: [
-                    { id: "topic_87", title: "Redux Toolkit", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_88", title: "Zustand", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_89", title: "React Query for server state", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_90", title: "Jotai atoms", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_91", title: "When to use what", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_92", title: "Deep Dive: Zustand", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_93", title: "Practical Zustand", difficulty: "Intermediate", duration: "1.5 hours" }
+                    { id: "topic_87", title: "Redux Toolkit", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_88", title: "Zustand", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_89", title: "React Query for server state", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_90", title: "Jotai atoms", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_91", title: "When to use what", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_92", title: "Deep Dive: Zustand", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_93", title: "Practical Zustand", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ }
                 ]
             },
             {
@@ -1189,13 +1189,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Testing and Deployment",
                 estimatedHours: 11,
                 topics: [
-                    { id: "topic_94", title: "Jest and React Testing Library", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_95", title: "End to end testing with Playwright", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_96", title: "CI/CD with GitHub Actions", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_97", title: "Deploying on Vercel and Netlify", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_98", title: "Performance auditing with Lighthouse", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_99", title: "Advanced CI/CD with GitHub Actions", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_100", title: "Deep Dive: Jest and React Testing Library", difficulty: "Hard", duration: "2 hours" }
+                    { id: "topic_94", title: "Jest and React Testing Library", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_95", title: "End to end testing with Playwright", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_96", title: "CI/CD with GitHub Actions", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_97", title: "Deploying on Vercel and Netlify", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_98", title: "Performance auditing with Lighthouse", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_99", title: "Advanced CI/CD with GitHub Actions", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ },
+                    { id: "topic_100", title: "Deep Dive: Jest and React Testing Library", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/w7ejDZ8SWv8" /* Traversy Media */ }
                 ]
             }
         ],
@@ -1941,12 +1941,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of State with Pinia",
                 estimatedHours: 14,
                 topics: [
-                    { id: "topic_101", title: "Store setup", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_102", title: "State getters actions", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_103", title: "Persisting state", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_104", title: "Composables vs stores", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_105", title: "Migrating from Vuex", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_106", title: "Deep Dive: Composables vs stores", difficulty: "Intermediate", duration: "2 hours" }
+                    { id: "topic_101", title: "Store setup", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_102", title: "State getters actions", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_103", title: "Persisting state", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_104", title: "Composables vs stores", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_105", title: "Migrating from Vuex", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_106", title: "Deep Dive: Composables vs stores", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ }
                 ]
             },
             {
@@ -1955,11 +1955,11 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Advanced Vue",
                 estimatedHours: 11,
                 topics: [
-                    { id: "topic_107", title: "Composition API deep dive", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_108", title: "Custom directives", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_109", title: "Plugins", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_110", title: "Server side rendering with Nuxt", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_111", title: "Testing with Vitest", difficulty: "Beginner", duration: "3 hours" }
+                    { id: "topic_107", title: "Composition API deep dive", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_108", title: "Custom directives", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_109", title: "Plugins", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_110", title: "Server side rendering with Nuxt", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_111", title: "Testing with Vitest", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ }
                 ]
             },
             {
@@ -1968,12 +1968,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Vue Router",
                 estimatedHours: 19,
                 topics: [
-                    { id: "topic_112", title: "Route configuration", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_113", title: "Dynamic routes", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_114", title: "Navigation guards", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_115", title: "Lazy loading routes", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_116", title: "Nested routes", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_117", title: "Practical Lazy loading routes", difficulty: "Beginner", duration: "3 hours" }
+                    { id: "topic_112", title: "Route configuration", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_113", title: "Dynamic routes", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_114", title: "Navigation guards", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_115", title: "Lazy loading routes", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_116", title: "Nested routes", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_117", title: "Practical Lazy loading routes", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ }
                 ]
             },
             {
@@ -1982,12 +1982,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Components",
                 estimatedHours: 17,
                 topics: [
-                    { id: "topic_118", title: "Component communication props and emits", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_119", title: "Slots and scoped slots", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_120", title: "Lifecycle hooks", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_121", title: "Teleport and Suspense", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_122", title: "Dynamic components", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_123", title: "Project: Slots and scoped slots", difficulty: "Beginner", duration: "3 hours" }
+                    { id: "topic_118", title: "Component communication props and emits", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_119", title: "Slots and scoped slots", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_120", title: "Lifecycle hooks", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_121", title: "Teleport and Suspense", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_122", title: "Dynamic components", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_123", title: "Project: Slots and scoped slots", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ }
                 ]
             },
             {
@@ -1996,12 +1996,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Vue Fundamentals",
                 estimatedHours: 14,
                 topics: [
-                    { id: "topic_124", title: "Vue 3 setup and Vite", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_125", title: "Template syntax", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_126", title: "Reactive data with ref and reactive", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_127", title: "Computed properties", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_128", title: "Watchers", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_129", title: "Deep Dive: Vue 3 setup and Vite", difficulty: "Intermediate", duration: "2 hours" }
+                    { id: "topic_124", title: "Vue 3 setup and Vite", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_125", title: "Template syntax", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_126", title: "Reactive data with ref and reactive", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_127", title: "Computed properties", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_128", title: "Watchers", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_129", title: "Deep Dive: Vue 3 setup and Vite", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ }
                 ]
             },
             {
@@ -2010,12 +2010,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Real Projects",
                 estimatedHours: 12,
                 topics: [
-                    { id: "topic_130", title: "Blog platform", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_131", title: "Admin dashboard", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_132", title: "Real time chat", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_133", title: "Deep Dive: Blog platform", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_134", title: "Advanced Blog platform", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_135", title: "Advanced Admin dashboard", difficulty: "Intermediate", duration: "3 hours" }
+                    { id: "topic_130", title: "Blog platform", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_131", title: "Admin dashboard", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_132", title: "Real time chat", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_133", title: "Deep Dive: Blog platform", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_134", title: "Advanced Blog platform", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ },
+                    { id: "topic_135", title: "Advanced Admin dashboard", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/FXpIoQ_rT_c" /* Traversy Media */ }
                 ]
             }
         ],
@@ -2601,13 +2601,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of API Design",
                 estimatedHours: 12,
                 topics: [
-                    { id: "topic_136", title: "REST principles", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_137", title: "API versioning", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_138", title: "Rate limiting", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_139", title: "Request validation with Joi", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_140", title: "API documentation with Swagger", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_141", title: "Interview Qs: API versioning", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_142", title: "Advanced Rate limiting", difficulty: "Hard", duration: "1.5 hours" }
+                    { id: "topic_136", title: "REST principles", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_137", title: "API versioning", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_138", title: "Rate limiting", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_139", title: "Request validation with Joi", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_140", title: "API documentation with Swagger", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_141", title: "Interview Qs: API versioning", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_142", title: "Advanced Rate limiting", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ }
                 ]
             },
             {
@@ -2616,12 +2616,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Authentication",
                 estimatedHours: 19,
                 topics: [
-                    { id: "topic_143", title: "JWT tokens", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_144", title: "Passport.js strategies", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_145", title: "OAuth2 with Google", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_146", title: "Session management", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_147", title: "Refresh token rotation", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_148", title: "Advanced JWT tokens", difficulty: "Hard", duration: "1.5 hours" }
+                    { id: "topic_143", title: "JWT tokens", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_144", title: "Passport.js strategies", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_145", title: "OAuth2 with Google", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_146", title: "Session management", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_147", title: "Refresh token rotation", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_148", title: "Advanced JWT tokens", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ }
                 ]
             },
             {
@@ -2630,12 +2630,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Databases",
                 estimatedHours: 10,
                 topics: [
-                    { id: "topic_149", title: "MongoDB with Mongoose", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_150", title: "Schema design and validation", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_151", title: "SQL with PostgreSQL", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_152", title: "Sequelize ORM", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_153", title: "Database indexing and optimization", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_154", title: "Advanced Database indexing and optimization", difficulty: "Intermediate", duration: "2 hours" }
+                    { id: "topic_149", title: "MongoDB with Mongoose", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_150", title: "Schema design and validation", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_151", title: "SQL with PostgreSQL", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_152", title: "Sequelize ORM", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_153", title: "Database indexing and optimization", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_154", title: "Advanced Database indexing and optimization", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ }
                 ]
             },
             {
@@ -2644,12 +2644,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Express Framework",
                 estimatedHours: 12,
                 topics: [
-                    { id: "topic_155", title: "Express setup and middleware", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_156", title: "Routing and controllers", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_157", title: "Request and response objects", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_158", title: "Error handling middleware", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_159", title: "Static files and templating", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_160", title: "Project: Request and response objects", difficulty: "Hard", duration: "2 hours" }
+                    { id: "topic_155", title: "Express setup and middleware", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_156", title: "Routing and controllers", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_157", title: "Request and response objects", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_158", title: "Error handling middleware", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_159", title: "Static files and templating", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_160", title: "Project: Request and response objects", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ }
                 ]
             },
             {
@@ -2658,12 +2658,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Node Foundations",
                 estimatedHours: 13,
                 topics: [
-                    { id: "topic_161", title: "How Node.js works", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_162", title: "Event loop deep dive", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_163", title: "Modules CommonJS and ESM", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_164", title: "File system operations", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_165", title: "Streams and buffers", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_166", title: "Deep Dive: Streams and buffers", difficulty: "Hard", duration: "3 hours" }
+                    { id: "topic_161", title: "How Node.js works", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_162", title: "Event loop deep dive", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_163", title: "Modules CommonJS and ESM", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_164", title: "File system operations", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_165", title: "Streams and buffers", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_166", title: "Deep Dive: Streams and buffers", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ }
                 ]
             },
             {
@@ -2672,13 +2672,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Advanced Backend",
                 estimatedHours: 19,
                 topics: [
-                    { id: "topic_167", title: "WebSockets with Socket.io", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_168", title: "Message queues with Redis", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_169", title: "Caching strategies", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_170", title: "Microservices basics", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_171", title: "GraphQL with Apollo", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_172", title: "Project: Microservices basics", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_173", title: "Advanced Message queues with Redis", difficulty: "Intermediate", duration: "1.5 hours" }
+                    { id: "topic_167", title: "WebSockets with Socket.io", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_168", title: "Message queues with Redis", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_169", title: "Caching strategies", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_170", title: "Microservices basics", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_171", title: "GraphQL with Apollo", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_172", title: "Project: Microservices basics", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_173", title: "Advanced Message queues with Redis", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ }
                 ]
             },
             {
@@ -2687,13 +2687,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of DevOps for Backend",
                 estimatedHours: 14,
                 topics: [
-                    { id: "topic_174", title: "Docker containerization", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_175", title: "Environment management", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_176", title: "Logging with Winston", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_177", title: "PM2 process management", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_178", title: "Deploying on Railway and Render", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_179", title: "Deep Dive: Environment management", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_180", title: "Deep Dive: PM2 process management", difficulty: "Hard", duration: "1.5 hours" }
+                    { id: "topic_174", title: "Docker containerization", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_175", title: "Environment management", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_176", title: "Logging with Winston", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_177", title: "PM2 process management", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_178", title: "Deploying on Railway and Render", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_179", title: "Deep Dive: Environment management", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ },
+                    { id: "topic_180", title: "Deep Dive: PM2 process management", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fBNz5xF-Kx4" /* Traversy Media */ }
                 ]
             }
         ],
@@ -3439,13 +3439,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Authentication",
                 estimatedHours: 16,
                 topics: [
-                    { id: "topic_181", title: "Token authentication", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_182", title: "JWT with SimpleJWT", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_183", title: "OAuth2 integration", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_184", title: "Custom user model", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_185", title: "Permission classes", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_186", title: "Practical Permission classes", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_187", title: "Deep Dive: Token authentication", difficulty: "Intermediate", duration: "3 hours" }
+                    { id: "topic_181", title: "Token authentication", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_182", title: "JWT with SimpleJWT", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_183", title: "OAuth2 integration", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_184", title: "Custom user model", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_185", title: "Permission classes", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_186", title: "Practical Permission classes", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_187", title: "Deep Dive: Token authentication", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ }
                 ]
             },
             {
@@ -3454,12 +3454,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Django REST Framework",
                 estimatedHours: 18,
                 topics: [
-                    { id: "topic_188", title: "Serializers", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_189", title: "APIView and ViewSets", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_190", title: "Routers", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_191", title: "Permissions and authentication", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_192", title: "Pagination and filtering", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_193", title: "Interview Qs: Serializers", difficulty: "Intermediate", duration: "1.5 hours" }
+                    { id: "topic_188", title: "Serializers", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_189", title: "APIView and ViewSets", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_190", title: "Routers", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_191", title: "Permissions and authentication", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_192", title: "Pagination and filtering", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_193", title: "Interview Qs: Serializers", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ }
                 ]
             },
             {
@@ -3468,12 +3468,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Models and Database",
                 estimatedHours: 14,
                 topics: [
-                    { id: "topic_194", title: "ORM and model definition", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_195", title: "Migrations", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_196", title: "QuerySet API", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_197", title: "Model relationships", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_198", title: "Database optimization", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_199", title: "Deep Dive: Migrations", difficulty: "Hard", duration: "3 hours" }
+                    { id: "topic_194", title: "ORM and model definition", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_195", title: "Migrations", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_196", title: "QuerySet API", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_197", title: "Model relationships", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_198", title: "Database optimization", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_199", title: "Deep Dive: Migrations", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ }
                 ]
             },
             {
@@ -3482,12 +3482,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Django Foundations",
                 estimatedHours: 13,
                 topics: [
-                    { id: "topic_200", title: "Django project structure", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_201", title: "Settings and configuration", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_202", title: "URL routing", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_203", title: "Views and templates", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_204", title: "Django admin panel", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_205", title: "Deep Dive: Settings and configuration", difficulty: "Intermediate", duration: "2 hours" }
+                    { id: "topic_200", title: "Django project structure", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_201", title: "Settings and configuration", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_202", title: "URL routing", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_203", title: "Views and templates", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_204", title: "Django admin panel", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_205", title: "Deep Dive: Settings and configuration", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ }
                 ]
             },
             {
@@ -3496,12 +3496,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Final Project",
                 estimatedHours: 15,
                 topics: [
-                    { id: "topic_206", title: "Full featured blog API", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_207", title: "E-commerce backend", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_208", title: "Real time notification system", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_209", title: "Project: E-commerce backend", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_210", title: "Deep Dive: Real time notification system", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_211", title: "Project: Full featured blog API", difficulty: "Beginner", duration: "1.5 hours" }
+                    { id: "topic_206", title: "Full featured blog API", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_207", title: "E-commerce backend", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_208", title: "Real time notification system", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_209", title: "Project: E-commerce backend", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_210", title: "Deep Dive: Real time notification system", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_211", title: "Project: Full featured blog API", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ }
                 ]
             },
             {
@@ -3510,13 +3510,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Advanced Django",
                 estimatedHours: 13,
                 topics: [
-                    { id: "topic_212", title: "Celery for background tasks", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_213", title: "Redis caching", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_214", title: "Django channels for WebSockets", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_215", title: "File uploads with S3", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_216", title: "Signal handlers", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_217", title: "Project: Celery for background tasks", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_218", title: "Project: Redis caching", difficulty: "Beginner", duration: "2 hours" }
+                    { id: "topic_212", title: "Celery for background tasks", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_213", title: "Redis caching", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_214", title: "Django channels for WebSockets", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_215", title: "File uploads with S3", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_216", title: "Signal handlers", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_217", title: "Project: Celery for background tasks", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_218", title: "Project: Redis caching", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ }
                 ]
             },
             {
@@ -3525,13 +3525,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Testing and Deployment",
                 estimatedHours: 11,
                 topics: [
-                    { id: "topic_219", title: "Unit testing with pytest", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_220", title: "Integration testing", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_221", title: "Docker with Django", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_222", title: "Deploying on Railway", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_223", title: "CI/CD pipeline", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_224", title: "Practical Docker with Django", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_225", title: "Advanced CI/CD pipeline", difficulty: "Beginner", duration: "3 hours" }
+                    { id: "topic_219", title: "Unit testing with pytest", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_220", title: "Integration testing", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_221", title: "Docker with Django", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_222", title: "Deploying on Railway", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_223", title: "CI/CD pipeline", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_224", title: "Practical Docker with Django", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ },
+                    { id: "topic_225", title: "Advanced CI/CD pipeline", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/F5mRW0jo-U4" /* Dennis Ivy / Traversy Media */ }
                 ]
             }
         ],
@@ -4277,13 +4277,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Express and Node",
                 estimatedHours: 17,
                 topics: [
-                    { id: "topic_226", title: "Server setup", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_227", title: "REST API design", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_228", title: "Middleware chain", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_229", title: "Error handling", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_230", title: "Environment configuration", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_231", title: "Project: Middleware chain", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_232", title: "Project: Server setup", difficulty: "Intermediate", duration: "2 hours" }
+                    { id: "topic_226", title: "Server setup", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_227", title: "REST API design", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_228", title: "Middleware chain", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_229", title: "Error handling", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_230", title: "Environment configuration", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_231", title: "Project: Middleware chain", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_232", title: "Project: Server setup", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ }
                 ]
             },
             {
@@ -4292,12 +4292,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of MongoDB",
                 estimatedHours: 17,
                 topics: [
-                    { id: "topic_233", title: "Document model", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_234", title: "CRUD operations", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_235", title: "Aggregation pipeline", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_236", title: "Indexing", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_237", title: "Atlas cloud setup", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_238", title: "Interview Qs: Document model", difficulty: "Intermediate", duration: "3 hours" }
+                    { id: "topic_233", title: "Document model", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_234", title: "CRUD operations", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_235", title: "Aggregation pipeline", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_236", title: "Indexing", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_237", title: "Atlas cloud setup", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_238", title: "Interview Qs: Document model", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ }
                 ]
             },
             {
@@ -4306,12 +4306,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Capstone Projects",
                 estimatedHours: 14,
                 topics: [
-                    { id: "topic_239", title: "Social media platform", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_240", title: "Project management tool", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_241", title: "Real time marketplace", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_242", title: "Practical Project management tool", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_243", title: "Interview Qs: Project management tool", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_244", title: "Deep Dive: Real time marketplace", difficulty: "Intermediate", duration: "1.5 hours" }
+                    { id: "topic_239", title: "Social media platform", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_240", title: "Project management tool", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_241", title: "Real time marketplace", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_242", title: "Practical Project management tool", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_243", title: "Interview Qs: Project management tool", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_244", title: "Deep Dive: Real time marketplace", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ }
                 ]
             },
             {
@@ -4320,12 +4320,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Real Time Features",
                 estimatedHours: 16,
                 topics: [
-                    { id: "topic_245", title: "Socket.io chat", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_246", title: "Live notifications", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_247", title: "Collaborative editing basics", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_248", title: "Real time dashboard", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_249", title: "Advanced Collaborative editing basics", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_250", title: "Interview Qs: Live notifications", difficulty: "Hard", duration: "1.5 hours" }
+                    { id: "topic_245", title: "Socket.io chat", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_246", title: "Live notifications", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_247", title: "Collaborative editing basics", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_248", title: "Real time dashboard", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_249", title: "Advanced Collaborative editing basics", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_250", title: "Interview Qs: Live notifications", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ }
                 ]
             },
             {
@@ -4334,13 +4334,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of React Frontend",
                 estimatedHours: 11,
                 topics: [
-                    { id: "topic_251", title: "Component architecture", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_252", title: "Hooks deep dive", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_253", title: "Context and state", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_254", title: "React Router", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_255", title: "API integration", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_256", title: "Deep Dive: API integration", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_257", title: "Advanced Context and state", difficulty: "Intermediate", duration: "3 hours" }
+                    { id: "topic_251", title: "Component architecture", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_252", title: "Hooks deep dive", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_253", title: "Context and state", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_254", title: "React Router", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_255", title: "API integration", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_256", title: "Deep Dive: API integration", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_257", title: "Advanced Context and state", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ }
                 ]
             },
             {
@@ -4349,13 +4349,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Node Advanced",
                 estimatedHours: 12,
                 topics: [
-                    { id: "topic_258", title: "Authentication with JWT", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_259", title: "File uploads with Multer", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_260", title: "Email with Nodemailer", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_261", title: "WebSockets", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_262", title: "Job queues", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_263", title: "Interview Qs: Authentication with JWT", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_264", title: "Project: Email with Nodemailer", difficulty: "Hard", duration: "3 hours" }
+                    { id: "topic_258", title: "Authentication with JWT", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_259", title: "File uploads with Multer", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_260", title: "Email with Nodemailer", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_261", title: "WebSockets", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_262", title: "Job queues", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_263", title: "Interview Qs: Authentication with JWT", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_264", title: "Project: Email with Nodemailer", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ }
                 ]
             },
             {
@@ -4364,13 +4364,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Redux and State",
                 estimatedHours: 14,
                 topics: [
-                    { id: "topic_265", title: "Redux Toolkit setup", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_266", title: "Async thunks", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_267", title: "RTK Query", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_268", title: "Optimistic updates", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_269", title: "State normalization", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_270", title: "Practical Async thunks", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_271", title: "Interview Qs: State normalization", difficulty: "Intermediate", duration: "2 hours" }
+                    { id: "topic_265", title: "Redux Toolkit setup", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_266", title: "Async thunks", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_267", title: "RTK Query", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_268", title: "Optimistic updates", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_269", title: "State normalization", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_270", title: "Practical Async thunks", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_271", title: "Interview Qs: State normalization", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ }
                 ]
             },
             {
@@ -4379,13 +4379,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Full Stack Integration",
                 estimatedHours: 19,
                 topics: [
-                    { id: "topic_272", title: "Connecting React to Express", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_273", title: "CORS configuration", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_274", title: "Proxy setup", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_275", title: "Cookie handling", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_276", title: "Deployment architecture", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_277", title: "Interview Qs: Proxy setup", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_278", title: "Deep Dive: Cookie handling", difficulty: "Intermediate", duration: "1.5 hours" }
+                    { id: "topic_272", title: "Connecting React to Express", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_273", title: "CORS configuration", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_274", title: "Proxy setup", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_275", title: "Cookie handling", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_276", title: "Deployment architecture", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_277", title: "Interview Qs: Proxy setup", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_278", title: "Deep Dive: Cookie handling", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ }
                 ]
             },
             {
@@ -4394,13 +4394,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Testing and Launch",
                 estimatedHours: 19,
                 topics: [
-                    { id: "topic_279", title: "API testing with Supertest", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_280", title: "React testing", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_281", title: "Docker compose full stack", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_282", title: "Deploying on VPS", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_283", title: "Domain and SSL setup", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_284", title: "Project: Domain and SSL setup", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_285", title: "Advanced API testing with Supertest", difficulty: "Beginner", duration: "1.5 hours" }
+                    { id: "topic_279", title: "API testing with Supertest", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_280", title: "React testing", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_281", title: "Docker compose full stack", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_282", title: "Deploying on VPS", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_283", title: "Domain and SSL setup", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_284", title: "Project: Domain and SSL setup", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ },
+                    { id: "topic_285", title: "Advanced API testing with Supertest", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fnpmR6Q5lEc" /* Traversy Media */ }
                 ]
             }
         ],
@@ -5386,13 +5386,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Trees",
                 estimatedHours: 13,
                 topics: [
-                    { id: "topic_286", title: "Binary trees traversal", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_287", title: "BST operations", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_288", title: "Level order BFS", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_289", title: "DFS patterns", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_290", title: "Lowest common ancestor", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_291", title: "Deep Dive: DFS patterns", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_292", title: "Advanced Lowest common ancestor", difficulty: "Beginner", duration: "1.5 hours" }
+                    { id: "topic_286", title: "Binary trees traversal", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_287", title: "BST operations", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_288", title: "Level order BFS", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_289", title: "DFS patterns", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_290", title: "Lowest common ancestor", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_291", title: "Deep Dive: DFS patterns", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_292", title: "Advanced Lowest common ancestor", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ }
                 ]
             },
             {
@@ -5401,12 +5401,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Stacks and Queues",
                 estimatedHours: 19,
                 topics: [
-                    { id: "topic_293", title: "Stack implementation", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_294", title: "Monotonic stacks", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_295", title: "Queue and deque", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_296", title: "Priority queues", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_297", title: "Problems and patterns", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_298", title: "Practical Priority queues", difficulty: "Hard", duration: "1.5 hours" }
+                    { id: "topic_293", title: "Stack implementation", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_294", title: "Monotonic stacks", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_295", title: "Queue and deque", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_296", title: "Priority queues", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_297", title: "Problems and patterns", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_298", title: "Practical Priority queues", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ }
                 ]
             },
             {
@@ -5415,12 +5415,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Linked Lists",
                 estimatedHours: 18,
                 topics: [
-                    { id: "topic_299", title: "Singly and doubly linked lists", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_300", title: "Fast and slow pointers", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_301", title: "Reversing linked lists", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_302", title: "Merge sorted lists", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_303", title: "Detect cycles", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_304", title: "Project: Reversing linked lists", difficulty: "Hard", duration: "2 hours" }
+                    { id: "topic_299", title: "Singly and doubly linked lists", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_300", title: "Fast and slow pointers", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_301", title: "Reversing linked lists", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_302", title: "Merge sorted lists", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_303", title: "Detect cycles", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_304", title: "Project: Reversing linked lists", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ }
                 ]
             },
             {
@@ -5429,12 +5429,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Foundations",
                 estimatedHours: 13,
                 topics: [
-                    { id: "topic_305", title: "Big O notation", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_306", title: "Arrays and strings", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_307", title: "Two pointers technique", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_308", title: "Sliding window", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_309", title: "Prefix sums", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_310", title: "Interview Qs: Big O notation", difficulty: "Beginner", duration: "1.5 hours" }
+                    { id: "topic_305", title: "Big O notation", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_306", title: "Arrays and strings", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_307", title: "Two pointers technique", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_308", title: "Sliding window", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_309", title: "Prefix sums", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_310", title: "Interview Qs: Big O notation", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ }
                 ]
             },
             {
@@ -5443,13 +5443,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Heaps and Hashing",
                 estimatedHours: 14,
                 topics: [
-                    { id: "topic_311", title: "Min max heap", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_312", title: "Top K problems", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_313", title: "HashMap patterns", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_314", title: "Two sum variations", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_315", title: "Group anagrams", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_316", title: "Project: Top K problems", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_317", title: "Interview Qs: Top K problems", difficulty: "Beginner", duration: "2 hours" }
+                    { id: "topic_311", title: "Min max heap", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_312", title: "Top K problems", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_313", title: "HashMap patterns", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_314", title: "Two sum variations", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_315", title: "Group anagrams", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_316", title: "Project: Top K problems", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_317", title: "Interview Qs: Top K problems", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ }
                 ]
             },
             {
@@ -5458,13 +5458,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Graphs",
                 estimatedHours: 11,
                 topics: [
-                    { id: "topic_318", title: "BFS and DFS", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_319", title: "Topological sort", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_320", title: "Union Find", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_321", title: "Dijkstra shortest path", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_322", title: "Minimum spanning tree", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_323", title: "Practical Minimum spanning tree", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_324", title: "Interview Qs: Minimum spanning tree", difficulty: "Intermediate", duration: "3 hours" }
+                    { id: "topic_318", title: "BFS and DFS", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_319", title: "Topological sort", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_320", title: "Union Find", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_321", title: "Dijkstra shortest path", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_322", title: "Minimum spanning tree", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_323", title: "Practical Minimum spanning tree", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_324", title: "Interview Qs: Minimum spanning tree", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ }
                 ]
             },
             {
@@ -5473,13 +5473,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Dynamic Programming",
                 estimatedHours: 13,
                 topics: [
-                    { id: "topic_325", title: "Memoization vs tabulation", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_326", title: "1D DP patterns", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_327", title: "2D DP patterns", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_328", title: "Knapsack problems", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_329", title: "LCS and LIS", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_330", title: "Practical Memoization vs tabulation", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_331", title: "Deep Dive: Knapsack problems", difficulty: "Intermediate", duration: "2 hours" }
+                    { id: "topic_325", title: "Memoization vs tabulation", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_326", title: "1D DP patterns", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_327", title: "2D DP patterns", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_328", title: "Knapsack problems", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_329", title: "LCS and LIS", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_330", title: "Practical Memoization vs tabulation", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_331", title: "Deep Dive: Knapsack problems", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ }
                 ]
             },
             {
@@ -5488,13 +5488,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Advanced Topics",
                 estimatedHours: 12,
                 topics: [
-                    { id: "topic_332", title: "Tries", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_333", title: "Segment trees", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_334", title: "Backtracking", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_335", title: "Bit manipulation", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_336", title: "System design basics", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_337", title: "Advanced System design basics", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_338", title: "Project: Segment trees", difficulty: "Hard", duration: "2 hours" }
+                    { id: "topic_332", title: "Tries", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_333", title: "Segment trees", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_334", title: "Backtracking", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_335", title: "Bit manipulation", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_336", title: "System design basics", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_337", title: "Advanced System design basics", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_338", title: "Project: Segment trees", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ }
                 ]
             },
             {
@@ -5503,13 +5503,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Interview Preparation",
                 estimatedHours: 16,
                 topics: [
-                    { id: "topic_339", title: "Mock interview problems", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_340", title: "Company specific patterns", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_341", title: "Google problems", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_342", title: "Amazon problems", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_343", title: "Time and space optimization", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_344", title: "Interview Qs: Google problems", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_345", title: "Project: Time and space optimization", difficulty: "Beginner", duration: "2 hours" }
+                    { id: "topic_339", title: "Mock interview problems", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_340", title: "Company specific patterns", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_341", title: "Google problems", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_342", title: "Amazon problems", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_343", title: "Time and space optimization", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_344", title: "Interview Qs: Google problems", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ },
+                    { id: "topic_345", title: "Project: Time and space optimization", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/pkYVOmU3MgA" /* NeetCode (English) */ }
                 ]
             }
         ],
@@ -6495,13 +6495,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of ML Fundamentals",
                 estimatedHours: 16,
                 topics: [
-                    { id: "topic_346", title: "Supervised vs unsupervised", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_347", title: "Train test split", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_348", title: "Cross validation", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_349", title: "Bias variance tradeoff", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_350", title: "Feature engineering", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_351", title: "Interview Qs: Train test split", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_352", title: "Project: Bias variance tradeoff", difficulty: "Intermediate", duration: "3 hours" }
+                    { id: "topic_346", title: "Supervised vs unsupervised", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_347", title: "Train test split", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_348", title: "Cross validation", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_349", title: "Bias variance tradeoff", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_350", title: "Feature engineering", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_351", title: "Interview Qs: Train test split", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_352", title: "Project: Bias variance tradeoff", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ }
                 ]
             },
             {
@@ -6510,12 +6510,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Math Foundations",
                 estimatedHours: 16,
                 topics: [
-                    { id: "topic_353", title: "Linear algebra for ML", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_354", title: "Calculus and gradients", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_355", title: "Probability and statistics", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_356", title: "NumPy operations", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_357", title: "Matplotlib visualization", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_358", title: "Deep Dive: Linear algebra for ML", difficulty: "Hard", duration: "1.5 hours" }
+                    { id: "topic_353", title: "Linear algebra for ML", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_354", title: "Calculus and gradients", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_355", title: "Probability and statistics", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_356", title: "NumPy operations", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_357", title: "Matplotlib visualization", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_358", title: "Deep Dive: Linear algebra for ML", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ }
                 ]
             },
             {
@@ -6524,12 +6524,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Projects",
                 estimatedHours: 10,
                 topics: [
-                    { id: "topic_359", title: "House price prediction", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_360", title: "Image classifier", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_361", title: "Sentiment analysis", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_362", title: "Recommendation system", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_363", title: "Interview Qs: House price prediction", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_364", title: "Project: Sentiment analysis", difficulty: "Beginner", duration: "2 hours" }
+                    { id: "topic_359", title: "House price prediction", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_360", title: "Image classifier", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_361", title: "Sentiment analysis", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_362", title: "Recommendation system", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_363", title: "Interview Qs: House price prediction", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_364", title: "Project: Sentiment analysis", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ }
                 ]
             },
             {
@@ -6538,12 +6538,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Interview Prep",
                 estimatedHours: 18,
                 topics: [
-                    { id: "topic_365", title: "ML system design", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_366", title: "Common interview questions", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_367", title: "Case studies", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_368", title: "Portfolio building", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_369", title: "Practical Case studies", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_370", title: "Interview Qs: Common interview questions", difficulty: "Hard", duration: "1.5 hours" }
+                    { id: "topic_365", title: "ML system design", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_366", title: "Common interview questions", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_367", title: "Case studies", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_368", title: "Portfolio building", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_369", title: "Practical Case studies", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_370", title: "Interview Qs: Common interview questions", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ }
                 ]
             },
             {
@@ -6552,13 +6552,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Classical ML",
                 estimatedHours: 14,
                 topics: [
-                    { id: "topic_371", title: "Linear regression", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_372", title: "Logistic regression", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_373", title: "Decision trees", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_374", title: "Random forests", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_375", title: "SVM and KNN", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_376", title: "Advanced SVM and KNN", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_377", title: "Interview Qs: Linear regression", difficulty: "Beginner", duration: "2 hours" }
+                    { id: "topic_371", title: "Linear regression", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_372", title: "Logistic regression", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_373", title: "Decision trees", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_374", title: "Random forests", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_375", title: "SVM and KNN", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_376", title: "Advanced SVM and KNN", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_377", title: "Interview Qs: Linear regression", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ }
                 ]
             },
             {
@@ -6567,13 +6567,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Scikit Learn",
                 estimatedHours: 18,
                 topics: [
-                    { id: "topic_378", title: "Pipeline building", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_379", title: "Preprocessing", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_380", title: "Model selection", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_381", title: "GridSearchCV", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_382", title: "Model evaluation metrics", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_383", title: "Project: Pipeline building", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_384", title: "Practical Model evaluation metrics", difficulty: "Intermediate", duration: "3 hours" }
+                    { id: "topic_378", title: "Pipeline building", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_379", title: "Preprocessing", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_380", title: "Model selection", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_381", title: "GridSearchCV", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_382", title: "Model evaluation metrics", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_383", title: "Project: Pipeline building", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_384", title: "Practical Model evaluation metrics", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ }
                 ]
             },
             {
@@ -6582,13 +6582,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Neural Networks",
                 estimatedHours: 14,
                 topics: [
-                    { id: "topic_385", title: "Perceptron and activation functions", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_386", title: "Backpropagation", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_387", title: "Keras and TensorFlow basics", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_388", title: "CNN architecture", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_389", title: "RNN and LSTM", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_390", title: "Deep Dive: RNN and LSTM", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_391", title: "Interview Qs: Keras and TensorFlow basics", difficulty: "Hard", duration: "3 hours" }
+                    { id: "topic_385", title: "Perceptron and activation functions", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_386", title: "Backpropagation", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_387", title: "Keras and TensorFlow basics", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_388", title: "CNN architecture", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_389", title: "RNN and LSTM", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_390", title: "Deep Dive: RNN and LSTM", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_391", title: "Interview Qs: Keras and TensorFlow basics", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ }
                 ]
             },
             {
@@ -6597,13 +6597,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Deep Learning",
                 estimatedHours: 18,
                 topics: [
-                    { id: "topic_392", title: "Transfer learning", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_393", title: "Fine tuning pretrained models", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_394", title: "Object detection with YOLO", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_395", title: "Image segmentation", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_396", title: "GANs introduction", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_397", title: "Interview Qs: GANs introduction", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_398", title: "Project: GANs introduction", difficulty: "Hard", duration: "3 hours" }
+                    { id: "topic_392", title: "Transfer learning", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_393", title: "Fine tuning pretrained models", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_394", title: "Object detection with YOLO", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_395", title: "Image segmentation", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_396", title: "GANs introduction", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_397", title: "Interview Qs: GANs introduction", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_398", title: "Project: GANs introduction", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ }
                 ]
             },
             {
@@ -6612,13 +6612,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of MLOps",
                 estimatedHours: 16,
                 topics: [
-                    { id: "topic_399", title: "Experiment tracking with MLflow", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_400", title: "Model serving with FastAPI", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_401", title: "Docker for ML", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_402", title: "Model monitoring", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_403", title: "A/B testing models", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_404", title: "Practical A/B testing models", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_405", title: "Interview Qs: Experiment tracking with MLflow", difficulty: "Intermediate", duration: "2 hours" }
+                    { id: "topic_399", title: "Experiment tracking with MLflow", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_400", title: "Model serving with FastAPI", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_401", title: "Docker for ML", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_402", title: "Model monitoring", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_403", title: "A/B testing models", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_404", title: "Practical A/B testing models", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ },
+                    { id: "topic_405", title: "Interview Qs: Experiment tracking with MLflow", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/NWONeJKn9Kc" /* freeCodeCamp */ }
                 ]
             }
         ],
@@ -7604,13 +7604,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Advanced NLP",
                 estimatedHours: 17,
                 topics: [
-                    { id: "topic_406", title: "Question answering systems", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_407", title: "Text summarization", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_408", title: "Machine translation", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_409", title: "Chatbot development", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_410", title: "RAG systems", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_411", title: "Interview Qs: Chatbot development", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_412", title: "Deep Dive: Machine translation", difficulty: "Beginner", duration: "1.5 hours" }
+                    { id: "topic_406", title: "Question answering systems", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_407", title: "Text summarization", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_408", title: "Machine translation", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_409", title: "Chatbot development", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_410", title: "RAG systems", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_411", title: "Interview Qs: Chatbot development", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_412", title: "Deep Dive: Machine translation", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ }
                 ]
             },
             {
@@ -7619,12 +7619,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Transformers",
                 estimatedHours: 14,
                 topics: [
-                    { id: "topic_413", title: "Transformer architecture", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_414", title: "BERT and variants", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_415", title: "GPT architecture", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_416", title: "Fine tuning pretrained models", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_417", title: "Hugging Face library", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_418", title: "Interview Qs: BERT and variants", difficulty: "Beginner", duration: "3 hours" }
+                    { id: "topic_413", title: "Transformer architecture", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_414", title: "BERT and variants", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_415", title: "GPT architecture", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_416", title: "Fine tuning pretrained models", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_417", title: "Hugging Face library", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_418", title: "Interview Qs: BERT and variants", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ }
                 ]
             },
             {
@@ -7633,12 +7633,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Deep Learning for NLP",
                 estimatedHours: 15,
                 topics: [
-                    { id: "topic_419", title: "RNNs for sequences", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_420", title: "LSTMs and GRUs", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_421", title: "Attention mechanism", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_422", title: "Seq2Seq models", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_423", title: "Beam search", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_424", title: "Deep Dive: Attention mechanism", difficulty: "Beginner", duration: "1.5 hours" }
+                    { id: "topic_419", title: "RNNs for sequences", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_420", title: "LSTMs and GRUs", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_421", title: "Attention mechanism", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_422", title: "Seq2Seq models", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_423", title: "Beam search", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_424", title: "Deep Dive: Attention mechanism", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ }
                 ]
             },
             {
@@ -7647,12 +7647,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Classical NLP",
                 estimatedHours: 19,
                 topics: [
-                    { id: "topic_425", title: "Naive Bayes classifier", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_426", title: "Sentiment analysis", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_427", title: "Named entity recognition", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_428", title: "POS tagging", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_429", title: "Text classification", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_430", title: "Project: Text classification", difficulty: "Hard", duration: "2 hours" }
+                    { id: "topic_425", title: "Naive Bayes classifier", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_426", title: "Sentiment analysis", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_427", title: "Named entity recognition", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_428", title: "POS tagging", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_429", title: "Text classification", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_430", title: "Project: Text classification", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ }
                 ]
             },
             {
@@ -7661,12 +7661,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Text Representation",
                 estimatedHours: 12,
                 topics: [
-                    { id: "topic_431", title: "Bag of words", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_432", title: "TF-IDF", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_433", title: "Word2Vec", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_434", title: "GloVe embeddings", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_435", title: "FastText", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_436", title: "Deep Dive: Word2Vec", difficulty: "Intermediate", duration: "1.5 hours" }
+                    { id: "topic_431", title: "Bag of words", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_432", title: "TF-IDF", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_433", title: "Word2Vec", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_434", title: "GloVe embeddings", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_435", title: "FastText", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_436", title: "Deep Dive: Word2Vec", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ }
                 ]
             },
             {
@@ -7675,12 +7675,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of NLP Foundations",
                 estimatedHours: 16,
                 topics: [
-                    { id: "topic_437", title: "Text preprocessing", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_438", title: "Tokenization", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_439", title: "Stemming and lemmatization", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_440", title: "Stop words", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_441", title: "Regular expressions for text", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_442", title: "Deep Dive: Stemming and lemmatization", difficulty: "Hard", duration: "2 hours" }
+                    { id: "topic_437", title: "Text preprocessing", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_438", title: "Tokenization", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_439", title: "Stemming and lemmatization", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_440", title: "Stop words", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_441", title: "Regular expressions for text", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_442", title: "Deep Dive: Stemming and lemmatization", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ }
                 ]
             },
             {
@@ -7689,12 +7689,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Projects",
                 estimatedHours: 13,
                 topics: [
-                    { id: "topic_443", title: "Sentiment analyzer", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_444", title: "Text summarizer", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_445", title: "Question answering bot", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_446", title: "Document search system", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_447", title: "Deep Dive: Document search system", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_448", title: "Practical Question answering bot", difficulty: "Hard", duration: "2 hours" }
+                    { id: "topic_443", title: "Sentiment analyzer", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_444", title: "Text summarizer", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_445", title: "Question answering bot", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_446", title: "Document search system", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_447", title: "Deep Dive: Document search system", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_448", title: "Practical Question answering bot", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ }
                 ]
             },
             {
@@ -7703,13 +7703,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Production NLP",
                 estimatedHours: 19,
                 topics: [
-                    { id: "topic_449", title: "Serving NLP models", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_450", title: "Latency optimization", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_451", title: "Vector databases", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_452", title: "LangChain basics", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_453", title: "Building AI applications", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_454", title: "Practical Building AI applications", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_455", title: "Interview Qs: Building AI applications", difficulty: "Beginner", duration: "3 hours" }
+                    { id: "topic_449", title: "Serving NLP models", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_450", title: "Latency optimization", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_451", title: "Vector databases", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_452", title: "LangChain basics", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_453", title: "Building AI applications", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_454", title: "Practical Building AI applications", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ },
+                    { id: "topic_455", title: "Interview Qs: Building AI applications", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/rmVRLeJRpdo" /* freeCodeCamp */ }
                 ]
             }
         ],
@@ -8535,13 +8535,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Machine Learning for DS",
                 estimatedHours: 17,
                 topics: [
-                    { id: "topic_456", title: "Regression models", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_457", title: "Classification models", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_458", title: "Clustering with KMeans", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_459", title: "Dimensionality reduction PCA", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_460", title: "Model evaluation", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_461", title: "Practical Classification models", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_462", title: "Deep Dive: Classification models", difficulty: "Hard", duration: "2 hours" }
+                    { id: "topic_456", title: "Regression models", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_457", title: "Classification models", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_458", title: "Clustering with KMeans", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_459", title: "Dimensionality reduction PCA", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_460", title: "Model evaluation", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_461", title: "Practical Classification models", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_462", title: "Deep Dive: Classification models", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ }
                 ]
             },
             {
@@ -8550,12 +8550,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Statistical Analysis",
                 estimatedHours: 16,
                 topics: [
-                    { id: "topic_463", title: "Hypothesis testing", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_464", title: "T-tests and ANOVA", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_465", title: "Chi-square tests", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_466", title: "Confidence intervals", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_467", title: "A/B testing", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_468", title: "Advanced T-tests and ANOVA", difficulty: "Beginner", duration: "3 hours" }
+                    { id: "topic_463", title: "Hypothesis testing", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_464", title: "T-tests and ANOVA", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_465", title: "Chi-square tests", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_466", title: "Confidence intervals", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_467", title: "A/B testing", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_468", title: "Advanced T-tests and ANOVA", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ }
                 ]
             },
             {
@@ -8564,12 +8564,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Exploratory Analysis",
                 estimatedHours: 10,
                 topics: [
-                    { id: "topic_469", title: "Descriptive statistics", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_470", title: "Correlation analysis", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_471", title: "Matplotlib plots", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_472", title: "Seaborn visualizations", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_473", title: "Plotly interactive charts", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_474", title: "Deep Dive: Correlation analysis", difficulty: "Beginner", duration: "1.5 hours" }
+                    { id: "topic_469", title: "Descriptive statistics", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_470", title: "Correlation analysis", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_471", title: "Matplotlib plots", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_472", title: "Seaborn visualizations", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_473", title: "Plotly interactive charts", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_474", title: "Deep Dive: Correlation analysis", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ }
                 ]
             },
             {
@@ -8578,12 +8578,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Data Cleaning",
                 estimatedHours: 14,
                 topics: [
-                    { id: "topic_475", title: "Handling missing values", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_476", title: "Outlier detection", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_477", title: "Data type conversion", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_478", title: "String cleaning", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_479", title: "Merging and joining datasets", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_480", title: "Advanced Outlier detection", difficulty: "Hard", duration: "3 hours" }
+                    { id: "topic_475", title: "Handling missing values", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_476", title: "Outlier detection", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_477", title: "Data type conversion", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_478", title: "String cleaning", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_479", title: "Merging and joining datasets", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_480", title: "Advanced Outlier detection", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ }
                 ]
             },
             {
@@ -8592,12 +8592,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Python for Data",
                 estimatedHours: 14,
                 topics: [
-                    { id: "topic_481", title: "Python review", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_482", title: "NumPy arrays", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_483", title: "Pandas DataFrames", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_484", title: "Data loading and export", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_485", title: "Jupyter notebooks", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_486", title: "Project: Pandas DataFrames", difficulty: "Hard", duration: "2 hours" }
+                    { id: "topic_481", title: "Python review", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_482", title: "NumPy arrays", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_483", title: "Pandas DataFrames", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_484", title: "Data loading and export", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_485", title: "Jupyter notebooks", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_486", title: "Project: Pandas DataFrames", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ }
                 ]
             },
             {
@@ -8606,13 +8606,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of SQL for Data Science",
                 estimatedHours: 17,
                 topics: [
-                    { id: "topic_487", title: "SQL fundamentals", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_488", title: "Joins and aggregations", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_489", title: "Window functions", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_490", title: "CTEs", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_491", title: "Connecting Python to SQL", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_492", title: "Advanced Connecting Python to SQL", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_493", title: "Interview Qs: SQL fundamentals", difficulty: "Intermediate", duration: "2 hours" }
+                    { id: "topic_487", title: "SQL fundamentals", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_488", title: "Joins and aggregations", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_489", title: "Window functions", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_490", title: "CTEs", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_491", title: "Connecting Python to SQL", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_492", title: "Advanced Connecting Python to SQL", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_493", title: "Interview Qs: SQL fundamentals", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ }
                 ]
             },
             {
@@ -8621,13 +8621,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Projects and Portfolio",
                 estimatedHours: 13,
                 topics: [
-                    { id: "topic_494", title: "End to end project workflow", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_495", title: "Kaggle competitions", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_496", title: "Storytelling with data", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_497", title: "Building a portfolio", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_498", title: "Interview preparation", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_499", title: "Advanced Kaggle competitions", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_500", title: "Advanced Storytelling with data", difficulty: "Intermediate", duration: "1.5 hours" }
+                    { id: "topic_494", title: "End to end project workflow", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_495", title: "Kaggle competitions", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_496", title: "Storytelling with data", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_497", title: "Building a portfolio", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_498", title: "Interview preparation", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_499", title: "Advanced Kaggle competitions", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ },
+                    { id: "topic_500", title: "Advanced Storytelling with data", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/r-uOLxNrNk8" /* freeCodeCamp */ }
                 ]
             }
         ],
@@ -9373,13 +9373,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Firebase Integration",
                 estimatedHours: 18,
                 topics: [
-                    { id: "topic_501", title: "Authentication", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_502", title: "Firestore CRUD", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_503", title: "Storage", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_504", title: "FCM notifications", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_505", title: "Crashlytics", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_506", title: "Project: Crashlytics", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_507", title: "Interview Qs: Authentication", difficulty: "Hard", duration: "1.5 hours" }
+                    { id: "topic_501", title: "Authentication", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_502", title: "Firestore CRUD", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_503", title: "Storage", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_504", title: "FCM notifications", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_505", title: "Crashlytics", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_506", title: "Project: Crashlytics", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_507", title: "Interview Qs: Authentication", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ }
                 ]
             },
             {
@@ -9388,12 +9388,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of State Management",
                 estimatedHours: 19,
                 topics: [
-                    { id: "topic_508", title: "setState basics", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_509", title: "Provider pattern", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_510", title: "Riverpod", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_511", title: "BLoC and Cubit", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_512", title: "GetX", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_513", title: "Interview Qs: Riverpod", difficulty: "Intermediate", duration: "3 hours" }
+                    { id: "topic_508", title: "setState basics", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_509", title: "Provider pattern", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_510", title: "Riverpod", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_511", title: "BLoC and Cubit", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_512", title: "GetX", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_513", title: "Interview Qs: Riverpod", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ }
                 ]
             },
             {
@@ -9402,12 +9402,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Flutter Basics",
                 estimatedHours: 10,
                 topics: [
-                    { id: "topic_514", title: "Widget tree and BuildContext", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_515", title: "Stateless vs Stateful", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_516", title: "Material and Cupertino widgets", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_517", title: "Layout widgets", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_518", title: "Navigation", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_519", title: "Deep Dive: Layout widgets", difficulty: "Beginner", duration: "2 hours" }
+                    { id: "topic_514", title: "Widget tree and BuildContext", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_515", title: "Stateless vs Stateful", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_516", title: "Material and Cupertino widgets", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_517", title: "Layout widgets", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_518", title: "Navigation", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_519", title: "Deep Dive: Layout widgets", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ }
                 ]
             },
             {
@@ -9416,12 +9416,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Dart Language",
                 estimatedHours: 12,
                 topics: [
-                    { id: "topic_520", title: "Dart syntax and variables", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_521", title: "Control flow", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_522", title: "Functions and closures", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_523", title: "OOP in Dart", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_524", title: "Null safety and async", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_525", title: "Practical Null safety and async", difficulty: "Beginner", duration: "2 hours" }
+                    { id: "topic_520", title: "Dart syntax and variables", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_521", title: "Control flow", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_522", title: "Functions and closures", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_523", title: "OOP in Dart", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_524", title: "Null safety and async", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_525", title: "Practical Null safety and async", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ }
                 ]
             },
             {
@@ -9430,12 +9430,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Final Project",
                 estimatedHours: 19,
                 topics: [
-                    { id: "topic_526", title: "Full social app with auth posts and real time chat", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_527", title: "Project: Full social app with auth posts and real time chat", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_528", title: "Interview Qs: Full social app with auth posts and real time chat", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_529", title: "Practical Full social app with auth posts and real time chat", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_530", title: "Deep Dive: Full social app with auth posts and real time chat", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_531", title: "Advanced Full social app with auth posts and real time chat", difficulty: "Intermediate", duration: "2 hours" }
+                    { id: "topic_526", title: "Full social app with auth posts and real time chat", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_527", title: "Project: Full social app with auth posts and real time chat", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_528", title: "Interview Qs: Full social app with auth posts and real time chat", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_529", title: "Practical Full social app with auth posts and real time chat", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_530", title: "Deep Dive: Full social app with auth posts and real time chat", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_531", title: "Advanced Full social app with auth posts and real time chat", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ }
                 ]
             },
             {
@@ -9444,13 +9444,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Advanced UI",
                 estimatedHours: 12,
                 topics: [
-                    { id: "topic_532", title: "Custom painting", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_533", title: "Animations", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_534", title: "Hero transitions", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_535", title: "Responsive design", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_536", title: "Themes and dark mode", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_537", title: "Practical Animations", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_538", title: "Project: Animations", difficulty: "Intermediate", duration: "1.5 hours" }
+                    { id: "topic_532", title: "Custom painting", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_533", title: "Animations", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_534", title: "Hero transitions", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_535", title: "Responsive design", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_536", title: "Themes and dark mode", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_537", title: "Practical Animations", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_538", title: "Project: Animations", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ }
                 ]
             },
             {
@@ -9459,13 +9459,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Production",
                 estimatedHours: 10,
                 topics: [
-                    { id: "topic_539", title: "REST API with Dio", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_540", title: "Local storage with Hive", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_541", title: "Unit and widget testing", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_542", title: "Play Store deployment", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_543", title: "iOS deployment", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_544", title: "Project: iOS deployment", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_545", title: "Advanced iOS deployment", difficulty: "Intermediate", duration: "2 hours" }
+                    { id: "topic_539", title: "REST API with Dio", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_540", title: "Local storage with Hive", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_541", title: "Unit and widget testing", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_542", title: "Play Store deployment", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_543", title: "iOS deployment", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_544", title: "Project: iOS deployment", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ },
+                    { id: "topic_545", title: "Advanced iOS deployment", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/jmsN7dn9iWk" /* Rivaan Ranawat */ }
                 ]
             }
         ],
@@ -10211,12 +10211,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Performance",
                 estimatedHours: 11,
                 topics: [
-                    { id: "topic_546", title: "FlatList optimization", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_547", title: "Memo and callbacks", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_548", title: "Hermes engine", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_549", title: "Bundle size reduction", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_550", title: "Profiling tools", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_551", title: "Advanced Bundle size reduction", difficulty: "Beginner", duration: "3 hours" }
+                    { id: "topic_546", title: "FlatList optimization", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_547", title: "Memo and callbacks", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_548", title: "Hermes engine", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_549", title: "Bundle size reduction", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_550", title: "Profiling tools", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_551", title: "Advanced Bundle size reduction", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ }
                 ]
             },
             {
@@ -10225,11 +10225,11 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Deployment",
                 estimatedHours: 12,
                 topics: [
-                    { id: "topic_552", title: "TestFlight for iOS", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_553", title: "Play Store for Android", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_554", title: "EAS Build", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_555", title: "OTA updates", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_556", title: "App store optimization", difficulty: "Beginner", duration: "2 hours" }
+                    { id: "topic_552", title: "TestFlight for iOS", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_553", title: "Play Store for Android", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_554", title: "EAS Build", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_555", title: "OTA updates", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_556", title: "App store optimization", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ }
                 ]
             },
             {
@@ -10238,12 +10238,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Native Features",
                 estimatedHours: 11,
                 topics: [
-                    { id: "topic_557", title: "Camera and gallery", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_558", title: "Location services", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_559", title: "Push notifications with Expo", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_560", title: "Biometric auth", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_561", title: "File system", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_562", title: "Project: Biometric auth", difficulty: "Hard", duration: "2 hours" }
+                    { id: "topic_557", title: "Camera and gallery", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_558", title: "Location services", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_559", title: "Push notifications with Expo", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_560", title: "Biometric auth", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_561", title: "File system", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_562", title: "Project: Biometric auth", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ }
                 ]
             },
             {
@@ -10252,12 +10252,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of State and Data",
                 estimatedHours: 13,
                 topics: [
-                    { id: "topic_563", title: "Context API", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_564", title: "Redux Toolkit", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_565", title: "AsyncStorage", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_566", title: "Fetch and Axios", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_567", title: "React Query", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_568", title: "Practical React Query", difficulty: "Intermediate", duration: "2 hours" }
+                    { id: "topic_563", title: "Context API", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_564", title: "Redux Toolkit", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_565", title: "AsyncStorage", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_566", title: "Fetch and Axios", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_567", title: "React Query", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_568", title: "Practical React Query", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ }
                 ]
             },
             {
@@ -10266,12 +10266,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Navigation",
                 estimatedHours: 15,
                 topics: [
-                    { id: "topic_569", title: "React Navigation v6", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_570", title: "Stack navigator", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_571", title: "Tab navigator", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_572", title: "Drawer navigator", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_573", title: "Deep linking", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_574", title: "Project: Drawer navigator", difficulty: "Intermediate", duration: "2 hours" }
+                    { id: "topic_569", title: "React Navigation v6", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_570", title: "Stack navigator", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_571", title: "Tab navigator", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_572", title: "Drawer navigator", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_573", title: "Deep linking", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_574", title: "Project: Drawer navigator", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ }
                 ]
             },
             {
@@ -10280,12 +10280,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of RN Foundations",
                 estimatedHours: 10,
                 topics: [
-                    { id: "topic_575", title: "Expo setup", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_576", title: "Core components", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_577", title: "Styling with StyleSheet", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_578", title: "Flexbox layout", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_579", title: "Platform specific code", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_580", title: "Practical Platform specific code", difficulty: "Hard", duration: "2 hours" }
+                    { id: "topic_575", title: "Expo setup", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_576", title: "Core components", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_577", title: "Styling with StyleSheet", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_578", title: "Flexbox layout", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_579", title: "Platform specific code", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ },
+                    { id: "topic_580", title: "Practical Platform specific code", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/0-S5a0eXPoc" /* Traversy Media */ }
                 ]
             }
         ],
@@ -10871,13 +10871,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Advanced",
                 estimatedHours: 16,
                 topics: [
-                    { id: "topic_581", title: "Custom views", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_582", title: "Canvas drawing", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_583", title: "Animations with Compose", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_584", title: "Maps integration", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_585", title: "Firebase for Android", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_586", title: "Project: Canvas drawing", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_587", title: "Deep Dive: Animations with Compose", difficulty: "Hard", duration: "1.5 hours" }
+                    { id: "topic_581", title: "Custom views", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_582", title: "Canvas drawing", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_583", title: "Animations with Compose", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_584", title: "Maps integration", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_585", title: "Firebase for Android", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_586", title: "Project: Canvas drawing", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_587", title: "Deep Dive: Animations with Compose", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ }
                 ]
             },
             {
@@ -10886,12 +10886,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Networking",
                 estimatedHours: 11,
                 topics: [
-                    { id: "topic_588", title: "Retrofit and OkHttp", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_589", title: "Kotlin serialization", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_590", title: "Flow for reactive streams", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_591", title: "Paging 3", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_592", title: "Offline first architecture", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_593", title: "Advanced Retrofit and OkHttp", difficulty: "Intermediate", duration: "2 hours" }
+                    { id: "topic_588", title: "Retrofit and OkHttp", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_589", title: "Kotlin serialization", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_590", title: "Flow for reactive streams", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_591", title: "Paging 3", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_592", title: "Offline first architecture", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_593", title: "Advanced Retrofit and OkHttp", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ }
                 ]
             },
             {
@@ -10900,12 +10900,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Data Persistence",
                 estimatedHours: 12,
                 topics: [
-                    { id: "topic_594", title: "Room database", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_595", title: "DataStore preferences", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_596", title: "File storage", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_597", title: "WorkManager", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_598", title: "Background tasks", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_599", title: "Practical Room database", difficulty: "Intermediate", duration: "2 hours" }
+                    { id: "topic_594", title: "Room database", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_595", title: "DataStore preferences", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_596", title: "File storage", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_597", title: "WorkManager", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_598", title: "Background tasks", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_599", title: "Practical Room database", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ }
                 ]
             },
             {
@@ -10914,12 +10914,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Architecture",
                 estimatedHours: 15,
                 topics: [
-                    { id: "topic_600", title: "MVVM pattern", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_601", title: "ViewModel and LiveData", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_602", title: "Repository pattern", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_603", title: "Hilt dependency injection", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_604", title: "Clean architecture", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_605", title: "Practical Repository pattern", difficulty: "Beginner", duration: "2 hours" }
+                    { id: "topic_600", title: "MVVM pattern", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_601", title: "ViewModel and LiveData", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_602", title: "Repository pattern", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_603", title: "Hilt dependency injection", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_604", title: "Clean architecture", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_605", title: "Practical Repository pattern", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ }
                 ]
             },
             {
@@ -10928,12 +10928,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Jetpack Compose",
                 estimatedHours: 13,
                 topics: [
-                    { id: "topic_606", title: "Composable functions", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_607", title: "State in Compose", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_608", title: "Layouts and modifiers", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_609", title: "Navigation Compose", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_610", title: "Theming", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_611", title: "Practical Layouts and modifiers", difficulty: "Intermediate", duration: "2 hours" }
+                    { id: "topic_606", title: "Composable functions", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_607", title: "State in Compose", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_608", title: "Layouts and modifiers", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_609", title: "Navigation Compose", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_610", title: "Theming", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_611", title: "Practical Layouts and modifiers", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ }
                 ]
             },
             {
@@ -10942,12 +10942,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Android Fundamentals",
                 estimatedHours: 14,
                 topics: [
-                    { id: "topic_612", title: "Activity and Fragment", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_613", title: "Intents", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_614", title: "Permissions", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_615", title: "RecyclerView", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_616", title: "ViewBinding", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_617", title: "Project: RecyclerView", difficulty: "Intermediate", duration: "1.5 hours" }
+                    { id: "topic_612", title: "Activity and Fragment", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_613", title: "Intents", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_614", title: "Permissions", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_615", title: "RecyclerView", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_616", title: "ViewBinding", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_617", title: "Project: RecyclerView", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ }
                 ]
             },
             {
@@ -10956,12 +10956,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Kotlin Basics",
                 estimatedHours: 15,
                 topics: [
-                    { id: "topic_618", title: "Kotlin syntax", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_619", title: "Null safety", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_620", title: "Data classes", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_621", title: "Extension functions", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_622", title: "Coroutines basics", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_623", title: "Deep Dive: Kotlin syntax", difficulty: "Beginner", duration: "1.5 hours" }
+                    { id: "topic_618", title: "Kotlin syntax", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_619", title: "Null safety", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_620", title: "Data classes", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_621", title: "Extension functions", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_622", title: "Coroutines basics", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_623", title: "Deep Dive: Kotlin syntax", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ }
                 ]
             },
             {
@@ -10970,13 +10970,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Publishing",
                 estimatedHours: 15,
                 topics: [
-                    { id: "topic_624", title: "Signing APK", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_625", title: "Play Store listing", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_626", title: "In-app purchases", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_627", title: "App bundle optimization", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_628", title: "Crash reporting", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_629", title: "Deep Dive: App bundle optimization", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_630", title: "Practical Crash reporting", difficulty: "Beginner", duration: "1.5 hours" }
+                    { id: "topic_624", title: "Signing APK", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_625", title: "Play Store listing", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_626", title: "In-app purchases", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_627", title: "App bundle optimization", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_628", title: "Crash reporting", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_629", title: "Deep Dive: App bundle optimization", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ },
+                    { id: "topic_630", title: "Practical Crash reporting", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/cDabx3SjuOY" /* freeCodeCamp */ }
                 ]
             }
         ],
@@ -11802,12 +11802,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Production K8s",
                 estimatedHours: 16,
                 topics: [
-                    { id: "topic_631", title: "Monitoring with Prometheus", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_632", title: "Logging with ELK", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_633", title: "CI/CD with ArgoCD", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_634", title: "Multi cluster management", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_635", title: "Cost optimization", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_636", title: "Deep Dive: CI/CD with ArgoCD", difficulty: "Beginner", duration: "1.5 hours" }
+                    { id: "topic_631", title: "Monitoring with Prometheus", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ },
+                    { id: "topic_632", title: "Logging with ELK", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ },
+                    { id: "topic_633", title: "CI/CD with ArgoCD", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ },
+                    { id: "topic_634", title: "Multi cluster management", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ },
+                    { id: "topic_635", title: "Cost optimization", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ },
+                    { id: "topic_636", title: "Deep Dive: CI/CD with ArgoCD", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ }
                 ]
             },
             {
@@ -11816,12 +11816,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Kubernetes Advanced",
                 estimatedHours: 15,
                 topics: [
-                    { id: "topic_637", title: "Helm charts", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_638", title: "Horizontal pod autoscaling", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_639", title: "StatefulSets", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_640", title: "Persistent volumes", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_641", title: "RBAC", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_642", title: "Interview Qs: Persistent volumes", difficulty: "Beginner", duration: "2 hours" }
+                    { id: "topic_637", title: "Helm charts", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ },
+                    { id: "topic_638", title: "Horizontal pod autoscaling", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ },
+                    { id: "topic_639", title: "StatefulSets", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ },
+                    { id: "topic_640", title: "Persistent volumes", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ },
+                    { id: "topic_641", title: "RBAC", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ },
+                    { id: "topic_642", title: "Interview Qs: Persistent volumes", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ }
                 ]
             },
             {
@@ -11830,12 +11830,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Kubernetes Basics",
                 estimatedHours: 14,
                 topics: [
-                    { id: "topic_643", title: "K8s architecture", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_644", title: "Pods and deployments", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_645", title: "Services and ingress", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_646", title: "ConfigMaps and secrets", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_647", title: "Namespaces", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_648", title: "Deep Dive: ConfigMaps and secrets", difficulty: "Hard", duration: "1.5 hours" }
+                    { id: "topic_643", title: "K8s architecture", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ },
+                    { id: "topic_644", title: "Pods and deployments", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ },
+                    { id: "topic_645", title: "Services and ingress", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ },
+                    { id: "topic_646", title: "ConfigMaps and secrets", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ },
+                    { id: "topic_647", title: "Namespaces", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ },
+                    { id: "topic_648", title: "Deep Dive: ConfigMaps and secrets", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ }
                 ]
             },
             {
@@ -11844,12 +11844,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Docker Advanced",
                 estimatedHours: 13,
                 topics: [
-                    { id: "topic_649", title: "Multi-stage builds", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_650", title: "Docker Compose", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_651", title: "Networking", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_652", title: "Volumes and persistence", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_653", title: "Docker security", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_654", title: "Deep Dive: Docker security", difficulty: "Beginner", duration: "2 hours" }
+                    { id: "topic_649", title: "Multi-stage builds", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ },
+                    { id: "topic_650", title: "Docker Compose", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ },
+                    { id: "topic_651", title: "Networking", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ },
+                    { id: "topic_652", title: "Volumes and persistence", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ },
+                    { id: "topic_653", title: "Docker security", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ },
+                    { id: "topic_654", title: "Deep Dive: Docker security", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ }
                 ]
             },
             {
@@ -11858,12 +11858,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Docker Fundamentals",
                 estimatedHours: 16,
                 topics: [
-                    { id: "topic_655", title: "Containers vs VMs", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_656", title: "Docker installation", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_657", title: "Images and containers", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_658", title: "Dockerfile writing", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_659", title: "Docker Hub", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_660", title: "Practical Dockerfile writing", difficulty: "Beginner", duration: "2 hours" }
+                    { id: "topic_655", title: "Containers vs VMs", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ },
+                    { id: "topic_656", title: "Docker installation", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ },
+                    { id: "topic_657", title: "Images and containers", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ },
+                    { id: "topic_658", title: "Dockerfile writing", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ },
+                    { id: "topic_659", title: "Docker Hub", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ },
+                    { id: "topic_660", title: "Practical Dockerfile writing", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/fqMOX6JJhGo" /* TechWorld with Nana */ }
                 ]
             }
         ],
@@ -12369,13 +12369,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of AWS Advanced",
                 estimatedHours: 12,
                 topics: [
-                    { id: "topic_661", title: "Lambda and serverless", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_662", title: "ECS and EKS", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_663", title: "CloudFormation", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_664", title: "AWS CDK", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_665", title: "Cost optimization", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_666", title: "Practical Cost optimization", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_667", title: "Practical AWS CDK", difficulty: "Intermediate", duration: "1.5 hours" }
+                    { id: "topic_661", title: "Lambda and serverless", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_662", title: "ECS and EKS", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_663", title: "CloudFormation", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_664", title: "AWS CDK", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_665", title: "Cost optimization", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_666", title: "Practical Cost optimization", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_667", title: "Practical AWS CDK", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ }
                 ]
             },
             {
@@ -12384,12 +12384,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of AWS Core",
                 estimatedHours: 13,
                 topics: [
-                    { id: "topic_668", title: "IAM and security", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_669", title: "EC2 and Auto Scaling", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_670", title: "S3 and CloudFront", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_671", title: "RDS and DynamoDB", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_672", title: "VPC networking", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_673", title: "Project: S3 and CloudFront", difficulty: "Beginner", duration: "1.5 hours" }
+                    { id: "topic_668", title: "IAM and security", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_669", title: "EC2 and Auto Scaling", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_670", title: "S3 and CloudFront", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_671", title: "RDS and DynamoDB", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_672", title: "VPC networking", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_673", title: "Project: S3 and CloudFront", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ }
                 ]
             },
             {
@@ -12398,12 +12398,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of CI/CD",
                 estimatedHours: 13,
                 topics: [
-                    { id: "topic_674", title: "GitHub Actions", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_675", title: "Jenkins basics", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_676", title: "Pipeline as code", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_677", title: "Automated testing in CI", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_678", title: "Deployment strategies", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_679", title: "Advanced Pipeline as code", difficulty: "Beginner", duration: "3 hours" }
+                    { id: "topic_674", title: "GitHub Actions", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_675", title: "Jenkins basics", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_676", title: "Pipeline as code", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_677", title: "Automated testing in CI", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_678", title: "Deployment strategies", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_679", title: "Advanced Pipeline as code", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ }
                 ]
             },
             {
@@ -12412,12 +12412,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Version Control",
                 estimatedHours: 13,
                 topics: [
-                    { id: "topic_680", title: "Git advanced", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_681", title: "Branching strategies", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_682", title: "Git hooks", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_683", title: "Monorepo management", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_684", title: "Code review practices", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_685", title: "Interview Qs: Git hooks", difficulty: "Beginner", duration: "1.5 hours" }
+                    { id: "topic_680", title: "Git advanced", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_681", title: "Branching strategies", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_682", title: "Git hooks", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_683", title: "Monorepo management", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_684", title: "Code review practices", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_685", title: "Interview Qs: Git hooks", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ }
                 ]
             },
             {
@@ -12426,12 +12426,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Linux and Shell",
                 estimatedHours: 11,
                 topics: [
-                    { id: "topic_686", title: "Linux commands", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_687", title: "Shell scripting", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_688", title: "Cron jobs", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_689", title: "SSH and security", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_690", title: "File permissions", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_691", title: "Deep Dive: Linux commands", difficulty: "Hard", duration: "1.5 hours" }
+                    { id: "topic_686", title: "Linux commands", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_687", title: "Shell scripting", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_688", title: "Cron jobs", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_689", title: "SSH and security", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_690", title: "File permissions", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_691", title: "Deep Dive: Linux commands", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ }
                 ]
             },
             {
@@ -12440,13 +12440,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Infrastructure as Code",
                 estimatedHours: 13,
                 topics: [
-                    { id: "topic_692", title: "Terraform basics", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_693", title: "Terraform modules", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_694", title: "State management", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_695", title: "Ansible basics", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_696", title: "Configuration management", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_697", title: "Advanced State management", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_698", title: "Practical Terraform modules", difficulty: "Beginner", duration: "3 hours" }
+                    { id: "topic_692", title: "Terraform basics", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_693", title: "Terraform modules", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_694", title: "State management", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_695", title: "Ansible basics", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_696", title: "Configuration management", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_697", title: "Advanced State management", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_698", title: "Practical Terraform modules", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ }
                 ]
             },
             {
@@ -12455,13 +12455,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Monitoring and Security",
                 estimatedHours: 10,
                 topics: [
-                    { id: "topic_699", title: "CloudWatch", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_700", title: "Grafana dashboards", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_701", title: "Incident response", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_702", title: "Security best practices", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_703", title: "Compliance", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_704", title: "Project: Security best practices", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_705", title: "Advanced Incident response", difficulty: "Beginner", duration: "2 hours" }
+                    { id: "topic_699", title: "CloudWatch", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_700", title: "Grafana dashboards", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_701", title: "Incident response", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_702", title: "Security best practices", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_703", title: "Compliance", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_704", title: "Project: Security best practices", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ },
+                    { id: "topic_705", title: "Advanced Incident response", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/ulprqHHWlng" /* Abhishek Veeramalla (Hindi) */ }
                 ]
             }
         ],
@@ -13207,13 +13207,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Ethical Hacking",
                 estimatedHours: 11,
                 topics: [
-                    { id: "topic_706", title: "Penetration testing methodology", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_707", title: "Reconnaissance", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_708", title: "Exploitation basics", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_709", title: "Metasploit framework", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_710", title: "Reporting", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_711", title: "Deep Dive: Exploitation basics", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_712", title: "Practical Reporting", difficulty: "Beginner", duration: "2 hours" }
+                    { id: "topic_706", title: "Penetration testing methodology", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_707", title: "Reconnaissance", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_708", title: "Exploitation basics", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_709", title: "Metasploit framework", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_710", title: "Reporting", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_711", title: "Deep Dive: Exploitation basics", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_712", title: "Practical Reporting", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ }
                 ]
             },
             {
@@ -13222,12 +13222,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of System Security",
                 estimatedHours: 19,
                 topics: [
-                    { id: "topic_713", title: "Windows security", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_714", title: "Linux hardening", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_715", title: "File system permissions", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_716", title: "User management", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_717", title: "Patch management", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_718", title: "Project: File system permissions", difficulty: "Intermediate", duration: "1.5 hours" }
+                    { id: "topic_713", title: "Windows security", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_714", title: "Linux hardening", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_715", title: "File system permissions", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_716", title: "User management", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_717", title: "Patch management", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_718", title: "Project: File system permissions", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ }
                 ]
             },
             {
@@ -13236,12 +13236,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Web Security",
                 estimatedHours: 13,
                 topics: [
-                    { id: "topic_719", title: "OWASP Top 10", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_720", title: "SQL injection", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_721", title: "XSS and CSRF", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_722", title: "Burp Suite basics", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_723", title: "API security testing", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_724", title: "Advanced API security testing", difficulty: "Intermediate", duration: "3 hours" }
+                    { id: "topic_719", title: "OWASP Top 10", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_720", title: "SQL injection", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_721", title: "XSS and CSRF", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_722", title: "Burp Suite basics", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_723", title: "API security testing", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_724", title: "Advanced API security testing", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ }
                 ]
             },
             {
@@ -13250,12 +13250,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Network Security",
                 estimatedHours: 13,
                 topics: [
-                    { id: "topic_725", title: "TCP/IP deep dive", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_726", title: "Wireshark analysis", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_727", title: "Firewalls and IDS", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_728", title: "VPN and proxies", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_729", title: "Network scanning with Nmap", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_730", title: "Practical VPN and proxies", difficulty: "Beginner", duration: "1.5 hours" }
+                    { id: "topic_725", title: "TCP/IP deep dive", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_726", title: "Wireshark analysis", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_727", title: "Firewalls and IDS", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_728", title: "VPN and proxies", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_729", title: "Network scanning with Nmap", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_730", title: "Practical VPN and proxies", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ }
                 ]
             },
             {
@@ -13264,12 +13264,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Security Foundations",
                 estimatedHours: 19,
                 topics: [
-                    { id: "topic_731", title: "CIA triad", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_732", title: "Types of attacks", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_733", title: "Security mindset", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_734", title: "Linux for security", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_735", title: "Networking basics", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_736", title: "Deep Dive: CIA triad", difficulty: "Hard", duration: "3 hours" }
+                    { id: "topic_731", title: "CIA triad", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_732", title: "Types of attacks", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_733", title: "Security mindset", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_734", title: "Linux for security", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_735", title: "Networking basics", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_736", title: "Deep Dive: CIA triad", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ }
                 ]
             },
             {
@@ -13278,13 +13278,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of CTF and Practice",
                 estimatedHours: 17,
                 topics: [
-                    { id: "topic_737", title: "TryHackMe challenges", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_738", title: "HackTheBox basics", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_739", title: "CTF methodology", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_740", title: "Write-up creation", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_741", title: "Building home lab", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_742", title: "Practical TryHackMe challenges", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_743", title: "Advanced Write-up creation", difficulty: "Hard", duration: "3 hours" }
+                    { id: "topic_737", title: "TryHackMe challenges", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_738", title: "HackTheBox basics", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_739", title: "CTF methodology", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_740", title: "Write-up creation", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_741", title: "Building home lab", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_742", title: "Practical TryHackMe challenges", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_743", title: "Advanced Write-up creation", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ }
                 ]
             },
             {
@@ -13293,13 +13293,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Career Path",
                 estimatedHours: 11,
                 topics: [
-                    { id: "topic_744", title: "CEH certification overview", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_745", title: "CompTIA Security plus", difficulty: "Beginner", duration: "1.5 hours" },
-                    { id: "topic_746", title: "Bug bounty basics", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_747", title: "Security career roadmap", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_748", title: "Portfolio building", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_749", title: "Deep Dive: CompTIA Security plus", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_750", title: "Project: CEH certification overview", difficulty: "Intermediate", duration: "1.5 hours" }
+                    { id: "topic_744", title: "CEH certification overview", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_745", title: "CompTIA Security plus", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_746", title: "Bug bounty basics", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_747", title: "Security career roadmap", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_748", title: "Portfolio building", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_749", title: "Deep Dive: CompTIA Security plus", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
+                    { id: "topic_750", title: "Project: CEH certification overview", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ }
                 ]
             }
         ],
@@ -14045,13 +14045,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Advanced Blockchain",
                 estimatedHours: 10,
                 topics: [
-                    { id: "topic_751", title: "Layer 2 solutions", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_752", title: "Cross chain bridges", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_753", title: "The Graph protocol", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_754", title: "IPFS and decentralized storage", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_755", title: "DAO development", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_756", title: "Advanced DAO development", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_757", title: "Deep Dive: Layer 2 solutions", difficulty: "Hard", duration: "3 hours" }
+                    { id: "topic_751", title: "Layer 2 solutions", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_752", title: "Cross chain bridges", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_753", title: "The Graph protocol", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_754", title: "IPFS and decentralized storage", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_755", title: "DAO development", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_756", title: "Advanced DAO development", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_757", title: "Deep Dive: Layer 2 solutions", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ }
                 ]
             },
             {
@@ -14060,12 +14060,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Web3 Frontend",
                 estimatedHours: 11,
                 topics: [
-                    { id: "topic_758", title: "Ethers.js and Web3.js", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_759", title: "Wagmi and RainbowKit", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_760", title: "Wallet connection", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_761", title: "Reading contract data", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_762", title: "Writing transactions", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_763", title: "Advanced Wallet connection", difficulty: "Hard", duration: "1.5 hours" }
+                    { id: "topic_758", title: "Ethers.js and Web3.js", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_759", title: "Wagmi and RainbowKit", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_760", title: "Wallet connection", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_761", title: "Reading contract data", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_762", title: "Writing transactions", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_763", title: "Advanced Wallet connection", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ }
                 ]
             },
             {
@@ -14074,12 +14074,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of DeFi Development",
                 estimatedHours: 17,
                 topics: [
-                    { id: "topic_764", title: "ERC20 tokens", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_765", title: "ERC721 NFTs", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_766", title: "AMM and DEX basics", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_767", title: "Lending protocols", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_768", title: "Yield farming contracts", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_769", title: "Interview Qs: Lending protocols", difficulty: "Hard", duration: "1.5 hours" }
+                    { id: "topic_764", title: "ERC20 tokens", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_765", title: "ERC721 NFTs", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_766", title: "AMM and DEX basics", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_767", title: "Lending protocols", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_768", title: "Yield farming contracts", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_769", title: "Interview Qs: Lending protocols", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ }
                 ]
             },
             {
@@ -14088,12 +14088,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Development Tools",
                 estimatedHours: 19,
                 topics: [
-                    { id: "topic_770", title: "Hardhat setup", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_771", title: "Testing with Ethers.js", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_772", title: "Deployment scripts", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_773", title: "OpenZeppelin contracts", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_774", title: "Foundry basics", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_775", title: "Project: Testing with Ethers.js", difficulty: "Hard", duration: "1.5 hours" }
+                    { id: "topic_770", title: "Hardhat setup", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_771", title: "Testing with Ethers.js", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_772", title: "Deployment scripts", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_773", title: "OpenZeppelin contracts", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_774", title: "Foundry basics", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_775", title: "Project: Testing with Ethers.js", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ }
                 ]
             },
             {
@@ -14102,12 +14102,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Solidity Advanced",
                 estimatedHours: 19,
                 topics: [
-                    { id: "topic_776", title: "Inheritance and interfaces", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_777", title: "Libraries", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_778", title: "Design patterns", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_779", title: "Gas optimization", difficulty: "Intermediate", duration: "1.5 hours" },
-                    { id: "topic_780", title: "Security vulnerabilities", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_781", title: "Deep Dive: Security vulnerabilities", difficulty: "Intermediate", duration: "2 hours" }
+                    { id: "topic_776", title: "Inheritance and interfaces", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_777", title: "Libraries", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_778", title: "Design patterns", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_779", title: "Gas optimization", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_780", title: "Security vulnerabilities", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_781", title: "Deep Dive: Security vulnerabilities", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ }
                 ]
             },
             {
@@ -14116,12 +14116,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Solidity Basics",
                 estimatedHours: 18,
                 topics: [
-                    { id: "topic_782", title: "Smart contract structure", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_783", title: "Data types and variables", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_784", title: "Functions and modifiers", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_785", title: "Events and errors", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_786", title: "Remix IDE", difficulty: "Intermediate", duration: "3 hours" },
-                    { id: "topic_787", title: "Interview Qs: Smart contract structure", difficulty: "Hard", duration: "2 hours" }
+                    { id: "topic_782", title: "Smart contract structure", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_783", title: "Data types and variables", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_784", title: "Functions and modifiers", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_785", title: "Events and errors", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_786", title: "Remix IDE", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_787", title: "Interview Qs: Smart contract structure", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ }
                 ]
             },
             {
@@ -14130,12 +14130,12 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Blockchain Basics",
                 estimatedHours: 17,
                 topics: [
-                    { id: "topic_788", title: "How blockchain works", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_789", title: "Consensus mechanisms", difficulty: "Beginner", duration: "3 hours" },
-                    { id: "topic_790", title: "Cryptography fundamentals", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_791", title: "Bitcoin architecture", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_792", title: "Ethereum overview", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_793", title: "Deep Dive: Ethereum overview", difficulty: "Hard", duration: "2 hours" }
+                    { id: "topic_788", title: "How blockchain works", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_789", title: "Consensus mechanisms", difficulty: "Beginner", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_790", title: "Cryptography fundamentals", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_791", title: "Bitcoin architecture", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_792", title: "Ethereum overview", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_793", title: "Deep Dive: Ethereum overview", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ }
                 ]
             },
             {
@@ -14144,13 +14144,13 @@ export const ROADMAPS: Record<string, Roadmap> = {
                 description: "Master the concepts of Projects and Career",
                 estimatedHours: 14,
                 topics: [
-                    { id: "topic_794", title: "DeFi protocol clone", difficulty: "Intermediate", duration: "2 hours" },
-                    { id: "topic_795", title: "NFT marketplace", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_796", title: "DAO with governance", difficulty: "Hard", duration: "1.5 hours" },
-                    { id: "topic_797", title: "Audit preparation", difficulty: "Beginner", duration: "2 hours" },
-                    { id: "topic_798", title: "Blockchain career path", difficulty: "Hard", duration: "2 hours" },
-                    { id: "topic_799", title: "Interview Qs: Audit preparation", difficulty: "Hard", duration: "3 hours" },
-                    { id: "topic_800", title: "Deep Dive: NFT marketplace", difficulty: "Beginner", duration: "2 hours" }
+                    { id: "topic_794", title: "DeFi protocol clone", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_795", title: "NFT marketplace", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_796", title: "DAO with governance", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_797", title: "Audit preparation", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_798", title: "Blockchain career path", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_799", title: "Interview Qs: Audit preparation", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ },
+                    { id: "topic_800", title: "Deep Dive: NFT marketplace", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/gyMwXuJrbJQ" /* freeCodeCamp Solidity */ }
                 ]
             }
         ],
