@@ -8,12 +8,12 @@ import {
   FiHome, FiBook, FiTerminal, FiCpu,
   FiTrendingUp, FiUser, FiLogOut, FiZap,
   FiAward, FiExternalLink, FiActivity, FiArrowRight, FiSettings,
-  FiMenu, FiX, FiBriefcase, FiGrid
+  FiMenu, FiX, FiBriefcase, FiGrid, FiCalendar, FiClock
 } from 'react-icons/fi';
 import { useAuth } from '@/hooks/useAuth';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { db } from '@/lib/firebase';
-import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, serverTimestamp, collection, query, where, getDocs } from 'firebase/firestore';
 import { fetchResilient } from '@/lib/firestore-resilience';
 import { addNotification } from '@/lib/notifications';
 import SkillGraph from '@/components/dashboard/SkillGraph';
@@ -35,7 +35,9 @@ interface UserProfile {
   employabilityScore?: number;
   employabilityLevel?: string;
   nextRecommendedTopic?: string;
+  nextRecommendedTopic?: string;
   recommendationReason?: string;
+  collegeId?: string;
 }
 
 export default function DashboardPage() {
@@ -48,6 +50,23 @@ export default function DashboardPage() {
   const [streakDays, setStreakDays] = useState(0);
   const [inactiveGap, setInactiveGap] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [exams, setExams] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!profile?.collegeId || !db) return;
+    const fetchExams = async () => {
+      try {
+        const q = query(collection(db, 'college_exams'), where('collegeId', '==', profile.collegeId));
+        const snap = await getDocs(q);
+        const examList = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        examList.sort((a: any, b: any) => new Date(a.examDate).getTime() - new Date(b.examDate).getTime());
+        setExams(examList.filter((e: any) => new Date(e.examDate).getTime() > Date.now() - 24 * 60 * 60 * 1000));
+      } catch (err) {
+        console.error("Failed to load exams", err);
+      }
+    };
+    fetchExams();
+  }, [profile?.collegeId]);
 
   // ── Streak sync helper ────────────────────────────────────────────────────
   // Returns today's date as a YYYY-MM-DD string in IST (UTC+5:30)
@@ -454,6 +473,48 @@ export default function DashboardPage() {
               Resume Path <FiArrowRight />
             </button>
           </motion.div>
+        )}
+
+        {/* MY EXAMS (COLLEGE STUDENTS ONLY) */}
+        {profile?.collegeId && exams.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-xl font-black text-[#2C1A0E] mb-4 flex items-center gap-2">
+              <FiCalendar /> Upcoming Exams
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {exams.map(exam => {
+                const eDate = new Date(exam.examDate);
+                const diffDays = Math.ceil((eDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+                const color = diffDays < 3 ? '#EF4444' : diffDays <= 7 ? '#F59E0B' : '#10B981';
+                
+                return (
+                  <div key={exam.id} className="bg-white rounded-[20px] border-2 border-[#B48C5A]/25 p-6 shadow-sm flex flex-col justify-between hover:-translate-y-1 transition-transform">
+                    <div>
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="text-[10px] font-black uppercase tracking-wider bg-[#FDF6EC] text-[#8B6E52] px-2 py-1 rounded-md border border-[#B48C5A]/20">
+                          {exam.subjectName}
+                        </div>
+                        <div className="flex items-center gap-1 text-[11px] font-black px-2 py-1 rounded-md bg-opacity-10" style={{ color, backgroundColor: `${color}15` }}>
+                          <div className="w-1.5 h-1.5 rounded-full" style={{ background: color }} />
+                          {diffDays <= 0 ? 'Today' : `${diffDays} Days`}
+                        </div>
+                      </div>
+                      <h3 className="font-black text-[#2C1A0E] text-lg leading-tight mb-2">{exam.examName}</h3>
+                      <div className="text-[#8B6E52] font-semibold text-xs flex items-center gap-2 mb-4">
+                        <FiClock /> {eDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} at {eDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                      </div>
+                    </div>
+                    <button 
+                      onClick={() => router.push(`/materials/${exam.subjectId}`)} 
+                      className="w-full bg-[#FDF6EC] hover:bg-[#F5E8D4] text-[#5C3D1E] border-2 border-[#B48C5A]/20 py-3 rounded-xl font-black text-sm flex items-center justify-center gap-2 transition-colors"
+                    >
+                      Start Revision <FiArrowRight />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         )}
 
         {/* STAT CARDS */}
