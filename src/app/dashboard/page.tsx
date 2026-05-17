@@ -35,7 +35,6 @@ interface UserProfile {
   employabilityScore?: number;
   employabilityLevel?: string;
   nextRecommendedTopic?: string;
-  nextRecommendedTopic?: string;
   recommendationReason?: string;
   collegeId?: string;
 }
@@ -179,6 +178,14 @@ export default function DashboardPage() {
           if (docResult && docResult.exists()) {
             const data = docResult.data() as UserProfile;
             setProfile(data);
+            
+            if (data.role && data.role !== 'student') {
+              if (data.role === 'company') router.push('/company/dashboard');
+              else if (data.role === 'college') router.push('/college/dashboard');
+              else if (data.role === 'admin') router.push('/admin/dashboard');
+              return;
+            }
+
             // Clear the UID-scoped localStorage cache once Firestore is available
             localStorage.removeItem('pp_profile_' + user.uid);
 
@@ -287,20 +294,6 @@ export default function DashboardPage() {
     { id: 'leaderboard', label: 'Leaderboard', icon: <FiAward />,      action: () => router.push('/leaderboard') },
     { id: 'settings',    label: 'Settings',    icon: <FiSettings />,   action: () => router.push('/settings') },
   ];
-
-  // Company Hub — only visible to company or admin users
-  if (userRole === 'company' || userRole === 'admin') {
-    baseNavItems.splice(7, 0, {
-      id: 'company', label: 'Company Hub', icon: <FiBriefcase />, action: () => router.push('/company/dashboard')
-    });
-  }
-
-  // Admin Dashboard link — only for admins
-  if (userRole === 'admin') {
-    baseNavItems.splice(baseNavItems.length - 1, 0, {
-      id: 'admin', label: 'Admin Dashboard', icon: <FiGrid />, action: () => router.push('/admin/dashboard')
-    });
-  }
 
   const navItems = baseNavItems;
 
@@ -645,12 +638,7 @@ export default function DashboardPage() {
           }}>
             <div style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#8B6E52', marginBottom: 16, alignSelf: 'flex-start' }}>Proficiency Spectrum</div>
             {skillScore > 0 ? (
-              <SkillGraph modules={[
-                { id: 1, title: 'Foundations', energy_cost: 10, difficulty: 'Beginner' },
-                { id: 2, title: 'Core Logic', energy_cost: 25, difficulty: 'Intermediate' },
-                { id: 3, title: 'Advanced Systems', energy_cost: 40, difficulty: 'Hard' },
-                { id: 4, title: 'Optimization', energy_cost: 55, difficulty: 'Expert' }
-              ]} />
+              <SkillGraph />
             ) : (
               <div className="flex flex-col items-center justify-center py-6">
                 <div className="text-3xl mb-2">📊</div>

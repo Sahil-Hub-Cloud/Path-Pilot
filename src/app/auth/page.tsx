@@ -86,6 +86,10 @@ function AuthForm() {
     // 4. Navigate
     if (finalRole === 'company') {
       router.push('/company/dashboard');
+    } else if (finalRole === 'college') {
+      router.push('/college/dashboard');
+    } else if (finalRole === 'admin') {
+      router.push('/admin/dashboard');
     } else if (isNewUser || !onboardingComplete) {
       router.push('/onboarding');
     } else {
@@ -147,7 +151,7 @@ function AuthForm() {
         const result = await signInWithEmailAndPassword(auth, formData.email, formData.password);
         
         // 1. Resolve role from Firestore
-        let userRole: 'student' | 'company' = 'student';
+        let userRole: 'student' | 'company' | 'college' | 'admin' = 'student';
         let targetPath = '/dashboard';
 
         if (db) {
@@ -160,8 +164,11 @@ function AuthForm() {
             
             if (docResult && 'exists' in docResult && docResult.exists()) {
               const userData = docResult.data();
-              userRole = (userData?.role as 'student' | 'company') || 'student';
-              targetPath = userRole === 'company' ? '/company/dashboard' : '/dashboard';
+              userRole = (userData?.role as 'student' | 'company' | 'college' | 'admin') || 'student';
+              targetPath = userRole === 'company' ? '/company/dashboard' 
+                         : userRole === 'college' ? '/college/dashboard' 
+                         : userRole === 'admin' ? '/admin/dashboard' 
+                         : '/dashboard';
             }
           } catch (e) {
             console.warn("Auth: Firestore role check failed, defaulting to student dashboard", e);
@@ -169,7 +176,7 @@ function AuthForm() {
         }
 
         // 2. Strict Role Validation: Ensure intended role matches account role
-        if (userRole !== role) {
+        if (userRole !== role && !['college', 'admin'].includes(userRole)) {
           await auth.signOut(); // Kick them out immediately
           const errorMsg = `Login Failed: This email is registered as a ${userRole.toUpperCase()}. Please switch the tab to ${userRole.toUpperCase()} mode to sign in.`;
           throw { code: 'custom/role-mismatch', message: errorMsg };

@@ -41,8 +41,12 @@ export default function ExamSchedulePage() {
         const userDoc = await getDoc(doc(db, 'users', user.uid));
         const data = userDoc.data();
         if (!userDoc.exists() || data?.role !== 'college') {
-          router.push('/dashboard');
-          return;
+           const role = data?.role || 'student';
+           if (role === 'student') router.push('/dashboard');
+           else if (role === 'company') router.push('/company/dashboard');
+           else if (role === 'admin') router.push('/admin/dashboard');
+           else router.push('/dashboard');
+           return;
         }
         setProfile(data);
 
@@ -196,7 +200,7 @@ export default function ExamSchedulePage() {
       <div style={{ padding: '28px 24px', display: 'flex', alignItems: 'center', gap: 10 }}>
         <div style={{
           width: 36, height: 36, background: 'linear-gradient(135deg, #006B7A, #2E7D52)',
-          borderRadius: 10, display: 'flex', alignItems: 'center', justify-content: 'center', color: 'white',
+          borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white',
           boxShadow: '0 4px 12px rgba(0,107,122,0.35)'
         }}>
           <span style={{ fontWeight: 900, fontSize: 18, marginLeft: 11 }}>P</span>
@@ -208,7 +212,6 @@ export default function ExamSchedulePage() {
         {[
           { id: 'overview', label: 'Overview', icon: <FiHome />, path: '/college/dashboard' },
           { id: 'students', label: 'My Students', icon: <FiUsers />, path: '/college/dashboard' },
-          { id: 'batches', label: 'Batches', icon: <FiLayers />, path: '/college/dashboard' },
           { id: 'library', label: 'PDF Library', icon: <FiFileText />, path: '/college/pdf-library' },
           { id: 'exams', label: 'Exam Schedule', icon: <FiCalendar />, path: '/college/exam-schedule' },
           { id: 'reports', label: 'Reports', icon: <FiPieChart />, path: '/college/dashboard' },
@@ -318,9 +321,9 @@ export default function ExamSchedulePage() {
              <div className="flex justify-between items-center mb-6">
                <h2 className="text-xl font-black text-[#2C1A0E]">Scheduled Exams</h2>
                <div className="flex items-center gap-4 text-[11px] font-bold uppercase tracking-wider text-[#8B6E52]">
-                 <span className="flex items-center gap-1"><div className="w-2.5 h-2.5 rounded-full bg-[#10B981]" /> > 7 Days</span>
+                 <span className="flex items-center gap-1"><div className="w-2.5 h-2.5 rounded-full bg-[#10B981]" /> {'>'} 7 Days</span>
                  <span className="flex items-center gap-1"><div className="w-2.5 h-2.5 rounded-full bg-[#F59E0B]" /> 3-7 Days</span>
-                 <span className="flex items-center gap-1"><div className="w-2.5 h-2.5 rounded-full bg-[#EF4444]" /> < 3 Days</span>
+                 <span className="flex items-center gap-1"><div className="w-2.5 h-2.5 rounded-full bg-[#EF4444]" /> {'<'} 3 Days</span>
                </div>
              </div>
 

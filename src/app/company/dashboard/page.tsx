@@ -14,7 +14,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { toast } from '@/lib/toast';
 import { db } from '@/lib/firebase';
-import { collection, query, where, getDocs, addDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, addDoc, doc, getDoc } from 'firebase/firestore';
 
 // --- CONSTANTS ---
 const TRACKS = [
@@ -50,9 +50,20 @@ export default function CompanyDashboard() {
   // --- FETCH DATA FROM FIRESTORE ---
   useEffect(() => {
     const fetchStudents = async () => {
-      if (!isReady) return;
+      if (!isReady || !user) return;
       try {
         setLoading(true);
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        const data = userDoc.data();
+        if (!userDoc.exists() || data?.role !== 'company') {
+           const role = data?.role || 'student';
+           if (role === 'student') router.push('/dashboard');
+           else if (role === 'college') router.push('/college/dashboard');
+           else if (role === 'admin') router.push('/admin/dashboard');
+           else router.push('/dashboard');
+           return;
+        }
+
         const q = query(collection(db, 'users'), where('role', '==', 'student'));
         const querySnapshot = await getDocs(q);
         
@@ -475,8 +486,8 @@ export default function CompanyDashboard() {
       <nav style={{ flex: 1, padding: '8px 12px', display: 'flex', flexDirection: 'column', gap: 4 }}>
         {[
           { id: 'talent', label: 'Talent Discovery', icon: <FiSearch /> },
-          { id: 'analytics', label: 'Intelligence', icon: <FiPieChart /> },
-          { id: 'settings', label: 'Portal Config', icon: <FiSettings /> },
+          { id: 'interviews', label: 'Interview Requests', icon: <FiBriefcase /> },
+          { id: 'settings', label: 'Settings', icon: <FiSettings /> },
         ].map(item => (
           <button key={item.id} onClick={() => setActiveNav(item.id)} style={{
             width: '100%', display: 'flex', alignItems: 'center', gap: 12,
@@ -510,7 +521,15 @@ export default function CompanyDashboard() {
       <main style={{ marginLeft: 240, flex: 1, padding: '40px 40px 80px', maxWidth: 1400 }}>
          <AnimatePresence mode="wait">
             {activeNav === 'talent' && <TalentDiscoveryView key="talent" />}
-            {activeNav === 'analytics' && <IntelligenceView key="intelligence" />}
+            {activeNav === 'interviews' && (
+               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} style={cardStyle}>
+                 <h2 style={{ fontSize: 20, fontWeight: 900, color: '#2C1A0E', marginBottom: 12 }}>Interview Requests</h2>
+                 <p style={{ color: '#8B6E52', fontSize: 14, fontWeight: 600, marginBottom: 24 }}>Manage your pending and scheduled interviews.</p>
+                 <div style={{ padding: 40, border: '2px dashed rgba(180,140,90,0.2)', borderRadius: 20, textAlign: 'center', color: '#B89A7E' }}>
+                    Module currently under development.
+                 </div>
+               </motion.div>
+            )}
             {activeNav === 'settings' && <PortalConfigView key="settings" />}
          </AnimatePresence>
       </main>

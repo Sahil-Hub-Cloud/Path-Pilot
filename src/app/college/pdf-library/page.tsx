@@ -39,8 +39,12 @@ export default function PdfLibraryPage() {
       try {
         const userDoc = await getDoc(doc(db, 'users', user.uid));
         if (!userDoc.exists() || userDoc.data()?.role !== 'college') {
-          router.push('/dashboard');
-          return;
+           const role = userDoc.exists() ? userDoc.data().role : 'student';
+           if (role === 'student') router.push('/dashboard');
+           else if (role === 'company') router.push('/company/dashboard');
+           else if (role === 'admin') router.push('/admin/dashboard');
+           else router.push('/dashboard');
+           return;
         }
         setProfile(userDoc.data());
       } catch (err) {
@@ -162,7 +166,6 @@ export default function PdfLibraryPage() {
         {[
           { id: 'overview', label: 'Overview', icon: <FiHome />, path: '/college/dashboard' },
           { id: 'students', label: 'My Students', icon: <FiUsers />, path: '/college/dashboard' },
-          { id: 'batches', label: 'Batches', icon: <FiLayers />, path: '/college/dashboard' },
           { id: 'library', label: 'PDF Library', icon: <FiFileText />, path: '/college/pdf-library' },
           { id: 'exams', label: 'Exam Schedule', icon: <FiCalendar />, path: '/college/dashboard' },
           { id: 'reports', label: 'Reports', icon: <FiPieChart />, path: '/college/dashboard' },

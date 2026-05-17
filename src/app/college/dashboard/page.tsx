@@ -53,8 +53,12 @@ export default function CollegeAdminDashboard() {
         // Check Admin Profile
         const userDoc = await getDoc(doc(db, 'users', user.uid));
         if (!userDoc.exists() || userDoc.data()?.role !== 'college') {
-          router.push('/dashboard');
-          return;
+           const role = userDoc.exists() ? userDoc.data().role : 'student';
+           if (role === 'student') router.push('/dashboard');
+           else if (role === 'company') router.push('/company/dashboard');
+           else if (role === 'admin') router.push('/admin/dashboard');
+           else router.push('/dashboard');
+           return;
         }
         
         const data = userDoc.data();
@@ -390,7 +394,6 @@ export default function CollegeAdminDashboard() {
         {[
           { id: 'overview', label: 'Overview', icon: <FiHome /> },
           { id: 'students', label: 'My Students', icon: <FiUsers /> },
-          { id: 'batches', label: 'Batches', icon: <FiLayers /> },
           { id: 'library', label: 'PDF Library', icon: <FiFileText /> },
           { id: 'exams', label: 'Exam Schedule', icon: <FiCalendar /> },
           { id: 'reports', label: 'Reports', icon: <FiPieChart /> },
@@ -429,7 +432,6 @@ export default function CollegeAdminDashboard() {
          <AnimatePresence mode="wait">
             {activeNav === 'overview' && <OverviewView key="overview" />}
             {activeNav === 'students' && <UnderConstruction key="students" title="My Students Directory" />}
-            {activeNav === 'batches' && <UnderConstruction key="batches" title="Batch Management" />}
             {activeNav === 'library' && <UnderConstruction key="library" title="PDF Library" />}
             {activeNav === 'exams' && <UnderConstruction key="exams" title="Exam Schedule" />}
             {activeNav === 'reports' && <UnderConstruction key="reports" title="Analytics & Reports" />}

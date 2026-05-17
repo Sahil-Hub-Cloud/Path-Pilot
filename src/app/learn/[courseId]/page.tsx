@@ -191,7 +191,7 @@ export default function LearningPage() {
           duration: t.duration,
           emoji: roadmapData.icon || '📚',
           keyPoints: roadmapData.skills.slice(0, 4),
-          videoUrl: t.youtubeUrl,
+          videoUrl: (t as any).youtubeUrl,
           challengeQ: step?.practice || 'Complete the practice exercise for this topic.',
           blocks: [
             { t: 'h2', v: t.title },

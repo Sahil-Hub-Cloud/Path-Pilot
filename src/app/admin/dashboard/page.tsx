@@ -83,10 +83,17 @@ export default function AdminDashboard() {
     };
 
     useEffect(() => {
-        if (!loading && !user) {
-            router.push('/auth');
+        if (!loading) {
+            if (!user) {
+                router.push('/auth');
+            } else if ((role as string) && (role as string) !== 'admin') {
+                if ((role as string) === 'student') router.push('/dashboard');
+                else if ((role as string) === 'college') router.push('/college/dashboard');
+                else if ((role as string) === 'company') router.push('/company/dashboard');
+                else router.push('/dashboard');
+            }
         }
-    }, [loading, user, router]);
+    }, [loading, user, role, router]);
 
     useEffect(() => {
         if (user) {
