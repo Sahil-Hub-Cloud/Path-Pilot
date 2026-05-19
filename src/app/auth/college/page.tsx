@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FiMail, FiLock, FiUser, FiEye, FiEyeOff, FiMapPin, FiPhone, FiCheck, FiX, FiInfo } from 'react-icons/fi';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
-import { setDoc, doc, collection, query, where, getDocs, addDoc } from 'firebase/firestore';
+import { setDoc, doc, collection, query, where, getDocs, serverTimestamp } from 'firebase/firestore';
 
 export default function CollegeSignupPage() {
   const router = useRouter();
@@ -107,6 +107,8 @@ export default function CollegeSignupPage() {
     setError('');
 
     try {
+      console.log('Step 1: Starting college registration flow');
+
       // 1. Double check uniqueness right before creating user
       const collegesRef = collection(db, 'colleges');
       const q = query(collegesRef, where('collegeCode', '==', formData.collegeCode));
@@ -119,11 +121,15 @@ export default function CollegeSignupPage() {
         return;
       }
 
-      // 2. Create user account
+      // 2. Create Firebase Auth user FIRST — Firestore rules require request.auth != null
       const result = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
-      
-      // 3. Save to colleges collection
-      const newCollegeDoc = await addDoc(collegesRef, {
+      const user = result.user;
+      console.log('Step 2: Firebase Auth user created:', user.uid);
+
+      // 3. Write to colleges/{user.uid} — doc ID MUST match uid so rules can verify ownership
+      const collegePath = 'colleges/' + user.uid;
+      console.log('Step 3: Writing to Firestore path:', collegePath);
+      const collegeData = {
         collegeName: formData.collegeName,
         city: formData.city,
         state: formData.state,
@@ -132,25 +138,30 @@ export default function CollegeSignupPage() {
         email: formData.email,
         phone: formData.phone,
         collegeCode: formData.collegeCode,
-        createdAt: new Date().toISOString(),
+        adminUid: user.uid,
+        createdAt: serverTimestamp(),
         totalStudents: 0,
         role: 'college'
-      });
+      };
+      console.log('Step 4: Data being written:', collegeData);
+      await setDoc(doc(db, 'colleges', user.uid), collegeData);
+      console.log('Step 5: colleges document written successfully');
 
-      // 4. Save to users/UID
-      await setDoc(doc(db, 'users', result.user.uid), {
+      // 4. Write to users/{user.uid} — lets role-based routing work across the app
+      await setDoc(doc(db, 'users', user.uid), {
         role: 'college',
-        collegeId: newCollegeDoc.id,
+        collegeId: user.uid,
         collegeName: formData.collegeName,
         collegeCode: formData.collegeCode,
         email: formData.email,
         displayName: formData.adminName,
-        createdAt: new Date().toISOString()
+        createdAt: serverTimestamp()
       });
+      console.log('Step 6: users document written successfully');
 
       console.log('SUCCESS: College and User documents created successfully!', {
-        collegeId: newCollegeDoc.id,
-        userId: result.user.uid,
+        collegeId: user.uid,
+        userId: user.uid,
         role: 'college'
       });
 

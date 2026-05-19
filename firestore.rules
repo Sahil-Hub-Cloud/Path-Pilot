@@ -105,7 +105,11 @@ service cloud.firestore {
     // Colleges collection
     match /colleges/{collegeId} {
       allow read: if request.auth != null;
-      allow create: if request.resource.data.keys().hasAll(['collegeName', 'collegeCode', 'adminName', 'email']) 
+      // create: caller must be authenticated, doc ID must match their uid, and required fields must be present
+      allow create: if request.auth != null
+        && request.auth.uid == collegeId
+        && request.resource.data.keys().hasAll(['collegeName', 'collegeCode', 'adminName', 'email', 'adminUid'])
+        && request.resource.data.adminUid == request.auth.uid
         && request.resource.data.collegeCode is string
         && request.resource.data.collegeCode.size() >= 6
         && request.resource.data.collegeCode.size() <= 10;
