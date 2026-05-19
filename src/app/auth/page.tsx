@@ -211,7 +211,50 @@ function AuthForm() {
     setError('');
     try {
       if (mode === 'signin') {
-        const result = await signInWithEmailAndPassword(auth, formData.email, formData.password);
+        let loginEmail = formData.email;
+
+        // Check if the input is a college code or roll number (no '@' in the string)
+        if (!formData.email.includes('@') && db) {
+          const entered = formData.email.trim();
+          
+          if (role === 'student' && isEnrolledInCollege) {
+            if (!collegeCode) {
+              throw { code: 'custom/invalid-college-code', message: 'Please enter your College Code.' };
+            }
+            if (collegeCodeStatus !== 'valid') {
+              throw { code: 'custom/invalid-college-code', message: 'Please enter a valid College Code.' };
+            }
+
+            const enteredRoll = entered.toUpperCase();
+            const enteredCode = collegeCode.toUpperCase().replace(/\s/g, '');
+            
+            const q = query(
+              collection(db, 'users'), 
+              where('collegeCode', '==', enteredCode),
+              where('regNumber', '==', enteredRoll)
+            );
+            const snapshot = await getDocs(q);
+            if (snapshot.empty) {
+              throw { code: 'auth/user-not-found', message: 'No student found with this Roll Number in this college.' };
+            }
+            loginEmail = snapshot.docs[0].data().email;
+          } else {
+            // General college code resolution (e.g. for college admin or if no tab mismatch constraints apply)
+            const enteredCode = entered.toUpperCase().replace(/\s/g, '');
+            const q = query(collection(db, 'colleges'), where('collegeCode', '==', enteredCode));
+            const snapshot = await getDocs(q);
+            if (!snapshot.empty) {
+              const collegeDoc = snapshot.docs[0].data();
+              if (collegeDoc.email) {
+                loginEmail = collegeDoc.email;
+              }
+            } else {
+              throw { code: 'auth/user-not-found', message: 'Invalid email address or college code.' };
+            }
+          }
+        }
+
+        const result = await signInWithEmailAndPassword(auth, loginEmail, formData.password);
         
         // 1. Resolve role from Firestore
         let userRole: 'student' | 'company' | 'college' | 'admin' = 'student';
@@ -232,9 +275,40 @@ function AuthForm() {
                          : userRole === 'college' ? '/college/dashboard' 
                          : userRole === 'admin' ? '/admin/dashboard' 
                          : '/dashboard';
+              
+              // If student signed in with a college code, make sure it is saved/updated in Firestore
+              if (userRole === 'student' && isEnrolledInCollege && validatedCollegeId) {
+                const updatedCode = collegeCode.toUpperCase().replace(/\s/g, '');
+                if (userData.collegeCode !== updatedCode) {
+                  const updateTimeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), 3000));
+                  await Promise.race([
+                    setDoc(doc(db, 'users', result.user.uid), {
+                      collegeCode: updatedCode,
+                      collegeId: validatedCollegeId,
+                      collegeName: validatedCollegeName
+                    }, { merge: true }),
+                    updateTimeout
+                  ]);
+                }
+              }
+            } else if (role === 'student' && isEnrolledInCollege && validatedCollegeId) {
+              // If document doesn't exist, we can create it
+              const createTimeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), 3000));
+              await Promise.race([
+                setDoc(doc(db, 'users', result.user.uid), {
+                  displayName: result.user.displayName || '',
+                  email: result.user.email || '',
+                  role: 'student',
+                  collegeCode: collegeCode.toUpperCase().replace(/\s/g, ''),
+                  collegeId: validatedCollegeId,
+                  collegeName: validatedCollegeName,
+                  createdAt: new Date().toISOString()
+                }, { merge: true }),
+                createTimeout
+              ]);
             }
           } catch (e) {
-            console.warn("Auth: Firestore role check failed, defaulting to student dashboard", e);
+            console.warn("Auth: Firestore role check/linking failed", e);
           }
         }
 
@@ -253,14 +327,11 @@ function AuthForm() {
           if (!collegeCode) {
             throw { code: 'custom/invalid-college-code', message: 'Please enter a college code.' };
           }
-          const entered = collegeCode.toUpperCase().replace(/\s/g, '');
-          const q = query(collection(db, 'colleges'), where('collegeCode', '==', entered));
-          const snapshot = await getDocs(q);
-          if (snapshot.empty) {
-            throw { code: 'custom/invalid-college-code', message: 'Invalid code. Ask your college admin.' };
+          if (collegeCodeStatus !== 'valid') {
+            throw { code: 'custom/invalid-college-code', message: 'Please enter a valid college code.' };
           }
-          collegeId = snapshot.docs[0].id;
-          collegeName = snapshot.docs[0].data().collegeName || 'your college';
+          collegeId = validatedCollegeId;
+          collegeName = validatedCollegeName || 'your college';
         }
 
         const result = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
@@ -300,14 +371,14 @@ function AuthForm() {
         }
       }
     } catch (err: any) {
-      console.error("Auth: Email error:", err);
+      console.error("Auth: Email/Code error:", err);
       setLoading(false); // Immediate unlock on error
       
       const msg =
         err.code === 'custom/role-mismatch' ? err.message
         : err.code === 'custom/invalid-college-code' ? err.message
-        : err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential' ? 'Incorrect email or password for this role.'
-        : err.code === 'auth/user-not-found' ? 'No account with this email. Create one below.'
+        : err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential' ? 'Incorrect credentials or password.'
+        : err.code === 'auth/user-not-found' ? (formData.email.includes('@') ? 'No account with this email. Create one below.' : err.message || 'No student found with this Roll Number.')
         : err.code === 'auth/email-already-in-use' ? 'Email already registered. Try switching to Sign In mode.'
         : err.code === 'auth/weak-password' ? 'Password must be at least 6 characters.'
         : err.code === 'auth/network-request-failed' ? 'Connection lost. Check your internet or VPN.'
@@ -469,57 +540,61 @@ function AuthForm() {
                     style={inputStyle}
                   />
                 </div>
-
-                {role === 'student' && (
-                  <div style={{ marginTop: 16 }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#2C1A0E', fontWeight: 600, cursor: 'pointer' }}>
-                      <input 
-                        type="checkbox" 
-                        checked={isEnrolledInCollege}
-                        onChange={(e) => setIsEnrolledInCollege(e.target.checked)}
-                        style={{ width: 16, height: 16, cursor: 'pointer', accentColor: '#006B7A' }}
-                      />
-                      My college uses Path Pilot
-                    </label>
-                    <AnimatePresence>
-                      {isEnrolledInCollege && (
-                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1, marginTop: 12 }} exit={{ height: 0, opacity: 0 }}>
-                          <input 
-                            type="text" 
-                            placeholder="e.g. LITAM2001" 
-                            required={isEnrolledInCollege}
-                            value={collegeCode}
-                            onChange={e => setCollegeCode(e.target.value)}
-                            style={inputStyle}
-                          />
-                          <p style={{ margin: '4px 0 0', fontSize: 12, color: '#8B6E52', fontWeight: 500 }}>
-                            Ask your college admin for this code
-                          </p>
-                          {collegeCode && (
-                            <div style={{ marginTop: 8, fontSize: 13, fontWeight: 600 }}>
-                              {collegeCodeStatus === 'checking' && (
-                                <span style={{ color: '#8B6E52' }}>Checking code...</span>
-                              )}
-                              {collegeCodeStatus === 'valid' && (
-                                <span style={{ color: '#2E7D52' }}>✓ Linked to {validatedCollegeName}</span>
-                              )}
-                              {collegeCodeStatus === 'invalid' && (
-                                <span style={{ color: '#B04A1E' }}>Invalid code. Ask your college admin.</span>
-                              )}
-                            </div>
-                          )}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                )}
               </motion.div>
             )}
           </AnimatePresence>
 
+          {role === 'student' && (
+            <div style={{ marginTop: 4 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#2C1A0E', fontWeight: 600, cursor: 'pointer' }}>
+                <input 
+                  type="checkbox" 
+                  checked={isEnrolledInCollege}
+                  onChange={(e) => setIsEnrolledInCollege(e.target.checked)}
+                  style={{ width: 16, height: 16, cursor: 'pointer', accentColor: '#006B7A' }}
+                />
+                My college uses Path Pilot
+              </label>
+              <AnimatePresence>
+                {isEnrolledInCollege && (
+                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1, marginTop: 12 }} exit={{ height: 0, opacity: 0 }}>
+                    <input 
+                      type="text" 
+                      placeholder="College Code (e.g. LITAM2001)" 
+                      required={isEnrolledInCollege}
+                      value={collegeCode}
+                      onChange={e => setCollegeCode(e.target.value)}
+                      style={inputStyle}
+                    />
+                    <p style={{ margin: '4px 0 0', fontSize: 12, color: '#8B6E52', fontWeight: 500 }}>
+                      Ask your college admin for this code
+                    </p>
+                    {collegeCode && (
+                      <div style={{ marginTop: 8, fontSize: 13, fontWeight: 600 }}>
+                        {collegeCodeStatus === 'checking' && (
+                          <span style={{ color: '#8B6E52' }}>Checking code...</span>
+                        )}
+                        {collegeCodeStatus === 'valid' && (
+                          <span style={{ color: '#2E7D52' }}>✓ Linked to {validatedCollegeName}</span>
+                        )}
+                        {collegeCodeStatus === 'invalid' && (
+                          <span style={{ color: '#B04A1E' }}>Invalid code. Ask your college admin.</span>
+                        )}
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
+
           <div style={{ position: 'relative' }}>
             <FiMail style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#8B6E52' }} />
-            <input type="email" placeholder="Email address" required value={formData.email}
+            <input 
+              type={(mode === 'signin' && role === 'student' && isEnrolledInCollege) ? "text" : "email"} 
+              placeholder={(mode === 'signin' && role === 'student' && isEnrolledInCollege) ? "Roll Number or Email address" : "Email address"} 
+              required 
+              value={formData.email}
               onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
               style={inputStyle}
             />
