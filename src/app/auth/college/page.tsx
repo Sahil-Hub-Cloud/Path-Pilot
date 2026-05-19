@@ -5,9 +5,9 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiMail, FiLock, FiUser, FiEye, FiEyeOff, FiMapPin, FiPhone, FiCheck, FiX, FiInfo } from 'react-icons/fi';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
-import { setDoc, doc, collection, query, where, getDocs, serverTimestamp } from 'firebase/firestore';
+import { setDoc, doc, serverTimestamp } from 'firebase/firestore';
 
 export default function CollegeSignupPage() {
   const router = useRouter();
@@ -58,21 +58,20 @@ export default function CollegeSignupPage() {
       }
 
       setCodeStatus('checking');
-      if (db) {
-        try {
-          const collegesRef = collection(db, 'colleges');
-          const q = query(collegesRef, where('collegeCode', '==', code));
-          const querySnapshot = await getDocs(q);
-          
-          if (querySnapshot.empty) {
-            setCodeStatus('available');
-          } else {
-            setCodeStatus('taken');
-          }
-        } catch (err) {
-          console.error("Code availability check failed:", err);
-          setCodeStatus('idle');
+      try {
+        const response = await fetch(`/api/college/check-code?code=${encodeURIComponent(code)}`);
+        if (!response.ok) {
+          throw new Error('Failed to verify college code');
         }
+        const data = await response.json();
+        if (data.available) {
+          setCodeStatus('available');
+        } else {
+          setCodeStatus('taken');
+        }
+      } catch (err) {
+        console.error("Code availability check failed:", err);
+        setCodeStatus('idle');
       }
     };
 
@@ -109,24 +108,36 @@ export default function CollegeSignupPage() {
     try {
       console.log('Step 1: Starting college registration flow');
 
-      // 1. Double check uniqueness right before creating user
-      const collegesRef = collection(db, 'colleges');
-      const q = query(collegesRef, where('collegeCode', '==', formData.collegeCode));
-      const querySnapshot = await getDocs(q);
-      
-      if (!querySnapshot.empty) {
+      // 1. Double check uniqueness right before creating user using API endpoint
+      const response = await fetch(`/api/college/check-code?code=${encodeURIComponent(formData.collegeCode)}`);
+      if (!response.ok) {
+        throw new Error('Failed to verify college code availability.');
+      }
+      const data = await response.json();
+      if (!data.available) {
         setLoading(false);
         setCodeStatus('taken');
         showError(`This code is taken. Try ${formData.collegeCode.substring(0, 6).toUpperCase()}2025 or ${formData.collegeCode.substring(0, 6).toUpperCase()}_CSE`);
         return;
       }
 
-      // 2. Create Firebase Auth user FIRST — Firestore rules require request.auth != null
+      // 2. Create Firebase Auth user FIRST
       const result = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
       const user = result.user;
       console.log('Step 2: Firebase Auth user created:', user.uid);
 
-      // 3. Write to colleges/{user.uid} — doc ID MUST match uid so rules can verify ownership
+      // Wait for auth state to be confirmed
+      await new Promise((resolve) => {
+        const unsubscribe = onAuthStateChanged(auth, (confirmedUser) => {
+          if (confirmedUser) {
+            unsubscribe();
+            resolve(confirmedUser);
+          }
+        });
+      });
+      console.log('Step 2.5: Firebase Auth state confirmed');
+
+      // 3. Write to colleges/{user.uid}
       const collegePath = 'colleges/' + user.uid;
       console.log('Step 3: Writing to Firestore path:', collegePath);
       const collegeData = {
@@ -147,7 +158,7 @@ export default function CollegeSignupPage() {
       await setDoc(doc(db, 'colleges', user.uid), collegeData);
       console.log('Step 5: colleges document written successfully');
 
-      // 4. Write to users/{user.uid} — lets role-based routing work across the app
+      // 4. Write to users/{user.uid}
       await setDoc(doc(db, 'users', user.uid), {
         role: 'college',
         collegeId: user.uid,
