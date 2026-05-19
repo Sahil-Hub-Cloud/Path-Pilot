@@ -37,7 +37,7 @@ function AuthForm() {
   const [validatedCollegeId, setValidatedCollegeId] = useState('');
 
   useEffect(() => {
-    if (!isEnrolledInCollege || !collegeCode) {
+    if (!isEnrolledInCollege || !collegeCode || !db) {
       setCollegeCodeStatus('idle');
       setValidatedCollegeName('');
       setValidatedCollegeId('');
@@ -47,15 +47,16 @@ function AuthForm() {
     const checkCode = async () => {
       setCollegeCodeStatus('checking');
       try {
-        const response = await fetch(`/api/college/check-code?code=${encodeURIComponent(collegeCode.toUpperCase().replace(/\s/g, ''))}`);
-        if (!response.ok) {
-          throw new Error('Failed to verify code');
-        }
-        const data = await response.json();
-        if (data.exists) {
+        const entered = collegeCode.toUpperCase().replace(/\s/g, '');
+        const q = query(collection(db, 'colleges'), where('collegeCode', '==', entered));
+        const snapshot = await getDocs(q);
+        
+        if (!snapshot.empty) {
+          const docData = snapshot.docs[0].data();
+          const colId = snapshot.docs[0].id;
           setCollegeCodeStatus('valid');
-          setValidatedCollegeName(data.collegeName);
-          setValidatedCollegeId(data.collegeId);
+          setValidatedCollegeName(docData.collegeName || 'your college');
+          setValidatedCollegeId(colId);
         } else {
           setCollegeCodeStatus('invalid');
           setValidatedCollegeName('');
@@ -67,7 +68,7 @@ function AuthForm() {
       }
     };
 
-    const timeoutId = setTimeout(checkCode, 500);
+    const timeoutId = setTimeout(checkCode, 300);
     return () => clearTimeout(timeoutId);
   }, [collegeCode, isEnrolledInCollege]);
 
@@ -80,6 +81,7 @@ function AuthForm() {
     let finalRole = savedRole;
     let isNewUser = true;
     let onboardingComplete = false;
+    let hasCollegeCode = false;
 
     if (db) {
       try {
@@ -90,6 +92,9 @@ function AuthForm() {
           isNewUser = false;
           onboardingComplete = userData?.onboardingComplete === true;
           finalRole = userData?.role || savedRole;
+          if (userData?.collegeCode) {
+            hasCollegeCode = true;
+          }
         }
 
         // 2. Role Validation: Check if the account matches the selected persona
@@ -118,6 +123,7 @@ function AuthForm() {
         if (finalRole === 'student' && pendingCollegeCode && pendingCollegeId) {
           userUpdateData.collegeCode = pendingCollegeCode;
           userUpdateData.collegeId = pendingCollegeId;
+          hasCollegeCode = true;
           if (pendingCollegeName) {
             userUpdateData.collegeName = pendingCollegeName;
           }
@@ -145,6 +151,8 @@ function AuthForm() {
       router.push('/college/dashboard');
     } else if (finalRole === 'admin') {
       router.push('/admin/dashboard');
+    } else if (finalRole === 'student' && hasCollegeCode) {
+      router.push('/dashboard');
     } else if (isNewUser || !onboardingComplete) {
       router.push('/onboarding');
     } else {
@@ -245,16 +253,14 @@ function AuthForm() {
           if (!collegeCode) {
             throw { code: 'custom/invalid-college-code', message: 'Please enter a college code.' };
           }
-          const response = await fetch(`/api/college/check-code?code=${encodeURIComponent(collegeCode.toUpperCase().replace(/\s/g, ''))}`);
-          if (!response.ok) {
-            throw { code: 'custom/invalid-college-code', message: 'Error checking college code. Please try again.' };
+          const entered = collegeCode.toUpperCase().replace(/\s/g, '');
+          const q = query(collection(db, 'colleges'), where('collegeCode', '==', entered));
+          const snapshot = await getDocs(q);
+          if (snapshot.empty) {
+            throw { code: 'custom/invalid-college-code', message: 'Invalid code. Ask your college admin.' };
           }
-          const data = await response.json();
-          if (!data.exists) {
-            throw { code: 'custom/invalid-college-code', message: 'Invalid college code. Please check with your admin.' };
-          }
-          collegeId = data.collegeId;
-          collegeName = data.collegeName;
+          collegeId = snapshot.docs[0].id;
+          collegeName = snapshot.docs[0].data().collegeName || 'your college';
         }
 
         const result = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
@@ -280,14 +286,18 @@ function AuthForm() {
             }
 
             await Promise.race([
-              setDoc(doc(db, 'users', result.user.uid), userData),
+              setDoc(doc(db, 'users', result.user.uid), userData, { merge: true }),
               firestoreTimeout
             ]);
           } catch (firestoreErr) {
             console.warn('Auth: Could not save profile to Firestore (timeout/offline), continuing...', firestoreErr);
           }
         }
-        router.push(role === 'company' ? '/company/dashboard' : '/onboarding');
+        if (role === 'student' && isEnrolledInCollege && collegeId) {
+          router.push('/dashboard');
+        } else {
+          router.push(role === 'company' ? '/company/dashboard' : '/onboarding');
+        }
       }
     } catch (err: any) {
       console.error("Auth: Email error:", err);
@@ -476,7 +486,7 @@ function AuthForm() {
                         <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1, marginTop: 12 }} exit={{ height: 0, opacity: 0 }}>
                           <input 
                             type="text" 
-                            placeholder="e.g. VIGNAN2024" 
+                            placeholder="e.g. LITAM2001" 
                             required={isEnrolledInCollege}
                             value={collegeCode}
                             onChange={e => setCollegeCode(e.target.value)}
@@ -491,10 +501,10 @@ function AuthForm() {
                                 <span style={{ color: '#8B6E52' }}>Checking code...</span>
                               )}
                               {collegeCodeStatus === 'valid' && (
-                                <span style={{ color: '#2E7D52' }}>✓ Valid college. You will be linked to {validatedCollegeName}</span>
+                                <span style={{ color: '#2E7D52' }}>✓ Linked to {validatedCollegeName}</span>
                               )}
                               {collegeCodeStatus === 'invalid' && (
-                                <span style={{ color: '#B04A1E' }}>Invalid college code. Please check with your admin.</span>
+                                <span style={{ color: '#B04A1E' }}>Invalid code. Ask your college admin.</span>
                               )}
                             </div>
                           )}
