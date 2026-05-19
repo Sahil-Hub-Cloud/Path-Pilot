@@ -21,9 +21,16 @@ export async function GET(req: Request) {
       const querySnapshot = await collegesRef.where('collegeCode', '==', code).get();
 
       if (querySnapshot.empty) {
-        return NextResponse.json({ available: true });
+        return NextResponse.json({ available: true, exists: false });
       } else {
-        return NextResponse.json({ available: false });
+        const firstDoc = querySnapshot.docs[0];
+        const data = firstDoc.data();
+        return NextResponse.json({
+          available: false,
+          exists: true,
+          collegeId: firstDoc.id,
+          collegeName: data.collegeName
+        });
       }
     } catch (adminError: any) {
       console.warn('API check-code: Firebase Admin SDK failed, falling back to Client SDK. Error:', adminError.message);
@@ -39,9 +46,16 @@ export async function GET(req: Request) {
       const querySnapshot = await getDocs(q);
 
       if (querySnapshot.empty) {
-        return NextResponse.json({ available: true });
+        return NextResponse.json({ available: true, exists: false });
       } else {
-        return NextResponse.json({ available: false });
+        const firstDoc = querySnapshot.docs[0];
+        const data = firstDoc.data();
+        return NextResponse.json({
+          available: false,
+          exists: true,
+          collegeId: firstDoc.id,
+          collegeName: data.collegeName
+        });
       }
     }
   } catch (error: any) {

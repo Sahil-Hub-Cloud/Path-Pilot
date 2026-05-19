@@ -45,6 +45,16 @@ export default function CollegeAdminDashboard() {
 
   // 1. Initial Load & Access Control
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get('tab');
+      if (tab) {
+        setActiveNav(tab);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     if (!isReady || !user) return;
     
     const initDashboard = async () => {
@@ -59,7 +69,7 @@ export default function CollegeAdminDashboard() {
            else if (role === 'admin') router.push('/admin/dashboard');
            else router.push('/dashboard');
            return;
-        }
+         }
         
         const data = userDoc.data();
         setProfile(data);
@@ -70,50 +80,52 @@ export default function CollegeAdminDashboard() {
           const snapshot = await getDocs(q);
           
           const now = new Date();
-          const studentList = snapshot.docs.map(doc => {
-            const sd = doc.data();
-            
-            // Calculate Status
-            let lastDate = new Date();
-            let hasDate = false;
-            if (sd.lastActiveTs?.seconds) {
-              lastDate = new Date(sd.lastActiveTs.seconds * 1000);
-              hasDate = true;
-            } else if (sd.lastActiveDate) {
-              lastDate = new Date(sd.lastActiveDate);
-              hasDate = true;
-            }
+          const studentList = snapshot.docs
+            .filter(doc => doc.data()?.role === 'student')
+            .map(doc => {
+              const sd = doc.data();
+              
+              // Calculate Status
+              let lastDate = new Date();
+              let hasDate = false;
+              if (sd.lastActiveTs?.seconds) {
+                lastDate = new Date(sd.lastActiveTs.seconds * 1000);
+                hasDate = true;
+              } else if (sd.lastActiveDate) {
+                lastDate = new Date(sd.lastActiveDate);
+                hasDate = true;
+              }
 
-            let status = 'At Risk';
-            let diffDays = 999;
-            if (hasDate) {
-              const diffTime = Math.abs(now.getTime() - lastDate.getTime());
-              diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-              if (diffDays <= 2) status = 'Active';
-              else if (diffDays <= 4) status = 'Idle';
-            }
+              let status = 'At Risk';
+              let diffDays = 999;
+              if (hasDate) {
+                const diffTime = Math.abs(now.getTime() - lastDate.getTime());
+                diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                if (diffDays <= 2) status = 'Active';
+                else if (diffDays <= 4) status = 'Idle';
+              }
 
-            let empLevel = sd.employabilityLevel || 'Unrated';
-            if (empLevel.includes('High') || empLevel.includes('Elite')) empLevel = 'High — Job Ready';
-            else if (empLevel.includes('Medium') || empLevel.includes('Advanced')) empLevel = 'Medium';
-            else empLevel = 'Unrated';
+              let empLevel = sd.employabilityLevel || 'Unrated';
+              if (empLevel.includes('High') || empLevel.includes('Elite')) empLevel = 'High — Job Ready';
+              else if (empLevel.includes('Medium') || empLevel.includes('Advanced')) empLevel = 'Medium';
+              else empLevel = 'Unrated';
 
-            return {
-              id: doc.id,
-              name: sd.displayName || sd.fullName || 'Unknown Student',
-              email: sd.email || '',
-              track: sd.learningPath || sd.track || 'Frontend Dev',
-              labs: sd.labsCompleted || 0,
-              score: sd.skillScore || 0,
-              empScore: sd.employabilityScore || 0,
-              empLevel: empLevel,
-              lastActive: hasDate ? lastDate.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : 'Never',
-              diffDays,
-              status,
-              completedTopics: sd.completedTopics || [],
-              labSubmissions: sd.completedLabsList || [],
-            };
-          });
+              return {
+                id: doc.id,
+                name: sd.displayName || sd.fullName || 'Unknown Student',
+                email: sd.email || '',
+                track: sd.learningPath || sd.track || 'Frontend Dev',
+                labs: sd.labsCompleted || 0,
+                score: sd.skillScore || 0,
+                empScore: sd.employabilityScore || 0,
+                empLevel: empLevel,
+                lastActive: hasDate ? lastDate.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : 'Never',
+                diffDays,
+                status,
+                completedTopics: sd.completedTopics || [],
+                labSubmissions: sd.completedLabsList || [],
+              };
+            });
           setStudents(studentList.sort((a, b) => b.score - a.score));
         }
       } catch (err) {
@@ -361,6 +373,224 @@ export default function CollegeAdminDashboard() {
     </motion.div>
   );
 
+  const StudentsView = () => (
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+        {/* HEADER */}
+        <div style={{ marginBottom: 32 }}>
+          <h1 style={{ fontSize: 28, fontWeight: 900, color: '#2C1A0E', letterSpacing: '-0.03em', marginBottom: 4 }}>Students Directory</h1>
+          <p style={{ color: '#8B6E52', fontSize: 14, fontWeight: 500 }}>Browse and monitor all students linked to {profile?.collegeName || 'your institution'}.</p>
+        </div>
+
+        {/* FILTER BAR */}
+        <div style={{
+          background: '#FFFFFF', borderRadius: 20, padding: '20px 24px', border: '2px solid rgba(180,140,90,0.25)',
+          marginBottom: 28, display: 'flex', gap: 16, alignItems: 'center', boxShadow: '0 4px 14px rgba(140,90,40,0.05)'
+        }}>
+          <div style={{ 
+            background: '#FDF6EC', border: '1.5px solid rgba(180,140,90,0.2)', borderRadius: 12, padding: '10px 16px', 
+            display: 'flex', alignItems: 'center', gap: 10, flex: 1 
+          }}>
+            <FiSearch color="#8B6E52" />
+            <input 
+              placeholder="Search students by name..." 
+              value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
+              style={{ background: 'none', border: 'none', outline: 'none', color: '#2C1A0E', fontWeight: 600, width: '100%', fontSize: 14 }}
+            />
+          </div>
+
+          <select value={filterTrack} onChange={e => setFilterTrack(e.target.value)} style={selectStyle}>
+            <option>All Tracks</option>
+            {TRACKS.map(t => <option key={t}>{t}</option>)}
+          </select>
+
+          <select value={filterLevel} onChange={e => setFilterLevel(e.target.value)} style={selectStyle}>
+            <option>All Levels</option>
+            {LEVELS.map(l => <option key={l}>{l}</option>)}
+          </select>
+
+          <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} style={selectStyle}>
+            <option>All Statuses</option>
+            {STATUSES.map(s => <option key={s}>{s}</option>)}
+          </select>
+        </div>
+
+        {/* TABLE */}
+        <div style={{ ...cardStyle, padding: 0, overflow: 'hidden' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+            <thead>
+              <tr style={{ background: 'rgba(180,140,90,0.05)', borderBottom: '2px solid rgba(180,140,90,0.1)' }}>
+                <th style={thStyle}>Student</th>
+                <th style={thStyle}>Track</th>
+                <th style={thStyle}>Labs</th>
+                <th style={thStyle}>Score</th>
+                <th style={thStyle}>Employability</th>
+                <th style={thStyle}>Last Active</th>
+                <th style={thStyle}>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredStudents.map((s, i) => {
+                const empColor = s.empLevel === 'High — Job Ready' ? '#10B981' : s.empLevel === 'Medium' ? '#F59E0B' : '#6B7280';
+                const statColor = s.status === 'Active' ? '#10B981' : s.status === 'Idle' ? '#F59E0B' : '#EF4444';
+                
+                return (
+                  <tr key={s.id} onClick={() => handleOpenProfile(s)} style={{ 
+                    borderBottom: '1.5px solid rgba(180,140,90,0.1)',
+                    background: i % 2 === 0 ? 'transparent' : 'rgba(253,246,236,0.5)',
+                    cursor: 'pointer'
+                  }} className="hover:bg-amber-50/50 transition-colors">
+                    <td style={tdStyle}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, #006B7A, #2E7D52)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 12, fontWeight: 900 }}>{s.name[0]}</div>
+                        <div style={{ fontWeight: 800, color: '#2C1A0E', fontSize: 14 }}>{s.name}</div>
+                      </div>
+                    </td>
+                    <td style={tdStyle}>
+                      <span style={{ fontSize: 11, fontWeight: 800, color: '#006B7A', background: '#e0f2f1', padding: '2px 8px', borderRadius: 6 }}>{s.track}</span>
+                    </td>
+                    <td style={tdStyle}>{s.labs}</td>
+                    <td style={{ ...tdStyle, fontWeight: 900, color: '#006B7A' }}>{s.score}</td>
+                    <td style={tdStyle}>
+                     <span style={{ fontSize: 11, fontWeight: 800, color: empColor, background: `${empColor}15`, padding: '2px 8px', borderRadius: 6 }}>{s.empLevel}</span>
+                    </td>
+                    <td style={tdStyle}>{s.lastActive}</td>
+                    <td style={tdStyle}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 800, color: statColor }}>
+                         <div style={{ width: 8, height: 8, borderRadius: '50%', background: statColor }} />
+                         {s.status}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          {filteredStudents.length === 0 && (
+             <div style={{ padding: 60, textAlign: 'center', color: '#8B6E52', fontWeight: 600 }}>No students match the current criteria.</div>
+          )}
+        </div>
+    </motion.div>
+  );
+
+  const ReportsView = () => (
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+        <div style={{ marginBottom: 32 }}>
+          <h1 style={{ fontSize: 28, fontWeight: 900, color: '#2C1A0E', letterSpacing: '-0.03em', marginBottom: 4 }}>Analytics & Reports</h1>
+          <p style={{ color: '#8B6E52', fontSize: 14, fontWeight: 500 }}>High level cohort intelligence and learning metrics.</p>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 32 }}>
+          {/* Card 1: Employability Distribution */}
+          <div style={cardStyle}>
+            <h3 style={{ fontSize: 16, fontWeight: 900, color: '#2C1A0E', marginBottom: 20 }}>Employability Distribution</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {[
+                { label: 'Job Ready (High / Elite)', count: stats.jobReady, percentage: stats.total > 0 ? Math.round((stats.jobReady / stats.total) * 100) : 0, color: '#10B981' },
+                { label: 'Progressing (Medium)', count: students.filter(s => s.empLevel === 'Medium').length, percentage: stats.total > 0 ? Math.round((students.filter(s => s.empLevel === 'Medium').length / stats.total) * 100) : 0, color: '#F59E0B' },
+                { label: 'Beginning (Unrated)', count: students.filter(s => s.empLevel === 'Unrated').length, percentage: stats.total > 0 ? Math.round((students.filter(s => s.empLevel === 'Unrated').length / stats.total) * 100) : 0, color: '#6B7280' },
+              ].map((item, idx) => (
+                <div key={idx}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, fontWeight: 700, marginBottom: 6 }}>
+                    <span style={{ color: '#5C3D1E' }}>{item.label}</span>
+                    <span style={{ color: '#2C1A0E' }}>{item.count} ({item.percentage}%)</span>
+                  </div>
+                  <div style={{ height: 8, background: 'rgba(180,140,90,0.1)', borderRadius: 4, overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: `${item.percentage}%`, background: item.color, borderRadius: 4 }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Card 2: Student Activity Status */}
+          <div style={cardStyle}>
+            <h3 style={{ fontSize: 16, fontWeight: 900, color: '#2C1A0E', marginBottom: 20 }}>Engagement Levels</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {[
+                { label: 'Active (Online in past 48h)', count: students.filter(s => s.status === 'Active').length, percentage: stats.total > 0 ? Math.round((students.filter(s => s.status === 'Active').length / stats.total) * 100) : 0, color: '#10B981' },
+                { label: 'Idle (Inactive 3-4 days)', count: students.filter(s => s.status === 'Idle').length, percentage: stats.total > 0 ? Math.round((students.filter(s => s.status === 'Idle').length / stats.total) * 100) : 0, color: '#F59E0B' },
+                { label: 'At Risk (Inactive > 4 days)', count: stats.atRisk, percentage: stats.total > 0 ? Math.round((stats.atRisk / stats.total) * 100) : 0, color: '#EF4444' },
+              ].map((item, idx) => (
+                <div key={idx}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, fontWeight: 700, marginBottom: 6 }}>
+                    <span style={{ color: '#5C3D1E' }}>{item.label}</span>
+                    <span style={{ color: '#2C1A0E' }}>{item.count} ({item.percentage}%)</span>
+                  </div>
+                  <div style={{ height: 8, background: 'rgba(180,140,90,0.1)', borderRadius: 4, overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: `${item.percentage}%`, background: item.color, borderRadius: 4 }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Learning Paths overview */}
+        <div style={cardStyle}>
+          <h3 style={{ fontSize: 16, fontWeight: 900, color: '#2C1A0E', marginBottom: 16 }}>Cohort Tracks Breakdown</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+            {TRACKS.map(track => {
+              const count = students.filter(s => s.track === track).length;
+              if (count === 0) return null;
+              return (
+                <div key={track} style={{ background: '#FDF6EC', border: '1.5px solid rgba(180,140,90,0.15)', borderRadius: 12, padding: 16, textAlign: 'center' }}>
+                  <div style={{ fontSize: 24, fontWeight: 900, color: '#006B7A', marginBottom: 4 }}>{count}</div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: '#8B6E52' }}>{track}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+    </motion.div>
+  );
+
+  const SettingsView = () => (
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} style={{ maxWidth: 800 }}>
+        <div style={{ marginBottom: 32 }}>
+          <h1 style={{ fontSize: 28, fontWeight: 900, color: '#2C1A0E', letterSpacing: '-0.03em', marginBottom: 4 }}>Admin Settings</h1>
+          <p style={{ color: '#8B6E52', fontSize: 14, fontWeight: 500 }}>Manage your administrator portal credentials and institution profile details.</p>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          {/* Institution profile card */}
+          <div style={cardStyle}>
+            <h3 style={{ fontSize: 16, fontWeight: 900, color: '#2C1A0E', marginBottom: 20 }}>Institution Profile</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div>
+                <label style={{ fontSize: 11, fontWeight: 800, color: '#8B6E52', textTransform: 'uppercase' }}>Institution Name</label>
+                <div style={{ fontSize: 15, fontWeight: 700, color: '#2C1A0E', marginTop: 4 }}>{profile?.collegeName || 'Not Set'}</div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                <div>
+                  <label style={{ fontSize: 11, fontWeight: 800, color: '#8B6E52', textTransform: 'uppercase' }}>College Code</label>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: '#006B7A', marginTop: 4 }}>{profile?.collegeCode || 'Not Set'}</div>
+                </div>
+                <div>
+                  <label style={{ fontSize: 11, fontWeight: 800, color: '#8B6E52', textTransform: 'uppercase' }}>Institution Type</label>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: '#2C1A0E', marginTop: 4 }}>{profile?.institutionType || 'College / University'}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Admin user card */}
+          <div style={cardStyle}>
+            <h3 style={{ fontSize: 16, fontWeight: 900, color: '#2C1A0E', marginBottom: 20 }}>Administrator Identity</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div>
+                <label style={{ fontSize: 11, fontWeight: 800, color: '#8B6E52', textTransform: 'uppercase' }}>Admin Full Name</label>
+                <div style={{ fontSize: 15, fontWeight: 700, color: '#2C1A0E', marginTop: 4 }}>{profile?.displayName || 'Administrator'}</div>
+              </div>
+              <div>
+                <label style={{ fontSize: 11, fontWeight: 800, color: '#8B6E52', textTransform: 'uppercase' }}>Authorized Email</label>
+                <div style={{ fontSize: 15, fontWeight: 700, color: '#2C1A0E', marginTop: 4 }}>{profile?.email || user?.email || ''}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </motion.div>
+  );
+
   const UnderConstruction = ({ title }: { title: string }) => (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} style={cardStyle}>
       <h2 style={{ fontSize: 20, fontWeight: 900, color: '#2C1A0E', marginBottom: 12 }}>{title}</h2>
@@ -392,14 +622,26 @@ export default function CollegeAdminDashboard() {
 
       <nav style={{ flex: 1, padding: '8px 12px', display: 'flex', flexDirection: 'column', gap: 4 }}>
         {[
-          { id: 'overview', label: 'Overview', icon: <FiHome /> },
-          { id: 'students', label: 'My Students', icon: <FiUsers /> },
-          { id: 'library', label: 'PDF Library', icon: <FiFileText /> },
-          { id: 'exams', label: 'Exam Schedule', icon: <FiCalendar /> },
-          { id: 'reports', label: 'Reports', icon: <FiPieChart /> },
-          { id: 'settings', label: 'Settings', icon: <FiSettings /> },
+          { id: 'overview', label: 'Overview', icon: <FiHome />, path: '/college/dashboard' },
+          { id: 'students', label: 'My Students', icon: <FiUsers />, path: '/college/dashboard?tab=students' },
+          { id: 'library', label: 'PDF Library', icon: <FiFileText />, path: '/college/pdf-library' },
+          { id: 'exams', label: 'Exam Schedule', icon: <FiCalendar />, path: '/college/exam-schedule' },
+          { id: 'reports', label: 'Reports', icon: <FiPieChart />, path: '/college/dashboard?tab=reports' },
+          { id: 'settings', label: 'Settings', icon: <FiSettings />, path: '/college/dashboard?tab=settings' },
         ].map(item => (
-          <button key={item.id} onClick={() => setActiveNav(item.id)} style={{
+          <button key={item.id} onClick={() => {
+            if (item.path.includes('/dashboard')) {
+              if (item.id === 'overview') {
+                router.replace('/college/dashboard');
+                setActiveNav('overview');
+              } else {
+                router.replace(item.path);
+                setActiveNav(item.id);
+              }
+            } else {
+              router.push(item.path);
+            }
+          }} style={{
             width: '100%', display: 'flex', alignItems: 'center', gap: 12,
             padding: '12px 14px', borderRadius: 12, border: 'none', cursor: 'pointer',
             fontWeight: 700, fontSize: 14, textAlign: 'left', transition: 'all 0.2s',
@@ -431,11 +673,11 @@ export default function CollegeAdminDashboard() {
       <main style={{ marginLeft: 240, flex: 1, padding: '40px 40px 80px', maxWidth: 1400 }}>
          <AnimatePresence mode="wait">
             {activeNav === 'overview' && <OverviewView key="overview" />}
-            {activeNav === 'students' && <UnderConstruction key="students" title="My Students Directory" />}
+            {activeNav === 'students' && <StudentsView key="students" />}
             {activeNav === 'library' && <UnderConstruction key="library" title="PDF Library" />}
             {activeNav === 'exams' && <UnderConstruction key="exams" title="Exam Schedule" />}
-            {activeNav === 'reports' && <UnderConstruction key="reports" title="Analytics & Reports" />}
-            {activeNav === 'settings' && <UnderConstruction key="settings" title="Admin Settings" />}
+            {activeNav === 'reports' && <ReportsView key="reports" />}
+            {activeNav === 'settings' && <SettingsView key="settings" />}
          </AnimatePresence>
       </main>
 

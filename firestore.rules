@@ -26,7 +26,18 @@ service cloud.firestore {
     // User Accounts - Core collection used by Auth and Onboarding
     match /users/{userId} {
       allow read, list: if isAuthenticated();
-      allow write: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isAuthenticated() && (
+        isOwner(userId) ||
+        (
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'college' &&
+          (
+            (resource != null && resource.data.collegeCode == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.collegeCode) ||
+            (request.resource != null && request.resource.data.collegeCode == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.collegeCode)
+          )
+        )
+      );
+      allow delete: if isOwner(userId);
 
       // Lab Submissions — subcollection under users, owner-only access
       match /submissions/{submissionId} {
@@ -105,15 +116,12 @@ service cloud.firestore {
     // Colleges collection
     match /colleges/{collegeId} {
       allow read: if request.auth != null;
-      // create: caller must be authenticated, doc ID must match their uid, and required fields must be present
-      allow create: if request.auth != null
-        && request.auth.uid == collegeId
-        && request.resource.data.keys().hasAll(['collegeName', 'collegeCode', 'adminName', 'email', 'adminUid'])
-        && request.resource.data.adminUid == request.auth.uid
+      allow write: if request.auth != null
+        && (request.auth.uid == collegeId 
+            || (resource != null && resource.data.adminUid == request.auth.uid) 
+            || (request.resource != null && request.resource.data.adminUid == request.auth.uid))
         && request.resource.data.collegeCode is string
-        && request.resource.data.collegeCode.size() >= 6
-        && request.resource.data.collegeCode.size() <= 10;
-      allow update, delete: if request.auth != null && request.auth.uid == resource.data.adminUid;
+        && request.resource.data.collegeCode.matches('^[a-zA-Z0-9]{6,10}$');
     }
 
     // Deny all other access

@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { useAuth } from '@/hooks/useAuth';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { db } from '@/lib/firebase';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { FiCpu, FiUser, FiCheck, FiChevronRight, FiArrowRight, FiPhone, FiHash, FiBookOpen } from 'react-icons/fi';
 import { toast } from '@/lib/toast';
 
@@ -77,6 +77,26 @@ export default function OnboardingPage() {
 
   const [step, setStep] = useState<0 | 1 | 2 | 3>(0); // 0=intro, 1=details, 2=track, 3=level
   const [details, setDetails] = useState<StudentDetails>({ fullName: '', college: '', regNumber: '', mobile: '' });
+
+  useEffect(() => {
+    if (!user || !db) return;
+    const fetchUserData = async () => {
+      try {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setDetails(prev => ({
+            ...prev,
+            fullName: userData.displayName || prev.fullName,
+            college: userData.collegeName || prev.college
+          }));
+        }
+      } catch (err) {
+        console.error('Error fetching user data in onboarding:', err);
+      }
+    };
+    fetchUserData();
+  }, [user]);
   const [focus, setFocus] = useState('');
   const [selectedTrack, setTrack] = useState('');
   const [selectedLevel, setLevel] = useState('');

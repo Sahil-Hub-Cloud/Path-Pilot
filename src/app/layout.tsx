@@ -5,6 +5,7 @@ import { CSPostHogProvider } from "./providers";
 import { AuthProvider } from "@/components/AuthProvider";
 import { PersonaProvider } from "@/components/PersonaProvider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { RoleRouteGuard } from "@/components/RoleRouteGuard";
 
 const plusJakartaSans = Plus_Jakarta_Sans({ 
   subsets: ['latin'], 
@@ -54,9 +55,11 @@ export default function RootLayout({
         <ErrorBoundary>
           <PersonaProvider>
             <AuthProvider>
-              <CSPostHogProvider>
-                {children}
-              </CSPostHogProvider>
+              <RoleRouteGuard>
+                <CSPostHogProvider>
+                  {children}
+                </CSPostHogProvider>
+              </RoleRouteGuard>
             </AuthProvider>
           </PersonaProvider>
         </ErrorBoundary>

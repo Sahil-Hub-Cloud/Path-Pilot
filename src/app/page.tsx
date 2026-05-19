@@ -137,48 +137,57 @@ export default function SplashScreen() {
               padding: '0 24px'
             }}
           >
-            <button 
-              onClick={() => router.push('/auth?type=student')}
-              style={{
-                width: '100%',
-                maxWidth: '300px',
-                padding: '16px 24px',
-                background: 'linear-gradient(135deg, #006B7A, #005060)',
-                color: 'white',
-                border: 'none',
-                borderRadius: '12px',
-                fontSize: '16px',
-                fontWeight: 800,
-                cursor: 'pointer',
-                boxShadow: '0 4px 14px rgba(0, 107, 122, 0.4)',
-                transition: 'transform 0.2s',
-              }}
-              onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-              onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-            >
-              I am a Student
-            </button>
-            <button 
-              onClick={() => router.push('/auth/college')}
-              style={{
-                width: '100%',
-                maxWidth: '300px',
-                padding: '16px 24px',
-                background: '#FFFFFF',
-                color: '#006B7A',
-                border: '2px solid #006B7A',
-                borderRadius: '12px',
-                fontSize: '16px',
-                fontWeight: 800,
-                cursor: 'pointer',
-                boxShadow: '0 4px 14px rgba(0, 0, 0, 0.05)',
-                transition: 'transform 0.2s',
-              }}
-              onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-              onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-            >
-              I represent a College
-            </button>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', width: '100%', maxWidth: '300px' }}>
+              <button 
+                onClick={() => router.push('/auth?type=student')}
+                style={{
+                  width: '100%',
+                  padding: '16px 24px',
+                  background: 'linear-gradient(135deg, #006B7A, #005060)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '12px',
+                  fontSize: '16px',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 14px rgba(0, 107, 122, 0.4)',
+                  transition: 'transform 0.2s',
+                }}
+                onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+                onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+              >
+                Start Learning Free
+              </button>
+              <span style={{ fontSize: '11px', color: '#8B6E52', textAlign: 'center', marginTop: '4px', fontWeight: 500 }}>
+                Join as a student to access paths, labs, and track your skills.
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', width: '100%', maxWidth: '300px' }}>
+              <button 
+                onClick={() => router.push('/auth/college')}
+                style={{
+                  width: '100%',
+                  padding: '16px 24px',
+                  background: '#FFFFFF',
+                  color: '#006B7A',
+                  border: '2px solid #006B7A',
+                  borderRadius: '12px',
+                  fontSize: '16px',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 14px rgba(0, 0, 0, 0.05)',
+                  transition: 'transform 0.2s',
+                }}
+                onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+                onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+              >
+                I represent a College
+              </button>
+              <span style={{ fontSize: '11px', color: '#8B6E52', textAlign: 'center', marginTop: '4px', fontWeight: 500 }}>
+                Register your institution to track student progress and manage onboarding.
+              </span>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

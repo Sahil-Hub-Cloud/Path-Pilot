@@ -26,6 +26,7 @@ export default function SettingsPage() {
   const [displayName, setDisplayName] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [profile, setProfile] = useState<any>(null);
   
   // Notification State
   const [emailReminders, setEmailReminders] = useState(true);
@@ -57,6 +58,7 @@ export default function SettingsPage() {
           const snap = await fetchResilient(doc(db, 'users', user.uid));
           if (snap && snap.exists()) {
             const data = snap.data();
+            setProfile(data);
             if (data.settings) {
               setEmailReminders(data.settings.emailReminders ?? true);
               setWeeklyReport(data.settings.weeklyReport ?? true);
@@ -205,6 +207,7 @@ export default function SettingsPage() {
   const sidebarNavItems = [
     { id: 'home',     label: 'Home',     icon: <FiHome />,      action: () => router.push('/dashboard') },
     { id: 'progress', label: 'Progress', icon: <FiTrendingUp />, action: () => router.push('/progress') },
+    ...(profile?.collegeCode || profile?.collegeId ? [{ id: 'materials', label: 'College Materials', icon: <FiBook />, action: () => router.push('/materials') }] : []),
     { id: 'profile',  label: 'Profile',  icon: <FiUser />,      action: () => router.push('/profile') },
     { id: 'leaderboard', label: 'Leaderboard', icon: <FiAward />, action: () => router.push('/leaderboard') },
     { id: 'settings', label: 'Settings', icon: <FiSettings />,  action: () => {} },

@@ -145,6 +145,7 @@ export default function CollegeSignupPage() {
         city: formData.city,
         state: formData.state,
         type: formData.type,
+        institutionType: formData.type,
         adminName: formData.adminName,
         email: formData.email,
         phone: formData.phone,
@@ -340,8 +341,17 @@ export default function CollegeSignupPage() {
                 {(codeStatus === 'taken' || codeStatus === 'invalid') && <FiX color="#EF4444" />}
               </div>
             </div>
-            <p style={{ margin: '6px 0 0', fontSize: 12, color: '#8B6E52' }}>
-              Min 6, Max 10 chars, letters/numbers only. Students will use this to join.
+            <p style={{ 
+              margin: '6px 0 0', 
+              fontSize: 12, 
+              color: codeStatus === 'available' ? '#10B981' : (codeStatus === 'taken' || codeStatus === 'invalid') ? '#EF4444' : '#8B6E52',
+              fontWeight: 600
+            }}>
+              {codeStatus === 'idle' && 'Min 6, Max 10 chars, letters/numbers only. Students will use this to join.'}
+              {codeStatus === 'checking' && 'Checking availability...'}
+              {codeStatus === 'available' && '✓ Available'}
+              {codeStatus === 'taken' && `✗ This code is taken. Try ${formData.collegeCode}2025`}
+              {codeStatus === 'invalid' && '✗ Code must be 6-10 characters, letters and numbers only, no spaces'}
             </p>
           </div>
 

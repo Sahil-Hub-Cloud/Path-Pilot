@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FiAward, FiFilter, FiUser, FiZap, FiTarget,
-  FiHome, FiTrendingUp, FiSettings, FiXCircle
+  FiHome, FiTrendingUp, FiSettings, FiXCircle, FiBook
 } from 'react-icons/fi';
 import { useAuth } from '@/hooks/useAuth';
 import { db } from '@/lib/firebase';
@@ -108,6 +108,7 @@ export default function LeaderboardPage() {
   const sidebarNavItems = [
     { id: 'home',     label: 'Home',     icon: <FiHome />,      action: () => router.push('/dashboard') },
     { id: 'progress', label: 'Progress', icon: <FiTrendingUp />, action: () => router.push('/progress') },
+    ...(userProfile?.collegeCode || userProfile?.collegeId ? [{ id: 'materials', label: 'College Materials', icon: <FiBook />, action: () => router.push('/materials') }] : []),
     { id: 'profile',  label: 'Profile',  icon: <FiUser />,      action: () => router.push('/profile') },
     { id: 'leaderboard', label: 'Leaderboard', icon: <FiAward />, action: () => {} },
     { id: 'settings', label: 'Settings', icon: <FiSettings />,  action: () => router.push('/settings') },

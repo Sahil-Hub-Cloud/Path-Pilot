@@ -211,11 +211,11 @@ export default function ExamSchedulePage() {
       <nav style={{ flex: 1, padding: '8px 12px', display: 'flex', flexDirection: 'column', gap: 4 }}>
         {[
           { id: 'overview', label: 'Overview', icon: <FiHome />, path: '/college/dashboard' },
-          { id: 'students', label: 'My Students', icon: <FiUsers />, path: '/college/dashboard' },
+          { id: 'students', label: 'My Students', icon: <FiUsers />, path: '/college/dashboard?tab=students' },
           { id: 'library', label: 'PDF Library', icon: <FiFileText />, path: '/college/pdf-library' },
           { id: 'exams', label: 'Exam Schedule', icon: <FiCalendar />, path: '/college/exam-schedule' },
-          { id: 'reports', label: 'Reports', icon: <FiPieChart />, path: '/college/dashboard' },
-          { id: 'settings', label: 'Settings', icon: <FiSettings />, path: '/college/dashboard' },
+          { id: 'reports', label: 'Reports', icon: <FiPieChart />, path: '/college/dashboard?tab=reports' },
+          { id: 'settings', label: 'Settings', icon: <FiSettings />, path: '/college/dashboard?tab=settings' },
         ].map(item => (
           <button key={item.id} onClick={() => router.push(item.path)} style={{
             width: '100%', display: 'flex', alignItems: 'center', gap: 12,

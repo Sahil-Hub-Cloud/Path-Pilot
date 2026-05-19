@@ -32,6 +32,44 @@ function AuthForm() {
   const [formData, setFormData] = useState({ email: '', password: '', name: '', companyName: '' });
   const [isEnrolledInCollege, setIsEnrolledInCollege] = useState(false);
   const [collegeCode, setCollegeCode] = useState('');
+  const [collegeCodeStatus, setCollegeCodeStatus] = useState<'idle' | 'checking' | 'valid' | 'invalid'>('idle');
+  const [validatedCollegeName, setValidatedCollegeName] = useState('');
+  const [validatedCollegeId, setValidatedCollegeId] = useState('');
+
+  useEffect(() => {
+    if (!isEnrolledInCollege || !collegeCode) {
+      setCollegeCodeStatus('idle');
+      setValidatedCollegeName('');
+      setValidatedCollegeId('');
+      return;
+    }
+
+    const checkCode = async () => {
+      setCollegeCodeStatus('checking');
+      try {
+        const response = await fetch(`/api/college/check-code?code=${encodeURIComponent(collegeCode.toUpperCase().replace(/\s/g, ''))}`);
+        if (!response.ok) {
+          throw new Error('Failed to verify code');
+        }
+        const data = await response.json();
+        if (data.exists) {
+          setCollegeCodeStatus('valid');
+          setValidatedCollegeName(data.collegeName);
+          setValidatedCollegeId(data.collegeId);
+        } else {
+          setCollegeCodeStatus('invalid');
+          setValidatedCollegeName('');
+          setValidatedCollegeId('');
+        }
+      } catch (err) {
+        console.error('Error validating college code:', err);
+        setCollegeCodeStatus('invalid');
+      }
+    };
+
+    const timeoutId = setTimeout(checkCode, 500);
+    return () => clearTimeout(timeoutId);
+  }, [collegeCode, isEnrolledInCollege]);
 
   // Handle post-auth Firestore writes & redirect — resilient to Firestore being offline
   const handlePostAuth = async (firebaseUser: any, uid: string) => {
@@ -63,13 +101,30 @@ function AuthForm() {
 
         // 3. Write/Sync user data with timeout — don't block if slow
         const syncTimeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), 5000));
+        const pendingCollegeCode = localStorage.getItem('pp_pending_college_code');
+        const pendingCollegeId = localStorage.getItem('pp_pending_college_id');
+        const pendingCollegeName = localStorage.getItem('pp_pending_college_name');
+        localStorage.removeItem('pp_pending_college_code');
+        localStorage.removeItem('pp_pending_college_id');
+        localStorage.removeItem('pp_pending_college_name');
+
+        const userUpdateData: any = {
+          displayName: firebaseUser.displayName,
+          email: firebaseUser.email,
+          role: finalRole,
+          updatedAt: new Date().toISOString()
+        };
+
+        if (finalRole === 'student' && pendingCollegeCode && pendingCollegeId) {
+          userUpdateData.collegeCode = pendingCollegeCode;
+          userUpdateData.collegeId = pendingCollegeId;
+          if (pendingCollegeName) {
+            userUpdateData.collegeName = pendingCollegeName;
+          }
+        }
+
         await Promise.race([
-          setDoc(doc(db, 'users', uid), {
-            displayName: firebaseUser.displayName,
-            email: firebaseUser.email,
-            role: finalRole,
-            updatedAt: new Date().toISOString()
-          }, { merge: true }),
+          setDoc(doc(db, 'users', uid), userUpdateData, { merge: true }),
           syncTimeout
         ]);
       } catch (err: any) {
@@ -185,20 +240,21 @@ function AuthForm() {
         router.push(targetPath);
       } else {
         let collegeId = '';
+        let collegeName = '';
         if (role === 'student' && isEnrolledInCollege) {
           if (!collegeCode) {
             throw { code: 'custom/invalid-college-code', message: 'Please enter a college code.' };
           }
-          if (db) {
-            const collegesRef = collection(db, 'colleges');
-            const q = query(collegesRef, where('collegeCode', '==', collegeCode));
-            const querySnapshot = await getDocs(q);
-            
-            if (querySnapshot.empty) {
-              throw { code: 'custom/invalid-college-code', message: 'Invalid college code. Ask your college admin for the correct code.' };
-            }
-            collegeId = querySnapshot.docs[0].id;
+          const response = await fetch(`/api/college/check-code?code=${encodeURIComponent(collegeCode.toUpperCase().replace(/\s/g, ''))}`);
+          if (!response.ok) {
+            throw { code: 'custom/invalid-college-code', message: 'Error checking college code. Please try again.' };
           }
+          const data = await response.json();
+          if (!data.exists) {
+            throw { code: 'custom/invalid-college-code', message: 'Invalid college code. Please check with your admin.' };
+          }
+          collegeId = data.collegeId;
+          collegeName = data.collegeName;
         }
 
         const result = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
@@ -216,8 +272,11 @@ function AuthForm() {
               createdAt: new Date().toISOString()
             };
             if (role === 'student' && isEnrolledInCollege && collegeId) {
-              userData.collegeCode = collegeCode;
+              userData.collegeCode = collegeCode.toUpperCase().replace(/\s/g, '');
               userData.collegeId = collegeId;
+              if (collegeName) {
+                userData.collegeName = collegeName;
+              }
             }
 
             await Promise.race([
@@ -254,6 +313,15 @@ function AuthForm() {
     setGoogleLoading(true);
     setError('');
     localStorage.setItem('pp_role', role);
+    if (role === 'student' && isEnrolledInCollege && collegeCodeStatus === 'valid' && validatedCollegeId) {
+      localStorage.setItem('pp_pending_college_code', collegeCode.toUpperCase().replace(/\s/g, ''));
+      localStorage.setItem('pp_pending_college_id', validatedCollegeId);
+      localStorage.setItem('pp_pending_college_name', validatedCollegeName);
+    } else {
+      localStorage.removeItem('pp_pending_college_code');
+      localStorage.removeItem('pp_pending_college_id');
+      localStorage.removeItem('pp_pending_college_name');
+    }
 
     try {
       // 1. Try popup first — works on localhost and most environments
@@ -401,19 +469,35 @@ function AuthForm() {
                         onChange={(e) => setIsEnrolledInCollege(e.target.checked)}
                         style={{ width: 16, height: 16, cursor: 'pointer', accentColor: '#006B7A' }}
                       />
-                      I am enrolled in a college using Path Pilot
+                      My college uses Path Pilot
                     </label>
                     <AnimatePresence>
                       {isEnrolledInCollege && (
                         <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1, marginTop: 12 }} exit={{ height: 0, opacity: 0 }}>
                           <input 
                             type="text" 
-                            placeholder="Enter your College Code" 
+                            placeholder="e.g. VIGNAN2024" 
                             required={isEnrolledInCollege}
                             value={collegeCode}
                             onChange={e => setCollegeCode(e.target.value)}
                             style={inputStyle}
                           />
+                          <p style={{ margin: '4px 0 0', fontSize: 12, color: '#8B6E52', fontWeight: 500 }}>
+                            Ask your college admin for this code
+                          </p>
+                          {collegeCode && (
+                            <div style={{ marginTop: 8, fontSize: 13, fontWeight: 600 }}>
+                              {collegeCodeStatus === 'checking' && (
+                                <span style={{ color: '#8B6E52' }}>Checking code...</span>
+                              )}
+                              {collegeCodeStatus === 'valid' && (
+                                <span style={{ color: '#2E7D52' }}>✓ Valid college. You will be linked to {validatedCollegeName}</span>
+                              )}
+                              {collegeCodeStatus === 'invalid' && (
+                                <span style={{ color: '#B04A1E' }}>Invalid college code. Please check with your admin.</span>
+                              )}
+                            </div>
+                          )}
                         </motion.div>
                       )}
                     </AnimatePresence>

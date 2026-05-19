@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 interface AuthContextType {
     user: User | null;
     loading: boolean;
-    role: 'student' | 'company' | null;
+    role: 'student' | 'company' | 'college' | 'admin' | null;
     signOut: () => Promise<void>;
     // Legacy compat
     institutionId: string | null;
@@ -27,7 +27,7 @@ export const AuthContext = createContext<AuthContextType>({
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
-    const [role, setRole] = useState<'student' | 'company' | null>(null);
+    const [role, setRole] = useState<'student' | 'company' | 'college' | 'admin' | null>(null);
     const router = useRouter();
 
     useEffect(() => {
@@ -78,7 +78,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const result = await Promise.race([docPromise, firestoreTimeout]);
             if (result && 'exists' in result && result.exists()) {
                 const data = result.data();
-                setRole(data?.role === 'company' ? 'company' : 'student');
+                const fetchedRole = data?.role;
+                if (fetchedRole === 'company' || fetchedRole === 'college' || fetchedRole === 'admin' || fetchedRole === 'student') {
+                    setRole(fetchedRole);
+                } else {
+                    setRole('student');
+                }
             } else {
                 setRole('student');
             }
