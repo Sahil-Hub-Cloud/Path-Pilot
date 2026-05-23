@@ -11,7 +11,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { toast } from '@/lib/toast';
 import { db } from '@/lib/firebase';
-import { doc, getDoc, collection, query, where, getDocs, addDoc, orderBy } from 'firebase/firestore';
+import { doc, getDoc, collection, getDocs, addDoc } from 'firebase/firestore';
 
 export default function ExamSchedulePage() {
   const router = useRouter();
@@ -53,14 +53,13 @@ export default function ExamSchedulePage() {
         const collegeId = data.collegeId;
         const collegeCode = data.collegeCode;
 
-        // Fetch Subjects
+        // Fetch Subjects from isolated college materials path
         if (collegeId) {
-          const subsSnap = await getDocs(collection(db, 'college_pdfs', collegeId, 'subjects'));
+          const subsSnap = await getDocs(collection(db, 'colleges', collegeId, 'materials'));
           setSubjects(subsSnap.docs.map(d => ({ id: d.id, ...d.data() })));
           
-          // Fetch Exams
-          const examsQ = query(collection(db, 'college_exams'), where('collegeId', '==', collegeId));
-          const examsSnap = await getDocs(examsQ);
+          // Fetch Exams from isolated college exams path
+          const examsSnap = await getDocs(collection(db, 'colleges', collegeId, 'exams'));
           const examsList = examsSnap.docs.map(d => ({ id: d.id, ...d.data() })) as any[];
           examsList.sort((a, b) => new Date(a.examDate).getTime() - new Date(b.examDate).getTime());
           setExams(examsList);
@@ -121,7 +120,8 @@ export default function ExamSchedulePage() {
         createdAt: new Date().toISOString()
       };
 
-      const examRef = await addDoc(collection(db, 'college_exams'), newExam);
+      // Write exam to isolated subcollection under this college
+      const examRef = await addDoc(collection(db, 'colleges', profile.collegeId, 'exams'), newExam);
       setExams(prev => [...prev, { id: examRef.id, ...newExam }].sort((a, b) => new Date(a.examDate).getTime() - new Date(b.examDate).getTime()));
 
       // Schedule Reminders

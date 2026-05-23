@@ -28,7 +28,8 @@ export default function MaterialsListPage() {
           return;
         }
 
-        const snapshot = await getDocs(collection(db, 'college_pdfs', collegeId, 'subjects'));
+        // ISSUE 3 FIX: Fetch ONLY from this student's college's isolated materials path
+        const snapshot = await getDocs(collection(db, 'colleges', collegeId, 'materials'));
         setSubjects(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
       } catch (err) {
         console.error("Failed to load materials", err);

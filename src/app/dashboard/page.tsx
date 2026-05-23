@@ -13,7 +13,7 @@ import {
 import { useAuth } from '@/hooks/useAuth';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { db } from '@/lib/firebase';
-import { doc, getDoc, updateDoc, serverTimestamp, collection, query, where, getDocs } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, serverTimestamp, collection, getDocs } from 'firebase/firestore';
 import { fetchResilient } from '@/lib/firestore-resilience';
 import { addNotification } from '@/lib/notifications';
 import SkillGraph from '@/components/dashboard/SkillGraph';
@@ -55,8 +55,8 @@ export default function DashboardPage() {
     if (!profile?.collegeId || !db) return;
     const fetchExams = async () => {
       try {
-        const q = query(collection(db, 'college_exams'), where('collegeId', '==', profile.collegeId));
-        const snap = await getDocs(q);
+        // ISSUE 2 FIX: Fetch exams from isolated colleges/{collegeId}/exams subcollection
+        const snap = await getDocs(collection(db, 'colleges', profile.collegeId, 'exams'));
         const examList = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         examList.sort((a: any, b: any) => new Date(a.examDate).getTime() - new Date(b.examDate).getTime());
         setExams(examList.filter((e: any) => new Date(e.examDate).getTime() > Date.now() - 24 * 60 * 60 * 1000));

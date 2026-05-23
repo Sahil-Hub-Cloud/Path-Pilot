@@ -2,129 +2,188 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // Helper function to check if user is authenticated
+
+    // ── Helper functions ──────────────────────────────────────────────────────
+
     function isAuthenticated() {
       return request.auth != null;
     }
-    
-    // Helper function to check if user owns the resource (used when doc ID is userId)
+
+    // True when the doc ID matches the caller's UID
     function isOwner(userId) {
       return isAuthenticated() && request.auth.uid == userId;
     }
-    
-    // Helper to check ownership on create (when resource does not exist yet)
+
+    // True when the *incoming* resource declares the caller as its owner
     function isCreatingOwnedResource() {
       return isAuthenticated() && request.resource.data.userId == request.auth.uid;
     }
 
-    // Helper to check ownership on existing resource (when resource already exists)
+    // True when the *existing* resource's userId matches the caller
     function isExistingOwnedResource() {
       return isAuthenticated() && resource.data.userId == request.auth.uid;
     }
 
-    // User Accounts - Core collection used by Auth and Onboarding
+    // Returns the caller's user document (cached by Firestore rules engine)
+    function callerDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    // True when the authenticated caller is the college admin for collegeId
+    function isCollegeAdmin(collegeId) {
+      return isAuthenticated() && callerDoc().collegeId == collegeId && callerDoc().role == 'college';
+    }
+
+    // True when the authenticated caller is a student belonging to collegeId
+    function isCollegeStudent(collegeId) {
+      return isAuthenticated() && callerDoc().collegeId == collegeId;
+    }
+
+    // ── Users ──────────────────────────────────────────────────────────────────
     match /users/{userId} {
       allow read, list: if isAuthenticated();
       allow create: if isOwner(userId);
       allow update: if isAuthenticated() && (
         isOwner(userId) ||
         (
-          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'college' &&
+          callerDoc().role == 'college' &&
           (
-            (resource != null && resource.data.collegeCode == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.collegeCode) ||
-            (request.resource != null && request.resource.data.collegeCode == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.collegeCode)
+            (resource != null && resource.data.collegeCode == callerDoc().collegeCode) ||
+            (request.resource != null && request.resource.data.collegeCode == callerDoc().collegeCode)
           )
         )
       );
       allow delete: if isOwner(userId);
 
-      // Lab Submissions — subcollection under users, owner-only access
+      // Lab Submissions
       match /submissions/{submissionId} {
         allow read, write: if isOwner(userId);
       }
 
-      // Notifications — subcollection under users, owner-only access
+      // Notifications
       match /notifications/{notificationId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      // College Quiz Results stored under the user
+      match /college_quizzes/{quizId} {
         allow read, write: if isOwner(userId);
       }
     }
 
-    // User Profiles - Users can only read/write their own profile
+    // ── User Profiles ─────────────────────────────────────────────────────────
     match /profiles/{userId} {
       allow read, write: if isOwner(userId);
     }
 
-    // Students - Users can read/write their own student doc
-    // Admin users (checked by custom claims) can read all students if implemented
+    // ── Students (legacy) ─────────────────────────────────────────────────────
     match /students/{userId} {
       allow read, write: if isOwner(userId);
     }
-    
-    // Sessions - Users can only access their own sessions
+
+    // ── Sessions ──────────────────────────────────────────────────────────────
     match /sessions/{sessionId} {
       allow create: if isCreatingOwnedResource();
       allow read, update, delete: if isExistingOwnedResource();
     }
-    
-    // Roadmaps - Users can only access their own roadmaps
+
+    // ── Roadmaps ──────────────────────────────────────────────────────────────
     match /roadmaps/{roadmapId} {
       allow create: if isCreatingOwnedResource();
       allow read, update, delete: if isExistingOwnedResource();
     }
-    
-    // Leaderboard - Read-only for all authenticated users
+
+    // ── Leaderboard ───────────────────────────────────────────────────────────
     match /leaderboard/{entry} {
       allow read: if isAuthenticated();
-      allow write: if false; // Managed by Cloud Functions only
+      allow write: if false; // Cloud Functions only
     }
 
-    // Certificates — authenticated users can create their own; owner can update/delete
+    // ── Certificates ──────────────────────────────────────────────────────────
     match /certificates/{certId} {
       allow read: if isAuthenticated();
       allow create: if isCreatingOwnedResource();
       allow update, delete: if isExistingOwnedResource();
     }
 
-    // Academic Brains (knowledge graph) — students can read/write their own brain doc
+    // ── Academic Brains ───────────────────────────────────────────────────────
     match /academic_brains/{userId} {
       allow read, write: if isOwner(userId);
-
-      // Academic Brains ingestions subcollection — owner-only
       match /ingestions/{ingestionId} {
         allow read, write: if isOwner(userId);
       }
     }
 
-    // Hiring Requests — companies can create, companies/students can read
+    // ── Hiring Requests ───────────────────────────────────────────────────────
     match /hiring_requests/{requestId} {
       allow create: if isAuthenticated();
       allow read, update, delete: if isAuthenticated();
     }
 
-    // College Syllabi - For B2B Admin feature
+    // ── College Syllabi (legacy) ───────────────────────────────────────────────
     match /college_syllabi/{collegeId} {
       allow read: if isAuthenticated();
-      allow write: if isAuthenticated(); 
-      
-      // If it's a collection, allow access to sub-documents
+      allow write: if isAuthenticated();
       match /{allPaths=**} {
         allow read, write: if isAuthenticated();
       }
     }
 
-    // Colleges collection
-    match /colleges/{collegeId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null
-        && (request.auth.uid == collegeId 
-            || (resource != null && resource.data.adminUid == request.auth.uid) 
-            || (request.resource != null && request.resource.data.adminUid == request.auth.uid))
-        && request.resource.data.collegeCode is string
-        && request.resource.data.collegeCode.matches('^[a-zA-Z0-9]{6,10}$');
+    // ── Exam Reminders (scheduling system) ────────────────────────────────────
+    match /exam_reminders/{reminderId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && callerDoc().role == 'college';
     }
 
-    // Deny all other access
+    // ── Colleges — THE CORE ISOLATED STRUCTURE ────────────────────────────────
+    //
+    //   colleges/{collegeId}                   → college profile doc
+    //   colleges/{collegeId}/materials/{id}    → uploaded PDFs + AI content
+    //   colleges/{collegeId}/exams/{id}        → exam schedule
+    //   colleges/{collegeId}/students/{id}     → reference docs (future use)
+    //
+    match /colleges/{collegeId} {
+
+      // Allow anyone (even unauthenticated) to READ/LIST the colleges collection.
+      // This is required so the signup page can validate a college code BEFORE
+      // the student has signed in. Only collegeName and collegeCode are at risk.
+      allow read, list: if true;
+
+      // Only the college admin or the creator can write the top-level doc
+      allow create: if isAuthenticated() && (
+        request.auth.uid == collegeId ||
+        (request.resource.data.adminUid != null && request.resource.data.adminUid == request.auth.uid)
+      );
+      allow update, delete: if isAuthenticated() && (
+        request.auth.uid == collegeId ||
+        (resource != null && resource.data.adminUid == request.auth.uid)
+      );
+
+      // ── Materials subcollection ─────────────────────────────────────────────
+      // Read:  any authenticated user whose collegeId matches, OR college admins
+      // Write: only college admins for this specific college
+      match /materials/{materialId} {
+        allow read: if isAuthenticated() && isCollegeStudent(collegeId);
+        allow write: if isCollegeAdmin(collegeId);
+      }
+
+      // ── Exams subcollection ────────────────────────────────────────────────
+      // Read:  students and admins of this college
+      // Write: only college admins
+      match /exams/{examId} {
+        allow read: if isAuthenticated() && isCollegeStudent(collegeId);
+        allow write: if isCollegeAdmin(collegeId);
+      }
+
+      // ── Students reference subcollection (future) ──────────────────────────
+      match /students/{studentId} {
+        allow read: if isCollegeAdmin(collegeId);
+        allow write: if isCollegeAdmin(collegeId);
+      }
+    }
+
+    // ── Deny everything else ──────────────────────────────────────────────────
     match /{document=**} {
       allow read, write: if false;
     }
