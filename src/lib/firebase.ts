@@ -1,10 +1,11 @@
 // Firebase initialization — client-side only, always works
 import { initializeApp, getApps } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { 
-  initializeFirestore, 
-  persistentLocalCache, 
-  persistentMultipleTabManager 
+import {
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
+  memoryLocalCache,
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -20,9 +21,24 @@ const firebaseConfig = {
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 
 export const auth = getAuth(app);
-export const db = initializeFirestore(app, {
-  localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
-});
+
+// Use persistent cache only in browser environments that support IndexedDB.
+// Falling back to memory cache avoids the SDK opening a background Write stream
+// before the user authenticates, which would produce a spurious PERMISSION_DENIED error.
+function createFirestore() {
+  if (typeof window !== "undefined" && typeof indexedDB !== "undefined") {
+    try {
+      return initializeFirestore(app, {
+        localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
+      });
+    } catch {
+      // IndexedDB blocked (private mode, old browser, etc.) — fall through
+    }
+  }
+  return initializeFirestore(app, { localCache: memoryLocalCache() });
+}
+
+export const db = createFirestore();
 
 // Legacy compat getters
 export const getFirebaseAuth = () => auth;
