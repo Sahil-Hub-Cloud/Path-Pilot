@@ -4,7 +4,6 @@ import { getAuth } from "firebase/auth";
 import {
   initializeFirestore,
   persistentLocalCache,
-  persistentMultipleTabManager,
   memoryLocalCache,
 } from "firebase/firestore";
 
@@ -25,11 +24,14 @@ export const auth = getAuth(app);
 // Use persistent cache only in browser environments that support IndexedDB.
 // Falling back to memory cache avoids the SDK opening a background Write stream
 // before the user authenticates, which would produce a spurious PERMISSION_DENIED error.
+// NOTE: We intentionally do NOT pass persistentMultipleTabManager here — that tab manager
+// opens an immediate background stream even before auth, causing the spurious warning.
+// Single-tab persistence (default) is sufficient and does not have this side effect.
 function createFirestore() {
   if (typeof window !== "undefined" && typeof indexedDB !== "undefined") {
     try {
       return initializeFirestore(app, {
-        localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
+        localCache: persistentLocalCache(),
       });
     } catch {
       // IndexedDB blocked (private mode, old browser, etc.) — fall through
