@@ -306,9 +306,9 @@ export default function LearningPage() {
 
   useEffect(() => { setShowTopics(false); setShowChat(false); }, [activeTopic]);
 
-  // Fetch Gemini notes whenever the active topic changes (with localStorage caching)
+  // Fetch Gemini notes whenever the Notes tab is clicked (with localStorage caching)
   useEffect(() => {
-    if (!activeTopic || !course) return;
+    if (activeTab !== 'notes' || !activeTopic || !course) return;
     
     const cacheKey = `pp_notes_${user?.uid || 'guest'}_${activeTopic.id}`;
     const cached = localStorage.getItem(cacheKey);
@@ -322,26 +322,36 @@ export default function LearningPage() {
     setGeminiNotes('');
     setNotesLoading(true);
     
-    fetch('/api/notes', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        topicName: activeTopic.title,
-        courseName: course.title,
-      })
-    })
-      .then(r => r.json())
-      .then(d => {
+    const fetchNotes = async () => {
+      try {
+        const token = user ? await user.getIdToken() : '';
+        const res = await fetch('/api/notes', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+          },
+          body: JSON.stringify({
+            topicName: activeTopic.title,
+            courseName: course.title,
+          })
+        });
+        const d = await res.json();
         if (d.notes) {
           setGeminiNotes(d.notes);
           localStorage.setItem(cacheKey, d.notes);
         } else {
-          setGeminiNotes('Notes unavailable right now. Try again later.');
+          setGeminiNotes('Could not load notes at this time.');
         }
-      })
-      .catch(() => setGeminiNotes('Notes unavailable right now. Try again later.'))
-      .finally(() => setNotesLoading(false));
-  }, [activeTopic?.id, course?.title, user?.uid]); // eslint-disable-line react-hooks/exhaustive-deps
+      } catch (err) {
+        setGeminiNotes('Failed to connect to the notes service.');
+      } finally {
+        setNotesLoading(false);
+      }
+    };
+    
+    fetchNotes();
+  }, [activeTab, activeTopic?.id, course?.title, user]);
 
   useEffect(() => { if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight; }, [messages]);
 
