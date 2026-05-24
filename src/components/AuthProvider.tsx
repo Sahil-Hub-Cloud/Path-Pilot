@@ -28,6 +28,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [role, setRole] = useState<'student' | 'company' | 'college' | 'admin' | null>(null);
+    const [institutionId, setInstitutionId] = useState<string | null>(null);
     const router = useRouter();
 
     useEffect(() => {
@@ -57,6 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 loadUserRole(firebaseUser.uid);
             } else {
                 setRole(null);
+                setInstitutionId(null);
             }
         });
 
@@ -84,12 +86,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 } else {
                     setRole('student');
                 }
+                if (fetchedRole === 'admin' || fetchedRole === 'college') {
+                    setInstitutionId(data?.collegeId || null);
+                } else {
+                    setInstitutionId(null);
+                }
             } else {
                 setRole('student');
+                setInstitutionId(null);
             }
         } catch {
             // Firestore offline — default to student role
             setRole('student');
+            setInstitutionId(null);
         }
     };
 
@@ -98,12 +107,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             await firebaseSignOut(auth);
             setUser(null);
             setRole(null);
+            setInstitutionId(null);
             router.push('/auth');
         }
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, role, institutionId: null, isAdmin: false, signOut }}>
+        <AuthContext.Provider value={{ user, loading, role, institutionId, isAdmin: role === 'admin', signOut }}>
             {children}
         </AuthContext.Provider>
     );
