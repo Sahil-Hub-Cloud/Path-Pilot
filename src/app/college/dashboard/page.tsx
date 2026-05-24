@@ -75,57 +75,87 @@ export default function CollegeAdminDashboard() {
         setProfile(data);
 
         // Fetch Students
-        if (data.collegeCode) {
-          const q = query(collection(db, 'users'), where('collegeCode', '==', data.collegeCode));
-          const snapshot = await getDocs(q);
+        const myCollegeCode = data.collegeCode;
+        const myCollegeId = data.collegeId || user.uid;
+
+        let studentDocs: any[] = [];
+
+        if (myCollegeCode) {
+          // Try querying by collegeCode first
+          const q1 = query(
+            collection(db, 'users'),
+            where('collegeCode', '==', myCollegeCode),
+            where('role', '==', 'student')
+          );
+          const snapshot1 = await getDocs(q1);
+          
+          console.log(`Searching for students with collegeCode: ${myCollegeCode}`);
+          console.log(`Results found: ${snapshot1.size}`);
+          
+          if (!snapshot1.empty) {
+            console.log(`First student doc:`, snapshot1.docs[0].data());
+            studentDocs = snapshot1.docs;
+          } else {
+            // Also try querying by collegeId
+            const q2 = query(
+              collection(db, 'users'),
+              where('collegeId', '==', myCollegeId),
+              where('role', '==', 'student')
+            );
+            const snapshot2 = await getDocs(q2);
+            console.log(`Results found by collegeId: ${snapshot2.size}`);
+            
+            if (!snapshot2.empty) {
+              console.log(`First student doc (by collegeId):`, snapshot2.docs[0].data());
+              studentDocs = snapshot2.docs;
+            }
+          }
           
           const now = new Date();
-          const studentList = snapshot.docs
-            .filter(doc => doc.data()?.role === 'student')
-            .map(doc => {
-              const sd = doc.data();
-              
-              // Calculate Status
-              let lastDate = new Date();
-              let hasDate = false;
-              if (sd.lastActiveTs?.seconds) {
-                lastDate = new Date(sd.lastActiveTs.seconds * 1000);
-                hasDate = true;
-              } else if (sd.lastActiveDate) {
-                lastDate = new Date(sd.lastActiveDate);
-                hasDate = true;
-              }
+          const studentList = studentDocs.map(doc => {
+            const sd = doc.data();
+            
+            // Calculate Status
+            let lastDate = new Date();
+            let hasDate = false;
+            if (sd.lastActiveTs?.seconds) {
+              lastDate = new Date(sd.lastActiveTs.seconds * 1000);
+              hasDate = true;
+            } else if (sd.lastActiveDate) {
+              lastDate = new Date(sd.lastActiveDate);
+              hasDate = true;
+            }
 
-              let status = 'At Risk';
-              let diffDays = 999;
-              if (hasDate) {
-                const diffTime = Math.abs(now.getTime() - lastDate.getTime());
-                diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                if (diffDays <= 2) status = 'Active';
-                else if (diffDays <= 4) status = 'Idle';
-              }
+            let status = 'At Risk';
+            let diffDays = 999;
+            if (hasDate) {
+              const diffTime = Math.abs(now.getTime() - lastDate.getTime());
+              diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+              if (diffDays <= 2) status = 'Active';
+              else if (diffDays <= 4) status = 'Idle';
+            }
 
-              let empLevel = sd.employabilityLevel || 'Unrated';
-              if (empLevel.includes('High') || empLevel.includes('Elite')) empLevel = 'High — Job Ready';
-              else if (empLevel.includes('Medium') || empLevel.includes('Advanced')) empLevel = 'Medium';
-              else empLevel = 'Unrated';
+            let empLevel = sd.employabilityLevel || 'Unrated';
+            if (empLevel.includes('High') || empLevel.includes('Elite')) empLevel = 'High — Job Ready';
+            else if (empLevel.includes('Medium') || empLevel.includes('Advanced')) empLevel = 'Medium';
+            else empLevel = 'Unrated';
 
-              return {
-                id: doc.id,
-                name: sd.displayName || sd.fullName || 'Unknown Student',
-                email: sd.email || '',
-                track: sd.learningPath || sd.track || 'Frontend Dev',
-                labs: sd.labsCompleted || 0,
-                score: sd.skillScore || 0,
-                empScore: sd.employabilityScore || 0,
-                empLevel: empLevel,
-                lastActive: hasDate ? lastDate.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : 'Never',
-                diffDays,
-                status,
-                completedTopics: sd.completedTopics || [],
-                labSubmissions: sd.completedLabsList || [],
-              };
-            });
+            return {
+              id: doc.id,
+              name: sd.displayName || sd.fullName || 'Unknown Student',
+              email: sd.email || '',
+              track: sd.learningPath || sd.track || 'Frontend Dev',
+              labs: sd.labsCompleted || 0,
+              score: sd.skillScore || 0,
+              empScore: sd.employabilityScore || 0,
+              empLevel: empLevel,
+              lastActive: hasDate ? lastDate.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : 'Never',
+              diffDays,
+              status,
+              completedTopics: sd.completedTopics || [],
+              labSubmissions: sd.completedLabsList || [],
+            };
+          });
           setStudents(studentList.sort((a, b) => b.score - a.score));
         }
       } catch (err) {
@@ -144,7 +174,7 @@ export default function CollegeAdminDashboard() {
     const total = students.length;
     const avgEmp = total > 0 ? Math.round(students.reduce((a, b) => a + b.empScore, 0) / total) : 0;
     const jobReady = students.filter(s => s.empLevel === 'High — Job Ready').length;
-    const atRisk = students.filter(s => s.status === 'At Risk').length;
+    const atRisk = students.filter(s => s.diffDays > 2).length;
     return { total, avgEmp, jobReady, atRisk };
   }, [students]);
 
