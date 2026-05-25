@@ -82,7 +82,7 @@ export default function DashboardPage() {
 
   const sendEmail = async (to: string, subject: string, html: string) => {
     try {
-      await fetch('/api/email/send', {
+      await fetch('/api/send-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ to, subject, html })
