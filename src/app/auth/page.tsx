@@ -484,7 +484,7 @@ function AuthForm() {
         style={{
           position: 'relative', zIndex: 1,
           width: '100%', maxWidth: 460,
-          background: '#FFFFFF',
+          backgroundColor: 'var(--surface-raised)',
           borderRadius: 28,
           border: '2px solid rgba(180,140,90,0.3)',
           padding: 48,
@@ -651,7 +651,7 @@ function AuthForm() {
 
         <button onClick={handleGoogleAuth} disabled={googleLoading} style={{
           width: '100%', padding: '14px 0',
-          background: '#FFFFFF', border: '2px solid rgba(180,140,90,0.35)',
+          backgroundColor: 'var(--surface-raised)', border: '2px solid rgba(180,140,90,0.35)',
           borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
           cursor: googleLoading ? 'not-allowed' : 'pointer',
           fontWeight: 700, fontSize: 14, color: '#2C1A0E',

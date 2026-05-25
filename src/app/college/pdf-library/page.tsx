@@ -221,7 +221,7 @@ export default function PdfLibraryPage() {
       <main style={{ marginLeft: 240, flex: 1, padding: '40px 40px 80px', maxWidth: 1000 }}>
 
         <div style={{ marginBottom: 40, display: 'flex', alignItems: 'center', gap: 16 }}>
-          <button onClick={() => router.push('/college/dashboard')} style={{ background: '#FFFFFF', border: '2px solid rgba(180,140,90,0.2)', width: 44, height: 44, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#8B6E52', transition: 'all 0.2s' }}>
+          <button onClick={() => router.push('/college/dashboard')} style={{ backgroundColor: 'var(--surface-raised)', border: '2px solid rgba(180,140,90,0.2)', width: 44, height: 44, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#8B6E52', transition: 'all 0.2s' }}>
             <FiArrowLeft size={20} />
           </button>
           <div>
@@ -247,7 +247,7 @@ export default function PdfLibraryPage() {
           )}
         </AnimatePresence>
 
-        <div style={{ background: '#FFFFFF', borderRadius: 24, border: '2px solid rgba(180,140,90,0.25)', boxShadow: '0 12px 30px rgba(140,90,40,0.08)', overflow: 'hidden' }}>
+        <div style={{ backgroundColor: 'var(--surface-raised)', borderRadius: 24, border: '2px solid rgba(180,140,90,0.25)', boxShadow: '0 12px 30px rgba(140,90,40,0.08)', overflow: 'hidden' }}>
           <form onSubmit={handleUpload} style={{ padding: 40, display: 'flex', flexDirection: 'column', gap: 32 }}>
 
             {/* Drag and Drop Zone */}
@@ -350,7 +350,7 @@ export default function PdfLibraryPage() {
             </h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {existingMaterials.map(mat => (
-                <div key={mat.id} style={{ background: '#FFFFFF', border: '1.5px solid rgba(180,140,90,0.2)', borderRadius: 16, padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div key={mat.id} style={{ backgroundColor: 'var(--surface-raised)', border: '1.5px solid rgba(180,140,90,0.2)', borderRadius: 16, padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                     <div style={{ width: 40, height: 40, background: 'linear-gradient(135deg, #006B7A, #2E7D52)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <FiFileText color="white" size={18} />

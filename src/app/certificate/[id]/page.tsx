@@ -230,7 +230,7 @@ export default function CertificatePage() {
 
         {/* ACTION BUTTONS */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 mb-20 print:hidden">
-           <button onClick={handleDownload} className="flex items-center justify-center gap-3 bg-white dark:bg-gray-800 text-black py-5 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-[#7C3AED] hover:text-white transition-all shadow-xl shadow-white/5">
+           <button onClick={handleDownload} className="flex items-center justify-center gap-3 bg-white dark:bg-gray-800 text-black dark:text-white py-5 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-[#7C3AED] hover:text-white transition-all shadow-xl shadow-white/5">
               <FiDownload size={18} /> Download Credentials
            </button>
            <button onClick={shareLinkedIn} className="flex items-center justify-center gap-3 bg-white dark:bg-gray-800/5 border border-white/10 py-5 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-[#0077B5] hover:border-[#0077B5] transition-all">

@@ -163,7 +163,7 @@ export default function WeeklyProgressPage() {
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
             {user && <NotificationBell uid={user.uid} />}
-            <div className="skeu-inset" style={{ padding: '16px 24px', borderRadius: 16, background: '#fff', border: `1px solid ${C.border}` }}>
+            <div className="skeu-inset" style={{ padding: '16px 24px', borderRadius: 16, backgroundColor: 'var(--surface-raised)', border: `1px solid ${C.border}` }}>
               <h3 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: stats.thisWeekLabs >= 3 ? C.blue : (stats.thisWeekLabs > 0 ? C.green : C.accent), display: 'flex', alignItems: 'center', gap: 8 }}>
                 {stats.thisWeekLabs >= 3 ? <FiStar /> : (stats.thisWeekLabs > 0 ? <FiTrendingUp /> : <FiClock />)}
                 {motivation}

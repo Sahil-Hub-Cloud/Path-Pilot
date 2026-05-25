@@ -221,7 +221,7 @@ export default function DebugChallengePage() {
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 onClick={loadChallenge}
-                                className="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest text-black hover:opacity-90 transition-all"
+                                className="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest text-black dark:text-white hover:opacity-90 transition-all"
                             >
                                 Next Challenge →
                             </motion.button>

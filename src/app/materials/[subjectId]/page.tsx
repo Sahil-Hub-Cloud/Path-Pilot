@@ -213,7 +213,7 @@ function FlowchartDiagram({ flowchart, index }: { flowchart: any; index: number 
       case 'decision':
         return { background: '#FFF8EE', color: '#2C1A0E', borderRadius: 8, border: '2px solid #F59E0B', transform: 'rotate(0deg)' };
       default: // process
-        return { background: '#FFFFFF', color: '#2C1A0E', borderRadius: 12, border: '2px solid rgba(180,140,90,0.3)' };
+        return { backgroundColor: 'var(--surface-raised)', color: '#2C1A0E', borderRadius: 12, border: '2px solid rgba(180,140,90,0.3)' };
     }
   };
 
@@ -248,7 +248,7 @@ function FlowchartDiagram({ flowchart, index }: { flowchart: any; index: number 
   });
 
   return (
-    <div style={{ background: '#FFFFFF', border: '2px solid rgba(180,140,90,0.2)', borderRadius: 24, overflow: 'hidden', boxShadow: '0 4px 20px rgba(140,90,40,0.08)' }}>
+    <div style={{ backgroundColor: 'var(--surface-raised)', border: '2px solid rgba(180,140,90,0.2)', borderRadius: 24, overflow: 'hidden', boxShadow: '0 4px 20px rgba(140,90,40,0.08)' }}>
       {/* Header */}
       <div style={{ background: 'linear-gradient(135deg, #006B7A15, #2E7D5215)', borderBottom: '2px solid rgba(180,140,90,0.15)', padding: '20px 28px', display: 'flex', alignItems: 'center', gap: 12 }}>
         <div style={{ width: 36, height: 36, background: 'linear-gradient(135deg, #006B7A, #2E7D52)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

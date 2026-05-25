@@ -217,7 +217,7 @@ export default function CollegeSignupPage() {
         style={{
           position: 'relative', zIndex: 1,
           width: '100%', maxWidth: 540,
-          background: '#FFFFFF',
+          backgroundColor: 'var(--surface-raised)',
           borderRadius: 28,
           border: '2px solid rgba(180,140,90,0.3)',
           padding: 48,

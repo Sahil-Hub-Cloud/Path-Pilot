@@ -1,6 +1,6 @@
 export default function TermsPage() {
     return (
-        <div className="min-h-screen bg-black text-slate-300 font-mono p-8 selection:bg-[var(--accent-teal)] selection:text-black">
+        <div className="min-h-screen bg-black text-slate-300 font-mono p-8 selection:bg-[var(--accent-teal)] selection:text-black dark:text-white">
             <div className="max-w-4xl mx-auto space-y-8">
                 <header className="border-b border-white/10 pb-8 mb-12">
                     <h1 className="text-4xl font-black text-white mb-2 font-orbitron tracking-widest">TERMS OF OPERATION</h1>

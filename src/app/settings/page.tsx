@@ -385,7 +385,7 @@ export default function SettingsPage() {
                     >
                       <motion.div 
                         animate={{ x: item.state ? 22 : 0 }}
-                        style={{ width: 20, height: 20, borderRadius: '50%', background: '#fff', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }} 
+                        style={{ width: 20, height: 20, borderRadius: '50%', backgroundColor: 'var(--surface-raised)', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }} 
                       />
                     </button>
                   </div>
@@ -422,7 +422,7 @@ export default function SettingsPage() {
                     animate={{ x: isDarkMode ? 26 : 0 }}
                     style={{ 
                       width: 22, height: 22, borderRadius: '50%', 
-                      background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      backgroundColor: 'var(--surface-raised)', display: 'flex', alignItems: 'center', justifyContent: 'center',
                       boxShadow: '0 2px 6px rgba(0,0,0,0.1)' 
                     }}
                   >
@@ -513,7 +513,7 @@ export default function SettingsPage() {
                     onChange={e => setDeleteConfirmText(e.target.value)}
                     placeholder="Type DELETE"
                     className="sku-input"
-                    style={{ background: '#fff' }}
+                    style={{ backgroundColor: 'var(--surface-raised)' }}
                   />
                 </div>
               </div>

@@ -11,7 +11,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { toast } from '@/lib/toast';
 import { db } from '@/lib/firebase';
-import { doc, getDoc, collection, getDocs, addDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, getDocs, addDoc, query, where } from 'firebase/firestore';
 
 export default function ExamSchedulePage() {
   const router = useRouter();
@@ -247,7 +247,7 @@ export default function ExamSchedulePage() {
       <main style={{ marginLeft: 240, flex: 1, padding: '40px 40px 80px', maxWidth: 1200 }}>
          
          <div style={{ marginBottom: 40, display: 'flex', alignItems: 'center', gap: 16 }}>
-           <button onClick={() => router.push('/college/dashboard')} style={{ background: '#FFFFFF', border: '2px solid rgba(180,140,90,0.2)', width: 44, height: 44, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#8B6E52', transition: 'all 0.2s' }}>
+           <button onClick={() => router.push('/college/dashboard')} style={{ backgroundColor: 'var(--surface-raised)', border: '2px solid rgba(180,140,90,0.2)', width: 44, height: 44, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#8B6E52', transition: 'all 0.2s' }}>
              <FiArrowLeft size={20} />
            </button>
            <div>

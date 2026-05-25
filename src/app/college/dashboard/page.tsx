@@ -280,7 +280,7 @@ export default function CollegeAdminDashboard() {
              <p style={{ color: '#8B6E52', fontSize: 14, fontWeight: 500 }}>Track and manage your student cohort's performance.</p>
            </div>
            
-           <div style={{ background: '#FFFFFF', border: '2px solid rgba(180,140,90,0.3)', borderRadius: 16, padding: '12px 20px', display: 'flex', alignItems: 'center', gap: 16, boxShadow: '0 4px 12px rgba(140,90,40,0.05)' }}>
+           <div style={{ backgroundColor: 'var(--surface-raised)', border: '2px solid rgba(180,140,90,0.3)', borderRadius: 16, padding: '12px 20px', display: 'flex', alignItems: 'center', gap: 16, boxShadow: '0 4px 12px rgba(140,90,40,0.05)' }}>
              <div>
                <div style={{ fontSize: 10, fontWeight: 800, color: '#8B6E52', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Institution Code</div>
                <div style={{ fontSize: 18, fontWeight: 900, color: '#006B7A', letterSpacing: '0.05em' }}>{profile?.collegeCode}</div>
@@ -314,7 +314,7 @@ export default function CollegeAdminDashboard() {
 
         {/* FILTER BAR */}
         <div style={{
-          background: '#FFFFFF', borderRadius: 20, padding: '20px 24px', border: '2px solid rgba(180,140,90,0.25)',
+          backgroundColor: 'var(--surface-raised)', borderRadius: 20, padding: '20px 24px', border: '2px solid rgba(180,140,90,0.25)',
           marginBottom: 28, display: 'flex', gap: 16, alignItems: 'center', boxShadow: '0 4px 14px rgba(140,90,40,0.05)'
         }}>
           <div style={{ 
@@ -413,7 +413,7 @@ export default function CollegeAdminDashboard() {
 
         {/* FILTER BAR */}
         <div style={{
-          background: '#FFFFFF', borderRadius: 20, padding: '20px 24px', border: '2px solid rgba(180,140,90,0.25)',
+          backgroundColor: 'var(--surface-raised)', borderRadius: 20, padding: '20px 24px', border: '2px solid rgba(180,140,90,0.25)',
           marginBottom: 28, display: 'flex', gap: 16, alignItems: 'center', boxShadow: '0 4px 14px rgba(140,90,40,0.05)'
         }}>
           <div style={{ 
@@ -828,7 +828,7 @@ export default function CollegeAdminDashboard() {
 
 // --- STYLE OBJECTS ---
 const cardStyle: React.CSSProperties = {
-  background: '#FFFFFF', borderRadius: 20,
+  backgroundColor: 'var(--surface-raised)', borderRadius: 20,
   border: '2px solid rgba(180,140,90,0.25)', padding: '24px 22px',
   boxShadow: '0 2px 0 rgba(255,255,255,0.9) inset, 0 8px 24px rgba(140,90,40,0.1)',
 };
@@ -846,7 +846,7 @@ const modalOverlayStyle: React.CSSProperties = {
 };
 
 const profileModalStyle: React.CSSProperties = {
-  background: '#FFFFFF', width: '500px', maxWidth: '100vw', height: '100vh', display: 'flex', flexDirection: 'column',
+  backgroundColor: 'var(--surface-raised)', width: '500px', maxWidth: '100vw', height: '100vh', display: 'flex', flexDirection: 'column',
   boxShadow: '-10px 0 40px rgba(0,0,0,0.2)'
 };
 

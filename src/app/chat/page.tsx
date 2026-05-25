@@ -144,7 +144,7 @@ function ChatContent() {
             background: isVernacular ? STYLE.teal : 'rgba(180,140,90,0.25)'
           }}>
             <motion.div animate={{ x: isVernacular ? 18 : 0 }} transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-              style={{ width: 16, height: 16, borderRadius: '50%', background: '#fff', boxShadow: '0 1px 4px rgba(0,0,0,0.2)' }} />
+              style={{ width: 16, height: 16, borderRadius: '50%', backgroundColor: 'var(--surface-raised)', boxShadow: '0 1px 4px rgba(0,0,0,0.2)' }} />
           </button>
         </div>
 

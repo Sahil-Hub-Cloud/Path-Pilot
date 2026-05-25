@@ -37,6 +37,7 @@ interface UserProfile {
   nextRecommendedTopic?: string;
   recommendationReason?: string;
   collegeId?: string;
+  collegeCode?: string;
 }
 
 export default function DashboardPage() {
@@ -56,7 +57,7 @@ export default function DashboardPage() {
     const fetchExams = async () => {
       try {
         // ISSUE 2 FIX: Fetch exams from isolated colleges/{collegeId}/exams subcollection
-        const snap = await getDocs(collection(db, 'colleges', profile.collegeId, 'exams'));
+        const snap = await getDocs(collection(db, 'colleges', profile.collegeId!, 'exams'));
         const examList = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         examList.sort((a: any, b: any) => new Date(a.examDate).getTime() - new Date(b.examDate).getTime());
         setExams(examList.filter((e: any) => new Date(e.examDate).getTime() > Date.now() - 24 * 60 * 60 * 1000));
@@ -583,7 +584,7 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-5 mb-8">
           {/* Learning Path / CTA */}
           <div style={{
-            background: '#FFFFFF', borderRadius: 20, border: '2px solid rgba(180,140,90,0.25)',
+            backgroundColor: 'var(--surface-raised)', borderRadius: 20, border: '2px solid rgba(180,140,90,0.25)',
             padding: '32px 28px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
             boxShadow: '0 2px 0 rgba(255,255,255,0.9) inset, 0 8px 24px rgba(140,90,40,0.1)',
           }}>
@@ -632,7 +633,7 @@ export default function DashboardPage() {
 
           {/* Skill Graph */}
           <div style={{
-            background: '#FFFFFF', borderRadius: 20, border: '2px solid rgba(180,140,90,0.25)',
+            backgroundColor: 'var(--surface-raised)', borderRadius: 20, border: '2px solid rgba(180,140,90,0.25)',
             padding: '28px', display: 'flex', flexDirection: 'column', alignItems: 'center',
             boxShadow: '0 2px 0 rgba(255,255,255,0.9) inset, 0 8px 24px rgba(140,90,40,0.1)',
           }}>

@@ -169,7 +169,7 @@ export default function SplashScreen() {
                 style={{
                   width: '100%',
                   padding: '16px 24px',
-                  background: '#FFFFFF',
+                  backgroundColor: 'var(--surface-raised)',
                   color: '#006B7A',
                   border: '2px solid #006B7A',
                   borderRadius: '12px',

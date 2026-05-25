@@ -488,7 +488,7 @@ export default function AdminDashboard() {
             <div className="fixed bottom-0 left-0 w-80 h-80 rounded-full opacity-15 pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(139,92,246,0.06), transparent 70%)' }} />
 
             {/* Header / Top Bar */}
-            <header className="sticky top-0 z-50 px-8 py-4 flex items-center justify-between border-b" style={{ background: '#FFFFFF', borderColor: '#F1F5F9' }}>
+            <header className="sticky top-0 z-50 px-8 py-4 flex items-center justify-between border-b" style={{ backgroundColor: 'var(--surface-raised)', borderColor: '#F1F5F9' }}>
                 <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg"
                         style={{ background: 'linear-gradient(135deg, #0F172A, #334155)' }}>

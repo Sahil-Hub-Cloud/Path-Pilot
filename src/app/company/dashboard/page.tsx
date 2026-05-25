@@ -259,7 +259,7 @@ export default function CompanyDashboard() {
 
         {/* FILTER BAR */}
         <div style={{
-          background: '#FFFFFF', borderRadius: 20, padding: '20px 24px', border: '2px solid rgba(180,140,90,0.25)',
+          backgroundColor: 'var(--surface-raised)', borderRadius: 20, padding: '20px 24px', border: '2px solid rgba(180,140,90,0.25)',
           marginBottom: 28, display: 'flex', gap: 16, alignItems: 'center', boxShadow: '0 4px 14px rgba(140,90,40,0.05)'
         }}>
           <div style={{ 
@@ -447,7 +447,7 @@ export default function CompanyDashboard() {
             <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.9)', lineHeight: 1.5, fontWeight: 600 }}>
               Students in the <strong>{analyticsData?.skillsArray[0]?.label || 'Elite'}</strong> track are seeing 40% faster placement rates this month.
             </p>
-            <button style={{ marginTop: 16, background: '#fff', color: '#006B7A', border: 'none', padding: '10px 16px', borderRadius: 10, fontSize: 11, fontWeight: 900, cursor: 'pointer' }}>View Talent Pipeline</button>
+            <button style={{ marginTop: 16, backgroundColor: 'var(--surface-raised)', color: '#006B7A', border: 'none', padding: '10px 16px', borderRadius: 10, fontSize: 11, fontWeight: 900, cursor: 'pointer' }}>View Talent Pipeline</button>
          </div>
       </div>
     </motion.div>
@@ -549,7 +549,7 @@ export default function CompanyDashboard() {
                 </div>
                 <button onClick={() => setShowProfile(false)} style={{ background: 'none', border: 'none', color: '#8B6E52', cursor: 'pointer' }}><FiXCircle size={24} /></button>
               </div>
-              <div style={{ padding: '40px', display: 'grid', gridTemplateColumns: '1fr 1.8fr', gap: 40, background: '#FFFFFF' }}>
+              <div style={{ padding: '40px', display: 'grid', gridTemplateColumns: '1fr 1.8fr', gap: 40, backgroundColor: 'var(--surface-raised)' }}>
                 <div>
                    <div style={{ width: 90, height: 90, borderRadius: 28, background: 'linear-gradient(135deg, #006B7A, #2E7D52)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, fontWeight: 900, color: '#fff', marginBottom: 20, boxShadow: '0 10px 20px rgba(0,107,122,0.2)' }}>
                      {selectedStudent.name[0]}
@@ -603,7 +603,7 @@ function FeaturedCard({ student, onOpen }: { student: any, onOpen: () => void })
     <motion.div 
       whileHover={{ scale: 1.02 }}
       style={{
-        background: '#FFFFFF', borderRadius: 24, padding: '32px',
+        backgroundColor: 'var(--surface-raised)', borderRadius: 24, padding: '32px',
         border: '2px solid rgba(180,140,90,0.25)', boxShadow: '0 8px 30px rgba(140,90,40,0.12)',
         display: 'flex', flexDirection: 'column', gap: 20, position: 'relative', overflow: 'hidden'
       }}
@@ -633,7 +633,7 @@ function FeaturedCard({ student, onOpen }: { student: any, onOpen: () => void })
 
 // --- STYLE OBJECTS ---
 const cardStyle: React.CSSProperties = {
-  background: '#FFFFFF', borderRadius: 20,
+  backgroundColor: 'var(--surface-raised)', borderRadius: 20,
   border: '2px solid rgba(180,140,90,0.25)', padding: '24px 22px',
   boxShadow: '0 2px 0 rgba(255,255,255,0.9) inset, 0 8px 24px rgba(140,90,40,0.1)',
 };
@@ -661,7 +661,7 @@ const modalOverlayStyle: React.CSSProperties = {
 };
 
 const profileModalStyle: React.CSSProperties = {
-  background: '#FFFFFF', width: '840px', maxWidth: '95vw', borderRadius: '32px', overflow: 'hidden', border: '2px solid rgba(180,140,90,0.3)', boxShadow: '0 30px 80px rgba(0,0,0,0.2)'
+  backgroundColor: 'var(--surface-raised)', width: '840px', maxWidth: '95vw', borderRadius: '32px', overflow: 'hidden', border: '2px solid rgba(180,140,90,0.3)', boxShadow: '0 30px 80px rgba(0,0,0,0.2)'
 };
 
 const modalInfoBox: React.CSSProperties = { background: '#FDF6EC', padding: '12px 16px', borderRadius: 12, border: '1.5px solid rgba(180,140,90,0.15)' };
