@@ -37,7 +37,6 @@ const DEFAULT_PROFILE: UserProfile = {
 
 import { getFirebaseDb } from './firebase';
 import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
-import { PersistentMemoryStore } from './persistent-store';
 
 export const useCyberneticProfile = (userId: string) => {
     const [profile, setProfile] = useState<UserProfile>(DEFAULT_PROFILE);
@@ -166,8 +165,6 @@ export const useCyberneticProfile = (userId: string) => {
         setProfile(prev => {
             const next = { ...prev, credits: prev.credits + amount };
             saveProfile(next); // Syncs full profile
-            // Secure Economy Update
-            PersistentMemoryStore.updateEconomy(userId, next.credits, 100); // 100 is placeholder for energy, should ideally be passed in or managed separately
             return next;
         });
     }, [saveProfile, userId]);
@@ -185,8 +182,6 @@ export const useCyberneticProfile = (userId: string) => {
                 inventory: [...prev.inventory, item]
             };
             saveProfile(next);
-            // Secure Economy Update
-            PersistentMemoryStore.updateEconomy(userId, next.credits, 100);
             success = true;
             return next;
         });

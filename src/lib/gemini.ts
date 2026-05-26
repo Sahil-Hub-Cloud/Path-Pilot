@@ -1,7 +1,22 @@
 import { StudentGraph } from "./memory-graph";
-import { Module } from "./mock-data";
 import { getPersona } from "./diction-adapter";
 
+export interface Module {
+    id: number;
+    name: string;
+    description: string;
+    estimatedHours: number;
+    mastery: number;
+    status: string;
+    units: {
+        id: number;
+        name: string;
+        difficulty: "Beginner" | "Intermediate" | "Advanced";
+        estimatedTime: string;
+        status: string;
+        retentionScore: number;
+    }[];
+}
 export class GeminiBrain {
     /**
      * Emergency Reroute: Trims optional fat and focuses on high-yield topics.
