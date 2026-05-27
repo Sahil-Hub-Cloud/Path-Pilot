@@ -602,7 +602,7 @@ Rules:
       {/* ══ HEADER ══ */}
       <header className="h-14 bg-[#13131A] border-b border-white/10 flex items-center justify-between px-3 md:px-6 flex-shrink-0 z-50">
         <div className="flex items-center gap-2 md:gap-5 overflow-hidden flex-1">
-          <button onClick={() => router.push('/dashboard')} className="flex items-center justify-center w-8 h-8 md:w-auto md:h-auto md:px-3 md:py-1.5 bg-white dark:bg-gray-800/5 border border-white/10 rounded-lg cursor-pointer text-[#888899] hover:bg-white dark:bg-gray-800/10 transition-all flex-shrink-0">
+          <button onClick={() => router.push('/labs')} className="flex items-center justify-center w-8 h-8 md:w-auto md:h-auto md:px-3 md:py-1.5 bg-white dark:bg-gray-800/5 border border-white/10 rounded-lg cursor-pointer text-[#888899] hover:bg-white dark:bg-gray-800/10 transition-all flex-shrink-0">
             <FiArrowLeft size={14} />
           </button>
           

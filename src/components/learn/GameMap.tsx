@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { FiCheck, FiLock } from 'react-icons/fi';
+import { FiCheck, FiLock, FiPlay } from 'react-icons/fi';
 
 export type NodeStatus = 'completed' | 'current' | 'locked';
 
@@ -31,56 +31,104 @@ interface GameMapProps {
   recentlyUnlockedId?: string | null;
 }
 
-const ZIGZAG = [12, 50, 88] as const;
+// Cycling emojis for chapter banners — gives each chapter a unique feel
+const CHAPTER_EMOJIS = ['🎯', '🚀', '📦', '🔥', '💡', '⚡', '🌟', '🏆', '🧠', '🎓', '🔮', '🛠️'];
 
-function PathConnector({ completed }: { completed: boolean }) {
+// Zigzag positions as % from left
+const ZIGZAG = [14, 50, 86] as const;
+
+// ── Path Connector ──────────────────────────────────────────────────────────
+function PathConnector({ completed, fromAlign, toAlign }: { completed: boolean; fromAlign: number; toAlign: number }) {
+  const color = completed ? '#22C55E' : '#D1D5DB';
+  const opacity = completed ? 1 : 0.55;
+
+  // If nodes are on different sides, draw a diagonal-ish connector
+  // using a thin SVG so it feels more like a game map path
+  const isDiagonal = fromAlign !== toAlign;
+
   return (
     <div
       style={{
-        width: 4,
-        height: 36,
-        margin: '4px auto',
-        borderLeft: `3px dotted ${completed ? '#22C55E' : '#D1D5DB'}`,
-        opacity: completed ? 1 : 0.7,
+        position: 'relative',
+        width: '100%',
+        height: isDiagonal ? 48 : 40,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        opacity,
       }}
-    />
+    >
+      {/* Dots drawn as a series of small circles */}
+      {Array.from({ length: 5 }).map((_, i) => {
+        const pct = i / 4;
+        // Interpolate x from fromAlign% to toAlign% of 260px panel
+        const x = fromAlign + (toAlign - fromAlign) * pct;
+        const y = (isDiagonal ? 48 : 40) * pct;
+        return (
+          <div
+            key={i}
+            style={{
+              position: 'absolute',
+              left: `${x}%`,
+              top: y,
+              width: 6,
+              height: 6,
+              borderRadius: '50%',
+              background: color,
+              transform: 'translate(-50%, 0)',
+              transition: 'background 0.4s ease',
+            }}
+          />
+        );
+      })}
+    </div>
   );
 }
 
+// ── Map Node ────────────────────────────────────────────────────────────────
 function MapNode({
   status,
   isActive,
   title,
   onClick,
   bounce,
+  nodeRef,
 }: {
   status: NodeStatus;
   isActive: boolean;
   title: string;
   onClick: () => void;
   bounce?: boolean;
+  nodeRef?: React.RefObject<HTMLButtonElement | null>;
 }) {
   const locked = status === 'locked';
   const done = status === 'completed';
   const current = status === 'current' || isActive;
 
   const size = current ? 72 : 64;
-  const bg = done ? '#22C55E' : current ? '#0D8C7A' : '#E5E7EB';
-  const shadow = done
-    ? '0 0 0 6px rgba(34,197,94,0.2), 0 8px 20px rgba(34,197,94,0.35)'
+
+  const bg = done
+    ? 'linear-gradient(135deg, #22C55E, #16A34A)'
     : current
-      ? '0 0 0 8px rgba(13,140,122,0.25), 0 8px 24px rgba(13,140,122,0.35)'
-      : 'none';
+      ? 'linear-gradient(135deg, #0D8C7A, #006B7A)'
+      : '#E5E7EB';
+
+  const shadow = done
+    ? '0 0 0 5px rgba(34,197,94,0.18), 0 8px 24px rgba(34,197,94,0.30)'
+    : current
+      ? '0 0 0 6px rgba(13,140,122,0.22), 0 8px 28px rgba(13,140,122,0.32)'
+      : '0 2px 8px rgba(0,0,0,0.08)';
 
   return (
     <motion.button
+      ref={nodeRef as React.RefObject<HTMLButtonElement>}
       type="button"
       disabled={locked}
       onClick={locked ? undefined : onClick}
-      animate={bounce ? { scale: [1, 1.15, 1], y: [0, -6, 0] } : {}}
-      transition={{ duration: 0.6 }}
-      whileHover={!locked ? { scale: 1.05 } : {}}
-      whileTap={!locked ? { scale: 0.96 } : {}}
+      animate={bounce ? { scale: [1, 1.18, 0.95, 1.05, 1], y: [0, -8, 2, -4, 0] } : {}}
+      transition={{ duration: 0.7, ease: 'easeOut' }}
+      whileHover={!locked ? { scale: 1.06, y: -2 } : {}}
+      whileTap={!locked ? { scale: 0.94 } : {}}
       style={{
         display: 'flex',
         flexDirection: 'column',
@@ -88,19 +136,21 @@ function MapNode({
         border: 'none',
         background: 'transparent',
         cursor: locked ? 'not-allowed' : 'pointer',
-        opacity: locked ? 0.6 : 1,
+        opacity: locked ? 0.55 : 1,
         padding: 0,
         position: 'relative',
+        outline: 'none',
       }}
     >
+      {/* Outer pulsing ring for active/current node */}
       {current && (
         <motion.span
-          animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.15, 0.5] }}
-          transition={{ repeat: Infinity, duration: 2 }}
+          animate={{ scale: [1, 1.25, 1], opacity: [0.6, 0.1, 0.6] }}
+          transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
           style={{
             position: 'absolute',
-            width: size + 16,
-            height: size + 16,
+            width: size + 18,
+            height: size + 18,
             borderRadius: '50%',
             border: '3px solid #0D8C7A',
             top: '50%',
@@ -110,7 +160,30 @@ function MapNode({
           }}
         />
       )}
-      <div
+
+      {/* Inner second ring for active node */}
+      {current && (
+        <motion.span
+          animate={{ scale: [1, 1.12, 1], opacity: [0.4, 0.05, 0.4] }}
+          transition={{ repeat: Infinity, duration: 2.2, delay: 0.5, ease: 'easeInOut' }}
+          style={{
+            position: 'absolute',
+            width: size + 32,
+            height: size + 32,
+            borderRadius: '50%',
+            border: '2px solid #0D8C7A',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            pointerEvents: 'none',
+          }}
+        />
+      )}
+
+      {/* Node circle */}
+      <motion.div
+        initial={false}
+        animate={{ scale: 1 }}
         style={{
           width: size,
           height: size,
@@ -121,26 +194,36 @@ function MapNode({
           alignItems: 'center',
           justifyContent: 'center',
           color: locked ? '#9CA3AF' : '#fff',
-          fontSize: done ? 28 : locked ? 22 : 26,
-          fontWeight: 900,
-          transition: 'all 0.25s ease',
+          fontSize: done ? 28 : locked ? 20 : 24,
+          transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+          position: 'relative',
+          zIndex: 1,
         }}
       >
-        {done ? <FiCheck size={32} strokeWidth={3} /> : locked ? <FiLock size={24} /> : '▶'}
-      </div>
+        {done ? (
+          <FiCheck size={30} strokeWidth={3} />
+        ) : locked ? (
+          <FiLock size={22} />
+        ) : (
+          <FiPlay size={22} style={{ marginLeft: 3 }} />
+        )}
+      </motion.div>
+
+      {/* Topic label */}
       <div
         style={{
-          marginTop: 8,
-          maxWidth: 100,
+          marginTop: 9,
+          maxWidth: 96,
           fontSize: 11,
           fontWeight: 700,
-          color: locked ? '#9CA3AF' : '#2C1A0E',
+          color: locked ? '#9CA3AF' : done ? '#16A34A' : '#2C1A0E',
           textAlign: 'center',
-          lineHeight: 1.3,
+          lineHeight: 1.35,
           display: '-webkit-box',
           WebkitLineClamp: 2,
           WebkitBoxOrient: 'vertical',
           overflow: 'hidden',
+          letterSpacing: '-0.01em',
         }}
       >
         {title}
@@ -149,6 +232,7 @@ function MapNode({
   );
 }
 
+// ── GameMap ─────────────────────────────────────────────────────────────────
 export default function GameMap({
   chapters,
   courseIcon,
@@ -159,57 +243,117 @@ export default function GameMap({
   recentlyUnlockedId,
 }: GameMapProps) {
   const flatTopics = chapters.flatMap((ch) => ch.topics);
+  const activeNodeRef = useRef<HTMLButtonElement | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+
+  // Scroll active node into view on mount and when it changes
+  useEffect(() => {
+    if (activeNodeRef.current && scrollContainerRef.current) {
+      setTimeout(() => {
+        activeNodeRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+      }, 300);
+    }
+  }, [activeTopicId]);
 
   return (
     <div
-      className="h-full overflow-y-auto no-scrollbar px-3 py-4"
-      style={{ background: 'linear-gradient(180deg, #FDF6EC 0%, #F5EDE0 100%)' }}
+      ref={scrollContainerRef}
+      className="h-full overflow-y-auto"
+      style={{
+        background: 'linear-gradient(180deg, #FDF6EC 0%, #F5EDE0 60%, #EDE4D4 100%)',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none',
+        paddingBottom: 32,
+      }}
     >
-      {chapters.map((chapter) => (
-        <div key={chapter.id} style={{ marginBottom: 28 }}>
-          <div
-            style={{
-              width: '100%',
-              marginBottom: 20,
-              padding: '10px 14px',
-              borderRadius: 999,
-              background: 'linear-gradient(135deg, #0D8C7A, #006B7A)',
-              color: '#fff',
-              fontSize: 12,
-              fontWeight: 800,
-              textAlign: 'center',
-              boxShadow: '0 4px 14px rgba(13,140,122,0.25)',
-            }}
-          >
-            {courseIcon} Chapter {chapter.chapterNumber} — {chapter.title}
+      {chapters.map((chapter, chapterIdx) => (
+        <div key={chapter.id} style={{ marginBottom: 8 }}>
+          {/* Chapter Banner */}
+          <div style={{ padding: '16px 12px 8px' }}>
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: chapterIdx * 0.05 }}
+              style={{
+                width: '100%',
+                padding: '11px 16px',
+                borderRadius: 999,
+                background: 'linear-gradient(135deg, #0D8C7A 0%, #006B7A 100%)',
+                color: '#fff',
+                fontSize: 12,
+                fontWeight: 800,
+                textAlign: 'center',
+                boxShadow: '0 4px 16px rgba(13,140,122,0.28)',
+                letterSpacing: '0.01em',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+              }}
+            >
+              <span style={{ fontSize: 16 }}>
+                {CHAPTER_EMOJIS[chapterIdx % CHAPTER_EMOJIS.length]}
+              </span>
+              <span>
+                Chapter {chapter.chapterNumber} — {chapter.title}
+              </span>
+            </motion.div>
           </div>
 
-          {chapter.topics.map((topic) => {
-            const status = getStatus(topic.id, topic.globalIndex);
-            const globalIdx = flatTopics.findIndex((t) => t.id === topic.id);
-            const prevTopic = globalIdx > 0 ? flatTopics[globalIdx - 1] : null;
-            const pathDone =
-              prevTopic &&
-              completedIds.has(prevTopic.id) &&
-              (completedIds.has(topic.id) || status !== 'locked');
+          {/* Topic nodes */}
+          <div style={{ padding: '0 8px' }}>
+            {chapter.topics.map((topic) => {
+              const status = getStatus(topic.id, topic.globalIndex);
+              const globalIdx = flatTopics.findIndex((t) => t.id === topic.id);
+              const prevTopic = globalIdx > 0 ? flatTopics[globalIdx - 1] : null;
+              const pathDone =
+                prevTopic &&
+                completedIds.has(prevTopic.id) &&
+                (completedIds.has(topic.id) || status !== 'locked');
 
-            const align = ZIGZAG[topic.globalIndex % 3];
+              const alignPct = ZIGZAG[topic.globalIndex % 3];
+              const prevAlignPct =
+                globalIdx > 0 ? ZIGZAG[flatTopics[globalIdx - 1].globalIndex % 3] : alignPct;
 
-            return (
-              <div key={topic.id} style={{ width: '100%', marginBottom: 4 }}>
-                {globalIdx > 0 && <PathConnector completed={!!pathDone} />}
-                <div style={{ display: 'flex', justifyContent: 'flex-start', paddingLeft: `${align}%`, transform: 'translateX(-32px)' }}>
-                  <MapNode
-                    status={status}
-                    isActive={activeTopicId === topic.id}
-                    title={topic.title}
-                    onClick={() => onSelectTopic(topic.id)}
-                    bounce={recentlyUnlockedId === topic.id}
-                  />
+              const isActive = activeTopicId === topic.id;
+              const isBouncing = recentlyUnlockedId === topic.id;
+
+              return (
+                <div key={topic.id} style={{ width: '100%' }}>
+                  {/* Path connector between nodes */}
+                  {globalIdx > 0 && (
+                    <PathConnector
+                      completed={!!pathDone}
+                      fromAlign={prevAlignPct}
+                      toAlign={alignPct}
+                    />
+                  )}
+
+                  {/* Node positioned at zigzag offset */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'flex-start',
+                      paddingLeft: `calc(${alignPct}% - 44px)`,
+                      paddingBottom: 4,
+                    }}
+                  >
+                    <MapNode
+                      nodeRef={isActive ? activeNodeRef : undefined}
+                      status={status}
+                      isActive={isActive}
+                      title={topic.title}
+                      onClick={() => onSelectTopic(topic.id)}
+                      bounce={isBouncing}
+                    />
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       ))}
     </div>

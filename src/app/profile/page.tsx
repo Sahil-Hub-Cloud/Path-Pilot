@@ -240,7 +240,7 @@ export default function ProfilePage() {
                             <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
                                 Complete labs to build your portfolio and showcase your work.
                             </p>
-                            <button onClick={() => router.push('/labs/1')} className="clay-btn clay-btn-primary clay-btn-sm">
+                            <button onClick={() => router.push('/labs')} className="clay-btn clay-btn-primary clay-btn-sm">
                                 Start a Lab
                             </button>
                         </div>

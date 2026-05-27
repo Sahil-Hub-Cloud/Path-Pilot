@@ -306,9 +306,12 @@ export default function LearningPage() {
               <FiArrowLeft size={16} />
             </button>
             <div className="min-w-0">
-              <h1 className="text-sm md:text-base font-black text-[#2C1A0E] truncate">{course?.title}</h1>
+              <h1 className="text-sm md:text-base font-black text-[#2C1A0E] truncate">
+                {course?.icon && <span className="mr-1.5">{course.icon}</span>}
+                {course?.title}
+              </h1>
               <p className="text-[11px] font-bold text-[#8B6E52]">
-                {done}/{total} topics · {pct}%
+                {done}/{total} topics completed · {pct}%
               </p>
             </div>
           </div>
@@ -477,36 +480,41 @@ export default function LearningPage() {
       <AnimatePresence>
         {celebrating && (
           <div className="fixed inset-0 pointer-events-none z-[100] flex items-center justify-center">
-            {['⭐', '🌟', '✨', '🎉', '💫'].map((emoji, i) => (
+            {['⭐', '🌟', '✨', '🎉', '💫', '🏆', '🎊', '⚡', '🔥', '🎯'].map((emoji, i) => (
               <motion.span
                 key={i}
-                initial={{ opacity: 1, scale: 0, x: 0, y: 0 }}
+                initial={{ opacity: 1, scale: 0.5, x: 0, y: 0 }}
                 animate={{
                   opacity: 0,
-                  scale: 2,
-                  x: (Math.random() - 0.5) * 280,
-                  y: (Math.random() - 0.5) * 280,
+                  scale: [0.5, 2.2, 1.8],
+                  x: (Math.cos((i / 10) * Math.PI * 2) * (120 + Math.random() * 120)),
+                  y: (Math.sin((i / 10) * Math.PI * 2) * (100 + Math.random() * 100)) - 40,
                 }}
-                transition={{ duration: 1.8, delay: i * 0.05 }}
-                style={{ position: 'absolute', fontSize: 36 }}
+                transition={{ duration: 1.6, delay: i * 0.04, ease: 'easeOut' }}
+                style={{ position: 'absolute', fontSize: 32 }}
               >
                 {emoji}
               </motion.span>
             ))}
             <motion.div
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ opacity: 0 }}
+              initial={{ scale: 0.5, opacity: 0, y: 10 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 20 }}
               style={{
                 background: '#fff',
-                padding: '16px 28px',
-                borderRadius: 16,
+                padding: '18px 32px',
+                borderRadius: 20,
                 fontWeight: 900,
                 color: '#16A34A',
-                boxShadow: '0 8px 32px rgba(34,197,94,0.35)',
+                fontSize: 18,
+                boxShadow: '0 8px 40px rgba(34,197,94,0.35), 0 0 0 4px rgba(34,197,94,0.12)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
               }}
             >
-              Topic complete! 🎉
+              🎉 Topic complete!
             </motion.div>
           </div>
         )}
@@ -532,7 +540,7 @@ function DoubtBotPanel({
   setInput: (v: string) => void;
   botLoading: boolean;
   sendDoubt: () => void;
-  chatRef: React.RefObject<HTMLDivElement | null>;
+  chatRef: React.RefObject<HTMLDivElement>;
   onClose: () => void;
   showClose: boolean;
 }) {

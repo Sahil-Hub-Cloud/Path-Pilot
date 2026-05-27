@@ -204,7 +204,7 @@ export default function RoadmapPage() {
                     {/* Sticky Open Lab Button */}
                     {selectedLevel && selectedLevel.status !== 'locked' && (
                         <div className="sticky bottom-0 p-4 border-t" style={{ borderColor: 'var(--border-light)', background: 'rgba(251,247,240,0.95)', backdropFilter: 'blur(8px)' }}>
-                            <button onClick={() => router.push(`/labs/${selectedLevel.id}`)} className="clay-btn clay-btn-primary w-full">
+                            <button onClick={() => router.push('/labs')} className="clay-btn clay-btn-primary w-full">
                                 🔬 Open Lab
                             </button>
                         </div>

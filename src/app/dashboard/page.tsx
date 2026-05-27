@@ -287,7 +287,7 @@ export default function DashboardPage() {
   const baseNavItems = [
     { id: 'home',        label: 'Home',        icon: <FiHome />,       action: () => {} },
     { id: 'learn',       label: 'Learn',       icon: <FiBook />,       action: () => router.push(`/learn/${courseId}`) },
-    { id: 'labs',        label: 'Labs',        icon: <FiTerminal />,   action: () => router.push(`/labs/${firstLabId}`) },
+    { id: 'labs',        label: 'Labs',        icon: <FiTerminal />,   action: () => router.push('/labs') },
     ...(profile?.collegeId || profile?.collegeCode ? [{ id: 'materials', label: 'College Materials', icon: <FiBook />, action: () => router.push('/materials') }] : []),
     { id: 'tutor',       label: 'AI Tutor',    icon: <FiCpu />,        action: () => router.push('/chat') },
     { id: 'progress',    label: 'Progress',    icon: <FiTrendingUp />, action: () => router.push('/progress') },
