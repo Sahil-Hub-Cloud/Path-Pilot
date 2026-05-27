@@ -7,14 +7,14 @@ if (!admin.apps.length) {
   if (privateKey && clientEmail) {
     admin.initializeApp({
       credential: admin.credential.cert({
-        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'path-pilot-11255',
+        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
         clientEmail: clientEmail,
         privateKey: privateKey.replace(/\\n/g, '\n'),
       })
     });
   } else {
     admin.initializeApp({
-      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'path-pilot-11255',
+      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
     });
   }
 }
