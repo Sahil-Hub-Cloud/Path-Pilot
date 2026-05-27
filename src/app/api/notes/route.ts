@@ -48,7 +48,9 @@ export async function POST(req: NextRequest) {
     );
 
     if (!res.ok) {
-      throw new Error(`Gemini API error: ${res.status}`);
+      const errorText = await res.text();
+      console.log('Exact Gemini API error happening:', errorText);
+      throw new Error(`Gemini API error: ${res.status} ${errorText}`);
     }
 
     const data = await res.json();
@@ -59,6 +61,7 @@ export async function POST(req: NextRequest) {
       generatedAt: Date.now()
     });
   } catch (err: any) {
+    console.log('Exact error happening [/api/notes]:', err);
     console.error('[/api/notes]', err.message);
     return NextResponse.json(
       { notes: `Notes unavailable right now. Try again later.`, generatedAt: Date.now() },
