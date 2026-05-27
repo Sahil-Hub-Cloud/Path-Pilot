@@ -18,7 +18,11 @@ interface UserProfile {
   onboardingComplete?: boolean;
   skillScore?: number;
   labsCompleted?: number;
+  streakDays?: number;
   streak?: number;
+  xp?: number;
+  employabilityScore?: number;
+  employabilityLevel?: string;
   createdAt?: string;
 }
 
@@ -149,15 +153,9 @@ export default function ProgressPage() {
   const { user } = useAuth();
   const { isReady } = useAuthGuard();
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [localStats, setLocalStats] = useState<any>(null);
 
   useEffect(() => {
     if (!user) return;
-    // Load local stats
-    const saved = localStorage.getItem('pathpilot_user_stats');
-    if (saved) {
-      try { setLocalStats(JSON.parse(saved)); } catch {}
-    }
     // Load profile from localStorage fallback first — keyed by UID to prevent cross-account leaks
     const localProfile = localStorage.getItem('pp_profile_' + user.uid);
     if (localProfile) {
@@ -190,9 +188,15 @@ export default function ProgressPage() {
   const firstName = displayName.split(' ')[0];
   const learningPath = profile?.learningPath || null;
   const proficiencyLevel = profile?.proficiencyLevel || null;
-  const skillScore = profile?.skillScore ?? localStats?.credits ?? 0;
-  const labsCompleted = profile?.labsCompleted ?? localStats?.labsCompleted ?? 0;
-  const streak = profile?.streak ?? localStats?.streak ?? 0;
+  const skillScore = profile?.skillScore ?? 0;
+  const labsCompleted = profile?.labsCompleted ?? 0;
+  const streak =
+    (profile?.streakDays ?? profile?.streak ?? 0) > 0
+      ? (profile?.streakDays ?? profile?.streak ?? 0)
+      : 0;
+  const xp = profile?.xp ?? 0;
+  const employabilityScore = profile?.employabilityScore ?? 0;
+  const employabilityLevel = profile?.employabilityLevel ?? 'Unrated';
   const onboardingComplete = profile?.onboardingComplete ?? false;
   const memberSince = (() => {
     if (!profile?.createdAt) return 'Recently joined';
@@ -233,9 +237,9 @@ export default function ProgressPage() {
   const roadmap = roadmapKey ? ROADMAP_STAGES[roadmapKey] : null;
 
   const stats = [
-    { label: 'Skill Score', value: skillScore > 0 ? skillScore.toString() : '—', icon: <FiAward size={20} />, color: S.teal, sub: skillScore > 0 ? 'Based on performance' : 'Complete labs to earn score' },
+    { label: 'Skill Score', value: skillScore > 0 ? skillScore.toString() : '—', icon: <FiAward size={20} />, color: S.teal, sub: skillScore > 0 ? 'Based on lab performance' : 'Complete labs to earn score' },
     { label: 'Labs Done', value: labsCompleted.toString(), icon: <FiTerminal size={20} />, color: S.green, sub: labsCompleted > 0 ? `${labsCompleted} lab${labsCompleted !== 1 ? 's' : ''} completed` : 'Start your first lab' },
-    { label: 'Day Streak', value: streak > 0 ? `${streak}` : '0', icon: <FiZap size={20} />, color: S.orange, sub: streak > 0 ? 'Keep it going!' : 'Log in daily to build streak' },
+    { label: 'Day Streak', value: String(streak), icon: <FiZap size={20} />, color: S.orange, sub: streak > 0 ? 'Keep it going!' : 'Log in daily to build streak' },
   ];
 
   return (
@@ -286,7 +290,9 @@ export default function ProgressPage() {
               {onboardingComplete && learningPath ? `${learningPath} — ${proficiencyLevel || 'Calibrated'}` : 'Complete your skill calibration'}
             </div>
             <div style={{ fontSize: 13, color: S.sub, fontWeight: 500, marginTop: 4 }}>
-              {onboardingComplete ? 'Your personalized roadmap is active below.' : 'Run the onboarding calibration to get your personalized learning path.'}
+              {onboardingComplete
+                ? `Employability: ${employabilityLevel}${employabilityScore > 0 ? ` (${employabilityScore}/100)` : ''}${xp > 0 ? ` · ${xp} XP` : ''}`
+                : 'Run the onboarding calibration to get your personalized learning path.'}
             </div>
           </div>
           {!onboardingComplete && (

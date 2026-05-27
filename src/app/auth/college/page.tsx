@@ -15,11 +15,30 @@ export default function CollegeSignupPage() {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
+  const UNIVERSITY_TYPES = [
+    'Autonomous',
+    'Government',
+    'JNTU Affiliated',
+    'Deemed University',
+    'Private University',
+    'Regional University',
+  ] as const;
+
+  const STUDENT_ID_FORMATS = [
+    'YY-Branch-Number (21CS001)',
+    'Branch-YY-Number (CS21001)',
+    'Custom',
+  ] as const;
+
   const [formData, setFormData] = useState({
     collegeName: '',
     city: '',
     state: '',
     type: 'Engineering College',
+    universityType: 'JNTU Affiliated' as (typeof UNIVERSITY_TYPES)[number],
+    universityAffiliation: '',
+    registrationNumber: '',
+    studentIdFormat: 'YY-Branch-Number (21CS001)' as (typeof STUDENT_ID_FORMATS)[number],
     adminName: '',
     email: '',
     phone: '',
@@ -146,6 +165,10 @@ export default function CollegeSignupPage() {
         state: formData.state,
         type: formData.type,
         institutionType: formData.type,
+        universityType: formData.universityType,
+        universityAffiliation: formData.universityAffiliation.trim(),
+        registrationNumber: formData.registrationNumber.trim(),
+        studentIdFormat: formData.studentIdFormat,
         adminName: formData.adminName,
         email: formData.email,
         phone: formData.phone,
@@ -285,6 +308,54 @@ export default function CollegeSignupPage() {
               <option value="Polytechnic">Polytechnic</option>
               <option value="University">University</option>
               <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div style={{ position: 'relative' }}>
+            <select
+              value={formData.universityType}
+              onChange={e => setFormData(prev => ({ ...prev, universityType: e.target.value as (typeof UNIVERSITY_TYPES)[number] }))}
+              style={{ ...inputStyle, paddingLeft: 16, cursor: 'pointer', appearance: 'none' }}
+              required
+            >
+              {UNIVERSITY_TYPES.map(t => (
+                <option key={t} value={t}>{t}</option>
+              ))}
+            </select>
+          </div>
+
+          <div style={{ position: 'relative' }}>
+            <input
+              type="text"
+              placeholder="University / Board affiliation (e.g. JNTU Kakinada)"
+              required
+              value={formData.universityAffiliation}
+              onChange={e => setFormData(prev => ({ ...prev, universityAffiliation: e.target.value }))}
+              style={{ ...inputStyle, paddingLeft: 16 }}
+            />
+          </div>
+
+          <div style={{ position: 'relative' }}>
+            <input
+              type="text"
+              placeholder="Registration / NAAC number"
+              required
+              value={formData.registrationNumber}
+              onChange={e => setFormData(prev => ({ ...prev, registrationNumber: e.target.value }))}
+              style={{ ...inputStyle, paddingLeft: 16 }}
+            />
+          </div>
+
+          <div style={{ position: 'relative' }}>
+            <select
+              value={formData.studentIdFormat}
+              onChange={e => setFormData(prev => ({ ...prev, studentIdFormat: e.target.value as (typeof STUDENT_ID_FORMATS)[number] }))}
+              style={{ ...inputStyle, paddingLeft: 16, cursor: 'pointer', appearance: 'none' }}
+              required
+            >
+              {STUDENT_ID_FORMATS.map(f => (
+                <option key={f} value={f}>{f}</option>
+              ))}
             </select>
           </div>
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -22,8 +22,11 @@ export default function CollegeAdminDashboard() {
   
   const [activeNav, setActiveNav] = useState('overview');
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [profile, setProfile] = useState<any>(null);
   const [students, setStudents] = useState<any[]>([]);
+  const redirectingRef = useRef(false);
+  const initRanRef = useRef(false);
 
   // Filtering
   const [searchQuery, setSearchQuery] = useState('');
@@ -43,6 +46,58 @@ export default function CollegeAdminDashboard() {
   const LEVELS = ["High — Job Ready", "Medium", "Unrated"];
   const STATUSES = ["Active", "Idle", "At Risk"];
 
+  const normalizeEmployabilityLevel = (raw: unknown): string => {
+    const empLevel = raw != null ? String(raw) : 'Unrated';
+    if (empLevel.includes('High') || empLevel.includes('Elite')) return 'High — Job Ready';
+    if (empLevel.includes('Medium') || empLevel.includes('Advanced')) return 'Medium';
+    return 'Unrated';
+  };
+
+  const mapStudentDoc = useCallback((docSnap: { id: string; data: () => Record<string, unknown> }) => {
+    const sd = docSnap.data() ?? {};
+    const now = new Date();
+
+    let lastDate = new Date();
+    let hasDate = false;
+    const lastActiveTs = sd.lastActiveTs as { seconds?: number } | undefined;
+    if (lastActiveTs?.seconds) {
+      lastDate = new Date(lastActiveTs.seconds * 1000);
+      hasDate = true;
+    } else if (sd.lastActiveDate) {
+      lastDate = new Date(String(sd.lastActiveDate));
+      hasDate = true;
+    }
+
+    let status = 'At Risk';
+    let diffDays = 999;
+    if (hasDate) {
+      const diffTime = Math.abs(now.getTime() - lastDate.getTime());
+      diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      if (diffDays <= 2) status = 'Active';
+      else if (diffDays <= 4) status = 'Idle';
+    }
+
+    const displayName = String(sd.displayName || sd.fullName || 'Unknown Student');
+    const initial = displayName.trim().charAt(0).toUpperCase() || '?';
+
+    return {
+      id: docSnap.id,
+      name: displayName,
+      initial,
+      email: String(sd.email || ''),
+      track: String(sd.learningPath || sd.track || 'Frontend Dev'),
+      labs: Number(sd.labsCompleted) || 0,
+      score: Number(sd.skillScore) || 0,
+      empScore: Number(sd.employabilityScore) || 0,
+      empLevel: normalizeEmployabilityLevel(sd.employabilityLevel),
+      lastActive: hasDate ? lastDate.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : 'Never',
+      diffDays,
+      status,
+      completedTopics: Array.isArray(sd.completedTopics) ? sd.completedTopics : [],
+      labSubmissions: Array.isArray(sd.completedLabsList) ? sd.completedLabsList : [],
+    };
+  }, []);
+
   // 1. Initial Load & Access Control
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -55,119 +110,123 @@ export default function CollegeAdminDashboard() {
   }, []);
 
   useEffect(() => {
-    if (!isReady || !user) return;
-    
+    initRanRef.current = false;
+    redirectingRef.current = false;
+  }, [user?.uid]);
+
+  useEffect(() => {
+    if (!isReady || !user?.uid) return;
+    if (initRanRef.current) return;
+    initRanRef.current = true;
+
     const initDashboard = async () => {
+      setLoading(true);
+      setLoadError(null);
+
+      if (!db) {
+        setLoadError('Database is not available. Please refresh the page.');
+        setLoading(false);
+        return;
+      }
+
       try {
-        setLoading(true);
-        // Check Admin Profile
         const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (!userDoc.exists() || userDoc.data()?.role !== 'college') {
-           const role = userDoc.exists() ? userDoc.data().role : 'student';
-           if (role === 'student') router.push('/dashboard');
-           else if (role === 'company') router.push('/company/dashboard');
-           else if (role === 'admin') router.push('/admin/dashboard');
-           else router.push('/dashboard');
-           return;
-         }
-        
-        const data = userDoc.data();
-        setProfile(data);
+        if (!userDoc.exists()) {
+          setLoadError('College profile not found. Please complete registration or sign in again.');
+          setStudents([]);
+          return;
+        }
 
-        // Fetch Students
-        const myCollegeCode = data.collegeCode;
-        const myCollegeId = data.collegeId || user.uid;
+        const userData = userDoc.data() ?? {};
+        if (userData.role !== 'college') {
+          if (redirectingRef.current) return;
+          redirectingRef.current = true;
+          const role = userData.role || 'student';
+          if (role === 'student') router.replace('/dashboard');
+          else if (role === 'company') router.replace('/company/dashboard');
+          else if (role === 'admin') router.replace('/admin/dashboard');
+          else router.replace('/dashboard');
+          return;
+        }
 
-        let studentDocs: any[] = [];
+        let collegeCode = userData.collegeCode ? String(userData.collegeCode) : '';
+        let collegeName = userData.collegeName ? String(userData.collegeName) : '';
+        const myCollegeId = userData.collegeId ? String(userData.collegeId) : user.uid;
 
-        if (myCollegeCode) {
-          // Try querying by collegeCode first
-          const q1 = query(
-            collection(db, 'users'),
-            where('collegeCode', '==', myCollegeCode),
-            where('role', '==', 'student')
-          );
-          const snapshot1 = await getDocs(q1);
-          
-          console.log(`Searching for students with collegeCode: ${myCollegeCode}`);
-          console.log(`Results found: ${snapshot1.size}`);
-          
-          if (!snapshot1.empty) {
-            console.log(`First student doc:`, snapshot1.docs[0].data());
-            studentDocs = snapshot1.docs;
-          } else {
-            // Also try querying by collegeId
-            const q2 = query(
-              collection(db, 'users'),
-              where('collegeId', '==', myCollegeId),
-              where('role', '==', 'student')
-            );
-            const snapshot2 = await getDocs(q2);
-            console.log(`Results found by collegeId: ${snapshot2.size}`);
-            
-            if (!snapshot2.empty) {
-              console.log(`First student doc (by collegeId):`, snapshot2.docs[0].data());
-              studentDocs = snapshot2.docs;
+        let collegeData: Record<string, unknown> = {};
+        try {
+          const collegeDoc = await getDoc(doc(db, 'colleges', myCollegeId));
+          if (collegeDoc.exists()) {
+            collegeData = collegeDoc.data() ?? {};
+            if (!collegeCode && collegeData.collegeCode) {
+              collegeCode = String(collegeData.collegeCode);
+            }
+            if (!collegeName && collegeData.collegeName) {
+              collegeName = String(collegeData.collegeName);
             }
           }
-          
-          const now = new Date();
-          const studentList = studentDocs.map(doc => {
-            const sd = doc.data();
-            
-            // Calculate Status
-            let lastDate = new Date();
-            let hasDate = false;
-            if (sd.lastActiveTs?.seconds) {
-              lastDate = new Date(sd.lastActiveTs.seconds * 1000);
-              hasDate = true;
-            } else if (sd.lastActiveDate) {
-              lastDate = new Date(sd.lastActiveDate);
-              hasDate = true;
-            }
-
-            let status = 'At Risk';
-            let diffDays = 999;
-            if (hasDate) {
-              const diffTime = Math.abs(now.getTime() - lastDate.getTime());
-              diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-              if (diffDays <= 2) status = 'Active';
-              else if (diffDays <= 4) status = 'Idle';
-            }
-
-            let empLevel = sd.employabilityLevel || 'Unrated';
-            if (empLevel.includes('High') || empLevel.includes('Elite')) empLevel = 'High — Job Ready';
-            else if (empLevel.includes('Medium') || empLevel.includes('Advanced')) empLevel = 'Medium';
-            else empLevel = 'Unrated';
-
-            return {
-              id: doc.id,
-              name: sd.displayName || sd.fullName || 'Unknown Student',
-              email: sd.email || '',
-              track: sd.learningPath || sd.track || 'Frontend Dev',
-              labs: sd.labsCompleted || 0,
-              score: sd.skillScore || 0,
-              empScore: sd.employabilityScore || 0,
-              empLevel: empLevel,
-              lastActive: hasDate ? lastDate.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : 'Never',
-              diffDays,
-              status,
-              completedTopics: sd.completedTopics || [],
-              labSubmissions: sd.completedLabsList || [],
-            };
-          });
-          setStudents(studentList.sort((a, b) => b.score - a.score));
+        } catch (collegeErr) {
+          console.warn('College dashboard: could not load colleges doc:', collegeErr);
         }
+
+        setProfile({
+          ...collegeData,
+          ...userData,
+          collegeCode: collegeCode || userData.collegeCode,
+          collegeName: collegeName || userData.collegeName,
+          collegeId: myCollegeId,
+        });
+
+        let studentDocs: { id: string; data: () => Record<string, unknown> }[] = [];
+
+        if (collegeCode) {
+          try {
+            const snapshotByCode = await getDocs(
+              query(
+                collection(db, 'users'),
+                where('collegeCode', '==', collegeCode),
+                where('role', '==', 'student')
+              )
+            );
+            if (!snapshotByCode.empty) {
+              studentDocs = snapshotByCode.docs as typeof studentDocs;
+            }
+          } catch (codeQueryErr) {
+            console.warn('College dashboard: collegeCode query failed:', codeQueryErr);
+          }
+        }
+
+        if (studentDocs.length === 0) {
+          try {
+            const snapshotById = await getDocs(
+              query(
+                collection(db, 'users'),
+                where('collegeId', '==', myCollegeId),
+                where('role', '==', 'student')
+              )
+            );
+            if (!snapshotById.empty) {
+              studentDocs = snapshotById.docs as typeof studentDocs;
+            }
+          } catch (idQueryErr) {
+            console.warn('College dashboard: collegeId query failed:', idQueryErr);
+          }
+        }
+
+        const studentList = studentDocs.map(mapStudentDoc);
+        setStudents(studentList.sort((a, b) => b.score - a.score));
       } catch (err) {
-        console.error("Dashboard init error:", err);
-        toast.error("Failed to load dashboard data.");
+        console.error('Dashboard init error:', err);
+        setLoadError('We could not load your dashboard. Please refresh or try again in a moment.');
+        setStudents([]);
+        toast.error('Failed to load dashboard data.');
       } finally {
         setLoading(false);
       }
     };
-    
+
     initDashboard();
-  }, [isReady, user, router]);
+  }, [isReady, user?.uid, mapStudentDoc, router]);
 
   // 2. Stats Calculation
   const stats = useMemo(() => {
@@ -268,6 +327,48 @@ export default function CollegeAdminDashboard() {
       </div>
     );
   }
+
+  if (loadError) {
+    return (
+      <div style={{ minHeight: '100vh', backgroundColor: '#FDF6EC', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+        <div style={{ maxWidth: 420, textAlign: 'center', background: '#fff', borderRadius: 20, border: '2px solid rgba(180,140,90,0.25)', padding: 32 }}>
+          <h2 style={{ fontSize: 20, fontWeight: 900, color: '#2C1A0E', marginBottom: 12 }}>Dashboard unavailable</h2>
+          <p style={{ color: '#8B6E52', fontSize: 14, fontWeight: 600, marginBottom: 20 }}>{loadError}</p>
+          <button
+            type="button"
+            onClick={() => {
+              initRanRef.current = false;
+              setLoadError(null);
+              setLoading(true);
+              window.location.reload();
+            }}
+            style={{ padding: '12px 24px', background: '#006B7A', color: '#fff', border: 'none', borderRadius: 12, fontWeight: 800, cursor: 'pointer' }}
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const EmptyStudentsState = ({ compact = false }: { compact?: boolean }) => (
+    <div style={{ padding: compact ? 40 : 60, textAlign: 'center', color: '#8B6E52' }}>
+      <div style={{ fontSize: 40, marginBottom: 12 }}>🎓</div>
+      <div style={{ fontSize: 16, fontWeight: 900, color: '#2C1A0E', marginBottom: 8 }}>No students enrolled yet</div>
+      <p style={{ fontSize: 14, fontWeight: 600, maxWidth: 400, margin: '0 auto 16px', lineHeight: 1.5 }}>
+        Share your institution code <strong style={{ color: '#006B7A' }}>{profile?.collegeCode || '—'}</strong> with students so they can join during signup.
+      </p>
+      {profile?.collegeCode && (
+        <button
+          type="button"
+          onClick={handleCopyCode}
+          style={{ padding: '10px 18px', background: 'rgba(0,107,122,0.1)', border: '1.5px solid rgba(0,107,122,0.3)', borderRadius: 10, color: '#006B7A', fontWeight: 800, cursor: 'pointer', fontSize: 13 }}
+        >
+          Copy college code
+        </button>
+      )}
+    </div>
+  );
 
   // --- VIEWS ---
 
@@ -372,7 +473,7 @@ export default function CollegeAdminDashboard() {
                   }} className="hover:bg-amber-50/50 transition-colors">
                     <td style={tdStyle}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, #006B7A, #2E7D52)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 12, fontWeight: 900 }}>{s.name[0]}</div>
+                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, #006B7A, #2E7D52)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 12, fontWeight: 900 }}>{s.initial ?? '?'}</div>
                         <div style={{ fontWeight: 800, color: '#2C1A0E', fontSize: 14 }}>{s.name}</div>
                       </div>
                     </td>
@@ -397,7 +498,9 @@ export default function CollegeAdminDashboard() {
             </tbody>
           </table>
           {filteredStudents.length === 0 && (
-             <div style={{ padding: 60, textAlign: 'center', color: '#8B6E52', fontWeight: 600 }}>No students match the current criteria.</div>
+            students.length === 0
+              ? <EmptyStudentsState />
+              : <div style={{ padding: 60, textAlign: 'center', color: '#8B6E52', fontWeight: 600 }}>No students match the current criteria.</div>
           )}
         </div>
     </motion.div>
@@ -471,7 +574,7 @@ export default function CollegeAdminDashboard() {
                   }} className="hover:bg-amber-50/50 transition-colors">
                     <td style={tdStyle}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, #006B7A, #2E7D52)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 12, fontWeight: 900 }}>{s.name[0]}</div>
+                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, #006B7A, #2E7D52)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 12, fontWeight: 900 }}>{s.initial ?? '?'}</div>
                         <div style={{ fontWeight: 800, color: '#2C1A0E', fontSize: 14 }}>{s.name}</div>
                       </div>
                     </td>
@@ -496,7 +599,9 @@ export default function CollegeAdminDashboard() {
             </tbody>
           </table>
           {filteredStudents.length === 0 && (
-             <div style={{ padding: 60, textAlign: 'center', color: '#8B6E52', fontWeight: 600 }}>No students match the current criteria.</div>
+            students.length === 0
+              ? <EmptyStudentsState compact />
+              : <div style={{ padding: 60, textAlign: 'center', color: '#8B6E52', fontWeight: 600 }}>No students match the current criteria.</div>
           )}
         </div>
     </motion.div>
@@ -597,9 +702,33 @@ export default function CollegeAdminDashboard() {
                 </div>
                 <div>
                   <label style={{ fontSize: 11, fontWeight: 800, color: '#8B6E52', textTransform: 'uppercase' }}>Institution Type</label>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: '#2C1A0E', marginTop: 4 }}>{profile?.institutionType || 'College / University'}</div>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: '#2C1A0E', marginTop: 4 }}>{profile?.institutionType || profile?.type || 'College / University'}</div>
                 </div>
               </div>
+              {profile?.universityType && (
+                <div>
+                  <label style={{ fontSize: 11, fontWeight: 800, color: '#8B6E52', textTransform: 'uppercase' }}>University Type</label>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: '#2C1A0E', marginTop: 4 }}>{profile.universityType}</div>
+                </div>
+              )}
+              {profile?.universityAffiliation && (
+                <div>
+                  <label style={{ fontSize: 11, fontWeight: 800, color: '#8B6E52', textTransform: 'uppercase' }}>Affiliation</label>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: '#2C1A0E', marginTop: 4 }}>{profile.universityAffiliation}</div>
+                </div>
+              )}
+              {profile?.registrationNumber && (
+                <div>
+                  <label style={{ fontSize: 11, fontWeight: 800, color: '#8B6E52', textTransform: 'uppercase' }}>Registration / NAAC</label>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: '#2C1A0E', marginTop: 4 }}>{profile.registrationNumber}</div>
+                </div>
+              )}
+              {profile?.studentIdFormat && (
+                <div>
+                  <label style={{ fontSize: 11, fontWeight: 800, color: '#8B6E52', textTransform: 'uppercase' }}>Student ID Format</label>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: '#2C1A0E', marginTop: 4 }}>{profile.studentIdFormat}</div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -732,7 +861,7 @@ export default function CollegeAdminDashboard() {
                 {/* Header Info */}
                 <div style={{ display: 'flex', gap: 24, marginBottom: 32 }}>
                    <div style={{ width: 80, height: 80, borderRadius: 24, background: 'linear-gradient(135deg, #006B7A, #2E7D52)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, fontWeight: 900, color: '#fff', boxShadow: '0 10px 20px rgba(0,107,122,0.2)', flexShrink: 0 }}>
-                     {selectedStudent.name[0]}
+                     {selectedStudent.initial ?? selectedStudent.name?.charAt(0) ?? '?'}
                    </div>
                    <div style={{ flex: 1 }}>
                      <h2 style={{ fontSize: 24, fontWeight: 900, color: '#2C1A0E', letterSpacing: '-0.02em', margin: '0 0 4px' }}>{selectedStudent.name}</h2>
