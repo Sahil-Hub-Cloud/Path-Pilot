@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { topicName, courseName } = body;
+    const { topicName, courseName, language } = body;
 
     if (!topicName || !courseName) {
       return NextResponse.json({ error: 'topicName and courseName are required' }, { status: 400 });
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const prompt = `You are an expert coding teacher for Indian engineering students. Explain ${topicName} from ${courseName} course. Use simple English mixed with Hindi/Telugu terms where helpful. Structure: ## What is it? (2-3 sentences) ## Key Concepts (5 bullet points) ## Code Example (if applicable) ## Real World Use (2-3 sentences) ## Quick Summary (1 sentence). Maximum 350 words.`;
+    const prompt = `Explain ${topicName} from ${courseName} course in simple English for an Indian engineering student. Structure as: 1) Simple Definition (2-3 sentences) 2) Key Concepts (5 bullet points) 3) Real World Example (3-4 sentences) 4) Common Mistakes (3 bullet points) 5) Quick Summary (1 sentence). Keep under 300 words.`;
 
     const res = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,

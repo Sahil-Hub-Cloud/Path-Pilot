@@ -231,7 +231,7 @@ export default function TopicPanel({
             'Content-Type': 'application/json',
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
-          body: JSON.stringify({ topicName: topic.title, courseName: courseTitle }),
+          body: JSON.stringify({ topicName: topic.title, courseName: courseTitle, language: selectedLanguage }),
         });
         const d = await res.json();
         await new Promise(r => setTimeout(r, 2500));
