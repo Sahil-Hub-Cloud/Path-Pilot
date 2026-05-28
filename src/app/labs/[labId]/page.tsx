@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import Editor from '@monaco-editor/react';
 import {
@@ -69,7 +69,15 @@ export default function LabPage() {
   const params = useParams();
   const { user } = useAuth();
   const labId  = (params?.labId as string) || 'lab-001';
-  const LAB    = LABS[labId] ?? null;                          // null = unrecognised
+  const STATIC_LAB = LABS[labId] ?? null;                          // null = unrecognised
+  const searchParams = useSearchParams();
+  const isChallenge = searchParams?.get('challenge') === 'true';
+  const courseIdParam = searchParams?.get('courseId');
+  const topicIdParam = searchParams?.get('topicId');
+  const [dynamicLab, setDynamicLab] = useState<any>(null);
+  const [isLoadingChallenge, setIsLoadingChallenge] = useState(isChallenge);
+  
+  const LAB = dynamicLab || STATIC_LAB;
   // Key by userId+labId — isolates each user's code on the same machine
   const labStorageKey = `pp_lab_code_${user?.uid || 'guest'}_${labId}`;
 
@@ -84,6 +92,7 @@ export default function LabPage() {
   const [output, setOutput]         = useState('');
   const [isRunning, setIsRunning]   = useState(false);
   const [isSubmitting, setIsSub]    = useState(false);
+  const [runCount, setRunCount]     = useState(0);
   const [execTime, setExecTime]     = useState<string | null>(null);
   const [testResults, setTests]     = useState<{pass: boolean, label: string}[]>([]);
 
@@ -147,6 +156,35 @@ export default function LabPage() {
     };
   }, []);
 
+  useEffect(() => {
+    if (isChallenge && courseIdParam && topicIdParam) {
+      setIsLoadingChallenge(true);
+      fetch('/api/challenge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ courseId: courseIdParam, topicId: topicIdParam })
+      })
+      .then(res => res.json())
+      .then(data => {
+        setDynamicLab({
+          id: `challenge-${topicIdParam}`,
+          title: data.title || 'Topic Challenge',
+          xp: data.difficulty === 'hard' ? 30 : data.difficulty === 'medium' ? 20 : 10,
+          problem: data.problemStatement || data.problem || 'Solve the problem.',
+          expected: data.expectedOutput || 'Output as expected',
+          hint: data.hint || "Think carefully about the requirements.",
+          tests: data.testCases || [],
+          defaultLang: 'python'
+        });
+        if (data.starterCode) {
+           setFiles([newFile('python', 'solution.py')].map(f => ({ ...f, content: data.starterCode })));
+        }
+      })
+      .catch(err => console.error("Failed to load dynamic challenge", err))
+      .finally(() => setIsLoadingChallenge(false));
+    }
+  }, [isChallenge, courseIdParam, topicIdParam]);
+
   // 30s Auto-save
   useEffect(() => {
     const saver = setInterval(() => {
@@ -180,6 +218,7 @@ export default function LabPage() {
   useEffect(() => {
     // Reset per-lab UI state
     setElapsedSeconds(0);
+    setRunCount(0);
     setTests([]);
     setOutput('');
     setExecTime(null);
@@ -240,6 +279,7 @@ export default function LabPage() {
   // ── Run ──────────────────────────────────────────────────────────────────
   const handleRun = async () => {
     if (!activeFile) return;
+    setRunCount(p => p + 1);
     setIsRunning(true);
     setSubmitBadge(null);
     setExecTime(null);
@@ -335,9 +375,25 @@ export default function LabPage() {
     }
   };
 
-  // ── Submit ────────────────────────────────────────────────────────────────
+  const showError = (msg: string) => {
+    setOutput(`[ERROR] Submission Failed\n\n${msg}`);
+    setIsSub(false);
+  };
+
   const handleSubmit = async () => {
     if (!activeFile) return;
+    
+    if (activeFile.content.trim().length < 10) {
+      return showError("Code must be at least 10 characters long.");
+    }
+    const cfg = LANGS[activeFile.language];
+    if (cfg && activeFile.content.trim() === cfg.starter.trim()) {
+      return showError("Code is unchanged from starter code. Please write your solution before submitting.");
+    }
+    if (runCount === 0) {
+      return showError("You must run your code at least once to verify it works before submitting.");
+    }
+
     setIsSub(true);
     setSubmitBadge(null);
     setExecTime(null);
@@ -355,10 +411,19 @@ export default function LabPage() {
       }
 
       const out = res.run.output?.trim() || '';
-      // Simple pass/fail based on expected output presence
-      const results = LAB.tests.map(t => ({ label: t.label, pass: out.length > 0 && !res.run.stderr }));
+      // Compare normalized outputs for pass/fail
+      const normalizedOut = out.replace(/\s+/g, '').toLowerCase();
+      const results = LAB.tests.map((t: any) => {
+        const normalizedExpected = t.expected.replace(/\s+/g, '').toLowerCase();
+        const pass = normalizedOut.includes(normalizedExpected) && !res.run.stderr;
+        return { label: t.label, pass };
+      });
+      
+      console.log('--- Test Results ---');
+      results.forEach((r: any) => console.log(`${r.pass ? '✅ PASS' : '❌ FAIL'}: ${r.label}`));
+      
       setTests(results);
-      const passedCount = results.filter(r => r.pass).length;
+      const passedCount = results.filter((r: any) => r.pass).length;
       const allPass     = passedCount === results.length;
       
       const pct = results.length > 0 ? (passedCount / results.length) * 100 : 0;
@@ -496,7 +561,18 @@ Rules:
     }
   };
 
-  // ─── COMING SOON SCREEN ─────────────────────────────────────────────────
+  // ─── COMING SOON / LOADING SCREEN ─────────────────────────────────────────────────
+  if (isLoadingChallenge) {
+    return (
+      <div style={{ height: '100vh', background: C.bg, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: C.text }}>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ textAlign: 'center' }}>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7C3AED] mx-auto mb-4"></div>
+          <h1 style={{ fontSize: 20, fontWeight: 700, color: C.text }}>Loading Challenge...</h1>
+        </motion.div>
+      </div>
+    );
+  }
+
   if (!LAB) {
     return (
       <div style={{ height: '100vh', background: C.bg, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: C.text, gap: 24 }}>
@@ -710,7 +786,7 @@ Rules:
 
             <div className="flex flex-col gap-4 pb-12">
               <div className="text-[9px] font-black uppercase tracking-[0.2em] text-[#444455] mb-2">04. Verification Cases</div>
-              {LAB.tests.map((t, i) => {
+              {LAB.tests.map((t: any, i: number) => {
                 const result = testResults[i];
                 return (
                   <div key={i} className={`p-4 bg-white dark:bg-gray-800/[0.02] border rounded-xl transition-all duration-300 ${result ? (result.pass ? 'border-green-500/30 bg-green-500/[0.03]' : 'border-red-500/30 bg-red-500/[0.03]') : 'border-white/10'}`}>

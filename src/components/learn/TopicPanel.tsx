@@ -10,9 +10,16 @@ import {
   FiChevronDown,
   FiChevronUp,
   FiExternalLink,
+  FiGithub,
+  FiBookOpen,
+  FiPlayCircle,
 } from 'react-icons/fi';
 import { GeminiNotes } from './GeminiNotes';
 import { getTopicResource, getCourseVideo } from '@/lib/data/topic-resources';
+import { TOPIC_VIDEOS } from '@/lib/data/videos';
+import { TOPIC_RESOURCES } from '@/lib/data/resources';
+import { db } from '@/lib/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 import type { ChallengePayload } from '@/app/api/challenge/route';
 import type { User } from 'firebase/auth';
 
@@ -55,6 +62,8 @@ const BADGE_ICONS: Record<string, string> = {
   freeCodeCamp: '🏕️',
   Guide:        '📖',
   Tutorial:     '🎥',
+  GFG:          '📗',
+  GitHub:       '🐙',
 };
 
 // ── Skeleton Loader ──────────────────────────────────────────────────────────
@@ -167,6 +176,29 @@ export default function TopicPanel({
   const [notesLoading, setNotesLoading] = useState(false);
   const [challenge, setChallenge] = useState<ChallengePayload | null>(null);
   const [challengeLoading, setChallengeLoading] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState<'telugu' | 'hindi' | 'english'>('english');
+
+  // Load preferred language from Firestore user profile
+  useEffect(() => {
+    if (!user || !db) return;
+    const fetchProfile = async () => {
+      try {
+        const userRef = doc(db, 'users', user.uid);
+        const snap = await getDoc(userRef);
+        if (snap.exists()) {
+          const data = snap.data();
+          const lang = data.preferredLanguage || (data.preferredLanguages && data.preferredLanguages[0]) || 'english';
+          const lowerLang = lang.toLowerCase();
+          if (['telugu', 'hindi', 'english'].includes(lowerLang)) {
+            setSelectedLanguage(lowerLang as 'telugu' | 'hindi' | 'english');
+          }
+        }
+      } catch (err) {
+        console.warn("Failed to fetch user language preference:", err);
+      }
+    };
+    fetchProfile();
+  }, [user]);
 
   // Reset when topic changes
   useEffect(() => {
@@ -179,7 +211,7 @@ export default function TopicPanel({
   useEffect(() => {
     if (activeTab !== 'notes' || !topic) return;
 
-    const cacheKey = `pp_notes_${user?.uid || 'guest'}_${topic.id}`;
+    const cacheKey = `pp_notes_${courseIdParam}_${topic.id}`;
     const cached = localStorage.getItem(cacheKey);
     if (cached) {
       setGeminiNotes(cached);
@@ -202,6 +234,7 @@ export default function TopicPanel({
           body: JSON.stringify({ topicName: topic.title, courseName: courseTitle }),
         });
         const d = await res.json();
+        await new Promise(r => setTimeout(r, 2500));
         if (d.notes) {
           setGeminiNotes(d.notes);
           localStorage.setItem(cacheKey, d.notes);
@@ -244,9 +277,11 @@ export default function TopicPanel({
           setChallenge({
             title: `${topic.title} Practice`,
             description: 'Sign in to generate AI-powered challenges.',
-            expectedOutput: 'N/A',
+            examples: [{ input: 'N/A', output: 'N/A' }],
+            testCases: [{ input: 'N/A', expectedOutput: 'N/A' }],
             hints: [],
             difficulty: 'Medium',
+            starterCode: '// Please sign in',
           });
           return;
         }
@@ -309,11 +344,17 @@ export default function TopicPanel({
 
   // ── Resource data ──────────────────────────────────────────────────────────
   const res = getTopicResource(topic.title);
+  const topicVideoConfig = TOPIC_VIDEOS[topic.id];
+  const selectedVideoId = topicVideoConfig?.[selectedLanguage] || res?.videoId || getCourseVideo(courseIdParam);
+  
+  const additionalResources = TOPIC_RESOURCES[topic.id] || [];
+  const combinedResources = [...(res?.resources || []), ...additionalResources];
+
   const videoEmbed = topic.videoUrl
     ? topic.videoUrl
-    : res?.videoId
-      ? `https://www.youtube.com/embed/${res.videoId}?rel=0&modestbranding=1`
-      : `https://www.youtube.com/embed/${getCourseVideo(courseIdParam)}?rel=0&modestbranding=1`;
+    : selectedVideoId
+      ? `https://www.youtube.com/embed/${selectedVideoId}?rel=0&modestbranding=1`
+      : null;
 
   const diffCfg = DIFF_CONFIG[topic.difficulty] ?? DIFF_CONFIG['Beginner'];
 
@@ -495,6 +536,28 @@ export default function TopicPanel({
             {/* VIDEO TAB */}
             {activeTab === 'video' && (
               <div>
+                <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+                  {(['english', 'hindi', 'telugu'] as const).map(lang => (
+                    <button
+                      key={lang}
+                      onClick={() => setSelectedLanguage(lang)}
+                      style={{
+                        padding: '6px 12px',
+                        borderRadius: 20,
+                        border: selectedLanguage === lang ? '1.5px solid #0D8C7A' : '1.5px solid rgba(180,140,90,0.2)',
+                        background: selectedLanguage === lang ? 'rgba(13,140,122,0.1)' : '#fff',
+                        color: selectedLanguage === lang ? '#0D8C7A' : '#8B6E52',
+                        fontSize: 11,
+                        fontWeight: 700,
+                        textTransform: 'capitalize',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                      }}
+                    >
+                      {lang}
+                    </button>
+                  ))}
+                </div>
                 {videoEmbed ? (
                   <>
                     <div
@@ -552,9 +615,9 @@ export default function TopicPanel({
             {/* RESOURCES TAB */}
             {activeTab === 'resources' && (
               <div>
-                {(res?.resources || []).length > 0 ? (
+                {combinedResources.length > 0 ? (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                    {res!.resources.map((link, i) => (
+                    {combinedResources.map((link, i) => (
                       <motion.a
                         key={i}
                         href={link.url}
@@ -710,7 +773,7 @@ export default function TopicPanel({
                         }}
                       >
                         <span style={{ fontWeight: 800, fontFamily: 'inherit' }}>Expected output: </span>
-                        {challenge.expectedOutput}
+                        {(challenge as any).expectedOutput || (challenge.examples && challenge.examples[0] ? challenge.examples[0].output : 'N/A')}
                       </div>
 
                       {/* Hints accordion */}
