@@ -235,9 +235,11 @@ export default function TopicPanel({
         });
         const d = await res.json();
         await new Promise(r => setTimeout(r, 2500));
-        if (d.notes) {
-          setGeminiNotes(d.notes);
-          localStorage.setItem(cacheKey, d.notes);
+        if (d.content) {
+          setGeminiNotes(d.content);
+          localStorage.setItem(cacheKey, d.content);
+        } else if (d.error) {
+          setGeminiNotes(`Error: ${d.error}`);
         } else {
           setGeminiNotes('Could not load notes at this time.');
         }
