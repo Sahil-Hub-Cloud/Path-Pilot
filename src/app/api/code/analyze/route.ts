@@ -3,11 +3,12 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const MODEL_PRIORITY = ['gemini-2.0-flash', 'gemini-1.5-flash-latest', 'gemini-1.5-flash'];
 
 export async function POST(req: Request) {
   try {
     const { code, language, problemId } = await req.json();
+    console.log('[/api/code/analyze] API Key exists:', !!process.env.GEMINI_API_KEY);
 
     const prompt = `Analyze this ${language} code for logic errors only. 
     Problem Context: ${problemId}
@@ -22,9 +23,27 @@ export async function POST(req: Request) {
     Code:
     ${code}`;
 
-    const result = await model.generateContent(prompt);
-    const responseText = result.response.text();
-    
+    let responseText = '';
+    let lastErr: any = null;
+
+    for (const modelName of MODEL_PRIORITY) {
+      try {
+        console.log(`[/api/code/analyze] Trying model: ${modelName}`);
+        const m = genAI.getGenerativeModel({ model: modelName });
+        const result = await m.generateContent(prompt);
+        responseText = result.response.text();
+        console.log(`[/api/code/analyze] Success with model: ${modelName}`);
+        break;
+      } catch (err: any) {
+        console.warn(`[/api/code/analyze] Model "${modelName}" failed:`, err?.message);
+        lastErr = err;
+        const msg = (err?.message || '').toLowerCase();
+        if (!msg.includes('404') && !msg.includes('not found')) break;
+      }
+    }
+
+    if (!responseText) throw lastErr || new Error('No response from AI');
+
     // Extract JSON from potential markdown tags
     const jsonStr = responseText.replace(/```json|```/g, "").trim();
     const issues = JSON.parse(jsonStr);

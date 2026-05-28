@@ -46,6 +46,8 @@ export async function POST(req: NextRequest) {
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
+    console.log('[/api/challenge] API Key exists:', !!apiKey, '| Topic:', topicName, '| Course:', courseName);
+
     if (!apiKey) {
       // Fallback challenge when API Key is missing
       const isPython = courseId.includes('python');
@@ -76,24 +78,41 @@ Rules:
 3. If the course is Python-based (or contains python in courseId), use Python syntax for the starterCode and testCases. If Javascript-based, use JavaScript syntax.
 4. Return ONLY valid raw JSON (no markdown block wrapper).`;
 
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            temperature: 0.5,
-            maxOutputTokens: 1000,
-            responseMimeType: 'application/json',
-          },
-        }),
-      }
-    );
+    // Try models in priority order
+    const MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash-latest', 'gemini-1.5-flash'];
+    let res: Response | null = null;
+    let usedModel = '';
 
-    if (!res.ok) {
-      throw new Error(`Gemini API error: ${res.status}`);
+    for (const modelName of MODELS) {
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+      console.log(`[/api/challenge] Trying model: ${modelName} | Endpoint: ${endpoint.split('?')[0]}`);
+      try {
+        const attempt = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: {
+              temperature: 0.5,
+              maxOutputTokens: 1000,
+            },
+          }),
+        });
+        if (attempt.status === 404 || attempt.status === 400) {
+          console.warn(`[/api/challenge] Model ${modelName} returned ${attempt.status}, trying next...`);
+          continue;
+        }
+        res = attempt;
+        usedModel = modelName;
+        console.log(`[/api/challenge] Success with model: ${modelName}`);
+        break;
+      } catch (fetchErr: any) {
+        console.warn(`[/api/challenge] Fetch error for ${modelName}:`, fetchErr?.message);
+      }
+    }
+
+    if (!res || !res.ok) {
+      throw new Error(`Gemini API error: ${res?.status ?? 'all models failed'}`);
     }
 
     const data = await res.json();

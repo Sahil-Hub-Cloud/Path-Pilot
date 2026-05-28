@@ -41,7 +41,9 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Content too short to generate a meaningful roadmap." }, { status: 400 });
         }
 
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        console.log('[/api/ingest] API Key exists:', !!process.env.GEMINI_API_KEY);
+
+        const MODEL_PRIORITY = ['gemini-2.0-flash', 'gemini-1.5-flash-latest', 'gemini-1.5-flash'];
 
         const prompt = `
         You are Path Pilot's AI Education Architect. Your mission is to transform a student's syllabus into a high-octane, interactive learning journey.
@@ -90,9 +92,26 @@ export async function POST(req: Request) {
         - Red/Pink for Advanced/Offensive/Simulation
         `;
 
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const textResponse = response.text();
+        let textResponse = '';
+        let lastErr: any = null;
+
+        for (const modelName of MODEL_PRIORITY) {
+            try {
+                console.log(`[/api/ingest] Trying model: ${modelName}`);
+                const model = genAI.getGenerativeModel({ model: modelName });
+                const result = await model.generateContent(prompt);
+                textResponse = result.response.text();
+                console.log(`[/api/ingest] Success with model: ${modelName}`);
+                break;
+            } catch (err: any) {
+                console.warn(`[/api/ingest] Model "${modelName}" failed:`, err?.message);
+                lastErr = err;
+                const msg = (err?.message || '').toLowerCase();
+                if (!msg.includes('404') && !msg.includes('not found')) break;
+            }
+        }
+
+        if (!textResponse) throw lastErr || new Error('No response from AI');
 
         // Clean up markdown markers
         const jsonMatch = textResponse.match(/\{[\s\S]*\}/);
