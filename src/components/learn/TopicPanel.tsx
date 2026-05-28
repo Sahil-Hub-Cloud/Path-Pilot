@@ -211,7 +211,7 @@ export default function TopicPanel({
   useEffect(() => {
     if (activeTab !== 'notes' || !topic) return;
 
-    const cacheKey = `pp_notes_${courseIdParam}_${topic.id}`;
+    const cacheKey = `pp_notes_v2_${courseIdParam}_${topic.id}_${selectedLanguage}`;
     const cached = localStorage.getItem(cacheKey);
     if (cached) {
       setGeminiNotes(cached);
