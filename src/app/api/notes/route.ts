@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
   } catch (err: any) {
     console.error('[/api/notes] Error:', err.message);
     return NextResponse.json(
-      { notes: `Notes unavailable right now. Try again later.`, generatedAt: Date.now() },
+      { notes: `Notes unavailable right now. Try again later.\n\nError details: ${err.message}`, generatedAt: Date.now() },
       { status: 200 }
     );
   }
