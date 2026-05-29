@@ -31,6 +31,10 @@ const TRACKS = [
   { id: 'blockchain',  emoji: '⛓️', label: 'Blockchain Dev',           desc: 'Solidity · Web3.js · Ethereum · DeFi' },
   { id: 'javascript',  emoji: '🟨', label: 'JavaScript Mastery',       desc: 'V8 Engine · Closures · Async · Patterns' },
   { id: 'aws',         emoji: '☁️', label: 'DevOps with AWS Cloud',    desc: 'EC2 · S3 · Lambda · Terraform · CI/CD' },
+  { id: 'ai-ml',       emoji: '🧠', label: 'AI/ML Engineer',           desc: 'PyTorch · Transformers · MLOps · LLM Fine-tuning' },
+  { id: 'data-eng',    emoji: '🗄️', label: 'Data Engineering',         desc: 'SQL · Spark · Airflow · Kafka · Data Lakes · ETL' },
+  { id: 'web3',        emoji: '⛓️', label: 'Web3/Blockchain Pro',      desc: 'Solidity · DeFi · Auditing · IPFS · DAO · Bridges' },
+  { id: 'cloud-native',emoji: '☁️', label: 'Cloud Native Developer',   desc: 'Docker · K8s Operators · Terraform · Prometheus · CI/CD' },
 ];
 
 const LEVELS = [

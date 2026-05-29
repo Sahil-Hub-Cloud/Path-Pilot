@@ -1,6 +1,6 @@
 /**
  * PATH PILOT — CENTRAL COURSE REGISTRY
- * Single source of truth for all 18 courses.
+ * Single source of truth for all 22 courses.
  * courseId = URL slug used in /learn/[courseId]
  */
 
@@ -176,6 +176,42 @@ export const COURSES: CourseEntry[] = [
     duration: '12 weeks',
     level: 'intermediate',
     trackIds: ['aws'],
+  },
+  {
+    courseId: 'ai-ml-engineer',
+    roadmapKey: 'ai-ml-engineer',
+    label: 'AI/ML Engineer',
+    emoji: '🧠',
+    duration: '14 weeks',
+    level: 'advanced',
+    trackIds: ['ai-ml'],
+  },
+  {
+    courseId: 'data-engineering',
+    roadmapKey: 'data-engineering',
+    label: 'Data Engineering',
+    emoji: '🗄️',
+    duration: '12 weeks',
+    level: 'intermediate',
+    trackIds: ['data-eng'],
+  },
+  {
+    courseId: 'web3-pro',
+    roadmapKey: 'web3-pro',
+    label: 'Web3/Blockchain Pro',
+    emoji: '⛓️',
+    duration: '14 weeks',
+    level: 'advanced',
+    trackIds: ['web3'],
+  },
+  {
+    courseId: 'cloud-native',
+    roadmapKey: 'cloud-native',
+    label: 'Cloud Native Developer',
+    emoji: '☁️',
+    duration: '12 weeks',
+    level: 'intermediate',
+    trackIds: ['cloud-native'],
   },
 ];
 

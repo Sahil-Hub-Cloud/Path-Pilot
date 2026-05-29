@@ -309,6 +309,14 @@ export const TRACK_DEFAULT_LAB: Record<string, string> = {
   'ai_nlp':            'python-basics',
   'machine_learning':  'python-basics',
   'data_science_python': 'python-basics',
+  'AI/ML Engineer':      'python-basics',
+  'Data Engineering':    'python-basics',
+  'Web3/Blockchain Pro': 'js-functions',
+  'Cloud Native Developer': 'cloud-bash',
+  'ai-ml-engineer':      'python-basics',
+  'data-engineering':    'python-basics',
+  'web3-pro':            'js-functions',
+  'cloud-native':        'cloud-bash',
 };
 
 // Ordered list for "browse all labs" features

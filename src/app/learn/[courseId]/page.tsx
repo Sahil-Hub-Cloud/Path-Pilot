@@ -114,8 +114,9 @@ export default function LearningPage() {
 
   const defaultLabId =
     TRACK_DEFAULT_LAB[roadmapId] ||
+    TRACK_DEFAULT_LAB[courseIdParam] ||
     TRACK_DEFAULT_LAB[course?.title || ''] ||
-  'lab-001';
+    'lab-001';
 
   const storageKey = `pp_learn_${user?.uid || 'guest'}_${roadmapId}`;
 

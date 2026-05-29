@@ -157,33 +157,56 @@ export default function LabPage() {
   }, []);
 
   useEffect(() => {
-    if (isChallenge && courseIdParam && topicIdParam) {
+    if (!isChallenge || !courseIdParam || !topicIdParam) return;
+
+    const loadChallenge = async () => {
       setIsLoadingChallenge(true);
-      fetch('/api/challenge', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ courseId: courseIdParam, topicId: topicIdParam })
-      })
-      .then(res => res.json())
-      .then(data => {
+      try {
+        const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+        if (user) {
+          const token = await user.getIdToken();
+          headers.Authorization = `Bearer ${token}`;
+        }
+        const res = await fetch('/api/challenge', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ courseId: courseIdParam, topicId: topicIdParam }),
+        });
+        const data = await res.json();
+        const c = data.challenge;
+        if (!res.ok || !c) throw new Error(data.error || 'Challenge load failed');
+
+        const lang = courseIdParam.includes('python') || courseIdParam.includes('ml') || courseIdParam.includes('data')
+          ? 'python'
+          : courseIdParam.includes('web3') || courseIdParam.includes('blockchain')
+            ? 'javascript'
+            : 'python';
+
         setDynamicLab({
           id: `challenge-${topicIdParam}`,
-          title: data.title || 'Topic Challenge',
-          xp: data.difficulty === 'hard' ? 30 : data.difficulty === 'medium' ? 20 : 10,
-          problem: data.problemStatement || data.problem || 'Solve the problem.',
-          expected: data.expectedOutput || 'Output as expected',
-          hint: data.hint || "Think carefully about the requirements.",
-          tests: data.testCases || [],
-          defaultLang: 'python'
+          title: c.title || 'Topic Challenge',
+          xp: c.difficulty === 'Hard' ? 30 : c.difficulty === 'Medium' ? 20 : 10,
+          problem: c.description || 'Solve the problem.',
+          expected: c.testCases?.[0]?.expectedOutput || c.examples?.[0]?.output || 'Output as expected',
+          hint: c.hints?.[0] || 'Think carefully about the requirements.',
+          tests: (c.testCases || []).map((t: { input: string; expectedOutput: string }, i: number) => ({
+            pass: false,
+            label: `Test ${i + 1}: ${t.input} → ${t.expectedOutput}`,
+          })),
+          defaultLang: lang,
         });
-        if (data.starterCode) {
-           setFiles([newFile('python', 'solution.py')].map(f => ({ ...f, content: data.starterCode })));
+        if (c.starterCode) {
+          setFiles([{ ...newFile(lang, lang === 'python' ? 'solution.py' : 'solution.js'), content: c.starterCode }]);
         }
-      })
-      .catch(err => console.error("Failed to load dynamic challenge", err))
-      .finally(() => setIsLoadingChallenge(false));
-    }
-  }, [isChallenge, courseIdParam, topicIdParam]);
+      } catch (err) {
+        console.error('Failed to load dynamic challenge', err);
+      } finally {
+        setIsLoadingChallenge(false);
+      }
+    };
+
+    loadChallenge();
+  }, [isChallenge, courseIdParam, topicIdParam, user]);
 
   // 30s Auto-save
   useEffect(() => {

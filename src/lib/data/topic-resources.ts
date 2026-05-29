@@ -217,6 +217,10 @@ export const COURSE_FALLBACK_VIDEOS: Record<string, string> = {
   'blockchain':         'ipwxYa-F1uY',
   'javascript-mastery': 'PkZNo7MFNFg',
   'devops-aws':         'ulprqHHWlng',
+  'ai-ml-engineer':     'NWONeJKn9Kc',
+  'data-engineering':   'r-uOLxNrNk8',
+  'web3-pro':           'ipwxYa-F1uY',
+  'cloud-native':       'fqMOX6JJhGo',
 };
 
 /** Look up resources for a topic title. Falls back to null if not found. */

@@ -15,9 +15,9 @@ import {
   FiPlayCircle,
 } from 'react-icons/fi';
 import { GeminiNotes } from './GeminiNotes';
-import { getTopicResource, getCourseVideo } from '@/lib/data/topic-resources';
-import { TOPIC_VIDEOS } from '@/lib/data/videos';
-import { TOPIC_RESOURCES } from '@/lib/data/resources';
+import { getTopicResource } from '@/lib/data/topic-resources';
+import { getTopicVideoId, type VideoLanguage } from '@/lib/data/videos';
+import { getTopicResourcesForId, type ResourceLink } from '@/lib/data/resources';
 import { db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import type { ChallengePayload } from '@/app/api/challenge/route';
@@ -350,7 +350,12 @@ export default function TopicPanel({
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ topicName: topic.title, courseName: courseTitle }),
+          body: JSON.stringify({
+            topicName: topic.title,
+            courseName: courseTitle || courseIdParam,
+            topicId: topic.id,
+            courseId: courseIdParam,
+          }),
         });
         const d = await res.json();
         if (d.challenge) {
@@ -367,7 +372,13 @@ export default function TopicPanel({
     };
 
     fetchChallenge();
-  }, [activeTab, topic, courseTitle, user]);
+  }, [activeTab, topic, courseTitle, courseIdParam, user]);
+
+  const langLabels: { id: VideoLanguage; label: string; flag: string }[] = [
+    { id: 'telugu', label: 'Telugu', flag: '🇮🇳' },
+    { id: 'hindi', label: 'Hindi', flag: '🇮🇳' },
+    { id: 'english', label: 'English', flag: '🌐' },
+  ];
 
   // ── Empty state ────────────────────────────────────────────────────────────
   if (!topic) {
@@ -403,17 +414,23 @@ export default function TopicPanel({
 
   // ── Resource data ──────────────────────────────────────────────────────────
   const res = getTopicResource(topic.title);
-  const topicVideoConfig = TOPIC_VIDEOS[topic.id];
-  const selectedVideoId = topicVideoConfig?.[selectedLanguage] || res?.videoId || getCourseVideo(courseIdParam);
-  
-  const additionalResources = TOPIC_RESOURCES[topic.id] || [];
-  const combinedResources = [...(res?.resources || []), ...additionalResources];
+  const pipelineResources = getTopicResourcesForId(topic.id);
+  const combinedResources: ResourceLink[] = [
+    ...pipelineResources,
+    ...(res?.resources || []).filter(
+      (r) => !pipelineResources.some((p) => p.url === r.url)
+    ),
+  ];
 
-  const videoEmbed = topic.videoUrl
-    ? topic.videoUrl
-    : selectedVideoId
-      ? `https://www.youtube.com/embed/${selectedVideoId}?rel=0&modestbranding=1`
-      : null;
+  const selectedVideoId = getTopicVideoId(
+    topic.id,
+    courseIdParam,
+    selectedLanguage,
+    topic.videoUrl
+  );
+  const videoEmbed = selectedVideoId
+    ? `https://www.youtube.com/embed/${selectedVideoId}?rel=0&modestbranding=1`
+    : null;
 
   const diffCfg = DIFF_CONFIG[topic.difficulty] ?? DIFF_CONFIG['Beginner'];
 
@@ -650,25 +667,29 @@ export default function TopicPanel({
             {/* VIDEO TAB */}
             {activeTab === 'video' && (
               <div>
-                <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
-                  {(['english', 'hindi', 'telugu'] as const).map(lang => (
+                <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
+                  {langLabels.map(({ id, label, flag }) => (
                     <button
-                      key={lang}
-                      onClick={() => setSelectedLanguage(lang)}
+                      key={id}
+                      type="button"
+                      onClick={() => setSelectedLanguage(id)}
                       style={{
-                        padding: '6px 12px',
+                        padding: '6px 14px',
                         borderRadius: 20,
-                        border: selectedLanguage === lang ? '1.5px solid #0D8C7A' : '1.5px solid rgba(180,140,90,0.2)',
-                        background: selectedLanguage === lang ? 'rgba(13,140,122,0.1)' : '#fff',
-                        color: selectedLanguage === lang ? '#0D8C7A' : '#8B6E52',
+                        border: selectedLanguage === id ? '1.5px solid #0D8C7A' : '1.5px solid rgba(180,140,90,0.2)',
+                        background: selectedLanguage === id ? 'rgba(13,140,122,0.1)' : '#fff',
+                        color: selectedLanguage === id ? '#0D8C7A' : '#8B6E52',
                         fontSize: 11,
                         fontWeight: 700,
-                        textTransform: 'capitalize',
                         cursor: 'pointer',
-                        transition: 'all 0.2s'
+                        transition: 'all 0.2s',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 6,
                       }}
                     >
-                      {lang}
+                      <span>{flag}</span>
+                      <span>{label}</span>
                     </button>
                   ))}
                 </div>
@@ -897,7 +918,7 @@ export default function TopicPanel({
 
                       {/* Open in Lab button */}
                       <motion.a
-                        href={`/labs/${defaultLabId}`}
+                        href={`/labs/${defaultLabId}?challenge=true&courseId=${encodeURIComponent(courseIdParam)}&topicId=${encodeURIComponent(topic.id)}`}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.97 }}
                         style={{

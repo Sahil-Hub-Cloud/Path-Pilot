@@ -1,6 +1,8 @@
 // Job-Ready Roadmaps for Indian Students
 // Auto-generated 18 course master configuration
 
+import { NEW_TRACK_ROADMAPS } from './new-tracks-roadmaps';
+
 export interface RoadmapStep {
     week: number
     topic: string
@@ -16,6 +18,10 @@ export interface Topic {
     duration: string
     videoUrl?: string
     pdfs?: { name: string; url: string }[]
+    estimatedHours?: number
+    tags?: string[]
+    challengeId?: string
+    resourceId?: string
 }
 
 export interface Chapter {
@@ -14957,6 +14963,7 @@ export const ROADMAPS: Record<string, Roadmap> = {
           }
 ]
     },
+    ...NEW_TRACK_ROADMAPS,
 };
 
 // ─── Hyphenated URL-slug aliases → existing roadmap keys ────────────────────
@@ -14979,6 +14986,10 @@ export const COURSE_SLUG_MAP: Record<string, string> = {
   'devops-aws': 'devops-aws',
   'cybersecurity': 'cybersecurity',
   'blockchain': 'blockchain',
+  'ai-ml-engineer': 'ai-ml-engineer',
+  'data-engineering': 'data-engineering',
+  'web3-pro': 'web3-pro',
+  'cloud-native': 'cloud-native',
 
   // Legacy onboarding trackId aliases (kept for backward compat)
   'frontend_react': 'frontend-react',
@@ -15013,6 +15024,10 @@ export const COURSE_SLUG_MAP: Record<string, string> = {
   'mobile-dev': 'flutter',
   'dsa': 'dsa-interviews',
   'data-science-python': 'data-science',
+  'ai-ml': 'ai-ml-engineer',
+  'data-eng': 'data-engineering',
+  'web3': 'web3-pro',
+  'cloud-native-dev': 'cloud-native',
 };
 
 export const getRoadmapById = (id: string): Roadmap | null => {

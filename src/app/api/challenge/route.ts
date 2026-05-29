@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { adminAuth, adminDb } from '@/lib/firebase-admin';
 import { GEMINI_GENERATE_MODELS } from '@/lib/gemini-models';
+import { getTopicMeta } from '@/lib/data/content-pipeline';
 
 export interface ChallengePayload {
   title: string;
@@ -26,10 +27,19 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { topicName, courseName, topicId, courseId } = body;
+    let { topicName, courseName, topicId, courseId } = body;
 
-    if (!topicName || !courseName || !topicId || !courseId) {
-      return NextResponse.json({ error: 'topicName, courseName, topicId, and courseId are required' }, { status: 400 });
+    if (!topicId || !courseId) {
+      return NextResponse.json({ error: 'topicId and courseId are required' }, { status: 400 });
+    }
+
+    if (!topicName || !courseName) {
+      const meta = getTopicMeta(courseId, topicId);
+      if (!meta) {
+        return NextResponse.json({ error: 'Could not resolve topic from courseId and topicId' }, { status: 400 });
+      }
+      topicName = meta.topicName;
+      courseName = meta.courseName;
     }
 
     // Check Firestore Cache First

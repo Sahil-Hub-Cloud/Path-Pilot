@@ -20,6 +20,7 @@ import SkillGraph from '@/components/dashboard/SkillGraph';
 import NotificationBell from '@/components/NotificationBell';
 import { TRACK_DEFAULT_LAB } from '@/lib/data/labs';
 import { ROADMAPS, COURSE_SLUG_MAP } from '@/lib/data/roadmaps';
+import { getCourseIdFromLabel } from '@/lib/data/course-map';
 
 interface UserProfile {
   displayName?: string;
@@ -243,31 +244,7 @@ export default function DashboardPage() {
 
   const empColor = employabilityLevel.includes('High') ? '#10B981' : employabilityLevel === 'Medium' ? '#F59E0B' : '#EF4444';
 
-  // Map Firestore learningPath label → URL slug matching COURSE_SLUG_MAP keys
-  const getCourseId = (path: string | null): string => {
-    if (!path) return 'frontend-react';
-    const p = path.toLowerCase();
-    if (p.includes('flutter'))                                                    return 'flutter';
-    if (p.includes('android') || p.includes('kotlin'))                            return 'android-kotlin';
-    if (p.includes('react native'))                                               return 'react-native';
-    if (p.includes('mern') || p.includes('full stack') || p.includes('fullstack')) return 'fullstack-mern';
-    if (p.includes('devops') || p.includes('aws'))                               return 'devops-aws';
-    if (p.includes('docker') || p.includes('kubernetes') || p.includes('cloud')) return 'docker-kubernetes';
-    if (p.includes('cybersecurity') || p.includes('cyber') || p.includes('security')) return 'cybersecurity';
-    if (p.includes('blockchain'))                                                 return 'blockchain';
-    if (p.includes('machine learning') || p.includes('ml engineer'))             return 'machine-learning';
-    if (p.includes('data science') || p.includes('data analyst'))                return 'data-science';
-    if (p.includes('nlp') || p.includes('natural language') || p.includes('ai engineering') || p.includes('prompt')) return 'nlp';
-    if (p.includes('dsa') || p.includes('algorithm') || p.includes('interview')) return 'dsa-interviews';
-    if (p.includes('django'))                                                     return 'backend-django';
-    if (p.includes('vue'))                                                        return 'frontend-vue';
-    if (p.includes('javascript mastery'))                                         return 'javascript-mastery';
-    if (p.includes('python beginner'))                                            return 'python-beginners';
-    if (p.includes('backend') || p.includes('node'))                             return 'backend-nodejs';
-    if (p.includes('frontend') || p.includes('react'))                           return 'frontend-react';
-    return 'frontend-react';
-  };
-  const courseId = getCourseId(learningPath);
+  const courseId = getCourseIdFromLabel(learningPath);
 
   // Resolve the first lab for this student's track
   const firstLabId = TRACK_DEFAULT_LAB[learningPath || ''] ?? 'lab-001';
