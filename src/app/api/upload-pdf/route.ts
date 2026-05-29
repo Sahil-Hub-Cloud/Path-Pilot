@@ -33,7 +33,27 @@ export async function POST(req: NextRequest) {
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const MODEL_PRIORITY = ['gemini-2.0-flash', 'gemini-1.5-flash-latest', 'gemini-1.5-flash'];
+    console.log('[/api/upload-pdf] API Key exists:', !!apiKey);
+
+    // Helper: try models in priority order
+    async function generateWithFallback(prompt: string): Promise<string> {
+      for (const modelName of MODEL_PRIORITY) {
+        try {
+          console.log(`[/api/upload-pdf] Trying model: ${modelName}`);
+          const model = genAI.getGenerativeModel({ model: modelName });
+          const result = await model.generateContent(prompt);
+          const text = result.response.text();
+          console.log(`[/api/upload-pdf] Success with model: ${modelName}, chars: ${text.length}`);
+          return text;
+        } catch (err: any) {
+          console.warn(`[/api/upload-pdf] Model "${modelName}" failed:`, err?.message);
+          const msg = (err?.message || '').toLowerCase();
+          if (!msg.includes('404') && !msg.includes('not found')) throw err;
+        }
+      }
+      throw new Error('All Gemini models failed');
+    }
 
     // ── Main content prompt (flashcards, formulas, MCQs) ─────────────────────
     const contentPrompt = `You are an expert academic content creator for Indian engineering students. Analyze this syllabus/subject PDF and return ONLY valid JSON with this structure:
@@ -115,15 +135,14 @@ CONTENT (first 20,000 chars):
 ${text.substring(0, 20000)}
 `;
 
-    // Run both prompts in parallel
-    const [contentResult, flowchartResult] = await Promise.all([
-      model.generateContent(contentPrompt),
-      model.generateContent(flowchartPrompt),
+    // Run both prompts in parallel using fallback helper
+    const [contentResultText, flowchartResultText] = await Promise.all([
+      generateWithFallback(contentPrompt),
+      generateWithFallback(flowchartPrompt),
     ]);
 
     // Parse main content
-    let aiContentText = contentResult.response.text();
-    aiContentText = aiContentText.replace(/```json/gi, '').replace(/```/g, '').trim();
+    let aiContentText = contentResultText.replace(/```json/gi, '').replace(/```/g, '').trim();
     let parsedData;
     try {
       parsedData = JSON.parse(aiContentText);
@@ -138,8 +157,7 @@ ${text.substring(0, 20000)}
     // Parse flowcharts (non-fatal — empty array on failure)
     let parsedFlowcharts: any[] = [];
     try {
-      let aiFlowchartText = flowchartResult.response.text();
-      aiFlowchartText = aiFlowchartText.replace(/```json/gi, '').replace(/```/g, '').trim();
+      let aiFlowchartText = flowchartResultText.replace(/```json/gi, '').replace(/```/g, '').trim();
       parsedFlowcharts = JSON.parse(aiFlowchartText);
       if (!Array.isArray(parsedFlowcharts)) parsedFlowcharts = [];
     } catch (flowErr) {

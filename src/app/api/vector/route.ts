@@ -24,7 +24,9 @@ export async function POST(request: NextRequest) {
             let embedding;
 
             if (GEMINI_API_KEY) {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${GEMINI_API_KEY}`, {
+                const embeddingEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${GEMINI_API_KEY}`;
+                console.log('[/api/vector] Indexing — embedding endpoint:', embeddingEndpoint.split('?')[0]);
+                const response = await fetch(embeddingEndpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -32,8 +34,13 @@ export async function POST(request: NextRequest) {
                         content: { parts: [{ text }] }
                     })
                 });
+                if (!response.ok) {
+                    console.error(`[/api/vector] Embedding error: ${response.status} ${response.statusText}`);
+                    throw new Error(`Embedding API error: ${response.status}`);
+                }
                 const data = await response.json();
                 embedding = data.embedding.values;
+                console.log('[/api/vector] Indexing — embedding generated, dims:', embedding?.length);
             } else {
                 embedding = new Array(768).fill(0);
             }
@@ -57,7 +64,9 @@ export async function POST(request: NextRequest) {
             let embedding;
 
             if (GEMINI_API_KEY) {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${GEMINI_API_KEY}`, {
+                const embeddingEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${GEMINI_API_KEY}`;
+                console.log('[/api/vector] Search — embedding endpoint:', embeddingEndpoint.split('?')[0]);
+                const response = await fetch(embeddingEndpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -65,8 +74,13 @@ export async function POST(request: NextRequest) {
                         content: { parts: [{ text: queryText }] }
                     })
                 });
+                if (!response.ok) {
+                    console.error(`[/api/vector] Search embedding error: ${response.status} ${response.statusText}`);
+                    throw new Error(`Embedding API error: ${response.status}`);
+                }
                 const data = await response.json();
                 embedding = data.embedding.values;
+                console.log('[/api/vector] Search — embedding generated, dims:', embedding?.length);
             } else {
                 embedding = new Array(768).fill(0);
             }

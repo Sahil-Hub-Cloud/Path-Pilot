@@ -16,7 +16,10 @@ export async function POST(request: NextRequest) {
         }
 
         const model = "text-embedding-004";
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:embedContent?key=${GEMINI_API_KEY}`, {
+        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:embedContent?key=${GEMINI_API_KEY}`;
+        console.log(`[/api/gemini/embed] Model: ${model} | Endpoint: ${endpoint.split('?')[0]}`);
+
+        const response = await fetch(endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -26,14 +29,15 @@ export async function POST(request: NextRequest) {
         });
 
         if (!response.ok) {
+            console.error(`[/api/gemini/embed] Error: ${response.status} ${response.statusText}`);
             throw new Error(`Gemini Embedding Error: ${response.statusText}`);
         }
 
         const data = await response.json();
+        console.log(`[/api/gemini/embed] Success, embedding dims: ${data.embedding?.values?.length}`);
         return NextResponse.json({ embedding: data.embedding.values });
     } catch (error: any) {
         console.error('Embedding API Error:', error);
         return NextResponse.json({ message: "Embedding failed.", error: error.message }, { status: 500 });
     }
 }
-
