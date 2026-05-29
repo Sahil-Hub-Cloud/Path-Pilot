@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { adminAuth, adminDb } from '@/lib/firebase-admin';
+import { GEMINI_GENERATE_MODELS } from '@/lib/gemini-models';
 
 export interface ChallengePayload {
   title: string;
@@ -78,12 +79,10 @@ Rules:
 3. If the course is Python-based (or contains python in courseId), use Python syntax for the starterCode and testCases. If Javascript-based, use JavaScript syntax.
 4. Return ONLY valid raw JSON (no markdown block wrapper).`;
 
-    // Try models in priority order
-    const MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash-latest', 'gemini-1.5-flash'];
     let res: Response | null = null;
     let usedModel = '';
 
-    for (const modelName of MODELS) {
+    for (const modelName of GEMINI_GENERATE_MODELS) {
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
       console.log(`[/api/challenge] Trying model: ${modelName} | Endpoint: ${endpoint.split('?')[0]}`);
       try {

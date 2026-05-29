@@ -1,14 +1,7 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { NextResponse } from 'next/server';
+import { generateTextWithFallback } from '@/lib/gemini-models';
 
-const MODEL_PRIORITY = [
-  'gemini-2.0-flash',
-  'gemini-1.5-flash-latest',
-  'gemini-1.5-flash',
-  'gemini-pro',
-];
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+export const dynamic = 'force-dynamic';
 
 function languageLabel(lang?: string): string {
   if (!lang) return 'English';
@@ -55,45 +48,15 @@ export async function POST(request: Request) {
 Keep under 300 words. Use clear headings (##) for each section.`;
 
     console.log('[/api/notes] Step 4: Calling Gemini…');
+    const { text: notes, model } = await generateTextWithFallback(apiKey, prompt, '[/api/notes]');
 
-    let lastError: Error | null = null;
-
-    for (const modelName of MODEL_PRIORITY) {
-      try {
-        console.log(`[/api/notes] Step 4a: Trying model ${modelName}`);
-        const model = genAI.getGenerativeModel({ model: modelName });
-        const result = await model.generateContent(prompt);
-        const notes = result.response.text()?.trim() || '';
-
-        if (!notes) {
-          throw new Error('Empty response from Gemini');
-        }
-
-        console.log(`[/api/notes] Step 5: Success (${modelName}), length=${notes.length}`);
-        return NextResponse.json({
-          notes,
-          content: notes,
-          model: modelName,
-          generatedAt: Date.now(),
-        });
-      } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : String(err);
-        console.warn(`[/api/notes] Model ${modelName} failed:`, message);
-        lastError = err instanceof Error ? err : new Error(message);
-        const msg = message.toLowerCase();
-        if (!msg.includes('404') && !msg.includes('not found') && !msg.includes('not supported')) {
-          break;
-        }
-      }
-    }
-
-    console.error('[/api/notes] Step 6: All models failed', lastError?.message);
-    return NextResponse.json(
-      {
-        error: lastError?.message || 'Gemini failed to generate notes',
-      },
-      { status: 500 }
-    );
+    console.log(`[/api/notes] Step 5: Success (${model}), length=${notes.length}`);
+    return NextResponse.json({
+      notes,
+      content: notes,
+      model,
+      generatedAt: Date.now(),
+    });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Failed to generate notes';
     console.error('[/api/notes] Step ERROR:', message);

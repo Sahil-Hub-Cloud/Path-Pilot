@@ -230,7 +230,9 @@ export default function TopicPanel({
     const cachedRaw = localStorage.getItem(cacheKey) || localStorage.getItem(legacyKey);
     const isStaleCache =
       cachedRaw &&
-      (/temporarily unavailable|under maintenance|AI notes are temporarily/i.test(cachedRaw));
+      (/temporarily unavailable|under maintenance|AI notes are temporarily|Notes unavailable right now|Gemini API error:\s*404|Error details:/i.test(
+        cachedRaw
+      ));
 
     const fetchNotes = async (background: boolean) => {
       console.log('[Notes] fetch start', { background, topic: topic.title, course: courseTitle });
