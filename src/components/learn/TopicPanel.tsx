@@ -84,9 +84,21 @@ function Skeleton({ lines = 4 }: { lines?: number }) {
           }}
         />
       ))}
-      <p style={{ fontSize: 11, fontWeight: 700, color: '#B8996E', marginTop: 6 }}>
-        ✨ Generating with Gemini…
+      <p style={{ fontSize: 12, fontWeight: 700, color: '#0D8C7A', marginTop: 8, display: 'flex', alignItems: 'center', gap: 8 }}>
+        <span
+          style={{
+            width: 14,
+            height: 14,
+            border: '2px solid rgba(13,140,122,0.3)',
+            borderTopColor: '#0D8C7A',
+            borderRadius: '50%',
+            display: 'inline-block',
+            animation: 'spin 0.8s linear infinite',
+          }}
+        />
+        AI is preparing your notes…
       </p>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }
@@ -174,6 +186,7 @@ export default function TopicPanel({
   const [activeTab, setActiveTab] = useState<TabId>('notes');
   const [geminiNotes, setGeminiNotes] = useState('');
   const [notesLoading, setNotesLoading] = useState(false);
+  const [notesError, setNotesError] = useState<string | null>(null);
   const [challenge, setChallenge] = useState<ChallengePayload | null>(null);
   const [challengeLoading, setChallengeLoading] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState<'telugu' | 'hindi' | 'english'>('english');
@@ -205,53 +218,95 @@ export default function TopicPanel({
     setActiveTab('notes');
     setChallenge(null);
     setGeminiNotes('');
+    setNotesError(null);
   }, [topic?.id]);
 
-  // Fetch Gemini notes
+  // Fetch Gemini notes (cache-first, then background refresh)
   useEffect(() => {
     if (activeTab !== 'notes' || !topic) return;
 
-    const cacheKey = `pp_notes_v2_${courseIdParam}_${topic.id}_${selectedLanguage}`;
-    const cached = localStorage.getItem(cacheKey);
-    if (cached) {
-      setGeminiNotes(cached);
-      setNotesLoading(false);
-      return;
-    }
+    const cacheKey = `pp_notes_${courseIdParam}_${topic.id}`;
+    const legacyKey = `pp_notes_v2_${courseIdParam}_${topic.id}_${selectedLanguage}`;
+    const cachedRaw = localStorage.getItem(cacheKey) || localStorage.getItem(legacyKey);
+    const isStaleCache =
+      cachedRaw &&
+      (/temporarily unavailable|under maintenance|AI notes are temporarily/i.test(cachedRaw));
 
-    setGeminiNotes('');
-    setNotesLoading(true);
+    const fetchNotes = async (background: boolean) => {
+      console.log('[Notes] fetch start', { background, topic: topic.title, course: courseTitle });
+      if (!background) {
+        setNotesLoading(true);
+        setNotesError(null);
+      }
 
-    const fetchNotes = async () => {
       try {
-        const token = user ? await user.getIdToken() : '';
         const res = await fetch('/api/notes', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-          body: JSON.stringify({ topicName: topic.title, courseName: courseTitle, language: selectedLanguage }),
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            topicName: topic.title,
+            courseName: courseTitle || courseIdParam,
+            language: selectedLanguage,
+          }),
         });
+
+        console.log('[Notes] response status', res.status);
         const d = await res.json();
-        await new Promise(r => setTimeout(r, 2500));
-        if (d.content) {
-          setGeminiNotes(d.content);
-          localStorage.setItem(cacheKey, d.content);
-        } else if (d.error) {
-          setGeminiNotes(`Error: ${d.error}`);
-        } else {
-          setGeminiNotes('Could not load notes at this time.');
+
+        if (!res.ok) {
+          const errMsg = d.error || 'Failed to load notes. Try again.';
+          console.error('[Notes] API error', errMsg);
+          if (!background || !cachedRaw || isStaleCache) {
+            setNotesError(errMsg);
+            setGeminiNotes('');
+          }
+          return;
         }
-      } catch {
-        setGeminiNotes('Failed to connect to the notes service.');
+
+        const text = (d.notes || d.content || '').trim();
+        if (!text) {
+          console.warn('[Notes] empty notes payload', d);
+          if (!background || !cachedRaw || isStaleCache) {
+            setNotesError('Failed to load notes. Try again.');
+            setGeminiNotes('');
+          }
+          return;
+        }
+
+        console.log('[Notes] success, chars=', text.length);
+        setGeminiNotes(text);
+        setNotesError(null);
+        localStorage.setItem(cacheKey, text);
+        localStorage.removeItem(legacyKey);
+      } catch (err) {
+        console.error('[Notes] fetch failed', err);
+        if (!background || !cachedRaw || isStaleCache) {
+          setNotesError('Failed to load notes. Try again.');
+          if (!cachedRaw || isStaleCache) setGeminiNotes('');
+        }
       } finally {
-        setNotesLoading(false);
+        if (!background) setNotesLoading(false);
       }
     };
 
-    fetchNotes();
-  }, [activeTab, topic, courseTitle, user]);
+    if (cachedRaw && !isStaleCache) {
+      console.log('[Notes] cache hit', cacheKey);
+      setGeminiNotes(cachedRaw);
+      setNotesLoading(false);
+      setNotesError(null);
+      fetchNotes(true);
+      return;
+    }
+
+    if (isStaleCache) {
+      console.log('[Notes] stale cache cleared', cacheKey);
+      localStorage.removeItem(cacheKey);
+      localStorage.removeItem(legacyKey);
+    }
+
+    setGeminiNotes('');
+    fetchNotes(false);
+  }, [activeTab, topic, courseTitle, courseIdParam, selectedLanguage, user]);
 
   // Fetch Gemini challenge
   useEffect(() => {
@@ -525,12 +580,67 @@ export default function TopicPanel({
             {/* NOTES TAB */}
             {activeTab === 'notes' && (
               <>
-                {notesLoading ? (
+                {notesLoading && !geminiNotes ? (
                   <Skeleton lines={6} />
+                ) : notesError && !geminiNotes ? (
+                  <div style={{ textAlign: 'center', padding: '24px 12px' }}>
+                    <p style={{ color: '#DC2626', fontSize: 14, fontWeight: 700, marginBottom: 12 }}>{notesError}</p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const cacheKey = `pp_notes_${courseIdParam}_${topic.id}`;
+                        localStorage.removeItem(cacheKey);
+                        setGeminiNotes('');
+                        setNotesError(null);
+                        setNotesLoading(true);
+                        fetch('/api/notes', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            topicName: topic.title,
+                            courseName: courseTitle || courseIdParam,
+                            language: selectedLanguage,
+                          }),
+                        })
+                          .then(async (res) => {
+                            const d = await res.json();
+                            if (res.ok && (d.notes || d.content)) {
+                              const text = (d.notes || d.content).trim();
+                              setGeminiNotes(text);
+                              localStorage.setItem(cacheKey, text);
+                              setNotesError(null);
+                            } else {
+                              setNotesError(d.error || 'Failed to load notes. Try again.');
+                            }
+                          })
+                          .catch(() => setNotesError('Failed to load notes. Try again.'))
+                          .finally(() => setNotesLoading(false));
+                      }}
+                      style={{
+                        padding: '10px 18px',
+                        background: '#0D8C7A',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: 10,
+                        fontWeight: 800,
+                        fontSize: 12,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Retry
+                    </button>
+                  </div>
                 ) : geminiNotes ? (
-                  <GeminiNotes markdown={geminiNotes} />
+                  <>
+                    {notesLoading && (
+                      <p style={{ fontSize: 11, color: '#8B6E52', fontWeight: 600, marginBottom: 8 }}>
+                        Refreshing notes…
+                      </p>
+                    )}
+                    <GeminiNotes markdown={geminiNotes} />
+                  </>
                 ) : (
-                  <p style={{ color: '#8B6E52', fontSize: 14 }}>Notes will appear here.</p>
+                  <p style={{ color: '#8B6E52', fontSize: 14 }}>Select this topic to load AI notes.</p>
                 )}
               </>
             )}
