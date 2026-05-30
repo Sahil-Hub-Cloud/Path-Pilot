@@ -14,6 +14,19 @@ export interface ChallengePayload {
   starterCode: string;
 }
 
+function cacheIsValid(
+  cached: Record<string, unknown> | undefined,
+  courseId: string,
+  topicId: string,
+  topicName: string
+): boolean {
+  if (!cached?.challenge) return false;
+  if (cached.courseId && cached.courseId !== courseId) return false;
+  if (cached.topicId && cached.topicId !== topicId) return false;
+  if (cached.topicName && cached.topicName !== topicName) return false;
+  return true;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const authHeader = req.headers.get('authorization');
@@ -28,6 +41,7 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
     let { topicName, courseName, topicId, courseId } = body;
+    const forceRegenerate = body.forceRegenerate === true;
 
     if (!topicId || !courseId) {
       return NextResponse.json({ error: 'topicId and courseId are required' }, { status: 400 });
@@ -42,59 +56,80 @@ export async function POST(req: NextRequest) {
       courseName = meta.courseName;
     }
 
-    // Check Firestore Cache First
-    const docRef = adminDb.collection('challenges').doc(courseId).collection('topics').doc(topicId);
-    const cachedDoc = await docRef.get();
-    if (cachedDoc.exists) {
-      const cachedData = cachedDoc.data();
-      if (cachedData?.challenge) {
-        return NextResponse.json({
-          challenge: cachedData.challenge as ChallengePayload,
-          generatedAt: cachedData.generatedAt || Date.now(),
-          cached: true
-        });
+    // Firestore: challenges/{courseId}/topics/{topicId}
+    const cacheRef = adminDb.collection('challenges').doc(courseId).collection('topics').doc(topicId);
+    console.log('[/api/challenge] cache path:', `challenges/${courseId}/topics/${topicId}`, '| topic:', topicName);
+
+    if (!forceRegenerate) {
+      const cachedDoc = await cacheRef.get();
+      if (cachedDoc.exists) {
+        const cachedData = cachedDoc.data() as Record<string, unknown> | undefined;
+        if (cacheIsValid(cachedData, courseId, topicId, topicName)) {
+          return NextResponse.json({
+            challenge: cachedData!.challenge as ChallengePayload,
+            generatedAt: cachedData!.generatedAt || Date.now(),
+            cached: true,
+            courseId,
+            topicId,
+          });
+        }
+        console.warn('[/api/challenge] Stale cache ignored for', courseId, topicId);
       }
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
-    console.log('[/api/challenge] API Key exists:', !!apiKey, '| Topic:', topicName, '| Course:', courseName);
+    console.log('[/api/challenge] Generating |', { courseId, topicId, topicName, courseName, hasKey: !!apiKey });
 
     if (!apiKey) {
-      // Fallback challenge when API Key is missing
-      const isPython = courseId.includes('python');
+      const isPython =
+        courseId.includes('python') ||
+        courseId.includes('ml') ||
+        courseId.includes('data') ||
+        courseId.includes('django');
       const fallbackChallenge: ChallengePayload = {
-        title: `${topicName} Practice`,
-        description: `Create a solution that demonstrates your understanding of ${topicName} in ${courseName}.`,
-        examples: [{ input: 'None', output: 'Success' }],
-        testCases: [{
-          input: isPython ? 'solution()' : 'solution()',
-          expectedOutput: 'Success'
-        }],
-        hints: ['Review course notes for syntax examples.', 'Make sure to return the correct value.'],
+        title: `${topicName} — ${courseName} Practice`,
+        description: `Write code that demonstrates your understanding of **${topicName}** specifically from the ${courseName} course. This challenge must NOT be generic.`,
+        examples: [{ input: 'example_input()', output: 'expected_result' }],
+        testCases: [
+          { input: 'test_case_1()', expectedOutput: 'result_1' },
+          { input: 'test_case_2()', expectedOutput: 'result_2' },
+          { input: 'test_case_3()', expectedOutput: 'result_3' },
+        ],
+        hints: [`Focus only on ${topicName}.`, 'Review the notes tab for this topic.'],
         difficulty: 'Medium',
-        starterCode: isPython ? 'def solution():\n    return "Success"\n' : 'function solution() {\n  return "Success";\n}'
+        starterCode: isPython
+          ? `# Challenge: ${topicName}\ndef solve():\n    # TODO: implement for ${topicName}\n    pass\n`
+          : `// Challenge: ${topicName}\nfunction solve() {\n  // TODO: implement for ${topicName}\n}\n`,
       };
 
       return NextResponse.json({
         challenge: fallbackChallenge,
-        generatedAt: Date.now()
+        generatedAt: Date.now(),
+        courseId,
+        topicId,
       });
     }
 
-    const prompt = `Create a coding challenge specifically for ${topicName} from ${courseName}. The challenge must: test understanding of ${topicName} specifically, be solvable in 15-30 minutes, have clear input/output examples, have 3 test cases. Return JSON: {title, description, examples: [{input, output}], testCases: [{input, expectedOutput}], hints: string[], difficulty, starterCode}
+    const prompt = `Create a unique coding challenge specifically for the topic '${topicName}' from the '${courseName}' course. 
+The challenge must:
+- Test ONLY concepts from ${topicName}
+- Be different from challenges for other topics
+- Be solvable in 15-20 minutes
+- Have 3 specific test cases
+Return JSON: {title, description, examples: [{input, output}], testCases: [{input, expectedOutput}], hints: string[], difficulty, starterCode}
 
-Rules:
-1. Each entry in testCases must have 'input' as a single executable expression calling the student's function (e.g., 'fizzbuzz(5)' or 'solution([1, 2, 3])') and 'expectedOutput' as the expected return value printed to stdout.
-2. The challenge starter code must be topic-specific — not a generic template. It should define the function structure with comments and a return placeholder.
-3. If the course is Python-based (or contains python in courseId), use Python syntax for the starterCode and testCases. If Javascript-based, use JavaScript syntax.
-4. Return ONLY valid raw JSON (no markdown block wrapper).`;
+Additional rules:
+1. Topic ID for uniqueness: ${topicId}. Course ID: ${courseId}. The title MUST mention "${topicName}".
+2. Each testCases entry must use 'input' as a single executable expression and 'expectedOutput' as the expected result.
+3. starterCode must be specific to ${topicName}, not a generic template.
+4. If courseId suggests Python (${courseId}), use Python; if JavaScript/React/Node/Web3, use JavaScript.
+5. Return ONLY valid raw JSON (no markdown fences).`;
 
     let res: Response | null = null;
-    let usedModel = '';
 
     for (const modelName of GEMINI_GENERATE_MODELS) {
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
-      console.log(`[/api/challenge] Trying model: ${modelName} | Endpoint: ${endpoint.split('?')[0]}`);
+      console.log(`[/api/challenge] Trying model: ${modelName}`);
       try {
         const attempt = await fetch(endpoint, {
           method: 'POST',
@@ -102,21 +137,18 @@ Rules:
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
             generationConfig: {
-              temperature: 0.5,
-              maxOutputTokens: 1000,
+              temperature: 0.85,
+              maxOutputTokens: 1200,
             },
           }),
         });
-        if (attempt.status === 404 || attempt.status === 400) {
-          console.warn(`[/api/challenge] Model ${modelName} returned ${attempt.status}, trying next...`);
-          continue;
-        }
+        if (attempt.status === 404 || attempt.status === 400) continue;
         res = attempt;
-        usedModel = modelName;
         console.log(`[/api/challenge] Success with model: ${modelName}`);
         break;
-      } catch (fetchErr: any) {
-        console.warn(`[/api/challenge] Fetch error for ${modelName}:`, fetchErr?.message);
+      } catch (fetchErr: unknown) {
+        const msg = fetchErr instanceof Error ? fetchErr.message : String(fetchErr);
+        console.warn(`[/api/challenge] Fetch error for ${modelName}:`, msg);
       }
     }
 
@@ -128,42 +160,58 @@ Rules:
     const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
     const cleaned = raw.replace(/```json|```/g, '').trim();
 
+    const isPython =
+      courseId.includes('python') ||
+      courseId.includes('ml') ||
+      courseId.includes('data') ||
+      courseId.includes('django');
+
     let challenge: ChallengePayload;
     try {
       const parsed = JSON.parse(cleaned);
       challenge = {
         title: String(parsed.title || `${topicName} Challenge`),
-        description: String(parsed.description || `Solve a problem related to ${topicName}.`),
+        description: String(parsed.description || `Apply ${topicName} from ${courseName}.`),
         examples: Array.isArray(parsed.examples) ? parsed.examples : [{ input: '', output: '' }],
-        testCases: Array.isArray(parsed.testCases) ? parsed.testCases : [{ input: '', expectedOutput: '' }],
-        hints: Array.isArray(parsed.hints) ? parsed.hints.map(String).slice(0, 5) : ['Read the problem carefully.', 'Start with pseudocode.'],
+        testCases: Array.isArray(parsed.testCases) ? parsed.testCases.slice(0, 3) : [{ input: '', expectedOutput: '' }],
+        hints: Array.isArray(parsed.hints) ? parsed.hints.map(String).slice(0, 5) : ['Read the problem carefully.'],
         difficulty: ['Easy', 'Medium', 'Hard'].includes(parsed.difficulty) ? parsed.difficulty : 'Medium',
-        starterCode: String(parsed.starterCode || (courseId.includes('python') ? 'def solution():\n    pass\n' : 'function solution() {\n  \n}')),
+        starterCode: String(
+          parsed.starterCode ||
+            (isPython ? `def ${topicName.replace(/\W+/g, '_').toLowerCase()}():\n    pass\n` : 'function solution() {\n  \n}')
+        ),
       };
     } catch {
       challenge = {
         title: `${topicName} Challenge`,
         description: `Apply what you learned about ${topicName} in ${courseName}.`,
         examples: [{ input: '', output: '' }],
-        testCases: [{ input: 'solution()', expectedOutput: 'Success' }],
+        testCases: [
+          { input: 'test_1()', expectedOutput: 'out_1' },
+          { input: 'test_2()', expectedOutput: 'out_2' },
+          { input: 'test_3()', expectedOutput: 'out_3' },
+        ],
         hints: ['Plan before coding.', 'Test edge cases.'],
         difficulty: 'Medium',
-        starterCode: courseId.includes('python') ? 'def solution():\n    pass\n' : 'function solution() {\n  \n}',
+        starterCode: isPython ? 'def solution():\n    pass\n' : 'function solution() {\n  \n}',
       };
     }
 
-    // Cache the challenge in Firestore
     const generatedAt = Date.now();
     try {
-      await docRef.set({
+      await cacheRef.set({
         challenge,
-        generatedAt
+        generatedAt,
+        courseId,
+        topicId,
+        topicName,
+        courseName,
       });
     } catch (dbErr) {
       console.warn('Failed to cache challenge to Firestore:', dbErr);
     }
 
-    return NextResponse.json({ challenge, generatedAt });
+    return NextResponse.json({ challenge, generatedAt, courseId, topicId, cached: false });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Challenge generation failed';
     console.error('[/api/challenge]', message);

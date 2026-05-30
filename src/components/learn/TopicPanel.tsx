@@ -18,6 +18,7 @@ import { GeminiNotes } from './GeminiNotes';
 import { getTopicResource } from '@/lib/data/topic-resources';
 import { getTopicVideoId, type VideoLanguage } from '@/lib/data/videos';
 import { getTopicResourcesForId, type ResourceLink } from '@/lib/data/resources';
+import { getLabForTopic } from '@/lib/data/labs';
 import { db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import type { ChallengePayload } from '@/app/api/challenge/route';
@@ -314,20 +315,28 @@ export default function TopicPanel({
   useEffect(() => {
     if (activeTab !== 'challenge' || !topic) return;
 
-    const cacheKey = `pp_challenge_${user?.uid || 'guest'}_${topic.id}`;
+    const cacheKey = `pp_challenge_${courseIdParam}_${topic.id}`;
+    // Remove legacy keys that caused cross-topic/course collisions
+    try {
+      const legacyKey = `pp_challenge_${user?.uid || 'guest'}_${topic.id}`;
+      if (legacyKey !== cacheKey) localStorage.removeItem(legacyKey);
+    } catch {
+      /* ignore */
+    }
+
+    setChallenge(null);
+    setChallengeLoading(true);
+
     const cached = localStorage.getItem(cacheKey);
     if (cached) {
       try {
         setChallenge(JSON.parse(cached));
         setChallengeLoading(false);
-        return;
+        // Still refresh from server in background for updated prompts
       } catch {
         localStorage.removeItem(cacheKey);
       }
     }
-
-    setChallenge(null);
-    setChallengeLoading(true);
 
     const fetchChallenge = async () => {
       try {
@@ -351,21 +360,21 @@ export default function TopicPanel({
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            topicName: topic.title,
-            courseName: courseTitle || courseIdParam,
             topicId: topic.id,
+            topicName: topic.title,
             courseId: courseIdParam,
+            courseName: courseTitle || courseIdParam,
           }),
         });
         const d = await res.json();
         if (d.challenge) {
           setChallenge(d.challenge);
           localStorage.setItem(cacheKey, JSON.stringify(d.challenge));
-        } else {
+        } else if (!cached) {
           setChallenge(null);
         }
       } catch {
-        setChallenge(null);
+        if (!cached) setChallenge(null);
       } finally {
         setChallengeLoading(false);
       }
@@ -431,6 +440,8 @@ export default function TopicPanel({
   const videoEmbed = selectedVideoId
     ? `https://www.youtube.com/embed/${selectedVideoId}?rel=0&modestbranding=1`
     : null;
+
+  const challengeLabId = getLabForTopic(courseIdParam, topic.id);
 
   const diffCfg = DIFF_CONFIG[topic.difficulty] ?? DIFF_CONFIG['Beginner'];
 
@@ -918,7 +929,7 @@ export default function TopicPanel({
 
                       {/* Open in Lab button */}
                       <motion.a
-                        href={`/labs/${defaultLabId}?challenge=true&courseId=${encodeURIComponent(courseIdParam)}&topicId=${encodeURIComponent(topic.id)}`}
+                        href={`/labs/${challengeLabId}?challenge=true&courseId=${encodeURIComponent(courseIdParam)}&topicId=${encodeURIComponent(topic.id)}`}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.97 }}
                         style={{

@@ -2,27 +2,15 @@
 // Add new labs here. The labId must match the URL segment /labs/[labId].
 // defaultLang must be a key in the LANGS map in the lab page.
 
-export interface LabTest {
-  label:    string;
-  input:    string;
-  expected: string;
-}
+import { buildCourseLabsRegistry, getCourseLabIds, getLabForTopic } from './course-labs';
+import { COURSES } from './course-map';
+import type { LabDef, LabTest } from './labs-types';
 
-export interface LabDef {
-  id:          string;
-  title:       string;
-  category:    string;   // badge shown in the top bar
-  difficulty:  'Easy' | 'Medium' | 'Hard';
-  xp:          number;
-  defaultLang: string;   // key into LANGS — sets the starter file language
-  problem:     string;
-  expected:    string;   // shown in the "Expected Output" box
-  tests:       LabTest[];
-  hint:        string;
-}
+export type { LabDef, LabTest };
+export { getCourseLabIds, getLabForTopic };
 
 // ─────────────────────────────────────────────────────────────────────────────
-export const LABS: Record<string, LabDef> = {
+const LEGACY_LABS: Record<string, LabDef> = {
 
   // ── 1. Python Basics ──────────────────────────────────────────────────────
   'python-basics': {
@@ -287,40 +275,26 @@ Print the result of the example above.`,
   },
 };
 
-// Track → first lab mapping (used by dashboard to route to a relevant lab)
-export const TRACK_DEFAULT_LAB: Record<string, string> = {
-  'Cloud & DevOps':    'cloud-bash',
-  'cloud-devops':      'cloud-bash',
-  'devops_aws':        'cloud-bash',
-  'devops_docker':     'cloud-bash',
-  'Backend Dev':       'api-design',
-  'backend':           'api-design',
-  'backend_node':      'api-design',
-  'backend_python':    'api-design',
-  'MERN Stack':        'api-design',
-  'fullstack_mern':    'api-design',
-  'Frontend Dev':      'js-functions',
-  'frontend':          'js-functions',
-  'frontend_react':    'js-functions',
-  'frontend_vue':      'js-functions',
-  'DSA & Interviews':  'arrays-loops',
-  'dsa_interview':     'arrays-loops',
-  'AI Engineering':    'python-basics',
-  'ai_nlp':            'python-basics',
-  'machine_learning':  'python-basics',
-  'data_science_python': 'python-basics',
-  'AI/ML Engineer':      'python-basics',
-  'Data Engineering':    'python-basics',
-  'Web3/Blockchain Pro': 'js-functions',
-  'Cloud Native Developer': 'cloud-bash',
-  'ai-ml-engineer':      'python-basics',
-  'data-engineering':    'python-basics',
-  'web3-pro':            'js-functions',
-  'cloud-native':        'cloud-bash',
+const COURSE_LABS = buildCourseLabsRegistry();
+
+/** Course-specific labs override legacy IDs when keys collide. */
+export const LABS: Record<string, LabDef> = {
+  ...LEGACY_LABS,
+  ...COURSE_LABS,
 };
 
-// Ordered list for "browse all labs" features
+// Track → first lab mapping (used by dashboard to route to a relevant lab)
+export const TRACK_DEFAULT_LAB: Record<string, string> = Object.fromEntries(
+  COURSES.flatMap((c) => [
+    [c.courseId, `${c.courseId}-lab-1`],
+    [c.label, `${c.courseId}-lab-1`],
+    ...c.trackIds.map((t) => [t, `${c.courseId}-lab-1`] as const),
+  ])
+);
+
+// Ordered list for "browse all labs" — course-specific labs first, then legacy
 export const LAB_IDS_ORDERED = [
+  ...COURSES.flatMap((c) => getCourseLabIds(c.courseId)),
   'python-basics',
   'js-functions',
   'debug-challenge',

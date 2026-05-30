@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import { ROADMAPS, COURSE_SLUG_MAP } from '@/lib/data/roadmaps';
-import { TRACK_DEFAULT_LAB } from '@/lib/data/labs';
+import { TRACK_DEFAULT_LAB, getLabForTopic } from '@/lib/data/labs';
 import GameMap, { type MapChapter, type NodeStatus } from '@/components/learn/GameMap';
 import TopicPanel, { type TopicPanelTopic } from '@/components/learn/TopicPanel';
 import {
@@ -112,12 +112,6 @@ export default function LearningPage() {
     [course]
   );
 
-  const defaultLabId =
-    TRACK_DEFAULT_LAB[roadmapId] ||
-    TRACK_DEFAULT_LAB[courseIdParam] ||
-    TRACK_DEFAULT_LAB[course?.title || ''] ||
-    'lab-001';
-
   const storageKey = `pp_learn_${user?.uid || 'guest'}_${roadmapId}`;
 
   const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
@@ -170,6 +164,12 @@ export default function LearningPage() {
   );
 
   const activeTopic = allTopics.find((t) => t.id === activeTopicId);
+  const defaultLabId =
+    (activeTopicId ? getLabForTopic(courseIdParam, activeTopicId) : null) ||
+    TRACK_DEFAULT_LAB[roadmapId] ||
+    TRACK_DEFAULT_LAB[courseIdParam] ||
+    TRACK_DEFAULT_LAB[course?.title || ''] ||
+    `${courseIdParam}-lab-1`;
   const activeGlobalIndex = activeTopic?.globalIndex ?? -1;
   const activeStatus = activeTopic ? getStatus(activeTopic.id, activeGlobalIndex) : 'locked';
   const canMark =

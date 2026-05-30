@@ -170,28 +170,44 @@ export default function LabPage() {
         const res = await fetch('/api/challenge', {
           method: 'POST',
           headers,
-          body: JSON.stringify({ courseId: courseIdParam, topicId: topicIdParam }),
+          body: JSON.stringify({
+            courseId: courseIdParam,
+            topicId: topicIdParam,
+            courseName: courseIdParam,
+          }),
         });
         const data = await res.json();
         const c = data.challenge;
         if (!res.ok || !c) throw new Error(data.error || 'Challenge load failed');
 
-        const lang = courseIdParam.includes('python') || courseIdParam.includes('ml') || courseIdParam.includes('data')
-          ? 'python'
-          : courseIdParam.includes('web3') || courseIdParam.includes('blockchain')
-            ? 'javascript'
-            : 'python';
+        const lang =
+          courseIdParam.includes('python') ||
+          courseIdParam.includes('ml') ||
+          courseIdParam.includes('data') ||
+          courseIdParam.includes('django')
+            ? 'python'
+            : courseIdParam.includes('web3') ||
+                courseIdParam.includes('blockchain') ||
+                courseIdParam.includes('javascript') ||
+                courseIdParam.includes('react') ||
+                courseIdParam.includes('node') ||
+                courseIdParam.includes('vue') ||
+                courseIdParam.includes('mern') ||
+                courseIdParam.includes('flutter')
+              ? 'javascript'
+              : 'python';
 
         setDynamicLab({
-          id: `challenge-${topicIdParam}`,
+          id: `challenge-${courseIdParam}-${topicIdParam}`,
           title: c.title || 'Topic Challenge',
           xp: c.difficulty === 'Hard' ? 30 : c.difficulty === 'Medium' ? 20 : 10,
           problem: c.description || 'Solve the problem.',
           expected: c.testCases?.[0]?.expectedOutput || c.examples?.[0]?.output || 'Output as expected',
           hint: c.hints?.[0] || 'Think carefully about the requirements.',
           tests: (c.testCases || []).map((t: { input: string; expectedOutput: string }, i: number) => ({
-            pass: false,
-            label: `Test ${i + 1}: ${t.input} → ${t.expectedOutput}`,
+            label: `Test ${i + 1}: ${t.input}`,
+            input: t.input,
+            expected: t.expectedOutput,
           })),
           defaultLang: lang,
         });
