@@ -538,6 +538,7 @@ export default function SettingsPage() {
 
       <style jsx global>{`
         .clay-sidebar { background: var(--bg-cream-deep) !important; color: var(--text-dark); }
+        .dark .clay-sidebar { background: var(--bg-cream-deep) !important; }
         .dark .sku-input { background: var(--surface-sunken) !important; color: var(--text-dark); }
       `}</style>
 

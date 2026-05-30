@@ -366,7 +366,7 @@ export default function DashboardPage() {
         {/* GREETING */}
         <div className="mb-8 flex flex-col md:flex-row justify-between items-start gap-4">
           <div>
-            <h1 className="text-xl md:text-3xl font-black text-gray-900 dark:text-gray-100 tracking-tight mb-1">
+            <h1 className="text-xl md:text-3xl font-black text-gray-900 dark:text-white tracking-tight mb-1">
               {getGreeting()}, {firstName}!
             </h1>
             <p style={{ color: '#8B6E52', fontSize: 14, fontWeight: 500 }}>
@@ -388,11 +388,11 @@ export default function DashboardPage() {
             className="group relative overflow-hidden bg-gradient-to-br from-[#006B7A] to-[#2E7D52] rounded-[24px] p-8 mb-8 cursor-pointer shadow-xl shadow-[#006B7A]/25"
           >
             {/* Decoration */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white dark:bg-gray-800/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 dark:bg-gray-800/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
             
             <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
               <div className="flex items-center gap-6">
-                <div className="w-16 h-16 bg-white dark:bg-gray-800/15 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl shadow-lg border border-white/20">
+                <div className="w-16 h-16 bg-white dark:bg-gray-800/15 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl shadow-lg border border-white/20 dark:border-gray-700">
                   🚀
                 </div>
                 <div>
@@ -410,7 +410,7 @@ export default function DashboardPage() {
                   </p>
                 </div>
               </div>
-              <button className="bg-white dark:bg-gray-800 text-[#006B7A] px-8 py-3.5 rounded-xl font-black text-sm uppercase tracking-wider shadow-lg group-hover:scale-105 transition-all">
+              <button className="bg-white dark:bg-gray-800 text-[#006B7A] dark:text-white px-8 py-3.5 rounded-xl font-black text-sm uppercase tracking-wider shadow-lg group-hover:scale-105 transition-all">
                 Launch Mission
               </button>
             </div>
@@ -449,7 +449,7 @@ export default function DashboardPage() {
         {/* MY EXAMS (COLLEGE STUDENTS ONLY) */}
         {profile?.collegeId && exams.length > 0 && (
           <div className="mb-8">
-            <h2 className="text-xl font-black text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+            <h2 className="text-xl font-black text-gray-900 dark:text-white mb-4 flex items-center gap-2">
               <FiCalendar /> Upcoming Exams
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -470,7 +470,7 @@ export default function DashboardPage() {
                           {diffDays <= 0 ? 'Today' : `${diffDays} Days`}
                         </div>
                       </div>
-                      <h3 className="font-black text-gray-900 dark:text-gray-100 text-lg leading-tight mb-2">{exam.examName}</h3>
+                      <h3 className="font-black text-gray-900 dark:text-white text-lg leading-tight mb-2">{exam.examName}</h3>
                       <div className="text-gray-600 dark:text-gray-400 font-semibold text-xs flex items-center gap-2 mb-4">
                         <FiClock /> {eDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} at {eDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                       </div>
@@ -531,9 +531,9 @@ export default function DashboardPage() {
               }}>
                 {s.icon}
               </div>
-              <div style={{ fontSize: 28, fontWeight: 900, color: '#2C1A0E', letterSpacing: '-0.04em', lineHeight: 1 }}>{s.value}</div>
-              <div style={{ fontSize: 11, fontWeight: 800, color: '#8B6E52', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 6 }}>{s.label}</div>
-              <div style={{ fontSize: 12, color: '#B89A7E', fontWeight: 500, marginTop: 2 }}>{s.sub}</div>
+              <div style={{ fontSize: 28, fontWeight: 900, color: 'var(--text-dark)', letterSpacing: '-0.04em', lineHeight: 1 }}>{s.value}</div>
+              <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 6 }}>{s.label}</div>
+              <div style={{ fontSize: 12, color: 'var(--text-light)', fontWeight: 500, marginTop: 2 }}>{s.sub}</div>
             </motion.div>
           ))}
         </div>
@@ -541,14 +541,14 @@ export default function DashboardPage() {
         {/* WEEKLY SUMMARY BANNER */}
         <motion.div
            onClick={() => router.push('/progress/weekly')}
-           className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white dark:bg-gray-800/70 border-1.5 border-[#B48C5A]/20 dark:border-gray-700 rounded-[20px] p-5 md:p-6 mb-8 cursor-pointer shadow-sm shadow-stone-800/5 backdrop-blur-md hover:bg-white dark:bg-gray-800/90 hover:-translate-y-0.5 transition-all gap-4"
+           className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white dark:bg-gray-800/70 border-1.5 border-[#B48C5A]/20 dark:border-gray-700 rounded-[20px] p-5 md:p-6 mb-8 cursor-pointer shadow-sm shadow-stone-800/5 backdrop-blur-md hover:bg-white dark:hover:bg-gray-800/90 hover:-translate-y-0.5 transition-all gap-4"
         >
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-[#006B7A15] rounded-xl flex items-center justify-center text-[#006B7A] flex-shrink-0">
                <FiTrendingUp size={24} />
             </div>
             <div>
-              <h2 className="m-0 text-lg font-extrabold text-gray-900 dark:text-gray-100 tracking-tight">Weekly Summary</h2>
+              <h2 className="m-0 text-lg font-extrabold text-gray-900 dark:text-white tracking-tight">Weekly Summary</h2>
               <p className="m-0 mt-1 text-[13px] text-gray-600 dark:text-gray-400 font-semibold">See your 7-day progress and streak insights.</p>
             </div>
           </div>
@@ -561,18 +561,18 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-5 mb-8">
           {/* Learning Path / CTA */}
           <div style={{
-            backgroundColor: 'var(--surface-raised)', borderRadius: 20, border: '2px solid rgba(180,140,90,0.25)',
+            backgroundColor: 'var(--surface-raised)', borderRadius: 20, border: '2px solid var(--border-clay)',
             padding: '32px 28px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-            boxShadow: '0 2px 0 rgba(255,255,255,0.9) inset, 0 8px 24px rgba(140,90,40,0.1)',
+            boxShadow: '0 2px 0 rgba(255,255,255,0.05) inset, 0 8px 24px var(--shadow-clay)',
           }}>
             {learningPath ? (
               <>
                 <div>
-                  <div style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#006B7A', marginBottom: 16 }}>Continue Learning</div>
-                  <h3 style={{ fontSize: 22, fontWeight: 900, color: '#2C1A0E', letterSpacing: '-0.03em', marginBottom: 12, lineHeight: 1.2 }}>
+                  <div style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--peacock-blue)', marginBottom: 16 }}>Continue Learning</div>
+                  <h3 style={{ fontSize: 22, fontWeight: 900, color: 'var(--text-dark)', letterSpacing: '-0.03em', marginBottom: 12, lineHeight: 1.2 }}>
                     {learningPath} Path
                   </h3>
-                  <p style={{ color: '#5C3D1E', fontSize: 14, fontWeight: 500, lineHeight: 1.6, marginBottom: 24 }}>
+                  <p style={{ color: 'var(--text-medium)', fontSize: 14, fontWeight: 500, lineHeight: 1.6, marginBottom: 24 }}>
                     {proficiencyLevel === 'Beginner (0-1 yrs)'
                       ? 'Building foundational skills. Each lesson gets you closer to your first role.'
                       : proficiencyLevel === 'Intermediate (2-4 yrs)'
@@ -587,11 +587,11 @@ export default function DashboardPage() {
             ) : (
               <>
                 <div>
-                  <div style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#D95F2B', marginBottom: 16 }}>Get Started</div>
-                  <h3 style={{ fontSize: 22, fontWeight: 900, color: '#2C1A0E', letterSpacing: '-0.03em', marginBottom: 12, lineHeight: 1.2 }}>
+                  <div style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--orange)', marginBottom: 16 }}>Get Started</div>
+                  <h3 style={{ fontSize: 22, fontWeight: 900, color: 'var(--text-dark)', letterSpacing: '-0.03em', marginBottom: 12, lineHeight: 1.2 }}>
                     Set up your learning path
                   </h3>
-                  <p style={{ color: '#5C3D1E', fontSize: 14, fontWeight: 500, lineHeight: 1.6, marginBottom: 24 }}>
+                  <p style={{ color: 'var(--text-medium)', fontSize: 14, fontWeight: 500, lineHeight: 1.6, marginBottom: 24 }}>
                     Complete your skill calibration to get a personalized roadmap tailored to your goals.
                   </p>
                 </div>
@@ -610,11 +610,11 @@ export default function DashboardPage() {
 
           {/* Skill Graph */}
           <div style={{
-            backgroundColor: 'var(--surface-raised)', borderRadius: 20, border: '2px solid rgba(180,140,90,0.25)',
+            backgroundColor: 'var(--surface-raised)', borderRadius: 20, border: '2px solid var(--border-clay)',
             padding: '28px', display: 'flex', flexDirection: 'column', alignItems: 'center',
-            boxShadow: '0 2px 0 rgba(255,255,255,0.9) inset, 0 8px 24px rgba(140,90,40,0.1)',
+            boxShadow: '0 2px 0 rgba(255,255,255,0.05) inset, 0 8px 24px var(--shadow-clay)',
           }}>
-            <div style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#8B6E52', marginBottom: 16, alignSelf: 'flex-start' }}>Proficiency Spectrum</div>
+            <div style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-muted)', marginBottom: 16, alignSelf: 'flex-start' }}>Proficiency Spectrum</div>
             {skillScore > 0 ? (
               <SkillGraph />
             ) : (

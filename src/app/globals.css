@@ -263,12 +263,25 @@ body {
     0 4px 10px rgba(140, 90, 40, 0.1);
 }
 
+.dark .btn-ghost {
+  background: rgba(30, 30, 46, 0.8);
+  border-color: #374151;
+  color: var(--text-medium);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.05) inset, 0 4px 10px rgba(0,0,0,0.3);
+}
+
 .btn-ghost:hover {
   background: rgba(255,255,255,0.9);
   border-color: var(--peacock-blue);
   color: var(--peacock-blue);
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(0,107,122,0.15);
+}
+
+.dark .btn-ghost:hover {
+  background: rgba(0, 107, 122, 0.15);
+  border-color: var(--peacock-blue);
+  color: var(--peacock-blue-light);
 }
 
 /* Keep for backwards compat */
@@ -300,11 +313,23 @@ body {
   box-shadow: 0 2px 6px rgba(140,90,40,0.1);
 }
 
+.dark .clay-badge {
+  background: rgba(30, 30, 46, 0.8);
+  border-color: #374151;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
 /* ─── SIDEBAR ─── */
 .clay-sidebar {
   background: linear-gradient(180deg, #FFF8EE 0%, #F5E8D4 100%);
   border-right: 2px solid var(--border-clay);
   box-shadow: 4px 0 24px rgba(140, 90, 40, 0.1);
+}
+
+.dark .clay-sidebar {
+  background: linear-gradient(180deg, #111118 0%, #0A0A0E 100%);
+  border-right-color: #374151;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
 }
 
 /* ─── NAV ITEM ACTIVE ─── */
@@ -328,11 +353,23 @@ body {
   transition: all 0.25s ease;
 }
 
+.dark .stat-card {
+  box-shadow:
+    0 2px 0 rgba(255,255,255,0.03) inset,
+    0 8px 24px rgba(0,0,0,0.3);
+}
+
 .stat-card:hover {
   transform: translateY(-3px);
   box-shadow:
     0 2px 0 rgba(255,255,255,0.9) inset,
     0 16px 40px rgba(140,90,40,0.16);
+}
+
+.dark .stat-card:hover {
+  box-shadow:
+    0 2px 0 rgba(255,255,255,0.03) inset,
+    0 16px 40px rgba(0,0,0,0.5);
 }
 
 /* ─── ANIMATIONS ─── */
@@ -368,3 +405,28 @@ body {
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-cream-deep); }
 ::-webkit-scrollbar-thumb { background: var(--border-clay); border-radius: 99px; }
+
+/* ─── DARK MODE UTILITY OVERRIDES ─── */
+.dark body {
+  background-image: none;
+}
+
+/* Ensure inputs look right in dark mode */
+.dark .sku-input {
+  background: var(--surface-sunken) !important;
+  color: var(--text-dark) !important;
+  border-color: #374151;
+}
+
+.dark .sku-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Clay card dark shadow fix */
+.dark .clay-card {
+  box-shadow:
+    0 2px 0 rgba(255,255,255,0.03) inset,
+    0 -2px 0 rgba(0,0,0,0.2) inset,
+    0 8px 24px rgba(0,0,0,0.35),
+    0 20px 48px rgba(0,0,0,0.25);
+}

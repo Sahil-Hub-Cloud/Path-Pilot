@@ -717,7 +717,7 @@ Rules:
       {/* ══ HEADER ══ */}
       <header className="h-14 bg-[#13131A] border-b border-white/10 flex items-center justify-between px-3 md:px-6 flex-shrink-0 z-50">
         <div className="flex items-center gap-2 md:gap-5 overflow-hidden flex-1">
-          <button onClick={() => router.push('/labs')} className="flex items-center justify-center w-8 h-8 md:w-auto md:h-auto md:px-3 md:py-1.5 bg-white dark:bg-gray-800/5 border border-white/10 rounded-lg cursor-pointer text-[#888899] hover:bg-white dark:bg-gray-800/10 transition-all flex-shrink-0">
+          <button onClick={() => router.push('/labs')} className="flex items-center justify-center w-8 h-8 md:w-auto md:h-auto md:px-3 md:py-1.5 bg-white dark:bg-gray-800/5 border border-white/10 dark:border-gray-700 rounded-lg cursor-pointer text-[#888899] dark:text-gray-300 hover:bg-white dark:bg-gray-800/10 transition-all flex-shrink-0">
             <FiArrowLeft size={14} />
           </button>
           
@@ -735,7 +735,7 @@ Rules:
           {/* Desktop actions (Run/Submit) */}
           <div className="hidden md:flex items-center gap-2">
             <button onClick={handleRun} disabled={isRunning || isSubmitting || isOffline}
-              className="flex items-center gap-2 px-4 py-1.5 bg-white dark:bg-gray-800/5 border border-white/15 rounded-lg cursor-pointer text-xs font-extrabold text-[#E2E2EE] hover:bg-white dark:bg-gray-800/10 disabled:opacity-50 shadow-lg shadow-black/20"
+              className="flex items-center gap-2 px-4 py-1.5 bg-white dark:bg-gray-800/5 border border-white/15 dark:border-gray-700 rounded-lg cursor-pointer text-xs font-extrabold text-[#E2E2EE] dark:text-white hover:bg-white dark:bg-gray-800/10 disabled:opacity-50 shadow-lg shadow-black/20"
             >
               <FiPlay size={12} className={isRunning ? 'animate-pulse' : ''} /> <span>{isRunning ? 'Running...' : 'Run'}</span>
             </button>
@@ -750,20 +750,20 @@ Rules:
           {/* Panel toggles */}
           <div className="hidden md:flex items-center gap-3">
             <button onClick={() => { handleAnalyze(); setRight('analyzer'); }}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg cursor-pointer text-[11px] font-bold transition-all ${rightPanel === 'analyzer' ? 'bg-blue-500/15 border border-blue-500/40 text-blue-400' : 'bg-white dark:bg-gray-800/5 border border-white/10 text-[#888899] hover:bg-white dark:bg-gray-800/10'}`}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg cursor-pointer text-[11px] font-bold transition-all ${rightPanel === 'analyzer' ? 'bg-blue-500/15 border border-blue-500/40 text-blue-400' : 'bg-white dark:bg-gray-800/5 border border-white/10 dark:border-gray-700 text-[#888899] dark:text-gray-300 hover:bg-white dark:bg-gray-800/10'}`}
             >
               <FiSearch size={12} /> Analyze
             </button>
 
             <button onClick={() => setRight(p => p === 'ai' ? 'none' : 'ai')}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg cursor-pointer text-[11px] font-bold transition-all ${rightPanel === 'ai' ? 'bg-[#7C3AED]/15 border border-[#7C3AED]/40 text-[#A78BFA]' : 'bg-white dark:bg-gray-800/5 border border-white/10 text-[#888899] hover:bg-white dark:bg-gray-800/10'}`}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg cursor-pointer text-[11px] font-bold transition-all ${rightPanel === 'ai' ? 'bg-[#7C3AED]/15 border border-[#7C3AED]/40 text-[#A78BFA]' : 'bg-white dark:bg-gray-800/5 border border-white/10 dark:border-gray-700 text-[#888899] dark:text-gray-300 hover:bg-white dark:bg-gray-800/10'}`}
             >
               <FiCpu size={12} /> AI Assist
             </button>
           </div>
           
           {/* Mobile AI Toggle */}
-          <button className="md:hidden p-2 text-[#888899] bg-white dark:bg-gray-800/5 border border-white/10 rounded-lg" onClick={() => setRight(p => p === 'ai' ? 'none' : 'ai')}>
+          <button className="md:hidden p-2 text-[#888899] dark:text-gray-300 bg-white dark:bg-gray-800/5 border border-white/10 dark:border-gray-700 rounded-lg" onClick={() => setRight(p => p === 'ai' ? 'none' : 'ai')}>
              <FiCpu size={16} />
           </button>
         </div>
