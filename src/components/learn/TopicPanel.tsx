@@ -190,10 +190,19 @@ export default function TopicPanel({
   const [notesError, setNotesError] = useState<string | null>(null);
   const [challenge, setChallenge] = useState<ChallengePayload | null>(null);
   const [challengeLoading, setChallengeLoading] = useState(false);
+  const [generatedChallenges, setGeneratedChallenges] = useState<any[] | null>(null);
+  const [generatingChallenges, setGeneratingChallenges] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState<'telugu' | 'hindi' | 'english'>('english');
 
-  // Load preferred language from Firestore user profile
+  // Load preferred language from localStorage first, then Firestore user profile
   useEffect(() => {
+    // Load from localStorage
+    const storedLang = localStorage.getItem('pathpilot_notes_language');
+    if (storedLang && ['telugu', 'hindi', 'english'].includes(storedLang)) {
+      setSelectedLanguage(storedLang as 'telugu' | 'hindi' | 'english');
+    }
+    
+    // Then load from Firestore user profile
     if (!user || !db) return;
     const fetchProfile = async () => {
       try {
@@ -214,10 +223,28 @@ export default function TopicPanel({
     fetchProfile();
   }, [user]);
 
+  // Save language preference to localStorage when changed
+  useEffect(() => {
+    localStorage.setItem('pathpilot_notes_language', selectedLanguage);
+  }, [selectedLanguage]);
+
+  // Clear notes cache when language changes to force regeneration
+  useEffect(() => {
+    if (topic) {
+      const cacheKey = `pp_notes_${courseIdParam}_${topic.id}`;
+      localStorage.removeItem(cacheKey);
+      setGeminiNotes('');
+      if (activeTab === 'notes') {
+        setNotesLoading(true);
+      }
+    }
+  }, [selectedLanguage]);
+
   // Reset when topic changes
   useEffect(() => {
     setActiveTab('notes');
     setChallenge(null);
+    setGeneratedChallenges(null);
     setGeminiNotes('');
     setNotesError(null);
   }, [topic?.id]);
@@ -437,6 +464,50 @@ export default function TopicPanel({
 
   const challengeLabId = getLabForTopic(courseIdParam, topic.id);
 
+  // Function to generate AI challenges
+  const handleGenerateChallenges = async () => {
+    if (!topic) return;
+    setGeneratingChallenges(true);
+    
+    // Check cache first
+    const cacheKey = `pp_generated_challenges_${courseIdParam}_${topic.id}`;
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      try {
+        setGeneratedChallenges(JSON.parse(cached));
+        setGeneratingChallenges(false);
+        return;
+      } catch {
+        localStorage.removeItem(cacheKey);
+      }
+    }
+
+    try {
+      const token = user ? await user.getIdToken() : '';
+      const res = await fetch('/api/challenges/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({
+          topicName: topic.title,
+          courseName: courseTitle || courseIdParam,
+        }),
+      });
+      
+      const data = await res.json();
+      if (data.challenges) {
+        setGeneratedChallenges(data.challenges);
+        localStorage.setItem(cacheKey, JSON.stringify(data.challenges));
+      }
+    } catch (err) {
+      console.error('Failed to generate challenges:', err);
+    } finally {
+      setGeneratingChallenges(false);
+    }
+  };
+
   const diffCfg = DIFF_CONFIG[topic.difficulty] ?? DIFF_CONFIG['Beginner'];
 
   const tabs: { id: TabId; label: string; icon: string }[] = [
@@ -604,6 +675,41 @@ export default function TopicPanel({
             {/* NOTES TAB */}
             {activeTab === 'notes' && (
               <>
+                {/* Language Selector */}
+                <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: '#8B6E52', display: 'flex', alignItems: 'center' }}>
+                    Language:
+                  </span>
+                  {[
+                    { id: 'english' as const, label: 'English', flag: '🌐' },
+                    { id: 'hindi' as const, label: 'Hindi', flag: '🇮🇳' },
+                    { id: 'telugu' as const, label: 'Telugu', flag: '🇮🇳' },
+                  ].map(({ id, label, flag }) => (
+                    <button
+                      key={id}
+                      type="button"
+                      onClick={() => setSelectedLanguage(id)}
+                      style={{
+                        padding: '6px 14px',
+                        borderRadius: 20,
+                        border: selectedLanguage === id ? '1.5px solid #0D8C7A' : '1.5px solid rgba(180,140,90,0.2)',
+                        background: selectedLanguage === id ? 'rgba(13,140,122,0.1)' : '#fff',
+                        color: selectedLanguage === id ? '#0D8C7A' : '#8B6E52',
+                        fontSize: 11,
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 6,
+                      }}
+                    >
+                      <span>{flag}</span>
+                      <span>{label}</span>
+                    </button>
+                  ))}
+                </div>
+
                 {notesLoading && !geminiNotes ? (
                   <Skeleton lines={6} />
                 ) : notesError && !geminiNotes ? (
@@ -710,6 +816,7 @@ export default function TopicPanel({
                         overflow: 'hidden',
                         border: '2px solid rgba(180,140,90,0.2)',
                         aspectRatio: '16/9',
+                        minHeight: 300,
                         boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
                       }}
                     >
@@ -951,6 +1058,156 @@ export default function TopicPanel({
                       </motion.a>
                     </div>
                   </div>
+                ) : user ? (
+                  <div>
+                    {generatingChallenges ? (
+                      <div style={{ textAlign: 'center', padding: 48 }}>
+                        <Skeleton lines={5} />
+                        <p style={{ fontSize: 12, fontWeight: 700, color: '#0D8C7A', marginTop: 16 }}>
+                          Generating AI challenges...
+                        </p>
+                      </div>
+                    ) : generatedChallenges && generatedChallenges.length > 0 ? (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                        <p style={{ fontSize: 13, fontWeight: 800, color: '#2C1A0E', marginBottom: 8 }}>
+                          AI-Generated Challenges for {topic.title}
+                        </p>
+                        {generatedChallenges.map((c: any, idx: number) => (
+                          <div
+                            key={idx}
+                            style={{
+                              padding: 20,
+                              background: '#fff',
+                              borderRadius: 16,
+                              border: '2px solid rgba(13,140,122,0.18)',
+                              boxShadow: '0 4px 16px rgba(13,140,122,0.07)',
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                              <span
+                                style={{
+                                  fontSize: 10,
+                                  fontWeight: 800,
+                                  padding: '3px 10px',
+                                  borderRadius: 999,
+                                  background:
+                                    c.difficulty === 'Hard'
+                                      ? 'rgba(239,68,68,0.1)'
+                                      : c.difficulty === 'Medium'
+                                        ? 'rgba(245,158,11,0.1)'
+                                        : 'rgba(34,197,94,0.1)',
+                                  color:
+                                    c.difficulty === 'Hard'
+                                      ? '#DC2626'
+                                      : c.difficulty === 'Medium'
+                                        ? '#D97706'
+                                        : '#16A34A',
+                                  textTransform: 'uppercase',
+                                  letterSpacing: '0.08em',
+                                }}
+                              >
+                                {c.difficulty}
+                              </span>
+                              <span style={{ fontSize: 10, fontWeight: 700, color: '#8B6E52', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                                ⚡ Challenge {idx + 1}
+                              </span>
+                            </div>
+
+                            <h3
+                              style={{
+                                fontSize: 16,
+                                fontWeight: 900,
+                                color: '#2C1A0E',
+                                margin: '0 0 8px',
+                                lineHeight: 1.3,
+                                letterSpacing: '-0.02em',
+                              }}
+                            >
+                              {c.title}
+                            </h3>
+
+                            <p style={{ fontSize: 13, color: '#5C3D1E', lineHeight: 1.6, marginBottom: 12 }}>
+                              {c.description}
+                            </p>
+
+                            <pre
+                              style={{
+                                padding: '12px',
+                                background: '#FDF6EC',
+                                borderRadius: 8,
+                                border: '1px solid rgba(180,140,90,0.25)',
+                                fontSize: 11,
+                                color: '#5C3D1E',
+                                marginBottom: 12,
+                                overflowX: 'auto',
+                                fontFamily: 'ui-monospace, monospace',
+                              }}
+                            >
+                              {c.starterCode}
+                            </pre>
+                          </div>
+                        ))}
+                        <motion.button
+                          type="button"
+                          onClick={() => {
+                            const cacheKey = `pp_generated_challenges_${courseIdParam}_${topic.id}`;
+                            localStorage.removeItem(cacheKey);
+                            setGeneratedChallenges(null);
+                            handleGenerateChallenges();
+                          }}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.97 }}
+                          style={{
+                            padding: '10px 20px',
+                            background: 'rgba(13,140,122,0.1)',
+                            color: '#0D8C7A',
+                            border: '1.5px solid rgba(13,140,122,0.3)',
+                            borderRadius: 10,
+                            fontWeight: 700,
+                            fontSize: 12,
+                            cursor: 'pointer',
+                            alignSelf: 'center',
+                          }}
+                        >
+                          Regenerate Challenges
+                        </motion.button>
+                      </div>
+                    ) : (
+                      <div
+                        style={{
+                          textAlign: 'center',
+                          padding: 48,
+                          color: '#8B6E52',
+                          background: '#fff',
+                          borderRadius: 16,
+                          border: '2px dashed rgba(180,140,90,0.3)',
+                        }}
+                      >
+                        <div style={{ fontSize: 40, marginBottom: 10 }}>⚡</div>
+                        <p style={{ fontWeight: 800, fontSize: 14, marginBottom: 4 }}>Generate AI Challenges</p>
+                        <p style={{ fontSize: 12, color: '#B8996E', marginBottom: 16 }}>Get 3 personalized coding challenges for this topic</p>
+                        <motion.button
+                          type="button"
+                          onClick={handleGenerateChallenges}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.97 }}
+                          style={{
+                            padding: '12px 24px',
+                            background: '#0D8C7A',
+                            color: '#fff',
+                            border: 'none',
+                            borderRadius: 10,
+                            fontWeight: 800,
+                            fontSize: 13,
+                            cursor: 'pointer',
+                            boxShadow: '0 4px 14px rgba(13,140,122,0.3)',
+                          }}
+                        >
+                          Generate Challenges
+                        </motion.button>
+                      </div>
+                    )}
+                  </div>
                 ) : (
                   <div
                     style={{
@@ -964,7 +1221,7 @@ export default function TopicPanel({
                   >
                     <div style={{ fontSize: 40, marginBottom: 10 }}>⚡</div>
                     <p style={{ fontWeight: 800, fontSize: 14, marginBottom: 4 }}>Challenge coming soon</p>
-                    <p style={{ fontSize: 12, color: '#B8996E' }}>Sign in to generate AI challenges</p>
+                    <p style={{ fontSize: 12, color: '#B8996E' }}>Please sign in to generate AI-powered coding challenges</p>
                   </div>
                 )}
               </div>
