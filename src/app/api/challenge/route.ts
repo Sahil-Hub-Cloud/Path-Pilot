@@ -29,14 +29,15 @@ function cacheIsValid(
 
 export async function POST(req: NextRequest) {
   try {
+    let isAuthenticated = false;
     const authHeader = req.headers.get('authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-    try {
-      await adminAuth.verifyIdToken(authHeader.split('Bearer ')[1]);
-    } catch {
-      return NextResponse.json({ error: 'Unauthorized: Invalid token' }, { status: 401 });
+    if (authHeader?.startsWith('Bearer ')) {
+      try {
+        await adminAuth.verifyIdToken(authHeader.split('Bearer ')[1]);
+        isAuthenticated = true;
+      } catch {
+        // Invalid token, just proceed as unauthenticated
+      }
     }
 
     const body = await req.json();
@@ -110,13 +111,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const prompt = `Create a unique coding challenge specifically for the topic '${topicName}' from the '${courseName}' course. 
-The challenge must:
-- Test ONLY concepts from ${topicName}
-- Be different from challenges for other topics
-- Be solvable in 15-20 minutes
-- Have 3 specific test cases
-Return JSON: {title, description, examples: [{input, output}], testCases: [{input, expectedOutput}], hints: string[], difficulty, starterCode}
+    const prompt = `Create a unique coding challenge ONLY for the topic '${topicName}' from '${courseName}' course. Test ONLY ${topicName} concepts. Return JSON: {title, description, examples:[{input,output}], testCases:[{input,expectedOutput}], hints:[], difficulty, starterCode}
 
 Additional rules:
 1. Topic ID for uniqueness: ${topicId}. Course ID: ${courseId}. The title MUST mention "${topicName}".
@@ -198,17 +193,19 @@ Additional rules:
     }
 
     const generatedAt = Date.now();
-    try {
-      await cacheRef.set({
-        challenge,
-        generatedAt,
-        courseId,
-        topicId,
-        topicName,
-        courseName,
-      });
-    } catch (dbErr) {
-      console.warn('Failed to cache challenge to Firestore:', dbErr);
+    if (isAuthenticated) {
+      try {
+        await cacheRef.set({
+          challenge,
+          generatedAt,
+          courseId,
+          topicId,
+          topicName,
+          courseName,
+        });
+      } catch (dbErr) {
+        console.warn('Failed to cache challenge to Firestore:', dbErr);
+      }
     }
 
     return NextResponse.json({ challenge, generatedAt, courseId, topicId, cached: false });

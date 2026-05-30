@@ -243,9 +243,13 @@ export default function TopicPanel({
       }
 
       try {
+        const token = user ? await user.getIdToken() : '';
         const res = await fetch('/api/notes', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
+          },
           body: JSON.stringify({
             topicName: topic.title,
             courseName: courseTitle || courseIdParam,
@@ -341,23 +345,11 @@ export default function TopicPanel({
     const fetchChallenge = async () => {
       try {
         const token = user ? await user.getIdToken() : '';
-        if (!token) {
-          setChallenge({
-            title: `${topic.title} Practice`,
-            description: 'Sign in to generate AI-powered challenges.',
-            examples: [{ input: 'N/A', output: 'N/A' }],
-            testCases: [{ input: 'N/A', expectedOutput: 'N/A' }],
-            hints: [],
-            difficulty: 'Medium',
-            starterCode: '// Please sign in',
-          });
-          return;
-        }
         const res = await fetch('/api/challenge', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
           },
           body: JSON.stringify({
             topicId: topic.id,
@@ -623,9 +615,13 @@ export default function TopicPanel({
                         setGeminiNotes('');
                         setNotesError(null);
                         setNotesLoading(true);
+                        const token = user ? await user.getIdToken() : '';
                         fetch('/api/notes', {
                           method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
+                          headers: { 
+                            'Content-Type': 'application/json',
+                            ...(token ? { Authorization: `Bearer ${token}` } : {})
+                          },
                           body: JSON.stringify({
                             topicName: topic.title,
                             courseName: courseTitle || courseIdParam,
