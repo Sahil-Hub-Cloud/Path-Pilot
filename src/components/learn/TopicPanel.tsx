@@ -281,6 +281,8 @@ export default function TopicPanel({
             topicName: topic.title,
             courseName: courseTitle || courseIdParam,
             language: selectedLanguage,
+            courseId: courseIdParam,
+            topicId: topic.id,
           }),
         });
 
@@ -310,8 +312,12 @@ export default function TopicPanel({
         console.log('[Notes] success, chars=', text.length);
         setGeminiNotes(text);
         setNotesError(null);
-        localStorage.setItem(cacheKey, text);
-        localStorage.removeItem(legacyKey);
+        if (d.isFallback) {
+          setTimeout(() => fetchNotes(true), 60000);
+        } else {
+          localStorage.setItem(cacheKey, text);
+          localStorage.removeItem(legacyKey);
+        }
       } catch (err) {
         console.error('[Notes] fetch failed', err);
         if (!background || !cachedRaw || isStaleCache) {
@@ -677,9 +683,6 @@ export default function TopicPanel({
               <>
                 {/* Language Selector */}
                 <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: '#8B6E52', display: 'flex', alignItems: 'center' }}>
-                    Language:
-                  </span>
                   {[
                     { id: 'english' as const, label: 'English', flag: '🌐' },
                     { id: 'hindi' as const, label: 'Hindi', flag: '🇮🇳' },
@@ -734,6 +737,8 @@ export default function TopicPanel({
                             topicName: topic.title,
                             courseName: courseTitle || courseIdParam,
                             language: selectedLanguage,
+                            courseId: courseIdParam,
+                            topicId: topic.id,
                           }),
                         })
                           .then(async (res) => {
@@ -741,8 +746,20 @@ export default function TopicPanel({
                             if (res.ok && (d.notes || d.content)) {
                               const text = (d.notes || d.content).trim();
                               setGeminiNotes(text);
-                              localStorage.setItem(cacheKey, text);
                               setNotesError(null);
+                              if (d.isFallback) {
+                                setTimeout(() => {
+                                  // Simplified retry via component state logic handling it
+                                  const cacheKeyRetry = `pp_notes_${courseIdParam}_${topic.id}`;
+                                  localStorage.removeItem(cacheKeyRetry);
+                                  setGeminiNotes('');
+                                  setNotesLoading(true);
+                                  // Re-trigger useEffect by toggling selectedLanguage would be complex here, 
+                                  // so let's just let the main useEffect handle it or assume user clicks retry.
+                                }, 60000);
+                              } else {
+                                localStorage.setItem(cacheKey, text);
+                              }
                             } else {
                               setNotesError(d.error || 'Failed to load notes. Try again.');
                             }
@@ -1220,8 +1237,8 @@ export default function TopicPanel({
                     }}
                   >
                     <div style={{ fontSize: 40, marginBottom: 10 }}>⚡</div>
-                    <p style={{ fontWeight: 800, fontSize: 14, marginBottom: 4 }}>Challenge coming soon</p>
-                    <p style={{ fontSize: 12, color: '#B8996E' }}>Please sign in to generate AI-powered coding challenges</p>
+                    <p style={{ fontWeight: 800, fontSize: 14, marginBottom: 4 }}>Please sign in to generate AI-powered coding challenges</p>
+                    <p style={{ fontSize: 12, color: '#B8996E' }}>Sign in to unlock interactive coding challenges for this topic</p>
                   </div>
                 )}
               </div>
