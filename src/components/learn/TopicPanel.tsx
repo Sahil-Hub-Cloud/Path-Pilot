@@ -429,9 +429,11 @@ export default function TopicPanel({
     selectedLanguage,
     topic.videoUrl
   );
+  
+  const searchQuery = encodeURIComponent(`${topic.title} ${courseTitle || courseIdParam} tutorial ${selectedLanguage === 'telugu' ? 'Telugu' : selectedLanguage === 'hindi' ? 'Hindi' : ''}`);
   const videoEmbed = selectedVideoId
     ? `https://www.youtube.com/embed/${selectedVideoId}?rel=0&modestbranding=1`
-    : null;
+    : `https://www.youtube.com/embed?listType=search&list=${searchQuery}`;
 
   const challengeLabId = getLabForTopic(courseIdParam, topic.id);
 
@@ -609,7 +611,7 @@ export default function TopicPanel({
                     <p style={{ color: '#DC2626', fontSize: 14, fontWeight: 700, marginBottom: 12 }}>{notesError}</p>
                     <button
                       type="button"
-                      onClick={() => {
+                      onClick={async () => {
                         const cacheKey = `pp_notes_${courseIdParam}_${topic.id}`;
                         localStorage.removeItem(cacheKey);
                         setGeminiNotes('');
@@ -731,7 +733,7 @@ export default function TopicPanel({
                         {topic.title}
                       </p>
                       <p style={{ fontSize: 11, color: '#8B6E52', margin: 0 }}>
-                        YouTube · Educational Video
+                        {selectedVideoId ? 'YouTube · Educational Video' : 'YouTube · Search Results'}
                       </p>
                     </div>
                   </>

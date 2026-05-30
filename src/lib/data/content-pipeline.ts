@@ -23,35 +23,35 @@ export interface CourseVideoPool {
 }
 
 const DEFAULT_POOL: CourseVideoPool = {
-  english: 'PkZNo7MFNFg',
-  hindi: 'aqvDxdPZiPg',
-  telugu: 'kqtD5dpn9C8',
+  english: '',
+  hindi: '',
+  telugu: '',
 };
 
 /** Per-course YouTube video IDs for tri-lingual toggles */
 export const COURSE_VIDEO_POOLS: Record<string, CourseVideoPool> = {
   'python-beginners': { english: 'rfscVS0vtbw', hindi: 'aqvDxdPZiPg', telugu: 'kqtD5dpn9C8' },
-  'javascript-mastery': { english: 'PkZNo7MFNFg', hindi: 'Vl0H5V7Z59E', telugu: 'kqtD5dpn9C8' },
-  'frontend-react': { english: 'w7ejDZ8SWv8', hindi: 'O6P86uwfdR0', telugu: 'kqtD5dpn9C8' },
-  'frontend-vue': { english: 'FXpIoQ_rT_c', hindi: 'O6P86uwfdR0', telugu: 'kqtD5dpn9C8' },
-  'backend-nodejs': { english: 'fBNz5xF-Kx4', hindi: 'L72fhGm1tfE', telugu: 'kqtD5dpn9C8' },
-  'backend-django': { english: 'F5mRW0jo-U4', hindi: 'HXV3zeQKqGY', telugu: 'kqtD5dpn9C8' },
-  'fullstack-mern': { english: 'fnpmR6Q5lEc', hindi: 'w7ejDZ8SWv8', telugu: 'kqtD5dpn9C8' },
-  'dsa-interviews': { english: 'pkYVOmU3MgA', hindi: 'pkYVOmU3MgA', telugu: 'kqtD5dpn9C8' },
-  'nlp': { english: 'rmVRLeJRpdo', hindi: 'rmVRLeJRpdo', telugu: 'kqtD5dpn9C8' },
-  'machine-learning': { english: 'NWONeJKn9Kc', hindi: 'NWONeJKn9Kc', telugu: 'kqtD5dpn9C8' },
-  'data-science': { english: 'r-uOLxNrNk8', hindi: 'r-uOLxNrNk8', telugu: 'kqtD5dpn9C8' },
-  'flutter': { english: 'jmsN7dn9iWk', hindi: 'jmsN7dn9iWk', telugu: 'kqtD5dpn9C8' },
-  'react-native': { english: '0-S5a0eXPoc', hindi: '0-S5a0eXPoc', telugu: 'kqtD5dpn9C8' },
-  'android-kotlin': { english: 'cDabx3SjuOY', hindi: 'cDabx3SjuOY', telugu: 'kqtD5dpn9C8' },
-  'docker-kubernetes': { english: 'fqMOX6JJhGo', hindi: 'fqMOX6JJhGo', telugu: 'kqtD5dpn9C8' },
-  'devops-aws': { english: 'ulprqHHWlng', hindi: 'ulprqHHWlng', telugu: 'kqtD5dpn9C8' },
-  'cybersecurity': { english: 'a03XHaG26L8', hindi: 'a03XHaG26L8', telugu: 'kqtD5dpn9C8' },
-  'blockchain': { english: 'ipwxYa-F1uY', hindi: 'ipwxYa-F1uY', telugu: 'kqtD5dpn9C8' },
-  'ai-ml-engineer': { english: 'NWONeJKn9Kc', hindi: 'NWONeJKn9Kc', telugu: 'kqtD5dpn9C8' },
-  'data-engineering': { english: 'r-uOLxNrNk8', hindi: 'r-uOLxNrNk8', telugu: 'kqtD5dpn9C8' },
-  'web3-pro': { english: 'ipwxYa-F1uY', hindi: 'ipwxYa-F1uY', telugu: 'kqtD5dpn9C8' },
-  'cloud-native': { english: 'fqMOX6JJhGo', hindi: 'fqMOX6JJhGo', telugu: 'kqtD5dpn9C8' },
+  'javascript-mastery': { english: 'PkZNo7MFNFg', hindi: 'Vl0H5V7Z59E', telugu: '' },
+  'frontend-react': { english: 'w7ejDZ8SWv8', hindi: 'O6P86uwfdR0', telugu: '' },
+  'frontend-vue': { english: 'FXpIoQ_rT_c', hindi: 'O6P86uwfdR0', telugu: '' },
+  'backend-nodejs': { english: 'fBNz5xF-Kx4', hindi: 'L72fhGm1tfE', telugu: '' },
+  'backend-django': { english: 'F5mRW0jo-U4', hindi: 'HXV3zeQKqGY', telugu: '' },
+  'fullstack-mern': { english: 'fnpmR6Q5lEc', hindi: 'w7ejDZ8SWv8', telugu: '' },
+  'dsa-interviews': { english: 'pkYVOmU3MgA', hindi: 'pkYVOmU3MgA', telugu: '' },
+  'nlp': { english: 'rmVRLeJRpdo', hindi: 'rmVRLeJRpdo', telugu: '' },
+  'machine-learning': { english: 'NWONeJKn9Kc', hindi: 'NWONeJKn9Kc', telugu: '' },
+  'data-science': { english: 'r-uOLxNrNk8', hindi: 'r-uOLxNrNk8', telugu: '' },
+  'flutter': { english: 'jmsN7dn9iWk', hindi: 'jmsN7dn9iWk', telugu: '' },
+  'react-native': { english: '0-S5a0eXPoc', hindi: '0-S5a0eXPoc', telugu: '' },
+  'android-kotlin': { english: 'cDabx3SjuOY', hindi: 'cDabx3SjuOY', telugu: '' },
+  'docker-kubernetes': { english: 'fqMOX6JJhGo', hindi: 'fqMOX6JJhGo', telugu: '' },
+  'devops-aws': { english: 'ulprqHHWlng', hindi: 'ulprqHHWlng', telugu: '' },
+  'cybersecurity': { english: 'a03XHaG26L8', hindi: 'a03XHaG26L8', telugu: '' },
+  'blockchain': { english: 'ipwxYa-F1uY', hindi: 'ipwxYa-F1uY', telugu: '' },
+  'ai-ml-engineer': { english: 'NWONeJKn9Kc', hindi: 'NWONeJKn9Kc', telugu: '' },
+  'data-engineering': { english: 'r-uOLxNrNk8', hindi: 'r-uOLxNrNk8', telugu: '' },
+  'web3-pro': { english: 'ipwxYa-F1uY', hindi: 'ipwxYa-F1uY', telugu: '' },
+  'cloud-native': { english: 'fqMOX6JJhGo', hindi: 'fqMOX6JJhGo', telugu: '' },
 };
 
 interface CourseResourceTemplate {
@@ -116,12 +116,15 @@ function buildMapsFromRoadmaps(roadmaps: Record<string, Roadmap>) {
     for (const chapter of roadmap.chapters) {
       for (const topic of chapter.topics) {
         const fromUrl = extractYoutubeId(topic.videoUrl);
-        const english = fromUrl || pool.english;
-        videos[topic.id] = {
-          english,
-          hindi: pool.hindi || english,
-          telugu: pool.telugu || english,
-        };
+        const english = fromUrl || pool.english || undefined;
+        const hindi = pool.hindi || english;
+        const telugu = pool.telugu || english;
+        
+        videos[topic.id] = {};
+        if (english) videos[topic.id].english = english;
+        if (hindi) videos[topic.id].hindi = hindi;
+        if (telugu) videos[topic.id].telugu = telugu;
+
         resources[topic.id] = buildResourcesForTopic(topic.title, courseId);
       }
     }
@@ -146,17 +149,15 @@ export function getTopicVideoId(
   const entry = TOPIC_VIDEOS[topicId];
   const pool = COURSE_VIDEO_POOLS[courseId] || DEFAULT_POOL;
 
-  const pick =
-    entry?.[language] ||
-    entry?.english ||
-    pool[language] ||
-    pool.english ||
-    extractYoutubeId(roadmapVideoUrl);
-
-  if (language !== 'english' && !entry?.[language] && !pool[language]) {
-    return entry?.english || pool.english || extractYoutubeId(roadmapVideoUrl);
-  }
-  return pick;
+  // We should NOT fallback to cross-languages if the pool explicitly doesn't have it, 
+  // because YouTube search is better than showing an English video to a Telugu user if they want Telugu.
+  // Wait, if there is a specific roadmapVideoUrl, we can use it.
+  
+  const exactMatch = entry?.[language] || pool[language];
+  if (exactMatch) return exactMatch;
+  
+  // No strict fallback here, let TopicPanel handle the YouTube Search embed.
+  return extractYoutubeId(roadmapVideoUrl);
 }
 
 export function getTopicResourcesForId(topicId: string): ResourceLink[] {
