@@ -284,7 +284,7 @@ export default function DashboardPage() {
           <div className="w-9 h-9 flex items-center justify-center overflow-hidden">
              <Image src="/logo.webp" alt="Path Pilot" width={32} height={32} className="object-contain" />
           </div>
-          <span className="font-black text-lg text-gray-900 dark:text-gray-100 tracking-tight">Path Pilot</span>
+          <span className="font-black text-lg text-gray-900 dark:text-white tracking-tight">Path Pilot</span>
         </div>
         <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 text-gray-800 dark:text-gray-300 hover:bg-[#B48C5A]/10 rounded-lg transition-colors">
           {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
@@ -320,7 +320,7 @@ export default function DashboardPage() {
           <div className="w-9 h-9 flex items-center justify-center overflow-hidden">
             <Image src="/logo.webp" alt="Path Pilot" width={36} height={36} className="object-contain" />
           </div>
-          <span className="font-black text-base text-gray-900 dark:text-gray-100 tracking-tight">Path Pilot</span>
+          <span className="font-black text-base text-gray-900 dark:text-white tracking-tight">Path Pilot</span>
         </div>
 
         {/* User avatar */}
@@ -330,7 +330,7 @@ export default function DashboardPage() {
               {firstName[0]?.toUpperCase()}
             </div>
             <div className="overflow-hidden">
-              <div className="font-bold text-sm text-gray-900 dark:text-gray-100 truncate">{firstName}</div>
+              <div className="font-bold text-sm text-gray-900 dark:text-white truncate">{firstName}</div>
               <div className="text-[10px] text-gray-600 dark:text-gray-400 font-semibold uppercase tracking-wider">{profile?.role || 'Student'}</div>
             </div>
           </div>

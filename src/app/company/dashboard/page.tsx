@@ -458,7 +458,7 @@ export default function CompanyDashboard() {
       <h2 style={{ fontSize: 20, fontWeight: 900, color: '#2C1A0E', marginBottom: 12 }}>Portal Configuration</h2>
       <p style={{ color: '#8B6E52', fontSize: 14, fontWeight: 600, marginBottom: 24 }}>Manage your company profile and recruiter permissions.</p>
       <div style={{ padding: 40, border: '2px dashed rgba(180,140,90,0.2)', borderRadius: 20, textAlign: 'center', color: '#B89A7E' }}>
-         Settings module currently under maintenance.
+         Settings module coming soon.
       </div>
     </motion.div>
   );

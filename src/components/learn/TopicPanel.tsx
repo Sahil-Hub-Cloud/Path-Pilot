@@ -67,6 +67,29 @@ const BADGE_ICONS: Record<string, string> = {
   GitHub:       '🐙',
 };
 
+function getCourseChannel(courseId: string, language: string): string {
+  const l = language.toLowerCase();
+  if (courseId === 'python-beginners') {
+    return l === 'hindi' ? 'CodeWithHarry' : 'freeCodeCamp';
+  }
+  if (courseId === 'backend-django') {
+    return l === 'hindi' ? 'Dennis Ivy DRF' : 'Traversy Media';
+  }
+  if (courseId === 'frontend-react') {
+    return l === 'hindi' ? 'Codevolution' : 'Traversy Media';
+  }
+  if (courseId === 'dsa-interviews') {
+    return l === 'hindi' ? 'Striver takeUforward' : 'NeetCode';
+  }
+  if (courseId === 'flutter') {
+    return l === 'hindi' ? 'Rivaan Ranawat' : 'Flutter Official';
+  }
+  if (courseId === 'machine-learning') {
+    return l === 'hindi' ? 'CampusX' : 'StatQuest';
+  }
+  return '';
+}
+
 // ── Skeleton Loader ──────────────────────────────────────────────────────────
 function Skeleton({ lines = 4 }: { lines?: number }) {
   return (
@@ -231,7 +254,7 @@ export default function TopicPanel({
   // Clear notes cache when language changes to force regeneration
   useEffect(() => {
     if (topic) {
-      const cacheKey = `pp_notes_${courseIdParam}_${topic.id}`;
+      const cacheKey = `pp_notes_${topic.id}`;
       localStorage.removeItem(cacheKey);
       setGeminiNotes('');
       if (activeTab === 'notes') {
@@ -253,12 +276,12 @@ export default function TopicPanel({
   useEffect(() => {
     if (activeTab !== 'notes' || !topic) return;
 
-    const cacheKey = `pp_notes_${courseIdParam}_${topic.id}`;
+    const cacheKey = `pp_notes_${topic.id}`;
     const legacyKey = `pp_notes_v2_${courseIdParam}_${topic.id}_${selectedLanguage}`;
     const cachedRaw = localStorage.getItem(cacheKey) || localStorage.getItem(legacyKey);
     const isStaleCache =
       cachedRaw &&
-      (/temporarily unavailable|under maintenance|AI notes are temporarily|Notes unavailable right now|Gemini API error:\s*404|Error details:/i.test(
+      (/temporarily unavailable|AI notes are temporarily|Notes unavailable right now|Gemini API error:\s*404|Error details:/i.test(
         cachedRaw
       ));
 
@@ -463,7 +486,11 @@ export default function TopicPanel({
     topic.videoUrl
   );
   
-  const searchQuery = encodeURIComponent(`${topic.title} ${courseTitle || courseIdParam} tutorial ${selectedLanguage === 'telugu' ? 'Telugu' : selectedLanguage === 'hindi' ? 'Hindi' : ''}`);
+  const channelName = getCourseChannel(courseIdParam, selectedLanguage);
+  const searchQuery = channelName
+    ? encodeURIComponent(`${topic.title} by ${channelName} tutorial`)
+    : encodeURIComponent(`${topic.title} ${courseTitle || courseIdParam} tutorial ${selectedLanguage === 'telugu' ? 'Telugu' : selectedLanguage === 'hindi' ? 'Hindi' : ''}`);
+
   const videoEmbed = selectedVideoId
     ? `https://www.youtube.com/embed/${selectedVideoId}?rel=0&modestbranding=1`
     : `https://www.youtube.com/embed?listType=search&list=${searchQuery}`;
@@ -721,7 +748,7 @@ export default function TopicPanel({
                     <button
                       type="button"
                       onClick={async () => {
-                        const cacheKey = `pp_notes_${courseIdParam}_${topic.id}`;
+                        const cacheKey = `pp_notes_${topic.id}`;
                         localStorage.removeItem(cacheKey);
                         setGeminiNotes('');
                         setNotesError(null);
@@ -744,24 +771,24 @@ export default function TopicPanel({
                           .then(async (res) => {
                             const d = await res.json();
                             if (res.ok && (d.notes || d.content)) {
-                              const text = (d.notes || d.content).trim();
-                              setGeminiNotes(text);
-                              setNotesError(null);
-                              if (d.isFallback) {
-                                setTimeout(() => {
-                                  // Simplified retry via component state logic handling it
-                                  const cacheKeyRetry = `pp_notes_${courseIdParam}_${topic.id}`;
-                                  localStorage.removeItem(cacheKeyRetry);
-                                  setGeminiNotes('');
-                                  setNotesLoading(true);
-                                  // Re-trigger useEffect by toggling selectedLanguage would be complex here, 
-                                  // so let's just let the main useEffect handle it or assume user clicks retry.
-                                }, 60000);
-                              } else {
-                                localStorage.setItem(cacheKey, text);
-                              }
+                               const text = (d.notes || d.content).trim();
+                               setGeminiNotes(text);
+                               setNotesError(null);
+                               if (d.isFallback) {
+                                 setTimeout(() => {
+                                   // Simplified retry via component state logic handling it
+                                   const cacheKeyRetry = `pp_notes_${topic.id}`;
+                                   localStorage.removeItem(cacheKeyRetry);
+                                   setGeminiNotes('');
+                                   setNotesLoading(true);
+                                   // Re-trigger useEffect by toggling selectedLanguage would be complex here, 
+                                   // so let's just let the main useEffect handle it or assume user clicks retry.
+                                 }, 60000);
+                               } else {
+                                 localStorage.setItem(cacheKey, text);
+                               }
                             } else {
-                              setNotesError(d.error || 'Failed to load notes. Try again.');
+                               setNotesError(d.error || 'Failed to load notes. Try again.');
                             }
                           })
                           .catch(() => setNotesError('Failed to load notes. Try again.'))
@@ -857,7 +884,10 @@ export default function TopicPanel({
                         {topic.title}
                       </p>
                       <p style={{ fontSize: 11, color: '#8B6E52', margin: 0 }}>
-                        {selectedVideoId ? 'YouTube · Educational Video' : 'YouTube · Search Results'}
+                        {(() => {
+                          const channel = getCourseChannel(courseIdParam, selectedLanguage);
+                          return channel ? `Video by ${channel} — YouTube` : 'YouTube · Educational Video';
+                        })()}
                       </p>
                     </div>
                   </>

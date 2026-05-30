@@ -145,14 +145,22 @@ export default function CollegeSignupPage() {
       const user = result.user;
       console.log('Step 2: Firebase Auth user created:', user.uid);
 
-      // Wait for auth state to be confirmed
-      await new Promise((resolve) => {
+      // Wait for auth state to be confirmed for this specific user UID
+      await new Promise<void>((resolve) => {
+        let resolved = false;
         const unsubscribe = onAuthStateChanged(auth, (confirmedUser) => {
-          if (confirmedUser) {
+          if (confirmedUser && confirmedUser.uid === user.uid) {
             unsubscribe();
-            resolve(confirmedUser);
+            resolved = true;
+            resolve();
           }
         });
+        setTimeout(() => {
+          if (!resolved) {
+            unsubscribe();
+            resolve();
+          }
+        }, 2000);
       });
       console.log('Step 2.5: Firebase Auth state confirmed');
 

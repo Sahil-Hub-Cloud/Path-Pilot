@@ -34,12 +34,12 @@ export default function LabsListingPage() {
     : trackLabIds.filter((id) => LABS[id]);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#050911] text-gray-900 dark:text-[#E8E8F0] p-6 md:p-12">
+    <div className="min-h-screen bg-white dark:bg-[#050911] text-gray-900 dark:text-white p-6 md:p-12">
       <div className="max-w-5xl mx-auto">
 
         <button
           onClick={() => router.push('/dashboard')}
-          className="mb-8 flex items-center gap-2 px-3 py-2 bg-[#FDF6EC] dark:bg-white/5 border border-[#B48C5A]/20 dark:border-white/10 rounded-xl cursor-pointer text-gray-600 dark:text-[#888899] text-xs font-bold hover:bg-white dark:hover:bg-white/10 transition-all"
+          className="mb-8 flex items-center gap-2 px-3 py-2 bg-[#FDF6EC] dark:bg-white/5 border border-[#B48C5A]/20 dark:border-white/10 rounded-xl cursor-pointer text-gray-600 dark:text-gray-300 text-xs font-bold hover:bg-white dark:hover:bg-white/10 transition-all"
         >
           <FiArrowLeft size={14} /> Back to Dashboard
         </button>
@@ -99,7 +99,7 @@ export default function LabsListingPage() {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-[#006B7A]/5 dark:bg-cyan-500/5 rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform" />
 
                 <div className="flex justify-between items-start mb-4">
-                  <span className="px-3 py-1 bg-white dark:bg-black/20 text-[10px] font-black uppercase tracking-widest rounded-lg border-2 border-[#B48C5A]/10 dark:border-white/5">
+                  <span className="px-3 py-1 bg-white dark:bg-gray-800 text-[10px] font-black uppercase tracking-widest rounded-lg border-2 border-[#B48C5A]/10 dark:border-gray-700">
                     {lab.category}
                   </span>
                   <div className="flex items-center gap-1 text-[#D95F2B] dark:text-[#F59E0B] text-xs font-black">
@@ -123,7 +123,7 @@ export default function LabsListingPage() {
                   >
                     {lab.difficulty}
                   </span>
-                  <span className="uppercase tracking-widest bg-white dark:bg-black/20 px-2 py-1 rounded-md border border-[#B48C5A]/10 dark:border-white/5">
+                  <span className="uppercase tracking-widest bg-white dark:bg-gray-800 px-2 py-1 rounded-md border border-[#B48C5A]/10 dark:border-gray-700">
                     {lab.defaultLang}
                   </span>
                 </div>

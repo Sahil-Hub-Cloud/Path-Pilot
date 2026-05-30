@@ -37,18 +37,18 @@ export const COURSE_VIDEO_POOLS: Record<string, CourseVideoPool> = {
   'backend-nodejs': { english: 'fBNz5xF-Kx4', hindi: 'L72fhGm1tfE', telugu: '' },
   'backend-django': { english: 'F5mRW0jo-U4', hindi: 'HXV3zeQKqGY', telugu: '' },
   'fullstack-mern': { english: 'fnpmR6Q5lEc', hindi: 'w7ejDZ8SWv8', telugu: '' },
-  'dsa-interviews': { english: 'pkYVOmU3MgA', hindi: 'pkYVOmU3MgA', telugu: '' },
+  'dsa-interviews': { english: 'pkYVOmU3MgA', hindi: '5rGMsR9P9gE', telugu: '' },
   'nlp': { english: 'rmVRLeJRpdo', hindi: 'rmVRLeJRpdo', telugu: '' },
-  'machine-learning': { english: 'NWONeJKn9Kc', hindi: 'NWONeJKn9Kc', telugu: '' },
+  'machine-learning': { english: 'NWONeJKn9Kc', hindi: '1vsmaEfd9JA', telugu: '' },
   'data-science': { english: 'r-uOLxNrNk8', hindi: 'r-uOLxNrNk8', telugu: '' },
-  'flutter': { english: 'jmsN7dn9iWk', hindi: 'jmsN7dn9iWk', telugu: '' },
+  'flutter': { english: 'cM535T5o1sE', hindi: 'jmsN7dn9iWk', telugu: '' },
   'react-native': { english: '0-S5a0eXPoc', hindi: '0-S5a0eXPoc', telugu: '' },
   'android-kotlin': { english: 'cDabx3SjuOY', hindi: 'cDabx3SjuOY', telugu: '' },
   'docker-kubernetes': { english: 'fqMOX6JJhGo', hindi: 'fqMOX6JJhGo', telugu: '' },
   'devops-aws': { english: 'ulprqHHWlng', hindi: 'ulprqHHWlng', telugu: '' },
   'cybersecurity': { english: 'a03XHaG26L8', hindi: 'a03XHaG26L8', telugu: '' },
   'blockchain': { english: 'ipwxYa-F1uY', hindi: 'ipwxYa-F1uY', telugu: '' },
-  'ai-ml-engineer': { english: 'NWONeJKn9Kc', hindi: 'NWONeJKn9Kc', telugu: '' },
+  'ai-ml-engineer': { english: 'NWONeJKn9Kc', hindi: '1vsmaEfd9JA', telugu: '' },
   'data-engineering': { english: 'r-uOLxNrNk8', hindi: 'r-uOLxNrNk8', telugu: '' },
   'web3-pro': { english: 'ipwxYa-F1uY', hindi: 'ipwxYa-F1uY', telugu: '' },
   'cloud-native': { english: 'fqMOX6JJhGo', hindi: 'fqMOX6JJhGo', telugu: '' },
@@ -107,6 +107,16 @@ function buildResourcesForTopic(topicTitle: string, courseId: string): ResourceL
   ];
 }
 
+const COURSE_PLACEHOLDERS = new Set([
+  'aqvDxdPZiPg', // Python beginners placeholder
+  'PkZNo7MFNFg', // Javascript mastery placeholder
+  'w7ejDZ8SWv8', // React beginners placeholder
+  'F5mRW0jo-U4', // Django placeholder
+  'pkYVOmU3MgA', // DSA placeholder
+  'NWONeJKn9Kc', // ML placeholder
+  'jmsN7dn9iWk', // Flutter placeholder
+]);
+
 function buildMapsFromRoadmaps(roadmaps: Record<string, Roadmap>) {
   const videos: Record<string, TopicVideoMap> = {};
   const resources: Record<string, ResourceLink[]> = {};
@@ -115,10 +125,12 @@ function buildMapsFromRoadmaps(roadmaps: Record<string, Roadmap>) {
     const pool = COURSE_VIDEO_POOLS[courseId] || DEFAULT_POOL;
     for (const chapter of roadmap.chapters) {
       for (const topic of chapter.topics) {
-        const fromUrl = extractYoutubeId(topic.videoUrl);
+        const extracted = extractYoutubeId(topic.videoUrl);
+        const fromUrl = extracted && !COURSE_PLACEHOLDERS.has(extracted) ? extracted : undefined;
+        
         const english = fromUrl || pool.english || undefined;
-        const hindi = pool.hindi || english;
-        const telugu = pool.telugu || english;
+        const hindi = fromUrl || pool.hindi || english;
+        const telugu = fromUrl || pool.telugu || english;
         
         videos[topic.id] = {};
         if (english) videos[topic.id].english = english;

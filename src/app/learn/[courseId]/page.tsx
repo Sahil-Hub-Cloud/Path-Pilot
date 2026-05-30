@@ -414,7 +414,7 @@ export default function LearningPage() {
               <button
                 type="button"
                 onClick={() => setShowMobilePanel(false)}
-                className="absolute top-3 right-4 p-2 rounded-full bg-white/80 z-10"
+                className="absolute top-3 right-4 p-2 rounded-full bg-white/80 dark:bg-gray-800/80 z-10"
                 style={{ color: '#8B6E52' }}
               >
                 <FiX size={20} />

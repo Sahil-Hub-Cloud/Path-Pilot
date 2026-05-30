@@ -1,30 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import pdfParse from 'pdf-parse';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { generateWithResilience, MODELS_HEAVY, MODELS_LIGHT } from '@/lib/gemini-resilience';
 
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get('file') as File;
+    const collegeId = (formData.get('collegeId') as string) || 'unknown';
+    const subjectId = (formData.get('subjectId') as string) || 'unknown';
 
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
-    }
-
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-
-    // Parse PDF
-    let text = '';
-    try {
-      const pdfData = await pdfParse(buffer);
-      text = pdfData.text;
-    } catch (parseError) {
-      console.error('PDF Parse Error:', parseError);
-      return NextResponse.json(
-        { error: 'Failed to extract text from PDF. Ensure it is a valid PDF file.' },
-        { status: 400 }
-      );
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
@@ -32,30 +18,26 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Gemini API key missing' }, { status: 500 });
     }
 
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const MODEL_PRIORITY = ['gemini-2.0-flash', 'gemini-1.5-flash-latest', 'gemini-1.5-flash'];
-    console.log('[/api/upload-pdf] API Key exists:', !!apiKey);
-
-    // Helper: try models in priority order
-    async function generateWithFallback(prompt: string): Promise<string> {
-      for (const modelName of MODEL_PRIORITY) {
-        try {
-          console.log(`[/api/upload-pdf] Trying model: ${modelName}`);
-          const model = genAI.getGenerativeModel({ model: modelName });
-          const result = await model.generateContent(prompt);
-          const text = result.response.text();
-          console.log(`[/api/upload-pdf] Success with model: ${modelName}, chars: ${text.length}`);
-          return text;
-        } catch (err: any) {
-          console.warn(`[/api/upload-pdf] Model "${modelName}" failed:`, err?.message);
-          const msg = (err?.message || '').toLowerCase();
-          if (!msg.includes('404') && !msg.includes('not found')) throw err;
-        }
-      }
-      throw new Error('All Gemini models failed');
+    // Parse PDF text
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    let text = '';
+    try {
+      const pdfData = await pdfParse(buffer);
+      text = pdfData.text;
+    } catch (parseError) {
+      console.error('[/api/upload-pdf] PDF parse error:', parseError);
+      return NextResponse.json(
+        { error: 'Failed to extract text from PDF. Ensure it is a valid PDF file.' },
+        { status: 400 }
+      );
     }
 
-    // ── Main content prompt (flashcards, formulas, MCQs) ─────────────────────
+    console.log(`[/api/upload-pdf] feature=pdf-process collegeId=${collegeId} subjectId=${subjectId} chars=${text.length}`);
+
+    const cacheKey = `pdf_${collegeId}_${subjectId}`;
+
+    // ── Main content prompt ────────────────────────────────────────────────────
     const contentPrompt = `You are an expert academic content creator for Indian engineering students. Analyze this syllabus/subject PDF and return ONLY valid JSON with this structure:
 {
   "subjectName": "string",
@@ -95,14 +77,14 @@ CRITICAL RULES:
 1. Make explanations simple enough for a beginner engineering student in India.
 2. MINIMUM 5 flashcards per topic.
 3. MINIMUM 5 MCQ questions per topic.
-4. Do NOT wrap the JSON in markdown code blocks like \`\`\`json. Return ONLY the raw JSON starting with { and ending with }.
+4. Do NOT wrap the JSON in markdown code blocks. Return ONLY the raw JSON starting with { and ending with }.
 5. Keep the total output token count reasonable by picking the top 3-4 most important topics if the PDF is extremely long.
 
 PDF TEXT (first 30,000 chars):
 ${text.substring(0, 30000)}
 `;
 
-    // ── Flowchart prompt ──────────────────────────────────────────────────────
+    // ── Flowchart prompt ───────────────────────────────────────────────────────
     const flowchartPrompt = `Analyze this educational content and identify any processes, algorithms, workflows, or step-by-step procedures described in it. For each one, create a detailed flowchart description.
 
 Return ONLY valid JSON as an array of flowcharts with this exact structure:
@@ -135,34 +117,77 @@ CONTENT (first 20,000 chars):
 ${text.substring(0, 20000)}
 `;
 
-    // Run both prompts in parallel using fallback helper
-    const [contentResultText, flowchartResultText] = await Promise.all([
-      generateWithFallback(contentPrompt),
-      generateWithFallback(flowchartPrompt),
+    // Run both in parallel using the resilience wrapper
+    // Heavy model for content, light for flowcharts
+    const [contentResult, flowchartResult] = await Promise.allSettled([
+      generateWithResilience({
+        apiKey,
+        prompt: contentPrompt,
+        featureName: 'pdf-process',
+        cacheKey,
+        models: MODELS_HEAVY,
+        timeoutMs: 15000,
+        logPrefix: '[/api/upload-pdf] content',
+        cacheMeta: { collegeId, subjectId, type: 'pdf_content' },
+      }),
+      generateWithResilience({
+        apiKey,
+        prompt: flowchartPrompt,
+        featureName: 'pdf-process',
+        // no cacheKey for flowcharts (lightweight, always fresh)
+        models: MODELS_LIGHT,
+        timeoutMs: 15000,
+        logPrefix: '[/api/upload-pdf] flowchart',
+      }),
     ]);
 
     // Parse main content
-    let aiContentText = contentResultText.replace(/```json/gi, '').replace(/```/g, '').trim();
+    if (contentResult.status === 'rejected') {
+      const msg = contentResult.reason?.message || 'Content generation failed';
+      if (msg.startsWith('QUOTA_EXCEEDED')) {
+        return NextResponse.json(
+          { error: 'PDF processing limit reached for today. Please try again tomorrow.' },
+          { status: 429 }
+        );
+      }
+      if (msg.includes('paused by admin')) {
+        return NextResponse.json(
+          { error: 'PDF processing is currently paused for maintenance.' },
+          { status: 503 }
+        );
+      }
+      throw new Error(msg);
+    }
+
+    const rawContent = contentResult.value.text
+      .replace(/```json/gi, '')
+      .replace(/```/g, '')
+      .trim();
+
     let parsedData;
     try {
-      parsedData = JSON.parse(aiContentText);
-    } catch (jsonError) {
-      console.error('Failed to parse Gemini content output as JSON:', aiContentText);
+      parsedData = JSON.parse(rawContent);
+    } catch {
+      console.error('[/api/upload-pdf] Failed to parse content JSON:', rawContent.slice(0, 500));
       return NextResponse.json(
         { error: 'Failed to generate valid study materials. Please try again.' },
         { status: 500 }
       );
     }
 
-    // Parse flowcharts (non-fatal — empty array on failure)
+    // Parse flowcharts (non-fatal)
     let parsedFlowcharts: any[] = [];
-    try {
-      let aiFlowchartText = flowchartResultText.replace(/```json/gi, '').replace(/```/g, '').trim();
-      parsedFlowcharts = JSON.parse(aiFlowchartText);
-      if (!Array.isArray(parsedFlowcharts)) parsedFlowcharts = [];
-    } catch (flowErr) {
-      console.warn('Flowchart generation failed (non-fatal), continuing without flowcharts:', flowErr);
-      parsedFlowcharts = [];
+    if (flowchartResult.status === 'fulfilled') {
+      try {
+        const rawFlowchart = flowchartResult.value.text
+          .replace(/```json/gi, '')
+          .replace(/```/g, '')
+          .trim();
+        parsedFlowcharts = JSON.parse(rawFlowchart);
+        if (!Array.isArray(parsedFlowcharts)) parsedFlowcharts = [];
+      } catch {
+        console.warn('[/api/upload-pdf] Flowchart parse failed (non-fatal)');
+      }
     }
 
     return NextResponse.json({
@@ -170,9 +195,14 @@ ${text.substring(0, 20000)}
       data: parsedData,
       flowcharts: parsedFlowcharts,
       rawText: text.substring(0, 50000),
+      cached: contentResult.value.cached,
     });
+
   } catch (error: any) {
-    console.error('PDF Processing Route Error:', error);
-    return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
+    console.error('[/api/upload-pdf] ERROR:', error?.message);
+    return NextResponse.json(
+      { error: error?.message || 'Internal Server Error' },
+      { status: 500 }
+    );
   }
 }

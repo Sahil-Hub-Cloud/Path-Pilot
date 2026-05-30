@@ -144,42 +144,15 @@ service cloud.firestore {
     //   colleges/{collegeId}/students/{id}     → reference docs (future use)
     //
     match /colleges/{collegeId} {
-
-      // Allow anyone (even unauthenticated) to READ/LIST the colleges collection.
-      // This is required so the signup page can validate a college code BEFORE
-      // the student has signed in. Only collegeName and collegeCode are at risk.
-      allow read, list: if true;
-
-      // Only the college admin or the creator can write the top-level doc
-      allow create: if isAuthenticated() && (
-        request.auth.uid == collegeId ||
-        (request.resource.data.adminUid != null && request.resource.data.adminUid == request.auth.uid)
-      );
-      allow update, delete: if isAuthenticated() && (
-        request.auth.uid == collegeId ||
-        (resource != null && resource.data.adminUid == request.auth.uid)
-      );
-
-      // ── Materials subcollection ─────────────────────────────────────────────
-      // Read:  any authenticated user whose collegeId matches, OR college admins
-      // Write: only college admins for this specific college
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && request.auth.uid == collegeId;
+      
       match /materials/{materialId} {
-        allow read: if isAuthenticated() && isCollegeStudent(collegeId);
-        allow write: if isCollegeAdmin(collegeId);
+        allow read, write: if request.auth != null;
       }
-
-      // ── Exams subcollection ────────────────────────────────────────────────
-      // Read:  students and admins of this college
-      // Write: only college admins
       match /exams/{examId} {
-        allow read: if isAuthenticated() && isCollegeStudent(collegeId);
-        allow write: if isCollegeAdmin(collegeId);
-      }
-
-      // ── Students reference subcollection (future) ──────────────────────────
-      match /students/{studentId} {
-        allow read: if isCollegeAdmin(collegeId);
-        allow write: if isCollegeAdmin(collegeId);
+        allow read, write: if request.auth != null;
       }
     }
 
