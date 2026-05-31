@@ -14,7 +14,7 @@ const PYTHON_LABS: [LabTemplate, LabTemplate, LabTemplate] = [
     difficulty: 'Easy',
     xp: 15,
     defaultLang: 'python',
-    problem: `Write a function squares_up_to(n) that returns a list of squares from 1² to n² using a list comprehension.\n\nExample: squares_up_to(4) → [1, 4, 9, 16]\n\nPrint squares_up_to(5).`,
+    problem: `Write a function squares_up_to(n) that returns a list of squares from 1² to n² using a list comprehension.\n\nExample: squares_up_to(4) → [1, 4, 9, 16]\n\nPrint squares_up_to(5).\n\nAvailable libraries: numpy, pandas, requests and 20+ more standard libraries.`,
     expected: '[1, 4, 9, 16, 25]',
     tests: [
       { label: 'n=5', input: 'squares_up_to(5)', expected: '[1, 4, 9, 16, 25]' },
@@ -29,7 +29,7 @@ const PYTHON_LABS: [LabTemplate, LabTemplate, LabTemplate] = [
     difficulty: 'Medium',
     xp: 20,
     defaultLang: 'python',
-    problem: `Write merge_counts(a, b) that merges two dicts of word→count, summing values for shared keys.\n\nExample: merge_counts({"a":1,"b":2}, {"b":3,"c":1}) → {"a":1,"b":5,"c":1}\n\nPrint merge_counts({"x":2}, {"x":1,"y":4}).`,
+    problem: `Write merge_counts(a, b) that merges two dicts of word→count, summing values for shared keys.\n\nExample: merge_counts({"a":1,"b":2}, {"b":3,"c":1}) → {"a":1,"b":5,"c":1}\n\nPrint merge_counts({"x":2}, {"x":1,"y":4}).\n\nAvailable libraries: numpy, pandas, requests and 20+ more standard libraries.`,
     expected: "{'x': 3, 'y': 4}",
     tests: [
       { label: 'Merge shared key', input: "merge_counts({'x':2},{'x':1,'y':4})", expected: "{'x': 3, 'y': 4}" },
@@ -44,7 +44,7 @@ const PYTHON_LABS: [LabTemplate, LabTemplate, LabTemplate] = [
     difficulty: 'Hard',
     xp: 30,
     defaultLang: 'python',
-    problem: `Write count_nonempty_lines(text) returning the number of non-empty, non-comment lines (lines starting with # after strip are comments).\n\nPrint count_nonempty_lines("a\\n\\n# hi\\nb").`,
+    problem: `Write count_nonempty_lines(text) returning the number of non-empty, non-comment lines (lines starting with # after strip are comments).\n\nPrint count_nonempty_lines("a\\n\\n# hi\\nb").\n\nAvailable libraries: numpy, pandas, requests and 20+ more standard libraries.`,
     expected: '2',
     tests: [
       { label: 'Skips blank and comment', input: 'count_nonempty_lines("a\\n\\n# hi\\nb")', expected: '2' },

@@ -29,7 +29,9 @@ const LEGACY_LABS: Record<string, LabDef> = {
 Example:
   fizzbuzz(5) → ["1", "2", "Fizz", "4", "Buzz"]
 
-Print the result list on a single line.`,
+Print the result list on a single line.
+
+Available libraries: numpy, pandas, requests and 20+ more standard libraries.`,
     expected: '["1", "2", "Fizz", "4", "Buzz"]',
     tests: [
       { label: 'n = 5',  input: 'fizzbuzz(5)',  expected: '["1", "2", "Fizz", "4", "Buzz"]' },
@@ -91,7 +93,9 @@ def search(arr, target):
             hi = mid - 1
     return -1
 
-print(search([1,3,5,7,9,11,13], 7))`,
+print(search([1,3,5,7,9,11,13], 7))
+
+Available libraries: numpy, pandas, requests and 20+ more standard libraries.`,
     expected: '3',
     tests: [
       { label: 'Target found — returns index', input: 'search([1,3,5,7,9,11,13], 7)', expected: '3' },
@@ -115,7 +119,9 @@ Example:
   running_avg([1, 2, 3, 4]) → [1.0, 1.5, 2.0, 2.5]
 
 Print the result list on one line.
-Constraint: Solve in a single O(n) pass — do not re-sum the array for each element.`,
+Constraint: Solve in a single O(n) pass — do not re-sum the array for each element.
+
+Available libraries: numpy, pandas, requests and 20+ more standard libraries.`,
     expected: '[1.0, 1.5, 2.0, 2.5]',
     tests: [
       { label: 'Basic 4-element list',   input: 'running_avg([1,2,3,4])',     expected: '[1.0, 1.5, 2.0, 2.5]' },
@@ -140,7 +146,9 @@ The algorithm must run in O(n) time complexity — no nested loops allowed.
 Example:
   prev = {"a": 1, "b": 2, "c": 3, "d": 4}
   curr = {"a": 1, "b": 9, "c": 3, "d": 7}
-  Output: ["b", "d"]`,
+  Output: ["b", "d"]
+
+Available libraries: numpy, pandas, requests and 20+ more standard libraries.`,
     expected: '["b", "d"]',
     tests: [
       { label: 'Basic change detection',  input: 'prev={"a":1,"b":2}, curr={"a":1,"b":9}',             expected: '["b"]' },
@@ -202,7 +210,9 @@ Example:
   expand_env("Deploy to $ENV by $USER", {"ENV": "production", "USER": "devops"})
   → "Deploy to production by devops"
 
-Print the result of the example above.`,
+Print the result of the example above.
+
+Available libraries: numpy, pandas, requests and 20+ more standard libraries.`,
     expected: 'Deploy to production by devops',
     tests: [
       { label: 'Basic substitution',    input: 'expand_env("Hello $NAME", {"NAME": "Alice"})',                                    expected: 'Hello Alice' },
@@ -235,7 +245,9 @@ Example input (as a multi-line string):
 
 Expected: {"HOST": "localhost", "PORT": "8080", "DEBUG": "true"}
 
-Print len(parse_config(example_text)) — should output 3.`,
+Print len(parse_config(example_text)) — should output 3.
+
+Available libraries: numpy, pandas, requests and 20+ more standard libraries.`,
     expected: '3',
     tests: [
       { label: 'Parses 3 config keys',  input: 'len(parse_config(text))',      expected: '3' },
@@ -264,7 +276,9 @@ Example:
   run_pipeline(stages)
   → [("build", "PASS"), ("test", "FAIL"), ("deploy", "SKIPPED")]
 
-Print the result of the example above.`,
+Print the result of the example above.
+
+Available libraries: numpy, pandas, requests and 20+ more standard libraries.`,
     expected: "[('build', 'PASS'), ('test', 'FAIL'), ('deploy', 'SKIPPED')]",
     tests: [
       { label: 'Stages skipped after FAIL',  input: 'run_pipeline([("build","PASS"),("test","FAIL"),("deploy","PASS")])', expected: "[('build', 'PASS'), ('test', 'FAIL'), ('deploy', 'SKIPPED')]" },

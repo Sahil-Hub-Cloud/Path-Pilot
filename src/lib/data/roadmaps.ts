@@ -46,6 +46,7 @@ export interface Roadmap {
     skills: string[]
     careerOutcomes: string[]
     outcome: string
+    labType?: 'judge0' | 'dartpad' | 'colab' | 'tryhackme' | 'remix' | 'theory' | 'codesandbox'
 }
 
 export const ROADMAPS: Record<string, Roadmap> = {
@@ -59,6 +60,7 @@ export const ROADMAPS: Record<string, Roadmap> = {
         icon: "🚀",
         color: "from-blue-500 to-cyan-600",
         outcome: "Job-ready portfolio and interview preparedness",
+        labType: "judge0",
         skills: ["Python","Problem Solving","Architecture"],
         careerOutcomes: ["Python for Beginners"],
         chapters: [
