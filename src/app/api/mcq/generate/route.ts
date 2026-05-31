@@ -1,3 +1,6 @@
+// IMPORTANT: This line must be present in ALL API routes to prevent Vercel build failures
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import { generateWithResilience } from '@/lib/gemini-resilience';
 import admin from 'firebase-admin';
