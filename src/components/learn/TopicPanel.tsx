@@ -17,7 +17,7 @@ import {
 import { GeminiNotes } from './GeminiNotes';
 import { TheoryMCQ } from './TheoryMCQ';
 import { getTopicResource } from '@/lib/data/topic-resources';
-import { getTopicVideoId, type VideoLanguage } from '@/lib/data/videos';
+import { type VideoLanguage } from '@/lib/data/videos';
 import { getTopicResourcesForId, type ResourceLink } from '@/lib/data/resources';
 import { getLabForTopic } from '@/lib/data/labs';
 import { db } from '@/lib/firebase';
@@ -473,29 +473,19 @@ export default function TopicPanel({
     ),
   ];
 
-  const selectedVideoId = getTopicVideoId(
-    topic.id,
-    courseIdParam,
-    selectedLanguage,
-    topic.videoUrl
-  );
-  
-  const buildVideoUrl = (topicName: string, courseName: string, language: string) => {
+  const courseName = courseTitle || courseIdParam;
+
+  const buildVideoSearchUrl = (topicName: string, courseName: string, language: string) => {
     let query = ''
     if (language === 'telugu') {
-      query = `${topicName} programming tutorial Telugu`
+      query = `${topicName} ${courseName} Telugu tutorial`
     } else if (language === 'hindi') {
-      query = `${topicName} programming tutorial Hindi`
+      query = `${topicName} ${courseName} Hindi tutorial`
     } else {
-      query = `${topicName} ${courseName} tutorial beginners`
+      query = `${topicName} ${courseName} tutorial for beginners`
     }
-    const encoded = encodeURIComponent(query)
-    return `https://www.youtube.com/embed?listType=search&list=${encoded}`
+    return `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`
   }
-
-  const videoUrl = selectedVideoId 
-    ? `https://www.youtube.com/embed/${selectedVideoId}?rel=0&modestbranding=1` 
-    : buildVideoUrl(topic.title, courseTitle || courseIdParam, selectedLanguage);
 
   const challengeLabId = getLabForTopic(courseIdParam, topic.id);
 
@@ -842,18 +832,40 @@ export default function TopicPanel({
                     </button>
                   ))}
                 </div>
-                <div>
-                  <iframe
-                    key={videoUrl}
-                    src={videoUrl}
-                    width="100%"
-                    height="380"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    style={{ borderRadius: '12px', border: 'none' }}
-                  />
-                  <p style={{ fontSize: '12px', color: '#888', marginTop: '8px', textAlign: 'center' }}>
-                    Showing YouTube results for: {topic.title} in {selectedLanguage}
+                <div style={{
+                  background: '#f8f4ee',
+                  border: '2px solid #e0d8c8',
+                  borderRadius: '12px',
+                  padding: '32px',
+                  textAlign: 'center'
+                }}>
+                  <div style={{ fontSize: '48px', marginBottom: '16px' }}>🎬</div>
+                  <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '8px', color: '#2C1A0E' }}>
+                    Watch: {topic.title}
+                  </h3>
+                  <p style={{ color: '#888', fontSize: '14px', marginBottom: '20px' }}>
+                    Find the best {selectedLanguage} tutorials for this topic on YouTube
+                  </p>
+                  
+                  <a
+                    href={buildVideoSearchUrl(topic.title, courseName, selectedLanguage)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      background: '#FF0000',
+                      color: 'white',
+                      padding: '12px 28px',
+                      borderRadius: '8px',
+                      textDecoration: 'none',
+                      fontWeight: '600',
+                      fontSize: '15px',
+                      display: 'inline-block'
+                    }}
+                  >
+                    ▶ Search on YouTube
+                  </a>
+                  <p style={{ color: '#aaa', fontSize: '12px', marginTop: '12px' }}>
+                    Opens YouTube search in new tab
                   </p>
                 </div>
               </div>
