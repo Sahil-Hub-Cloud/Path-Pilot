@@ -15,6 +15,7 @@ import {
   FiPlayCircle,
 } from 'react-icons/fi';
 import { GeminiNotes } from './GeminiNotes';
+import { TheoryMCQ } from './TheoryMCQ';
 import { getTopicResource } from '@/lib/data/topic-resources';
 import { getTopicVideoId, type VideoLanguage } from '@/lib/data/videos';
 import { getTopicResourcesForId, type ResourceLink } from '@/lib/data/resources';
@@ -23,6 +24,7 @@ import { db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import type { ChallengePayload } from '@/app/api/challenge/route';
 import type { User } from 'firebase/auth';
+import { ROADMAPS } from '@/lib/data/roadmaps';
 
 export interface TopicPanelTopic {
   id: string;
@@ -458,6 +460,9 @@ export default function TopicPanel({
     );
   }
 
+  const roadmap = ROADMAPS[roadmapId];
+  const labType = roadmap?.labType || 'judge0';
+
   // ── Resource data ──────────────────────────────────────────────────────────
   const res = getTopicResource(topic.title);
   const pipelineResources = getTopicResourcesForId(topic.id);
@@ -475,14 +480,22 @@ export default function TopicPanel({
     topic.videoUrl
   );
   
-  const channelName = getCourseChannel(courseIdParam, selectedLanguage);
-  const searchQuery = channelName
-    ? encodeURIComponent(`${topic.title} by ${channelName} tutorial`)
-    : encodeURIComponent(`${topic.title} ${courseTitle || courseIdParam} tutorial ${selectedLanguage === 'telugu' ? 'Telugu' : selectedLanguage === 'hindi' ? 'Hindi' : ''}`);
+  const buildVideoUrl = (topicName: string, courseName: string, language: string) => {
+    let query = ''
+    if (language === 'telugu') {
+      query = `${topicName} programming tutorial Telugu`
+    } else if (language === 'hindi') {
+      query = `${topicName} programming tutorial Hindi`
+    } else {
+      query = `${topicName} ${courseName} tutorial beginners`
+    }
+    const encoded = encodeURIComponent(query)
+    return `https://www.youtube.com/embed?listType=search&list=${encoded}`
+  }
 
-  const videoEmbed = selectedVideoId
-    ? `https://www.youtube.com/embed/${selectedVideoId}?rel=0&modestbranding=1`
-    : `https://www.youtube.com/embed?listType=search&list=${searchQuery}`;
+  const videoUrl = selectedVideoId 
+    ? `https://www.youtube.com/embed/${selectedVideoId}?rel=0&modestbranding=1` 
+    : buildVideoUrl(topic.title, courseTitle || courseIdParam, selectedLanguage);
 
   const challengeLabId = getLabForTopic(courseIdParam, topic.id);
 
@@ -829,61 +842,20 @@ export default function TopicPanel({
                     </button>
                   ))}
                 </div>
-                {videoEmbed ? (
-                  <>
-                    <div
-                      style={{
-                        borderRadius: 16,
-                        overflow: 'hidden',
-                        border: '2px solid rgba(180,140,90,0.2)',
-                        aspectRatio: '16/9',
-                        minHeight: 300,
-                        boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-                      }}
-                    >
-                      <iframe
-                        src={videoEmbed}
-                        title={topic.title}
-                        allowFullScreen
-                        style={{ width: '100%', height: '100%', border: 'none' }}
-                      />
-                    </div>
-                    <div
-                      style={{
-                        marginTop: 12,
-                        padding: '10px 14px',
-                        background: '#fff',
-                        borderRadius: 10,
-                        border: '1px solid rgba(180,140,90,0.18)',
-                      }}
-                    >
-                      <p style={{ fontSize: 13, fontWeight: 800, color: '#2C1A0E', margin: '0 0 2px' }}>
-                        {topic.title}
-                      </p>
-                      <p style={{ fontSize: 11, color: '#8B6E52', margin: 0 }}>
-                        {(() => {
-                          const channel = getCourseChannel(courseIdParam, selectedLanguage);
-                          return channel ? `Video by ${channel} — YouTube` : 'YouTube · Educational Video';
-                        })()}
-                      </p>
-                    </div>
-                  </>
-                ) : (
-                  <div
-                    style={{
-                      textAlign: 'center',
-                      padding: 48,
-                      color: '#8B6E52',
-                      background: '#fff',
-                      borderRadius: 16,
-                      border: '2px dashed rgba(180,140,90,0.3)',
-                    }}
-                  >
-                    <div style={{ fontSize: 40, marginBottom: 10 }}>🎬</div>
-                    <p style={{ fontWeight: 800, fontSize: 14, marginBottom: 4 }}>Video coming soon</p>
-                    <p style={{ fontSize: 12, color: '#B8996E' }}>Check back later for video content</p>
-                  </div>
-                )}
+                <div>
+                  <iframe
+                    key={videoUrl}
+                    src={videoUrl}
+                    width="100%"
+                    height="380"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    style={{ borderRadius: '12px', border: 'none' }}
+                  />
+                  <p style={{ fontSize: '12px', color: '#888', marginTop: '8px', textAlign: 'center' }}>
+                    Showing YouTube results for: {topic.title} in {selectedLanguage}
+                  </p>
+                </div>
               </div>
             )}
 
@@ -970,6 +942,50 @@ export default function TopicPanel({
             {/* CHALLENGE TAB */}
             {activeTab === 'challenge' && (
               <div>
+                {labType === 'colab' && (
+                  <div style={{ padding: 48, textAlign: 'center', background: '#fff', borderRadius: 16 }}>
+                    <div style={{ fontSize: 40, marginBottom: 16 }}>📊</div>
+                    <h3 style={{ marginBottom: 8, color: '#2C1A0E' }}>Data Science Environment</h3>
+                    <p style={{ marginBottom: 20, color: '#8B6E52', fontSize: 14 }}>Practice this topic using Google Colab's cloud notebooks.</p>
+                    <a href={"https://colab.research.google.com/search?q=" + encodeURIComponent(topic.title)} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', padding: '12px 24px', background: '#F9AB00', color: '#fff', borderRadius: 8, fontWeight: 'bold', textDecoration: 'none' }}>
+                      Open in Google Colab →
+                    </a>
+                  </div>
+                )}
+                {labType === 'tryhackme' && (
+                  <div style={{ padding: 48, textAlign: 'center', background: '#fff', borderRadius: 16 }}>
+                    <div style={{ fontSize: 40, marginBottom: 16 }}>🔐</div>
+                    <h3 style={{ marginBottom: 8, color: '#2C1A0E' }}>Cybersecurity Practice</h3>
+                    <p style={{ marginBottom: 20, color: '#8B6E52', fontSize: 14 }}>Get hands-on experience in a real vulnerable environment.</p>
+                    <a href={"https://tryhackme.com/search?q=" + encodeURIComponent(topic.title)} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', padding: '12px 24px', background: '#212C42', color: '#fff', borderRadius: 8, fontWeight: 'bold', textDecoration: 'none' }}>
+                      Practice on TryHackMe (Free) →
+                    </a>
+                  </div>
+                )}
+                {labType === 'dartpad' && (
+                  <div style={{ width: '100%', height: 600, borderRadius: 12, overflow: 'hidden' }}>
+                    <iframe src="https://dartpad.dev/embed-flutter.html?theme=dark" width="100%" height="100%" style={{ border: 'none' }} />
+                  </div>
+                )}
+                {labType === 'remix' && (
+                  <div style={{ width: '100%', height: 600, borderRadius: 12, overflow: 'hidden' }}>
+                    <iframe src="https://remix.ethereum.org" width="100%" height="100%" style={{ border: 'none' }} />
+                  </div>
+                )}
+                {labType === 'codesandbox' && (
+                  <div style={{ width: '100%', height: 600, borderRadius: 12, overflow: 'hidden' }}>
+                    <iframe src="https://codesandbox.io/embed/new?template=react&theme=dark" width="100%" height="100%" style={{ border: 'none' }} />
+                  </div>
+                )}
+                {labType === 'theory' && (
+                  <div style={{ padding: 24, background: '#fff', borderRadius: 16 }}>
+                    <h3 style={{ marginBottom: 8, color: '#2C1A0E' }}>Theory Check</h3>
+                    <p style={{ marginBottom: 20, color: '#8B6E52', fontSize: 14 }}>Complete these 5 MCQs to pass this topic (Requires 3/5).</p>
+                    <TheoryMCQ topicName={topic.title} courseName={courseTitle || courseIdParam} onPass={onMarkComplete} />
+                  </div>
+                )}
+                {labType === 'judge0' && (
+<>
                 {challengeLoading ? (
                   <Skeleton lines={5} />
                 ) : challenge ? (
@@ -1248,6 +1264,8 @@ export default function TopicPanel({
                     <p style={{ fontSize: 12, color: '#B8996E' }}>Sign in to unlock interactive coding challenges for this topic</p>
                   </div>
                 )}
+              </>
+            )}
               </div>
             )}
 

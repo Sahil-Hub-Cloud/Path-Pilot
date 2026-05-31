@@ -7,8 +7,20 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
-  // Headers removed to prevent auth/network-request-failed issues
-
+  // Headers added for YouTube iframe support
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com"
+          }
+        ]
+      }
+    ]
+  }
 };
 
 export default nextConfig;
