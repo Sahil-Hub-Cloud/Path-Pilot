@@ -251,16 +251,15 @@ export default function TopicPanel({
     localStorage.setItem('pathpilot_notes_language', selectedLanguage);
   }, [selectedLanguage]);
 
-  // Clear notes cache when language changes to force regeneration
+  // When language changes, clear displayed notes so the right-language cache is loaded
   useEffect(() => {
     if (topic) {
-      const cacheKey = `pp_notes_${topic.id}`;
-      localStorage.removeItem(cacheKey);
       setGeminiNotes('');
       if (activeTab === 'notes') {
         setNotesLoading(true);
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedLanguage]);
 
   // Reset when topic changes
@@ -272,21 +271,19 @@ export default function TopicPanel({
     setNotesError(null);
   }, [topic?.id]);
 
-  // Fetch Gemini notes (cache-first, then background refresh)
+  // Fetch Gemini notes — localStorage first for instant load, then Firestore/Gemini
   useEffect(() => {
     if (activeTab !== 'notes' || !topic) return;
 
-    const cacheKey = `pp_notes_${topic.id}`;
-    const legacyKey = `pp_notes_v2_${courseIdParam}_${topic.id}_${selectedLanguage}`;
-    const cachedRaw = localStorage.getItem(cacheKey) || localStorage.getItem(legacyKey);
+    // Unique key per course + topic + language — prevents cross-language cache collisions
+    const localKey = `pp_notes_${courseIdParam}_${topic.id}_${selectedLanguage}`;
+    const cachedRaw = localStorage.getItem(localKey);
     const isStaleCache =
-      cachedRaw &&
-      (/temporarily unavailable|AI notes are temporarily|Notes unavailable right now|Gemini API error:\s*404|Error details:/i.test(
-        cachedRaw
-      ));
+      !!cachedRaw &&
+      /temporarily unavailable|AI notes are temporarily|Notes unavailable right now|Gemini API error|Error details:/i.test(cachedRaw);
 
     const fetchNotes = async (background: boolean) => {
-      console.log('[Notes] fetch start', { background, topic: topic.title, course: courseTitle });
+      console.log('[Notes] fetch start', { background, topic: topic.title, language: selectedLanguage });
       if (!background) {
         setNotesLoading(true);
         setNotesError(null);
@@ -296,25 +293,23 @@ export default function TopicPanel({
         const token = user ? await user.getIdToken() : '';
         const res = await fetch('/api/notes', {
           method: 'POST',
-          headers: { 
+          headers: {
             'Content-Type': 'application/json',
-            ...(token ? { Authorization: `Bearer ${token}` } : {})
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           body: JSON.stringify({
             topicName: topic.title,
             courseName: courseTitle || courseIdParam,
-            language: selectedLanguage,
-            courseId: courseIdParam,
-            topicId: topic.id,
+            language:   selectedLanguage,
+            courseId:   courseIdParam,
+            topicId:    topic.id,
           }),
         });
 
-        console.log('[Notes] response status', res.status);
         const d = await res.json();
 
         if (!res.ok) {
           const errMsg = d.error || 'Failed to load notes. Try again.';
-          console.error('[Notes] API error', errMsg);
           if (!background || !cachedRaw || isStaleCache) {
             setNotesError(errMsg);
             setGeminiNotes('');
@@ -324,7 +319,6 @@ export default function TopicPanel({
 
         const text = (d.notes || d.content || '').trim();
         if (!text) {
-          console.warn('[Notes] empty notes payload', d);
           if (!background || !cachedRaw || isStaleCache) {
             setNotesError('Failed to load notes. Try again.');
             setGeminiNotes('');
@@ -332,15 +326,11 @@ export default function TopicPanel({
           return;
         }
 
-        console.log('[Notes] success, chars=', text.length);
+        console.log(`[Notes] ${d.cached ? 'Firestore cache hit' : 'Gemini generated'} | chars=${text.length}`);
         setGeminiNotes(text);
         setNotesError(null);
-        if (d.isFallback) {
-          setTimeout(() => fetchNotes(true), 60000);
-        } else {
-          localStorage.setItem(cacheKey, text);
-          localStorage.removeItem(legacyKey);
-        }
+        // Save to localStorage for instant access next visit
+        localStorage.setItem(localKey, text);
       } catch (err) {
         console.error('[Notes] fetch failed', err);
         if (!background || !cachedRaw || isStaleCache) {
@@ -352,19 +342,18 @@ export default function TopicPanel({
       }
     };
 
+    // Instant load from localStorage — then background-refresh only if stale
     if (cachedRaw && !isStaleCache) {
-      console.log('[Notes] cache hit', cacheKey);
+      console.log('[Notes] localStorage HIT', localKey);
       setGeminiNotes(cachedRaw);
       setNotesLoading(false);
       setNotesError(null);
-      fetchNotes(true);
+      // No background refresh needed — Firestore is the source of truth
       return;
     }
 
     if (isStaleCache) {
-      console.log('[Notes] stale cache cleared', cacheKey);
-      localStorage.removeItem(cacheKey);
-      localStorage.removeItem(legacyKey);
+      localStorage.removeItem(localKey);
     }
 
     setGeminiNotes('');
@@ -748,47 +737,35 @@ export default function TopicPanel({
                     <button
                       type="button"
                       onClick={async () => {
-                        const cacheKey = `pp_notes_${topic.id}`;
-                        localStorage.removeItem(cacheKey);
+                        const localKey = `pp_notes_${courseIdParam}_${topic.id}_${selectedLanguage}`;
+                        localStorage.removeItem(localKey);
                         setGeminiNotes('');
                         setNotesError(null);
                         setNotesLoading(true);
                         const token = user ? await user.getIdToken() : '';
                         fetch('/api/notes', {
                           method: 'POST',
-                          headers: { 
+                          headers: {
                             'Content-Type': 'application/json',
-                            ...(token ? { Authorization: `Bearer ${token}` } : {})
+                            ...(token ? { Authorization: `Bearer ${token}` } : {}),
                           },
                           body: JSON.stringify({
                             topicName: topic.title,
                             courseName: courseTitle || courseIdParam,
-                            language: selectedLanguage,
-                            courseId: courseIdParam,
-                            topicId: topic.id,
+                            language:   selectedLanguage,
+                            courseId:   courseIdParam,
+                            topicId:    topic.id,
                           }),
                         })
                           .then(async (res) => {
                             const d = await res.json();
                             if (res.ok && (d.notes || d.content)) {
-                               const text = (d.notes || d.content).trim();
-                               setGeminiNotes(text);
-                               setNotesError(null);
-                               if (d.isFallback) {
-                                 setTimeout(() => {
-                                   // Simplified retry via component state logic handling it
-                                   const cacheKeyRetry = `pp_notes_${topic.id}`;
-                                   localStorage.removeItem(cacheKeyRetry);
-                                   setGeminiNotes('');
-                                   setNotesLoading(true);
-                                   // Re-trigger useEffect by toggling selectedLanguage would be complex here, 
-                                   // so let's just let the main useEffect handle it or assume user clicks retry.
-                                 }, 60000);
-                               } else {
-                                 localStorage.setItem(cacheKey, text);
-                               }
+                              const text = (d.notes || d.content).trim();
+                              setGeminiNotes(text);
+                              setNotesError(null);
+                              localStorage.setItem(localKey, text);
                             } else {
-                               setNotesError(d.error || 'Failed to load notes. Try again.');
+                              setNotesError(d.error || 'Failed to load notes. Try again.');
                             }
                           })
                           .catch(() => setNotesError('Failed to load notes. Try again.'))

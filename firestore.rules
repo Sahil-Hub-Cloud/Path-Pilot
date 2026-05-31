@@ -156,6 +156,18 @@ service cloud.firestore {
       }
     }
 
+    // ── Notes Cache (permanent AI-generated notes — public read, server-write only) ──
+    match /notes_cache/{cacheId} {
+      allow read: if true;    // fast public reads — content is not sensitive
+      allow write: if false;  // only Firebase Admin SDK (server) can write
+    }
+
+    // ── Topic Notes (legacy cache — same policy) ────────────────────────────
+    match /topic_notes/{docId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
     // ── Deny everything else ──────────────────────────────────────────────────
     match /{document=**} {
       allow read, write: if false;

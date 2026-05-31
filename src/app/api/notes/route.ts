@@ -1,19 +1,19 @@
 import { NextResponse } from 'next/server';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { adminDb } from '@/lib/firebase-admin';
-import { generateWithResilience, MODELS_LIGHT } from '@/lib/gemini-resilience';
+import { FieldValue } from 'firebase-admin/firestore';
 
 export const dynamic = 'force-dynamic';
 
-function languageLabel(lang?: string): string {
-  if (!lang) return 'English';
-  const l = lang.toLowerCase();
-  if (l === 'hindi') return 'Hindi';
-  if (l === 'telugu') return 'Telugu';
-  return 'English';
-}
-
 export async function POST(request: Request) {
-  console.log('[/api/notes] POST received');
+  const body = await request.json();
+  const {
+    topicName,
+    topicId,
+    courseName,
+    courseId,
+    language = 'english',
+  } = body;
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
@@ -24,87 +24,125 @@ export async function POST(request: Request) {
     );
   }
 
-  try {
-    const body = await request.json();
-    const { topicName, courseName, language, courseId, topicId } = body;
-    console.log('[/api/notes] body =', JSON.stringify({ topicName, courseName, language, courseId, topicId }));
+  if (!topicName || !courseName) {
+    return NextResponse.json(
+      { error: 'topicName and courseName are required' },
+      { status: 400 }
+    );
+  }
 
-    if (!topicName || !courseName) {
-      return NextResponse.json(
-        { error: 'topicName and courseName are required' },
-        { status: 400 }
-      );
-    }
+  const lang = (language || 'english').toLowerCase();
 
-    if (!courseId || !topicId) {
-      console.warn('[/api/notes] courseId or topicId missing — skipping Firestore cache');
-    }
+  // Create a unique permanent cache ID — one entry per course + topic + language
+  const cacheId = `${courseId}__${topicId}__${lang}`;
 
-    const lang = languageLabel(language);
-    const cacheKey = courseId && topicId ? `notes_${courseId}_${topicId}_${lang}` : undefined;
+  console.log(`[/api/notes] POST | cacheId=${cacheId} | topic="${topicName}"`);
 
-    const langPrompt = lang === 'English' ? 'simple English' : `simple ${lang}`;
-    const prompt = `Explain ${topicName} from ${courseName} in ${langPrompt} for Indian engineering student. Structure: 1) Simple Definition (2-3 sentences) 2) Key Concepts (5 bullets) 3) Real World Example (3-4 sentences) 4) Common Mistakes (3 bullets) 5) Quick Summary (1 sentence). Max 300 words.`;
+  // ── Step 1: Check Firestore permanent cache first ────────────────────────
+  if (courseId && topicId) {
+    try {
+      const cacheRef = adminDb.collection('notes_cache').doc(cacheId);
+      const cacheSnap = await cacheRef.get();
 
-    const { text: notes, model, cached } = await generateWithResilience({
-      apiKey,
-      prompt,
-      featureName: 'notes',
-      cacheKey,
-      models: MODELS_LIGHT,
-      timeoutMs: 15000,
-      logPrefix: '[/api/notes]',
-      cacheMeta: { courseId, topicId, language: lang },
-    });
-
-    // Also write to legacy topic_notes collection for backward compatibility
-    if (!cached && courseId && topicId) {
-      try {
-        await adminDb.collection('topic_notes').doc(`${courseId}_${topicId}_${lang}`).set({
-          courseId,
-          topicId,
-          notes,
-          language: lang,
-          createdAt: Date.now(),
+      if (cacheSnap.exists) {
+        const data = cacheSnap.data()!;
+        console.log(`[/api/notes] Cache HIT — returning stored notes, no Gemini call`);
+        return NextResponse.json({
+          content: data.content,
+          notes:   data.content,
+          cached:  true,
+          generatedAt: data.generatedAt ?? null,
         });
-      } catch (e) {
-        console.warn('[/api/notes] Failed to write legacy topic_notes cache:', e);
+      }
+    } catch (cacheErr) {
+      console.log('[/api/notes] Cache read failed, will generate fresh notes:', cacheErr);
+    }
+  }
+
+  // ── Step 2: Notes don't exist yet — generate with Gemini ONCE ────────────
+  try {
+    // Strict language instruction — prevents mixing scripts
+    const languageInstruction =
+      lang === 'telugu'
+        ? 'Write ENTIRELY in Telugu language using Telugu script only.'
+        : lang === 'hindi'
+        ? 'Write ENTIRELY in Hindi language using Devanagari script only.'
+        : 'Write ENTIRELY in English. Do not use Telugu or Hindi words.';
+
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+
+    const prompt = `${languageInstruction}
+You are an expert coding teacher for Indian engineering students.
+Explain the topic: ${topicName} from the course: ${courseName}
+
+Structure your response exactly like this:
+## What is ${topicName}?
+(2-3 simple sentences)
+
+## Key Concepts
+(5 bullet points)
+
+## Code Example
+(practical code example if applicable)
+
+## Real World Use
+(where this is used in real projects, 2-3 sentences)
+
+## Quick Summary
+(1 sentence summary)
+
+Keep it simple and clear. Maximum 400 words.`;
+
+    console.log(`[/api/notes] Calling Gemini for cacheId=${cacheId}`);
+    const result = await model.generateContent(prompt);
+    const content = result.response.text();
+
+    if (!content || !content.trim()) {
+      throw new Error('Gemini returned empty content');
+    }
+
+    // ── Step 3: Save to Firestore PERMANENTLY — never generate again ────────
+    if (courseId && topicId) {
+      try {
+        await adminDb.collection('notes_cache').doc(cacheId).set({
+          content,
+          topicName,
+          topicId,
+          courseName,
+          courseId,
+          language: lang,
+          generatedAt: FieldValue.serverTimestamp(),
+          permanent: true,
+        });
+        console.log(`[/api/notes] Permanently cached: ${cacheId}`);
+      } catch (writeErr) {
+        console.warn('[/api/notes] Failed to write to notes_cache:', writeErr);
+        // Non-blocking — still return the content even if write fails
       }
     }
 
     return NextResponse.json({
-      notes,
-      content: notes,
-      model,
-      cached,
-      generatedAt: Date.now(),
+      content,
+      notes:       content,
+      cached:      false,
+      generatedAt: new Date().toISOString(),
     });
 
   } catch (error: any) {
     const message = error instanceof Error ? error.message : String(error);
     console.error('[/api/notes] ERROR:', message);
 
-    if (message.startsWith('QUOTA_EXCEEDED')) {
-      return NextResponse.json({
-        notes: 'Notes are temporarily unavailable — daily limit reached. Please check back tomorrow.',
-        isFallback: true,
-      });
+    if (message.includes('429') || message.toLowerCase().includes('quota')) {
+      return NextResponse.json(
+        {
+          error: 'Notes are being prepared. Please try again in a few minutes.',
+          rateLimited: true,
+        },
+        { status: 429 }
+      );
     }
 
-    if (message.includes('paused by admin')) {
-      return NextResponse.json({
-        notes: 'AI Notes are currently paused for maintenance. Please check back soon.',
-        isFallback: true,
-      });
-    }
-
-    if (message.includes('timed out') || message.includes('429') || message.toLowerCase().includes('quota')) {
-      return NextResponse.json({
-        notes: 'Notes are being prepared for this topic. Please check back soon.',
-        isFallback: true,
-      });
-    }
-
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: 'Could not generate notes' }, { status: 500 });
   }
 }
