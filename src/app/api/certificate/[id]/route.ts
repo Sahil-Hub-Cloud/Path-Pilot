@@ -1,3 +1,6 @@
+// IMPORTANT: This line must be present in ALL API routes to prevent Vercel build failures
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from "next/server";
 import { db, auth } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
