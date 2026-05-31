@@ -122,20 +122,23 @@ function buildMapsFromRoadmaps(roadmaps: Record<string, Roadmap>) {
   const resources: Record<string, ResourceLink[]> = {};
 
   for (const [courseId, roadmap] of Object.entries(roadmaps)) {
-    const pool = COURSE_VIDEO_POOLS[courseId] || DEFAULT_POOL;
     for (const chapter of roadmap.chapters) {
       for (const topic of chapter.topics) {
+        // Only store a video when the roadmap has a genuine topic-specific URL.
+        // Falling back to the course pool video causes ALL topics in a course to
+        // show the same intro video (e.g., every Flutter topic showing cM535T5o1sE).
         const extracted = extractYoutubeId(topic.videoUrl);
         const fromUrl = extracted && !COURSE_PLACEHOLDERS.has(extracted) ? extracted : undefined;
-        
-        const english = fromUrl || pool.english || undefined;
-        const hindi = fromUrl || pool.hindi || english;
-        const telugu = fromUrl || pool.telugu || english;
-        
-        videos[topic.id] = {};
-        if (english) videos[topic.id].english = english;
-        if (hindi) videos[topic.id].hindi = hindi;
-        if (telugu) videos[topic.id].telugu = telugu;
+
+        if (fromUrl) {
+          videos[topic.id] = {
+            english: fromUrl,
+            hindi:   fromUrl,
+            telugu:  fromUrl,
+          };
+        }
+        // If no specific video, leave videos[topic.id] undefined so TopicPanel
+        // falls through to the YouTube search embed automatically.
 
         resources[topic.id] = buildResourcesForTopic(topic.title, courseId);
       }
@@ -158,18 +161,19 @@ export function getTopicVideoId(
   language: VideoLanguage,
   roadmapVideoUrl?: string
 ): string | undefined {
+  // 1. Check topic-specific video map (only populated from genuine topic.videoUrl)
   const entry = TOPIC_VIDEOS[topicId];
-  const pool = COURSE_VIDEO_POOLS[courseId] || DEFAULT_POOL;
+  if (entry) {
+    const specific = entry[language] || entry.english;
+    if (specific) return specific;
+  }
 
-  // We should NOT fallback to cross-languages if the pool explicitly doesn't have it, 
-  // because YouTube search is better than showing an English video to a Telugu user if they want Telugu.
-  // Wait, if there is a specific roadmapVideoUrl, we can use it.
-  
-  const exactMatch = entry?.[language] || pool[language];
-  if (exactMatch) return exactMatch;
-  
-  // No strict fallback here, let TopicPanel handle the YouTube Search embed.
-  return extractYoutubeId(roadmapVideoUrl);
+  // 2. Check the roadmap videoUrl directly (passed from the topic data)
+  const fromRoadmap = extractYoutubeId(roadmapVideoUrl);
+  if (fromRoadmap && !COURSE_PLACEHOLDERS.has(fromRoadmap)) return fromRoadmap;
+
+  // 3. Return undefined — TopicPanel will show a topic-specific YouTube search embed
+  return undefined;
 }
 
 export function getTopicResourcesForId(topicId: string): ResourceLink[] {
