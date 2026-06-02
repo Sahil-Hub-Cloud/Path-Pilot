@@ -301,7 +301,8 @@ export default function TopicPanel({
           },
           body: JSON.stringify({
             topicName: topic.title,
-            courseName: courseTitle || courseIdParam,
+            courseName: courseIdParam,
+            difficulty: topic.difficulty || 'Beginner',
             language:   selectedLanguage,
             courseId:   courseIdParam,
             topicId:    topic.id,
@@ -754,7 +755,8 @@ export default function TopicPanel({
                           },
                           body: JSON.stringify({
                             topicName: topic.title,
-                            courseName: courseTitle || courseIdParam,
+                            courseName: courseIdParam,
+                            difficulty: topic.difficulty || 'Beginner',
                             language:   selectedLanguage,
                             courseId:   courseIdParam,
                             topicId:    topic.id,
@@ -944,8 +946,8 @@ export default function TopicPanel({
                     }}
                   >
                     <div style={{ fontSize: 40, marginBottom: 10 }}>🔗</div>
-                    <p style={{ fontWeight: 800, fontSize: 14, marginBottom: 4 }}>Resources coming soon</p>
-                    <p style={{ fontSize: 12, color: '#B8996E' }}>Curated links will appear here</p>
+                    <p style={{ fontWeight: 800, fontSize: 14, marginBottom: 4 }}>No resources yet</p>
+                    <p style={{ fontSize: 12, color: '#B8996E' }}>Curated links will be added for this topic</p>
                   </div>
                 )}
               </div>

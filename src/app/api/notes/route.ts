@@ -12,6 +12,7 @@ export async function POST(request: Request) {
     topicId,
     courseName,
     courseId,
+    difficulty = 'Beginner',
     language = 'english',
   } = body;
 
@@ -70,29 +71,10 @@ export async function POST(request: Request) {
         : 'Write ENTIRELY in English. Do not use Telugu or Hindi words.';
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
     const prompt = `${languageInstruction}
-You are an expert coding teacher for Indian engineering students.
-Explain the topic: ${topicName} from the course: ${courseName}
-
-Structure your response exactly like this:
-## What is ${topicName}?
-(2-3 simple sentences)
-
-## Key Concepts
-(5 bullet points)
-
-## Code Example
-(practical code example if applicable)
-
-## Real World Use
-(where this is used in real projects, 2-3 sentences)
-
-## Quick Summary
-(1 sentence summary)
-
-Keep it simple and clear. Maximum 400 words.`;
+You are an expert coding teacher for Indian engineering students. Explain ${topicName} from ${courseName} course. Use simple English mixed with Hindi/Telugu terms where helpful. Structure: ## What is it? (2-3 sentences) ## Key Concepts (5 bullet points) ## Code Example (if applicable) ## Real World Use (2-3 sentences) ## Quick Summary (1 sentence). Maximum 350 words.`;
 
     console.log(`[/api/notes] Calling Gemini for cacheId=${cacheId}`);
     const result = await model.generateContent(prompt);
