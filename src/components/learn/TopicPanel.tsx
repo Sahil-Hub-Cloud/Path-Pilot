@@ -280,9 +280,10 @@ export default function TopicPanel({
     // Unique key per course + topic + language — prevents cross-language cache collisions
     const localKey = `pp_notes_${courseIdParam}_${topic.id}_${selectedLanguage}`;
     const cachedRaw = localStorage.getItem(localKey);
+    // Detect stale/error caches — any error message that got accidentally saved
     const isStaleCache =
       !!cachedRaw &&
-      /temporarily unavailable|AI notes are temporarily|Notes unavailable right now|Gemini API error|Error details:/i.test(cachedRaw);
+      /temporarily unavailable|AI notes are temporarily|Notes unavailable right now|Gemini API error|Error details:|Could not generate|Failed to load|GEMINI_API_KEY|not configured/i.test(cachedRaw);
 
     const fetchNotes = async (background: boolean) => {
       console.log('[Notes] fetch start', { background, topic: topic.title, language: selectedLanguage });
@@ -310,9 +311,11 @@ export default function TopicPanel({
         });
 
         const d = await res.json();
+        console.log('[Notes] API response:', { ok: res.ok, status: res.status, hasNotes: !!(d.notes), cached: d.cached });
 
         if (!res.ok) {
-          const errMsg = d.error || 'Failed to load notes. Try again.';
+          const errMsg = d.error || 'Could not generate notes. Please try again.';
+          console.error('[Notes] API error:', errMsg);
           if (!background || !cachedRaw || isStaleCache) {
             setNotesError(errMsg);
             setGeminiNotes('');
@@ -323,7 +326,7 @@ export default function TopicPanel({
         const text = (d.notes || d.content || '').trim();
         if (!text) {
           if (!background || !cachedRaw || isStaleCache) {
-            setNotesError('Failed to load notes. Try again.');
+            setNotesError('Could not generate notes. Please try again.');
             setGeminiNotes('');
           }
           return;
@@ -337,7 +340,7 @@ export default function TopicPanel({
       } catch (err) {
         console.error('[Notes] fetch failed', err);
         if (!background || !cachedRaw || isStaleCache) {
-          setNotesError('Failed to load notes. Try again.');
+          setNotesError('Could not generate notes. Please try again.');
           if (!cachedRaw || isStaleCache) setGeminiNotes('');
         }
       } finally {
@@ -345,17 +348,19 @@ export default function TopicPanel({
       }
     };
 
-    // Instant load from localStorage — then background-refresh only if stale
+    // Instant load from localStorage — then background-refresh to keep fresh
     if (cachedRaw && !isStaleCache) {
       console.log('[Notes] localStorage HIT', localKey);
       setGeminiNotes(cachedRaw);
       setNotesLoading(false);
       setNotesError(null);
-      // No background refresh needed — Firestore is the source of truth
+      // Background refresh to update cache silently
+      fetchNotes(true);
       return;
     }
 
     if (isStaleCache) {
+      console.log('[Notes] Stale/error cache detected — clearing', localKey);
       localStorage.removeItem(localKey);
     }
 
@@ -746,35 +751,37 @@ export default function TopicPanel({
                         setGeminiNotes('');
                         setNotesError(null);
                         setNotesLoading(true);
-                        const token = user ? await user.getIdToken() : '';
-                        fetch('/api/notes', {
-                          method: 'POST',
-                          headers: {
-                            'Content-Type': 'application/json',
-                            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-                          },
-                          body: JSON.stringify({
-                            topicName: topic.title,
-                            courseName: courseIdParam,
-                            difficulty: topic.difficulty || 'Beginner',
-                            language:   selectedLanguage,
-                            courseId:   courseIdParam,
-                            topicId:    topic.id,
-                          }),
-                        })
-                          .then(async (res) => {
-                            const d = await res.json();
-                            if (res.ok && (d.notes || d.content)) {
-                              const text = (d.notes || d.content).trim();
-                              setGeminiNotes(text);
-                              setNotesError(null);
-                              localStorage.setItem(localKey, text);
-                            } else {
-                              setNotesError(d.error || 'Failed to load notes. Try again.');
-                            }
-                          })
-                          .catch(() => setNotesError('Failed to load notes. Try again.'))
-                          .finally(() => setNotesLoading(false));
+                        try {
+                          const token = user ? await user.getIdToken() : '';
+                          const res = await fetch('/api/notes', {
+                            method: 'POST',
+                            headers: {
+                              'Content-Type': 'application/json',
+                              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                            },
+                            body: JSON.stringify({
+                              topicName: topic.title,
+                              courseName: courseIdParam,
+                              difficulty: topic.difficulty || 'Beginner',
+                              language:   selectedLanguage,
+                              courseId:   courseIdParam,
+                              topicId:    topic.id,
+                            }),
+                          });
+                          const d = await res.json();
+                          if (res.ok && d.notes) {
+                            const text = d.notes.trim();
+                            setGeminiNotes(text);
+                            setNotesError(null);
+                            localStorage.setItem(localKey, text);
+                          } else {
+                            setNotesError(d.error || 'Could not generate notes. Please try again.');
+                          }
+                        } catch {
+                          setNotesError('Could not generate notes. Please try again.');
+                        } finally {
+                          setNotesLoading(false);
+                        }
                       }}
                       style={{
                         padding: '10px 18px',
