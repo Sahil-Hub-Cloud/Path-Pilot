@@ -6,10 +6,10 @@ import { db } from '@/lib/firebase'
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore'
 
 export async function POST(request: Request) {
-  console.log('=== NOTES API CALLED ===')
+  console.log('=== NOTES API DEBUG ===')
   console.log('GEMINI_API_KEY exists:', !!process.env.GEMINI_API_KEY)
-  console.log('GEMINI_API_KEY length:', process.env.GEMINI_API_KEY?.length)
-  console.log('Request body:', await request.clone().text())
+  console.log('GEMINI_API_KEY first 5 chars:', process.env.GEMINI_API_KEY?.substring(0,5) + '...')
+  console.log('Request body:', await request.clone().json())
 
   try {
     const body = await request.json()
@@ -77,8 +77,18 @@ Structure:
 
 Maximum 350 words. Keep it simple.`
 
-    const result = await model.generateContent(prompt)
-    const content = result.response.text()
+    let content = ''
+    try {
+      const result = await model.generateContent(prompt)
+      content = result.response.text()
+      console.log('Gemini response received')
+    } catch (error: any) {
+      console.error('Gemini API Error Name:', error.name)
+      console.error('Gemini API Error Message:', error.message)
+      console.error('Gemini API Error Stack:', error.stack)
+      console.error('Full error object:', JSON.stringify(error, null, 2))
+      return NextResponse.json({ error: 'Notes generation failed', details: error.message }, { status: 500 })
+    }
 
     // Save to Firestore permanently
     try {
@@ -95,6 +105,8 @@ Maximum 350 words. Keep it simple.`
       console.log('Cache save failed:', saveError)
     }
 
+    console.log('Returning notes:', content?.substring(0,100) + '...')
+    console.log('=== END DEBUG ===')
     return NextResponse.json({ content, cached: false })
 
   } catch (error: any) {
