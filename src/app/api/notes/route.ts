@@ -6,6 +6,11 @@ import { db } from '@/lib/firebase'
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore'
 
 export async function POST(request: Request) {
+  console.log('=== NOTES API CALLED ===')
+  console.log('GEMINI_API_KEY exists:', !!process.env.GEMINI_API_KEY)
+  console.log('GEMINI_API_KEY length:', process.env.GEMINI_API_KEY?.length)
+  console.log('Request body:', await request.clone().text())
+
   try {
     const body = await request.json()
     const { 
