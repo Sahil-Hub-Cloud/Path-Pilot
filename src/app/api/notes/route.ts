@@ -99,7 +99,7 @@ export async function POST(request: Request) {
         : 'Write ENTIRELY in English. Do not use Telugu or Hindi words.';
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
 
     const prompt = `${languageInstruction}
 You are an expert coding teacher for Indian engineering students. Explain ${topicName} from ${courseName} course. Use simple English mixed with Hindi/Telugu terms where helpful. Structure your response as:
@@ -121,7 +121,7 @@ You are an expert coding teacher for Indian engineering students. Explain ${topi
 
 Keep language simple and beginner-friendly. Maximum 400 words.`;
 
-    console.log('[/api/notes] Calling Gemini gemini-1.5-flash...');
+    console.log('[/api/notes] Calling Gemini gemini-2.0-flash-exp...');
     const startTime = Date.now();
     const result = await model.generateContent(prompt);
     const content = result.response.text();
