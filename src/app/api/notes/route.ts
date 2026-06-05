@@ -1,123 +1,52 @@
 export const dynamic = 'force-dynamic'
 
 import { NextResponse } from 'next/server'
-import { GoogleGenerativeAI } from '@google/generative-ai'
-import { db } from '@/lib/firebase'
-import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore'
 
 export async function POST(request: Request) {
-  console.log('=== NOTES API DEBUG ===')
-  console.log('GEMINI_API_KEY exists:', !!process.env.GEMINI_API_KEY)
-  console.log('GEMINI_API_KEY first 5 chars:', process.env.GEMINI_API_KEY?.substring(0,5) + '...')
-  console.log('Request body:', await request.clone().json())
-
   try {
     const body = await request.json()
-    const { 
-      topicName = 'this topic', 
-      topicId = 'unknown', 
-      courseId = 'unknown', 
-      courseName = 'this course', 
-      language = 'english' 
-    } = body
+    const { topicName = 'this topic', courseName = 'this course', language = 'english' } = body
 
-    // Check Firestore cache first
-    const cacheId = `${courseId}__${topicId}__${language}`
-    
-    try {
-      const cacheRef = doc(db, 'notes_cache', cacheId)
-      const cacheSnap = await getDoc(cacheRef)
-      if (cacheSnap.exists()) {
-        return NextResponse.json({ 
-          content: cacheSnap.data().content,
-          cached: true 
-        })
-      }
-    } catch (cacheError) {
-      console.log('Cache read failed, generating fresh')
-    }
-
-    // Check API key
     const apiKey = process.env.GEMINI_API_KEY
     if (!apiKey) {
-      return NextResponse.json(
-        { error: 'Notes service not configured' }, 
-        { status: 500 }
-      )
+      return NextResponse.json({ error: 'Missing API key' }, { status: 500 })
     }
 
-    // Generate with Gemini
-    const languageInstruction = 
-      language === 'telugu' ? 'Write ENTIRELY in Telugu language.' :
-      language === 'hindi' ? 'Write ENTIRELY in Hindi language.' :
-      'Write ENTIRELY in English.'
+    const languageInstruction =
+      language === 'telugu' ? 'Write in Telugu language.' :
+      language === 'hindi' ? 'Write in Hindi language.' :
+      'Write in English.'
 
-    const genAI = new GoogleGenerativeAI(apiKey)
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' })
+    const prompt = `${languageInstruction} Explain ${topicName} from ${courseName} for Indian engineering students. Include: definition, 5 key concepts, code example, real world use. Max 300 words.`
 
-    const prompt = `${languageInstruction}
-You are an expert teacher for Indian engineering students.
-Explain: ${topicName} from ${courseName} course.
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }]
+        })
+      }
+    )
 
-Structure:
-## What is ${topicName}?
-(2-3 simple sentences)
+    const data = await response.json()
 
-## Key Concepts
-(5 bullet points)
-
-## Code Example
-(if applicable)
-
-## Real World Use
-(2-3 sentences)
-
-## Quick Summary
-(1 sentence)
-
-Maximum 350 words. Keep it simple.`
-
-    let content = ''
-    try {
-      const result = await model.generateContent(prompt)
-      content = result.response.text()
-      console.log('Gemini response received')
-    } catch (error: any) {
-      console.error('Gemini API Error Name:', error.name)
-      console.error('Gemini API Error Message:', error.message)
-      console.error('Gemini API Error Stack:', error.stack)
-      console.error('Full error object:', JSON.stringify(error, null, 2))
-      return NextResponse.json({ error: 'Notes generation failed', details: error.message }, { status: 500 })
+    if (!response.ok) {
+      console.error('Gemini error:', JSON.stringify(data))
+      return NextResponse.json({ error: 'Gemini API failed: ' + (data.error?.message || 'unknown') }, { status: 500 })
     }
 
-    // Save to Firestore permanently
-    try {
-      const cacheRef = doc(db, 'notes_cache', cacheId)
-      await setDoc(cacheRef, {
-        content,
-        topicName,
-        courseId,
-        language,
-        generatedAt: serverTimestamp(),
-        permanent: true
-      })
-    } catch (saveError) {
-      console.log('Cache save failed:', saveError)
-    }
+    const content = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Notes not available'
 
-    console.log('Returning notes:', content?.substring(0,100) + '...')
-    console.log('=== END DEBUG ===')
-    return NextResponse.json({ content, cached: false })
+    return NextResponse.json({ content })
 
   } catch (error: any) {
-    console.error('Notes API error:', error.message)
-    return NextResponse.json(
-      { error: 'Could not generate notes. Please try again.' },
-      { status: 500 }
-    )
+    console.error('Notes error:', error.message)
+    return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
 
 export async function GET() {
-  return NextResponse.json({ status: 'Notes API ready' })
+  return NextResponse.json({ status: 'ok' })
 }
