@@ -1,116 +1,119 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import { config } from 'dotenv';
 import * as admin from 'firebase-admin';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import * as dotenv from 'dotenv';
 import { ROADMAPS } from '../src/lib/data/roadmaps';
 
-// Load environment variables
-config({ path: path.resolve(process.cwd(), '.env.local') });
-config({ path: path.resolve(process.cwd(), '.env') });
+dotenv.config({ path: '.env.local' });
+dotenv.config();
 
-const apiKey = process.env.GEMINI_API_KEY;
-if (!apiKey) {
-  console.error('ERROR: GEMINI_API_KEY is missing in environment variables.');
-  process.exit(1);
-}
-
-const genAI = new GoogleGenerativeAI(apiKey);
-
-// Initialize Firebase Admin
+// 1. Initialize Firebase Admin
 if (!admin.apps.length) {
-  const privateKey = process.env.FIREBASE_PRIVATE_KEY;
-  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-
-  if (privateKey && clientEmail) {
-    admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-        clientEmail: clientEmail,
-        privateKey: privateKey.replace(/\\n/g, '\n'),
-      }),
-    });
-  } else {
-    admin.initializeApp({
-      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-    });
-  }
+    if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
+        const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+        admin.initializeApp({
+            credential: admin.credential.cert(serviceAccount),
+            projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+        });
+    } else {
+        admin.initializeApp({
+            projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+        });
+    }
 }
 
 const db = admin.firestore();
+const apiKey = process.env.GEMINI_API_KEY;
 
-async function generateWithRetry(prompt: string, retries = 3): Promise<string> {
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-001' });
-  
-  for (let i = 0; i < retries; i++) {
-    try {
-      const result = await model.generateContent(prompt);
-      return result.response.text();
-    } catch (error: any) {
-      if (error.message?.includes('429') || error.message?.toLowerCase().includes('quota')) {
-        console.warn(`[Quota Error] Retrying in ${Math.pow(2, i) * 2} seconds...`);
-        await new Promise((resolve) => setTimeout(resolve, Math.pow(2, i) * 2000));
-        continue;
+if (!apiKey) {
+    console.error("GEMINI_API_KEY is not set.");
+    process.exit(1);
+}
+
+async function generateNote(topicName: string, courseName: string) {
+    const prompt = `Write in English. Explain ${topicName} from ${courseName} for Indian engineering students. Include: definition, 5 key concepts, code example, real world use. Max 300 words.`;
+
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }]
+        })
       }
-      throw error;
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw { status: response.status, message: data.error?.message || 'unknown' };
     }
-  }
-  throw new Error('Max retries exceeded');
+
+    return data.candidates?.[0]?.content?.parts?.[0]?.text || 'Notes not available';
 }
 
 async function main() {
-  const courses = Object.values(ROADMAPS);
-  console.log(`Starting pre-generation for ${courses.length} courses...`);
-  
-  for (const course of courses) {
-    console.log(`\nProcessing course: ${course.title} (${course.id})`);
-    
-    for (const chapter of course.chapters) {
-      for (const topic of chapter.topics) {
-        const lang = 'English'; // Pre-generating in English as default
-        const docId = `${course.id}_${topic.id}_${lang}`;
-        const cacheRef = db.collection('topic_notes').doc(docId);
-        
-        const existing = await cacheRef.get();
-        if (existing.exists) {
-          console.log(`  [SKIP] Notes already exist for topic: ${topic.title}`);
-          continue;
+    const courses = Object.values(ROADMAPS);
+    console.log(`Found ${courses.length} courses.`);
+
+    const allTasks: any[] = [];
+    for (const course of courses) {
+        if (!course.chapters) continue;
+        for (const chapter of course.chapters) {
+            if (!chapter.topics) continue;
+            for (const topic of chapter.topics) {
+                allTasks.push({
+                    courseId: course.id,
+                    courseName: course.title,
+                    topicId: topic.id,
+                    topicName: topic.title,
+                    language: 'english'
+                });
+            }
         }
+    }
 
-        console.log(`  [GENERATE] Generating notes for topic: ${topic.title}...`);
-        const prompt = `Explain ${topic.title} from ${course.title} course in simple ${lang} for an Indian engineering student. Structure your response as markdown with these sections:
-1) Simple Definition (2-3 sentences)
-2) Key Concepts (5 bullet points)
-3) Real World Example (3-4 sentences)
-4) Common Mistakes (3 bullets)
-5) Quick Summary (1 sentence)
+    console.log(`Found ${allTasks.length} topics to generate notes for.`);
 
-Keep under 300 words. Use clear headings (##) for each section.`;
+    let generatedCount = 0;
+    let skippedCount = 0;
+    let failedCount = 0;
+
+    for (let i = 0; i < allTasks.length; i++) {
+        const { courseId, courseName, topicId, topicName, language } = allTasks[i];
+        const docId = `${courseId}_${topicId}_${language}`;
+        const docRef = db.collection('topic_notes').doc(docId);
 
         try {
-          const notes = await generateWithRetry(prompt);
-          
-          await cacheRef.set({
-            courseId: course.id,
-            topicId: topic.id,
-            notes,
-            language: lang,
-            createdAt: Date.now(),
-          });
-          
-          console.log(`  [SUCCESS] Saved notes for: ${topic.title}`);
-          
-          // Small delay to be polite to the API rate limits
-          await new Promise(r => setTimeout(r, 1000));
+            const noteContent = await generateNote(topicName, courseName);
+            
+            await docRef.set({
+                notes: noteContent,
+                courseId,
+                topicId,
+                topicName,
+                language,
+                generatedAt: admin.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+
+            generatedCount++;
+            console.log(`Generated ${i + 1}/${allTasks.length} topics... (${courseName} - ${topicName})`);
+
+            // Delay to avoid quota issues
+            await new Promise(resolve => setTimeout(resolve, 4000));
+
         } catch (error: any) {
-          console.error(`  [ERROR] Failed to generate notes for ${topic.title}:`, error.message);
+            if (error.status === 429 || error.status === 403) {
+                console.log(`Skipping due to quota (${error.status}) on ${topicName}`);
+                skippedCount++;
+            } else {
+                console.error(`Error generating note for ${topicName}: ${error.message}`);
+                failedCount++;
+            }
+            console.log(`Generated ${i + 1}/${allTasks.length} topics...`);
         }
-      }
     }
-  }
-  
-  console.log('\n✅ Pre-generation complete!');
-  process.exit(0);
+
+    console.log(`Completed: ${generatedCount} success, ${skippedCount} skipped due to quota, ${failedCount} errors`);
 }
 
 main().catch(console.error);

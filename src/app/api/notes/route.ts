@@ -1,11 +1,23 @@
 export const dynamic = 'force-dynamic'
 
 import { NextResponse } from 'next/server'
+import { adminDb } from '@/lib/firebase-admin'
 
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { topicName = 'this topic', courseName = 'this course', language = 'english' } = body
+    const { topicName = 'this topic', courseName = 'this course', courseId, topicId, language = 'english' } = body
+
+    if (courseId && topicId) {
+      const docId = `${courseId}_${topicId}_${language}`
+      const docSnap = await adminDb.collection('topic_notes').doc(docId).get()
+      if (docSnap.exists) {
+        const data = docSnap.data()
+        if (data?.notes) {
+          return NextResponse.json({ content: data.notes, cached: true })
+        }
+      }
+    }
 
     const apiKey = process.env.GEMINI_API_KEY
     if (!apiKey) {
@@ -33,11 +45,29 @@ export async function POST(request: Request) {
     const data = await response.json()
 
     if (!response.ok) {
+      if (response.status === 429 || response.status === 403) {
+        return NextResponse.json({ 
+          content: 'Notes coming soon for this topic!', 
+          isFallback: true 
+        })
+      }
       console.error('Gemini error:', JSON.stringify(data))
       return NextResponse.json({ error: 'Gemini API failed: ' + (data.error?.message || 'unknown') }, { status: 500 })
     }
 
     const content = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Notes not available'
+
+    if (courseId && topicId && content !== 'Notes not available') {
+      const docId = `${courseId}_${topicId}_${language}`
+      await adminDb.collection('topic_notes').doc(docId).set({
+        notes: content,
+        courseId,
+        topicId,
+        topicName,
+        language,
+        generatedAt: new Date()
+      }, { merge: true }).catch(err => console.error("Cache save error:", err))
+    }
 
     return NextResponse.json({ content })
 

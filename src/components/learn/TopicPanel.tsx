@@ -280,10 +280,33 @@ export default function TopicPanel({
     // Unique key per course + topic + language — prevents cross-language cache collisions
     const localKey = `pp_notes_${courseIdParam}_${topic.id}_${selectedLanguage}`;
     const cachedRaw = localStorage.getItem(localKey);
+
+    let cachedText = '';
+    let isFallbackCache = false;
+    let cacheAge = 0;
+
+    if (cachedRaw) {
+      try {
+        const parsed = JSON.parse(cachedRaw);
+        if (parsed.text) {
+          cachedText = parsed.text;
+          isFallbackCache = parsed.isFallback || false;
+          cacheAge = Date.now() - (parsed.timestamp || 0);
+        } else {
+          cachedText = cachedRaw; // fallback for non-JSON string
+        }
+      } catch (e) {
+        cachedText = cachedRaw; // legacy string cache
+      }
+    }
+
     // Detect stale/error caches — any error message that got accidentally saved
     const isStaleCache =
-      !!cachedRaw &&
-      /temporarily unavailable|AI notes are temporarily|Notes unavailable right now|Gemini API error|Error details:|Could not generate|Failed to load|GEMINI_API_KEY|not configured/i.test(cachedRaw);
+      !!cachedText &&
+      /temporarily unavailable|AI notes are temporarily|Notes unavailable right now|Gemini API error|Error details:|Could not generate|Failed to load|GEMINI_API_KEY|not configured/i.test(cachedText);
+
+    // Expire fallbacks after 24 hours to retry generation
+    const isExpiredFallback = isFallbackCache && cacheAge > 24 * 60 * 60 * 1000;
 
     const fetchNotes = async (background: boolean) => {
       console.log('[Notes] fetch start', { background, topic: topic.title, language: selectedLanguage });
@@ -311,12 +334,12 @@ export default function TopicPanel({
         });
 
         const d = await res.json();
-        console.log('[Notes] API response:', { ok: res.ok, status: res.status, hasNotes: !!(d.notes), cached: d.cached });
+        console.log('[Notes] API response:', { ok: res.ok, status: res.status, hasNotes: !!(d.notes || d.content), cached: d.cached, isFallback: d.isFallback });
 
         if (!res.ok) {
           const errMsg = d.error || 'Could not generate notes. Please try again.';
           console.error('[Notes] API error:', errMsg);
-          if (!background || !cachedRaw || isStaleCache) {
+          if (!background || !cachedText || isStaleCache || isExpiredFallback) {
             setNotesError(errMsg);
             setGeminiNotes('');
           }
@@ -325,7 +348,7 @@ export default function TopicPanel({
 
         const text = (d.notes || d.content || '').trim();
         if (!text) {
-          if (!background || !cachedRaw || isStaleCache) {
+          if (!background || !cachedText || isStaleCache || isExpiredFallback) {
             setNotesError('Could not generate notes. Please try again.');
             setGeminiNotes('');
           }
@@ -335,13 +358,17 @@ export default function TopicPanel({
         console.log(`[Notes] ${d.cached ? 'Firestore cache hit' : 'Gemini generated'} | chars=${text.length}`);
         setGeminiNotes(text);
         setNotesError(null);
-        // Save to localStorage for instant access next visit
-        localStorage.setItem(localKey, text);
+        // Save to localStorage with fallback metadata
+        localStorage.setItem(localKey, JSON.stringify({
+          text,
+          isFallback: d.isFallback || false,
+          timestamp: Date.now()
+        }));
       } catch (err) {
         console.error('[Notes] fetch failed', err);
-        if (!background || !cachedRaw || isStaleCache) {
+        if (!background || !cachedText || isStaleCache || isExpiredFallback) {
           setNotesError('Could not generate notes. Please try again.');
-          if (!cachedRaw || isStaleCache) setGeminiNotes('');
+          if (!cachedText || isStaleCache || isExpiredFallback) setGeminiNotes('');
         }
       } finally {
         if (!background) setNotesLoading(false);
@@ -349,9 +376,9 @@ export default function TopicPanel({
     };
 
     // Instant load from localStorage — then background-refresh to keep fresh
-    if (cachedRaw && !isStaleCache) {
+    if (cachedText && !isStaleCache && !isExpiredFallback) {
       console.log('[Notes] localStorage HIT', localKey);
-      setGeminiNotes(cachedRaw);
+      setGeminiNotes(cachedText);
       setNotesLoading(false);
       setNotesError(null);
       // Background refresh to update cache silently
@@ -359,8 +386,8 @@ export default function TopicPanel({
       return;
     }
 
-    if (isStaleCache) {
-      console.log('[Notes] Stale/error cache detected — clearing', localKey);
+    if (isStaleCache || isExpiredFallback) {
+      console.log(`[Notes] ${isStaleCache ? 'Stale/error cache' : 'Expired fallback'} detected — clearing`, localKey);
       localStorage.removeItem(localKey);
     }
 
@@ -769,11 +796,15 @@ export default function TopicPanel({
                             }),
                           });
                           const d = await res.json();
-                          if (res.ok && d.notes) {
-                            const text = d.notes.trim();
+                          if (res.ok && (d.notes || d.content)) {
+                            const text = (d.notes || d.content).trim();
                             setGeminiNotes(text);
                             setNotesError(null);
-                            localStorage.setItem(localKey, text);
+                            localStorage.setItem(localKey, JSON.stringify({
+                              text,
+                              isFallback: d.isFallback || false,
+                              timestamp: Date.now()
+                            }));
                           } else {
                             setNotesError(d.error || 'Could not generate notes. Please try again.');
                           }
