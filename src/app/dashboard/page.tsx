@@ -93,32 +93,29 @@ export default function DashboardPage() {
     }
   };
 
-  const syncStreak = async (uid: string, existingStreak: number, lastActiveDate: string | undefined) => {
-    const today = getTodayIST();
-    let newStreak = existingStreak;
+  const syncStreak = async (uid: string, currentStreak: number, lastActive: string | undefined) => {
+    const todayStr = getTodayIST();
+    let newStreak = currentStreak;
 
-    if (!lastActiveDate) {
-      // 1. If lastActiveDate is null or undefined: set streakDays to 1, set lastActiveDate to today
+    if (!lastActive) {
+      // 1. If lastActive is null or undefined: set streakDays to 1, set lastActiveDate to today
       newStreak = 1;
-    } else if (lastActiveDate === today) {
-      // 2. If lastActiveDate is TODAY: do nothing, streak stays same
-      setStreakDays(existingStreak);
-      return;
     } else {
-      // Calculate diff in calendar days using IST strings
-      const yesterdayDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
-      yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-      const yesterdayStr = yesterdayDate.toISOString().split('T')[0];
-      
-      // Simpler calendar diff logic
-      const lastDate = new Date(lastActiveDate);
-      const todayDate = new Date(today);
-      const diffTime = Math.abs(todayDate.getTime() - lastDate.getTime());
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
 
-      if (diffDays === 1) {
-        // 3. If lastActiveDate is YESTERDAY: increment streakDays by 1
-        newStreak = existingStreak + 1;
+      const lastActiveDate = new Date(lastActive)
+      lastActiveDate.setHours(0, 0, 0, 0)
+
+      const diffTime = today.getTime() - lastActiveDate.getTime()
+      const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24))
+
+      if (diffDays === 0) {
+        // Already logged in today — keep streak
+        newStreak = currentStreak
+      } else if (diffDays === 1) {
+        // Logged in yesterday — increment
+        newStreak = currentStreak + 1
         
         // Milestone notifications
         if ([3, 7, 14, 30, 50, 100].includes(newStreak)) {
@@ -126,8 +123,8 @@ export default function DashboardPage() {
           await addNotification(uid, 'streak', 'Streak Milestone', msg);
         }
       } else {
-        // 4. If lastActiveDate is 2 or more days ago: reset streakDays to 1
-        newStreak = 1;
+        // Missed days — reset
+        newStreak = 1
         await addNotification(uid, 'inactivity', 'Sector Offline', `You were offline for ${diffDays} days. Streak has been reset, but your progress is safe.`);
         
         if (user?.email) {
