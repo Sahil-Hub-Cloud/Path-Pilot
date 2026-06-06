@@ -1,10 +1,8 @@
+import './load-env';
 import * as admin from 'firebase-admin';
-import * as dotenv from 'dotenv';
 import { ROADMAPS } from '../src/lib/data/roadmaps';
 import { db } from '../src/lib/firebase-admin';
 
-dotenv.config({ path: '.env.local' });
-dotenv.config();
 const apiKey = process.env.GEMINI_API_KEY;
 
 if (!apiKey) {
