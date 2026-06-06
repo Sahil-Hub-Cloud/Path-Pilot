@@ -5,6 +5,11 @@ import { db } from '@/lib/firebase-admin'
 
 export async function POST(request: Request) {
   try {
+    console.log('🔍 NOTES API HIT');
+    console.log('Body:', await request.clone().json());
+    console.log('GEMINI_API_KEY exists:', !!process.env.GEMINI_API_KEY);
+    console.log('FIREBASE_ADMIN_PROJECT_ID exists:', !!process.env.FIREBASE_ADMIN_PROJECT_ID);
+
     const body = await request.json()
     const { topicName = 'this topic', courseName = 'this course', courseId, topicId, language = 'english' } = body
 
@@ -72,11 +77,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ content })
 
   } catch (error: any) {
-    console.error('Notes error:', error.message)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    console.error('💥 NOTES API CRASH:', error.message);
+    console.error('Stack:', error.stack);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
 export async function GET() {
-  return NextResponse.json({ status: 'ok' })
+  return NextResponse.json({
+    status: 'ok',
+    geminiKey: !!process.env.GEMINI_API_KEY,
+    firebaseKey: !!process.env.FIREBASE_ADMIN_PROJECT_ID
+  })
 }
