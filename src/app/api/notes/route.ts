@@ -1,43 +1,32 @@
 export const dynamic = 'force-dynamic'
 
 import { NextResponse } from 'next/server'
-import { db } from '@/lib/firebase-admin'
 
 export async function POST(request: Request) {
   try {
-    console.log('🔍 NOTES API HIT');
-    console.log('Body:', await request.clone().json());
-    console.log('GEMINI_API_KEY exists:', !!process.env.GEMINI_API_KEY);
-    console.log('FIREBASE_ADMIN_PROJECT_ID exists:', !!process.env.FIREBASE_ADMIN_PROJECT_ID);
-
     const body = await request.json()
-    const { topicName = 'this topic', courseName = 'this course', courseId, topicId, language = 'english' } = body
-
-    if (courseId && topicId) {
-      const docId = `${courseId}_${topicId}_${language}`
-      const docSnap = await db.collection('topic_notes').doc(docId).get()
-      if (docSnap.exists) {
-        const data = docSnap.data()
-        if (data?.notes) {
-          return NextResponse.json({ content: data.notes, cached: true })
-        }
-      }
-    }
+    const { topicName = 'this topic', courseName = 'this course', language = 'English' } = body
 
     const apiKey = process.env.GEMINI_API_KEY
     if (!apiKey) {
-      return NextResponse.json({ error: 'Missing API key' }, { status: 500 })
+      return NextResponse.json({ error: 'Missing Gemini API key' }, { status: 500 })
     }
 
-    const languageInstruction =
-      language === 'telugu' ? 'Write in Telugu language.' :
-      language === 'hindi' ? 'Write in Hindi language.' :
-      'Write in English.'
-
-    const prompt = `${languageInstruction} Explain ${topicName} from ${courseName} for Indian engineering students. Include: definition, 5 key concepts, code example, real world use. Max 300 words.`
+    const prompt = `Explain ${topicName} from ${courseName} in simple ${language}. Structure exactly:
+## What is it?
+(2-3 simple sentences)
+## Key Concepts
+- (5 bullet points)
+## Code Example
+(if applicable, otherwise skip)
+## Real World Use
+(2-3 sentences)
+## Quick Summary
+(1 sentence)
+Keep under 350 words. Use clear markdown formatting.`
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -50,43 +39,25 @@ export async function POST(request: Request) {
     const data = await response.json()
 
     if (!response.ok) {
-      if (response.status === 429 || response.status === 403) {
-        return NextResponse.json({ 
-          content: 'Notes coming soon for this topic!', 
-          isFallback: true 
-        })
-      }
       console.error('Gemini error:', JSON.stringify(data))
-      return NextResponse.json({ error: 'Gemini API failed: ' + (data.error?.message || 'unknown') }, { status: 500 })
+      return NextResponse.json(
+        { error: 'Gemini API failed: ' + (data.error?.message || 'unknown') },
+        { status: 500 }
+      )
     }
 
-    const content = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Notes not available'
-
-    if (courseId && topicId && content !== 'Notes not available') {
-      const docId = `${courseId}_${topicId}_${language}`
-      await db.collection('topic_notes').doc(docId).set({
-        notes: content,
-        courseId,
-        topicId,
-        topicName,
-        language,
-        generatedAt: new Date()
-      }, { merge: true }).catch(err => console.error("Cache save error:", err))
+    const notes = data.candidates?.[0]?.content?.parts?.[0]?.text
+    if (!notes) {
+      return NextResponse.json(
+        { error: 'Gemini returned empty response' },
+        { status: 500 }
+      )
     }
 
-    return NextResponse.json({ content })
+    return NextResponse.json({ notes })
 
   } catch (error: any) {
-    console.error('💥 NOTES API CRASH:', error.message);
-    console.error('Stack:', error.stack);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('💥 NOTES API CRASH:', error.message)
+    return NextResponse.json({ error: error.message }, { status: 500 })
   }
-}
-
-export async function GET() {
-  return NextResponse.json({
-    status: 'ok',
-    geminiKey: !!process.env.GEMINI_API_KEY,
-    firebaseKey: !!process.env.FIREBASE_ADMIN_PROJECT_ID
-  })
 }

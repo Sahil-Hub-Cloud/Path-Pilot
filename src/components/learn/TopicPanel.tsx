@@ -273,48 +273,16 @@ export default function TopicPanel({
     setNotesError(null);
   }, [topic?.id]);
 
-  // Fetch Gemini notes — localStorage first for instant load, then Firestore/Gemini
+  // Fetch Gemini notes — direct generation, no caching
   useEffect(() => {
     if (activeTab !== 'notes' || !topic) return;
 
-    // Unique key per course + topic + language — prevents cross-language cache collisions
-    const localKey = `pp_notes_${courseIdParam}_${topic.id}_${selectedLanguage}`;
-    const cachedRaw = localStorage.getItem(localKey);
+    let cancelled = false;
+    setNotesLoading(true);
+    setNotesError(null);
+    setGeminiNotes('');
 
-    let cachedText = '';
-    let isFallbackCache = false;
-    let cacheAge = 0;
-
-    if (cachedRaw) {
-      try {
-        const parsed = JSON.parse(cachedRaw);
-        if (parsed.text) {
-          cachedText = parsed.text;
-          isFallbackCache = parsed.isFallback || false;
-          cacheAge = Date.now() - (parsed.timestamp || 0);
-        } else {
-          cachedText = cachedRaw; // fallback for non-JSON string
-        }
-      } catch (e) {
-        cachedText = cachedRaw; // legacy string cache
-      }
-    }
-
-    // Detect stale/error caches — any error message that got accidentally saved
-    const isStaleCache =
-      !!cachedText &&
-      /temporarily unavailable|AI notes are temporarily|Notes unavailable right now|Gemini API error|Error details:|Could not generate|Failed to load|GEMINI_API_KEY|not configured/i.test(cachedText);
-
-    // Expire fallbacks after 24 hours to retry generation
-    const isExpiredFallback = isFallbackCache && cacheAge > 24 * 60 * 60 * 1000;
-
-    const fetchNotes = async (background: boolean) => {
-      console.log('[Notes] fetch start', { background, topic: topic.title, language: selectedLanguage });
-      if (!background) {
-        setNotesLoading(true);
-        setNotesError(null);
-      }
-
+    const fetchNotes = async () => {
       try {
         const token = user ? await user.getIdToken() : '';
         const res = await fetch('/api/notes', {
@@ -325,74 +293,39 @@ export default function TopicPanel({
           },
           body: JSON.stringify({
             topicName: topic.title,
-            courseName: courseIdParam,
-            difficulty: topic.difficulty || 'Beginner',
-            language:   selectedLanguage,
-            courseId:   courseIdParam,
-            topicId:    topic.id,
+            courseName: courseTitle || courseIdParam,
+            language: selectedLanguage === 'english' ? 'English' : selectedLanguage === 'hindi' ? 'Hindi' : 'Telugu',
           }),
         });
 
         const d = await res.json();
-        console.log('[Notes] API response:', { ok: res.ok, status: res.status, hasNotes: !!(d.notes || d.content), cached: d.cached, isFallback: d.isFallback });
+
+        if (cancelled) return;
 
         if (!res.ok) {
-          const errMsg = d.error || 'Could not generate notes. Please try again.';
-          console.error('[Notes] API error:', errMsg);
-          if (!background || !cachedText || isStaleCache || isExpiredFallback) {
-            setNotesError(errMsg);
-            setGeminiNotes('');
-          }
+          setNotesError(d.error || 'Could not generate notes.');
           return;
         }
 
-        const text = (d.notes || d.content || '').trim();
+        const text = (d.notes || '').trim();
         if (!text) {
-          if (!background || !cachedText || isStaleCache || isExpiredFallback) {
-            setNotesError('Could not generate notes. Please try again.');
-            setGeminiNotes('');
-          }
+          setNotesError('Gemini returned empty notes. Please retry.');
           return;
         }
 
-        console.log(`[Notes] ${d.cached ? 'Firestore cache hit' : 'Gemini generated'} | chars=${text.length}`);
         setGeminiNotes(text);
         setNotesError(null);
-        // Save to localStorage with fallback metadata
-        localStorage.setItem(localKey, JSON.stringify({
-          text,
-          isFallback: d.isFallback || false,
-          timestamp: Date.now()
-        }));
-      } catch (err) {
-        console.error('[Notes] fetch failed', err);
-        if (!background || !cachedText || isStaleCache || isExpiredFallback) {
-          setNotesError('Could not generate notes. Please try again.');
-          if (!cachedText || isStaleCache || isExpiredFallback) setGeminiNotes('');
+      } catch (err: any) {
+        if (!cancelled) {
+          setNotesError(err.message || 'Could not generate notes. Please try again.');
         }
       } finally {
-        if (!background) setNotesLoading(false);
+        if (!cancelled) setNotesLoading(false);
       }
     };
 
-    // Instant load from localStorage — then background-refresh to keep fresh
-    if (cachedText && !isStaleCache && !isExpiredFallback) {
-      console.log('[Notes] localStorage HIT', localKey);
-      setGeminiNotes(cachedText);
-      setNotesLoading(false);
-      setNotesError(null);
-      // Background refresh to update cache silently
-      fetchNotes(true);
-      return;
-    }
-
-    if (isStaleCache || isExpiredFallback) {
-      console.log(`[Notes] ${isStaleCache ? 'Stale/error cache' : 'Expired fallback'} detected — clearing`, localKey);
-      localStorage.removeItem(localKey);
-    }
-
-    setGeminiNotes('');
-    fetchNotes(false);
+    fetchNotes();
+    return () => { cancelled = true; };
   }, [activeTab, topic, courseTitle, courseIdParam, selectedLanguage, user]);
 
   // Fetch Gemini challenge
@@ -765,16 +698,16 @@ export default function TopicPanel({
                   ))}
                 </div>
 
-                {notesLoading && !geminiNotes ? (
+                {notesLoading ? (
                   <Skeleton lines={6} />
-                ) : notesError && !geminiNotes ? (
+                ) : notesError ? (
                   <div style={{ textAlign: 'center', padding: '24px 12px' }}>
-                    <p style={{ color: '#DC2626', fontSize: 14, fontWeight: 700, marginBottom: 12 }}>{notesError}</p>
+                    <p style={{ color: '#DC2626', fontSize: 14, fontWeight: 700, marginBottom: 12 }}>
+                      Generation failed: {notesError}
+                    </p>
                     <button
                       type="button"
                       onClick={async () => {
-                        const localKey = `pp_notes_${courseIdParam}_${topic.id}_${selectedLanguage}`;
-                        localStorage.removeItem(localKey);
                         setGeminiNotes('');
                         setNotesError(null);
                         setNotesLoading(true);
@@ -788,28 +721,19 @@ export default function TopicPanel({
                             },
                             body: JSON.stringify({
                               topicName: topic.title,
-                              courseName: courseIdParam,
-                              difficulty: topic.difficulty || 'Beginner',
-                              language:   selectedLanguage,
-                              courseId:   courseIdParam,
-                              topicId:    topic.id,
+                              courseName: courseTitle || courseIdParam,
+                              language: selectedLanguage === 'english' ? 'English' : selectedLanguage === 'hindi' ? 'Hindi' : 'Telugu',
                             }),
                           });
                           const d = await res.json();
-                          if (res.ok && (d.notes || d.content)) {
-                            const text = (d.notes || d.content).trim();
-                            setGeminiNotes(text);
+                          if (res.ok && d.notes) {
+                            setGeminiNotes(d.notes.trim());
                             setNotesError(null);
-                            localStorage.setItem(localKey, JSON.stringify({
-                              text,
-                              isFallback: d.isFallback || false,
-                              timestamp: Date.now()
-                            }));
                           } else {
                             setNotesError(d.error || 'Could not generate notes. Please try again.');
                           }
-                        } catch {
-                          setNotesError('Could not generate notes. Please try again.');
+                        } catch (err: any) {
+                          setNotesError(err.message || 'Could not generate notes. Please try again.');
                         } finally {
                           setNotesLoading(false);
                         }
@@ -825,21 +749,12 @@ export default function TopicPanel({
                         cursor: 'pointer',
                       }}
                     >
-                      Retry
+                      🔄 Retry
                     </button>
                   </div>
                 ) : geminiNotes ? (
-                  <>
-                    {notesLoading && (
-                      <p style={{ fontSize: 11, color: '#8B6E52', fontWeight: 600, marginBottom: 8 }}>
-                        Refreshing notes…
-                      </p>
-                    )}
-                    <GeminiNotes markdown={geminiNotes} />
-                  </>
-                ) : (
-                  <p style={{ color: '#8B6E52', fontSize: 14 }}>Select this topic to load AI notes.</p>
-                )}
+                  <GeminiNotes markdown={geminiNotes} />
+                ) : null}
               </>
             )}
 
