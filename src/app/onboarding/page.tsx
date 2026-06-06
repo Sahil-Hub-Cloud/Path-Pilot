@@ -59,6 +59,7 @@ const S = {
 interface StudentDetails {
   fullName: string;
   college: string;
+  collegeCode: string;
   regNumber: string;
   mobile: string;
 }
@@ -80,7 +81,7 @@ export default function OnboardingPage() {
   const { isReady } = useAuthGuard();
 
   const [step, setStep] = useState<0 | 1 | 2 | 3>(0); // 0=intro, 1=details, 2=track, 3=level
-  const [details, setDetails] = useState<StudentDetails>({ fullName: '', college: '', regNumber: '', mobile: '' });
+  const [details, setDetails] = useState<StudentDetails>({ fullName: '', college: '', collegeCode: '', regNumber: '', mobile: '' });
 
   useEffect(() => {
     if (!user || !db) return;
@@ -122,11 +123,35 @@ export default function OnboardingPage() {
     return '';
   };
 
-  const handleDetailsNext = () => {
+  const handleDetailsNext = async () => {
     const err = validateDetails();
     if (err) { setDetailsError(err); return; }
-    setDetailsError('');
-    setStep(2);
+    
+    // Check college code if provided
+    if (details.collegeCode.trim()) {
+      try {
+        const res = await fetch(`/api/college/check-code?code=${details.collegeCode.trim()}`);
+        const data = await res.json();
+        if (data.exists) {
+          // If college name is empty, auto-fill it
+          if (!details.college.trim()) {
+            setDetails(p => ({ ...p, college: data.collegeName }));
+          }
+          setDetailsError('');
+          setStep(2);
+        } else {
+          setDetailsError('Invalid college code. Please check and try again.');
+          return;
+        }
+      } catch (error) {
+        console.error('Error checking college code:', error);
+        setDetailsError('Error validating college code.');
+        return;
+      }
+    } else {
+      setDetailsError('');
+      setStep(2);
+    }
   };
 
   const handleTrackSelect = (id: string) => {
@@ -144,6 +169,7 @@ export default function OnboardingPage() {
     const profileData = {
       displayName: details.fullName.trim(),
       college: details.college.trim(),
+      collegeCode: details.collegeCode.trim() || null,
       regNumber: details.regNumber.trim(),
       mobile: details.mobile.trim(),
       learningPath: track?.label || selectedTrack,
@@ -163,6 +189,23 @@ export default function OnboardingPage() {
           updateDoc(doc(db, 'users', user.uid), profileData),
           new Promise<void>((_, rej) => setTimeout(() => rej(), 4000))
         ]);
+
+        // Also link profile in Supabase
+        await fetch('/api/college/link-profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: user.uid,
+            email: user.email,
+            fullName: details.fullName.trim(),
+            collegeCode: details.collegeCode.trim(),
+            collegeName: details.college.trim(),
+            yearOfStudy: null, // User can update later in profile settings
+            profileImageUrl: null,
+            showProfileToAdmins: true
+          })
+        });
+
         toast.success('Profile saved!');
       } catch {
         toast.success('Saved locally — will sync when online.');
@@ -264,6 +307,15 @@ export default function OnboardingPage() {
                           onFocus={() => setFocus('name')} onBlur={() => setFocus('')}
                           placeholder="Full Name *"
                           style={inputStyle(focus === 'name')} />
+                      </div>
+
+                      {/* College Code */}
+                      <div style={{ position: 'relative' }}>
+                        <FiBookOpen size={15} color={focus === 'collegeCode' ? S.teal : S.muted} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+                        <input value={details.collegeCode} onChange={e => setDetails(p => ({ ...p, collegeCode: e.target.value.toUpperCase() }))}
+                          onFocus={() => setFocus('collegeCode')} onBlur={() => setFocus('')}
+                          placeholder="College Code (If provided by institution)"
+                          style={inputStyle(focus === 'collegeCode')} />
                       </div>
 
                       {/* College */}

@@ -33,6 +33,7 @@ export default function CollegeAdminDashboard() {
   const [filterTrack, setFilterTrack] = useState('All Tracks');
   const [filterLevel, setFilterLevel] = useState('All Levels');
   const [filterStatus, setFilterStatus] = useState('All Statuses');
+  const [filterYear, setFilterYear] = useState('All Years');
 
   // Modal State
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
@@ -93,6 +94,9 @@ export default function CollegeAdminDashboard() {
       lastActive: hasDate ? lastDate.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : 'Never',
       diffDays,
       status,
+      yearOfStudy: sd.yearOfStudy ? String(sd.yearOfStudy) : null,
+      profileImageUrl: sd.showProfileToAdmins === false ? null : (sd.profileImageUrl || null),
+      isPrivate: sd.showProfileToAdmins === false,
       completedTopics: Array.isArray(sd.completedTopics) ? sd.completedTopics : [],
       labSubmissions: Array.isArray(sd.completedLabsList) ? sd.completedLabsList : [],
     };
@@ -244,10 +248,11 @@ export default function CollegeAdminDashboard() {
       const matchTrack = filterTrack === 'All Tracks' || s.track === filterTrack;
       const matchLevel = filterLevel === 'All Levels' || s.empLevel === filterLevel;
       const matchStatus = filterStatus === 'All Statuses' || s.status === filterStatus;
+      const matchYear = filterYear === 'All Years' || s.yearOfStudy === filterYear;
       
-      return matchSearch && matchTrack && matchLevel && matchStatus;
+      return matchSearch && matchTrack && matchLevel && matchStatus && matchYear;
     });
-  }, [students, searchQuery, filterTrack, filterLevel, filterStatus]);
+  }, [students, searchQuery, filterTrack, filterLevel, filterStatus, filterYear]);
 
   // 4. Generate AI Summary
   useEffect(() => {
@@ -283,6 +288,25 @@ export default function CollegeAdminDashboard() {
     setSelectedStudent(student);
     setAiSummary('');
     setShowProfile(true);
+  };
+
+  const handleExportCSV = () => {
+    if (filteredStudents.length === 0) return;
+    const headers = ['Name', 'Email', 'Track', 'Score', 'Employability', 'Status', 'Last Active'];
+    const csvContent = [
+      headers.join(','),
+      ...filteredStudents.map(s => `"${s.name}","${s.email}","${s.track}","${s.score}","${s.empLevel}","${s.status}","${s.lastActive}"`)
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `students_export_${profile?.collegeCode || 'college'}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const handleCopyCode = () => {
@@ -509,9 +533,14 @@ export default function CollegeAdminDashboard() {
   const StudentsView = () => (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
         {/* HEADER */}
-        <div style={{ marginBottom: 32 }}>
-          <h1 style={{ fontSize: 28, fontWeight: 900, color: '#2C1A0E', letterSpacing: '-0.03em', marginBottom: 4 }}>Students Directory</h1>
-          <p style={{ color: '#8B6E52', fontSize: 14, fontWeight: 500 }}>Browse and monitor all students linked to {profile?.collegeName || 'your institution'}.</p>
+        <div style={{ marginBottom: 32, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div>
+            <h1 style={{ fontSize: 28, fontWeight: 900, color: '#2C1A0E', letterSpacing: '-0.03em', marginBottom: 4 }}>Students Directory</h1>
+            <p style={{ color: '#8B6E52', fontSize: 14, fontWeight: 500 }}>Browse and monitor all students linked to {profile?.collegeName || 'your institution'}.</p>
+          </div>
+          <button onClick={handleExportCSV} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 16px', background: '#006B7A', color: 'white', borderRadius: 10, border: 'none', fontWeight: 800, cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,107,122,0.2)' }}>
+            <FiFileText /> Export CSV
+          </button>
         </div>
 
         {/* FILTER BAR */}
@@ -545,6 +574,14 @@ export default function CollegeAdminDashboard() {
             <option>All Statuses</option>
             {STATUSES.map(s => <option key={s}>{s}</option>)}
           </select>
+
+          <select value={filterYear} onChange={e => setFilterYear(e.target.value)} style={selectStyle}>
+            <option>All Years</option>
+            <option value="1">1st Year</option>
+            <option value="2">2nd Year</option>
+            <option value="3">3rd Year</option>
+            <option value="4">4th Year</option>
+          </select>
         </div>
 
         {/* TABLE */}
@@ -574,8 +611,17 @@ export default function CollegeAdminDashboard() {
                   }} className="hover:bg-amber-50/50 transition-colors">
                     <td style={tdStyle}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, #006B7A, #2E7D52)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 12, fontWeight: 900 }}>{s.initial ?? '?'}</div>
-                        <div style={{ fontWeight: 800, color: '#2C1A0E', fontSize: 14 }}>{s.name}</div>
+                        <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg, #006B7A, #2E7D52)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 14, fontWeight: 900, overflow: 'hidden', position: 'relative' }}>
+                          {s.profileImageUrl ? (
+                            <Image src={s.profileImageUrl} alt="Profile" fill style={{ objectFit: 'cover' }} />
+                          ) : (
+                            s.initial ?? '?'
+                          )}
+                        </div>
+                        <div>
+                           <div style={{ fontWeight: 800, color: '#2C1A0E', fontSize: 14 }}>{s.isPrivate ? 'Private Student' : s.name}</div>
+                           <div style={{ fontSize: 11, color: '#8B6E52', fontWeight: 600 }}>{s.yearOfStudy ? `Year ${s.yearOfStudy}` : 'No Year'}</div>
+                        </div>
                       </div>
                     </td>
                     <td style={tdStyle}>
