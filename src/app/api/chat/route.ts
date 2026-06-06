@@ -51,7 +51,9 @@ export async function POST(request: NextRequest) {
             personalityMode = 'TUTOR',
             vernacularMode = false,
             studentContext,
-            userId
+            userId,
+            message,
+            mode
         } = body;
 
         // Rate Limiting
@@ -65,8 +67,21 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ message: "AI Offline (Groq Key Missing)", error: "CONFIG_ERROR" }, { status: 500 });
         }
 
-        const personality = PERSONALITIES[personalityMode] || PERSONALITIES.TUTOR;
-        const systemPrompt = `
+        let groqMessages;
+        if (mode === 'notes') {
+            groqMessages = [
+                {
+                    role: 'system',
+                    content: 'ACT AS A STUDY GUIDE GENERATOR. Do not chat. Do not ask questions. Generate structured notes. Format notes exactly as requested. Do not end with any question or follow-up.'
+                },
+                {
+                    role: 'user',
+                    content: message || ''
+                }
+            ];
+        } else {
+            const personality = PERSONALITIES[personalityMode] || PERSONALITIES.TUTOR;
+            const systemPrompt = `
 PERSONAL INTELLIGENCE PROTOCOL (PIP):
 ${personality}
 
@@ -80,10 +95,11 @@ INSTRUCTION:
 Respond as the ${personalityMode} persona. Keep responses concise (under 300 words). Be helpful but firm about mastery.
 `.trim();
 
-        const groqMessages = [
-            { role: 'system', content: systemPrompt },
-            ...messages
-        ];
+            groqMessages = [
+                { role: 'system', content: systemPrompt },
+                ...messages
+            ];
+        }
 
         const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
@@ -113,4 +129,3 @@ Respond as the ${personalityMode} persona. Keep responses concise (under 300 wor
         return NextResponse.json({ message: "Neural Link Interference.", error: error.message }, { status: 500 });
     }
 }
-

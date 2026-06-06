@@ -273,9 +273,19 @@ export default function TopicPanel({
     setNotesError(null);
   }, [topic?.id]);
 
-  // Fetch Gemini notes — direct generation, no caching
+  // Fetch Gemini notes — chatbot API generation with caching
   useEffect(() => {
     if (activeTab !== 'notes' || !topic) return;
+
+    const cacheKey = `pp_notes_${courseIdParam}_${topic.id}`;
+    const cachedNotes = localStorage.getItem(cacheKey);
+
+    if (cachedNotes) {
+      setGeminiNotes(cachedNotes);
+      setNotesLoading(false);
+      setNotesError(null);
+      return;
+    }
 
     let cancelled = false;
     setNotesLoading(true);
@@ -285,16 +295,33 @@ export default function TopicPanel({
     const fetchNotes = async () => {
       try {
         const token = user ? await user.getIdToken() : '';
-        const res = await fetch('/api/notes', {
+        const prompt = `ACT AS A STUDY GUIDE GENERATOR. Do not chat. Do not ask questions. 
+Generate structured notes for the topic: ${topic.title} from course: ${courseTitle || courseIdParam}.
+
+Format EXACTLY:
+## What is it?
+(2-3 simple sentences)
+## Key Concepts
+- (5 bullet points)
+## Code Example
+(if applicable)
+## Real World Use
+(2-3 sentences)
+## Quick Summary
+(1 sentence)
+
+IMPORTANT: Do NOT end with a question to the student. Just provide the notes.`;
+
+        const res = await fetch('/api/chat', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           body: JSON.stringify({
-            topicName: topic.title,
-            courseName: courseTitle || courseIdParam,
-            language: selectedLanguage === 'english' ? 'English' : selectedLanguage === 'hindi' ? 'Hindi' : 'Telugu',
+            message: prompt,
+            mode: 'notes',
+            userId: user?.uid || 'guest'
           }),
         });
 
@@ -303,18 +330,25 @@ export default function TopicPanel({
         if (cancelled) return;
 
         if (!res.ok) {
-          setNotesError(d.error || 'Could not generate notes.');
+          setNotesError(d.message || d.error || 'Could not generate notes.');
           return;
         }
 
-        const text = (d.notes || '').trim();
-        if (!text) {
-          setNotesError('Gemini returned empty notes. Please retry.');
+        const rawText = d.text || '';
+        const cleanNotes = rawText
+          .replace(/\?\s*$/, '') // Remove trailing question mark
+          .split('\n')
+          .filter((line: string) => !line.match(/^(What do you think|Try this|Question:)/i))
+          .join('\n'); // Remove follow-up questions
+
+        if (!cleanNotes.trim()) {
+          setNotesError('Received empty notes from chatbot.');
           return;
         }
 
-        setGeminiNotes(text);
+        setGeminiNotes(cleanNotes);
         setNotesError(null);
+        localStorage.setItem(cacheKey, cleanNotes);
       } catch (err: any) {
         if (!cancelled) {
           setNotesError(err.message || 'Could not generate notes. Please try again.');
@@ -713,24 +747,50 @@ export default function TopicPanel({
                         setNotesLoading(true);
                         try {
                           const token = user ? await user.getIdToken() : '';
-                          const res = await fetch('/api/notes', {
+                          const prompt = `ACT AS A STUDY GUIDE GENERATOR. Do not chat. Do not ask questions. 
+Generate structured notes for the topic: ${topic.title} from course: ${courseTitle || courseIdParam}.
+
+Format EXACTLY:
+## What is it?
+(2-3 simple sentences)
+## Key Concepts
+- (5 bullet points)
+## Code Example
+(if applicable)
+## Real World Use
+(2-3 sentences)
+## Quick Summary
+(1 sentence)
+
+IMPORTANT: Do NOT end with a question to the student. Just provide the notes.`;
+
+                          const res = await fetch('/api/chat', {
                             method: 'POST',
                             headers: {
                               'Content-Type': 'application/json',
                               ...(token ? { Authorization: `Bearer ${token}` } : {}),
                             },
                             body: JSON.stringify({
-                              topicName: topic.title,
-                              courseName: courseTitle || courseIdParam,
-                              language: selectedLanguage === 'english' ? 'English' : selectedLanguage === 'hindi' ? 'Hindi' : 'Telugu',
+                              message: prompt,
+                              mode: 'notes',
+                              userId: user?.uid || 'guest'
                             }),
                           });
                           const d = await res.json();
-                          if (res.ok && d.notes) {
-                            setGeminiNotes(d.notes.trim());
+                          if (res.ok && d.text) {
+                            const rawText = d.text || '';
+                            const cleanNotes = rawText
+                              .replace(/\?\s*$/, '') // Remove trailing question mark
+                              .split('\n')
+                              .filter((line: string) => !line.match(/^(What do you think|Try this|Question:)/i))
+                              .join('\n'); // Remove follow-up questions
+
+                            setGeminiNotes(cleanNotes);
                             setNotesError(null);
+                            const cacheKey = `pp_notes_${courseIdParam}_${topic.id}`;
+                            localStorage.setItem(cacheKey, cleanNotes);
                           } else {
-                            setNotesError(d.error || 'Could not generate notes. Please try again.');
+                            setNotesError(d.message || d.error || 'Could not generate notes. Please try again.');
                           }
                         } catch (err: any) {
                           setNotesError(err.message || 'Could not generate notes. Please try again.');
