@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { NextResponse } from 'next/server'
-import { adminDb } from '@/lib/firebase-admin'
+import { db } from '@/lib/firebase-admin'
 
 export async function POST(request: Request) {
   try {
@@ -10,7 +10,7 @@ export async function POST(request: Request) {
 
     if (courseId && topicId) {
       const docId = `${courseId}_${topicId}_${language}`
-      const docSnap = await adminDb.collection('topic_notes').doc(docId).get()
+      const docSnap = await db.collection('topic_notes').doc(docId).get()
       if (docSnap.exists) {
         const data = docSnap.data()
         if (data?.notes) {
@@ -59,7 +59,7 @@ export async function POST(request: Request) {
 
     if (courseId && topicId && content !== 'Notes not available') {
       const docId = `${courseId}_${topicId}_${language}`
-      await adminDb.collection('topic_notes').doc(docId).set({
+      await db.collection('topic_notes').doc(docId).set({
         notes: content,
         courseId,
         topicId,

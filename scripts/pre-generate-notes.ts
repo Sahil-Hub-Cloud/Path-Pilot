@@ -1,26 +1,10 @@
 import * as admin from 'firebase-admin';
 import * as dotenv from 'dotenv';
 import { ROADMAPS } from '../src/lib/data/roadmaps';
+import { db } from '../src/lib/firebase-admin';
 
 dotenv.config({ path: '.env.local' });
 dotenv.config();
-
-// 1. Initialize Firebase Admin
-if (!admin.apps.length) {
-    if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
-        const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
-        admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount),
-            projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-        });
-    } else {
-        admin.initializeApp({
-            projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-        });
-    }
-}
-
-const db = admin.firestore();
 const apiKey = process.env.GEMINI_API_KEY;
 
 if (!apiKey) {

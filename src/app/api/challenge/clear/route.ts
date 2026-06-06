@@ -1,6 +1,6 @@
 export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase-admin';
+import { db } from '@/lib/firebase-admin';
 
 /** DELETE all cached challenges under challenges/{courseId}/topics/{topicId} */
 export async function DELETE(req: NextRequest) {
@@ -15,11 +15,11 @@ export async function DELETE(req: NextRequest) {
     let deletedCourses = 0;
     let deletedTopics = 0;
 
-    const coursesSnap = await adminDb.collection('challenges').get();
+    const coursesSnap = await db.collection('challenges').get();
     for (const courseDoc of coursesSnap.docs) {
       const topicsSnap = await courseDoc.ref.collection('topics').get();
       if (topicsSnap.size > 0) {
-        const batch = adminDb.batch();
+        const batch = db.batch();
         topicsSnap.docs.forEach((d) => batch.delete(d.ref));
         await batch.commit();
         deletedTopics += topicsSnap.size;

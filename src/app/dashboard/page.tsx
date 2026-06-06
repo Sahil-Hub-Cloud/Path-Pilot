@@ -147,7 +147,7 @@ export default function DashboardPage() {
       if (db) {
         await updateDoc(doc(db, 'users', uid), {
           streakDays:      newStreak,
-          lastActiveDate:  today,           // YYYY-MM-DD in IST
+          lastActiveDate:  todayStr,           // YYYY-MM-DD in IST
           lastActiveTs:    serverTimestamp(),
         });
       }

@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 
 import { NextResponse } from "next/server";
 import { Resend } from 'resend';
-import { adminAuth } from '@/lib/firebase-admin';
+import { auth } from '@/lib/firebase-admin';
 
 const resendClient = new Resend(process.env.RESEND_API_KEY);
 
@@ -14,7 +14,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     try {
-      await adminAuth.verifyIdToken(authHeader.split('Bearer ')[1]);
+      await auth.verifyIdToken(authHeader.split('Bearer ')[1]);
     } catch (e) {
       return NextResponse.json({ error: 'Unauthorized: Invalid token' }, { status: 401 });
     }

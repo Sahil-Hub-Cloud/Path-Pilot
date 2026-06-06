@@ -1,6 +1,6 @@
 export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
-import { adminAuth, adminDb } from '@/lib/firebase-admin';
+import { auth, db } from '@/lib/firebase-admin';
 import { GEMINI_GENERATE_MODELS } from '@/lib/gemini-models';
 import { getTopicMeta } from '@/lib/data/content-pipeline';
 
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     const authHeader = req.headers.get('authorization');
     if (authHeader?.startsWith('Bearer ')) {
       try {
-        await adminAuth.verifyIdToken(authHeader.split('Bearer ')[1]);
+        await auth.verifyIdToken(authHeader.split('Bearer ')[1]);
         isAuthenticated = true;
       } catch {
         // Invalid token, just proceed as unauthenticated
@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Firestore: challenges/{courseId}/topics/{topicId}
-    const cacheRef = adminDb.collection('challenges').doc(courseId).collection('topics').doc(topicId);
+    const cacheRef = db.collection('challenges').doc(courseId).collection('topics').doc(topicId);
     console.log('[/api/challenge] cache path:', `challenges/${courseId}/topics/${topicId}`, '| topic:', topicName);
 
     if (!forceRegenerate) {

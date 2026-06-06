@@ -1,24 +1,32 @@
 import * as admin from 'firebase-admin';
 
-if (!admin.apps.length) {
-  const privateKey = process.env.FIREBASE_PRIVATE_KEY;
-  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-
-  if (privateKey && clientEmail) {
-    admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-        clientEmail: clientEmail,
-        privateKey: privateKey.replace(/\\n/g, '\n'),
-      })
-    });
-  } else {
-    admin.initializeApp({
-      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-    });
+export function initFirebaseAdmin() {
+  if (admin.apps.length > 0) {
+    return admin.app();
   }
+  
+  const projectId = process.env.FIREBASE_ADMIN_PROJECT_ID;
+  const privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n');
+  const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL;
+  
+  if (!projectId || !privateKey || !clientEmail) {
+    console.error('❌ Missing Firebase Admin credentials');
+    console.error('FIREBASE_ADMIN_PROJECT_ID:', !!projectId);
+    console.error('FIREBASE_ADMIN_PRIVATE_KEY:', !!privateKey);
+    console.error('FIREBASE_ADMIN_CLIENT_EMAIL:', !!clientEmail);
+    throw new Error('Firebase Admin credentials not configured');
+  }
+  
+  const app = admin.initializeApp({
+    credential: admin.credential.cert({
+      projectId,
+      privateKey,
+      clientEmail,
+    }),
+  });
+  console.log('✅ Firebase Admin initialized');
+  return app;
 }
 
-export const adminDb = admin.firestore();
-export const adminAuth = admin.auth();
-export { admin };
+export const db = initFirebaseAdmin().firestore();
+export const auth = initFirebaseAdmin().auth();

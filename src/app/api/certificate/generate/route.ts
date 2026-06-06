@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { supabaseAdmin as supabase } from '@/lib/supabase-admin';
-import { adminAuth } from '@/lib/firebase-admin';
+import { auth } from '@/lib/firebase-admin';
 
 /**
  * Certificate Hash Generator
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     try {
-      await adminAuth.verifyIdToken(authHeader.split('Bearer ')[1]);
+      await auth.verifyIdToken(authHeader.split('Bearer ')[1]);
     } catch (e) {
       return NextResponse.json({ error: 'Unauthorized: Invalid token' }, { status: 401 });
     }

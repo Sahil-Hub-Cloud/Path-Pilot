@@ -5,7 +5,7 @@
  * per-feature daily quota tracking (usage_limits), and usage logging.
  */
 
-import { adminDb } from '@/lib/firebase-admin';
+import { db } from '@/lib/firebase-admin';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // ─── Model routing ────────────────────────────────────────────────────────────
@@ -46,7 +46,7 @@ export interface GeminiResult {
 /** Check whether a GLM feature is enabled via admin toggle. */
 export async function isFeatureEnabled(featureName: string): Promise<boolean> {
   try {
-    const ref = adminDb.collection('glm_settings').doc('features');
+    const ref = db.collection('glm_settings').doc('features');
     const snap = await ref.get();
     if (!snap.exists) return true; // default: enabled
     const data = snap.data() as Record<string, boolean>;
@@ -65,7 +65,7 @@ export async function isOverQuota(featureName: string): Promise<boolean> {
   const limit = DAILY_LIMITS[featureName] ?? DAILY_LIMITS['default'];
 
   try {
-    const ref = adminDb.collection('usage_limits').doc(docId);
+    const ref = db.collection('usage_limits').doc(docId);
     const snap = await ref.get();
     const current = (snap.data()?.count as number) ?? 0;
 
@@ -93,7 +93,7 @@ export async function isOverQuota(featureName: string): Promise<boolean> {
 /** Read from glm_outputs cache. Returns null on miss or expired (>7 days). */
 export async function readGlmCache(cacheKey: string): Promise<string | null> {
   try {
-    const ref = adminDb.collection('glm_outputs').doc(cacheKey);
+    const ref = db.collection('glm_outputs').doc(cacheKey);
     const snap = await ref.get();
     if (!snap.exists) return null;
     const data = snap.data();
@@ -118,7 +118,7 @@ export async function writeGlmCache(
   meta: Record<string, unknown> = {}
 ): Promise<void> {
   try {
-    await adminDb.collection('glm_outputs').doc(cacheKey).set({
+    await db.collection('glm_outputs').doc(cacheKey).set({
       content,
       generatedAt: Date.now(),
       ...meta,

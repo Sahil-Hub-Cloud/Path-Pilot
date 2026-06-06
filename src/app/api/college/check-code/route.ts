@@ -1,6 +1,6 @@
 export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase-admin';
+import { db } from '@/lib/firebase-admin';
 
 export async function GET(req: Request) {
   try {
@@ -12,7 +12,7 @@ export async function GET(req: Request) {
     }
 
     console.log(`API check-code: Querying Firebase Admin SDK for collegeCode = ${code}`);
-    const collegesRef = adminDb.collection('colleges');
+    const collegesRef = db.collection('colleges');
     const querySnapshot = await collegesRef.where('collegeCode', '==', code).get();
 
     if (querySnapshot.empty) {
