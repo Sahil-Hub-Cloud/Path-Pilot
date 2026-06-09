@@ -10,6 +10,7 @@ import {
   FiCpu, FiSend, FiAlertTriangle, FiChevronDown, FiCode, FiTerminal, FiClock
 } from 'react-icons/fi';
 import { executeCode } from '@/lib/piston';
+import { executePythonClient } from '@/lib/pyodide-runner';
 import { useAuth } from '@/hooks/useAuth';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, updateDoc, increment, collection, addDoc, setDoc, serverTimestamp } from 'firebase/firestore';
@@ -25,7 +26,7 @@ interface AIMessage { role: 'ai' | 'user'; content: string; isBlocked?: boolean;
 
 // ─── LANGUAGE CONFIG ──────────────────────────────────────────────────────────
 const LANGS: Record<string, { ext: string; label: string; starter: string; monacoId: string }> = {
-  python:     { ext: 'py',  label: 'Python',     monacoId: 'python',     starter: '# Write your solution here\n\ndef solution():\n    pass\n\nprint(solution())' },
+  python:     { ext: 'py',  label: 'Python',     monacoId: 'python',     starter: '# Complete this function\n\ndef solution():\n    # Your code here\n    pass\n\n# Test automatically (do not modify)\nprint(solution())' },
   javascript: { ext: 'js',  label: 'JavaScript', monacoId: 'javascript', starter: '// Write your solution here\n\nfunction solution() {\n  \n}\n\nconsole.log(solution());' },
   typescript: { ext: 'ts',  label: 'TypeScript', monacoId: 'typescript', starter: '// Write your solution here\n\nfunction solution(): void {\n  \n}\n\nconsole.log(solution());' },
   java:       { ext: 'java',label: 'Java',       monacoId: 'java',       starter: 'public class Solution {\n    public static void main(String[] args) {\n        System.out.println("Hello!");\n    }\n}' },
@@ -316,6 +317,21 @@ export default function LabPage() {
   };
 
   // ── Run ──────────────────────────────────────────────────────────────────
+  const runCodeWrapper = async (language: string, content: string) => {
+    if (language === 'python') {
+      const pyRes = await executePythonClient(content);
+      return {
+        run: {
+          code: pyRes.error ? 1 : 0,
+          signal: pyRes.error ? 'Error' : null,
+          output: [pyRes.stdout, pyRes.stderr].filter(Boolean).join('\\n').trim(),
+          stderr: pyRes.stderr
+        }
+      };
+    }
+    return await executeCode(language, content);
+  };
+
   const handleRun = async () => {
     if (!activeFile) return;
     setRunCount(p => p + 1);
@@ -325,7 +341,7 @@ export default function LabPage() {
     setOutput('▶ Running ' + activeFile.name + '...\n');
     const t0 = performance.now();
     try {
-      const res = await executeCode(activeFile.language, activeFile.content);
+      const res = await runCodeWrapper(activeFile.language, activeFile.content);
       const duration = ((performance.now() - t0) / 1000).toFixed(2);
       setExecTime(duration + 's');
       
@@ -439,7 +455,7 @@ export default function LabPage() {
     setOutput('⚡ Running test suite...\n');
     const t0 = performance.now();
     try {
-      const res = await executeCode(activeFile.language, activeFile.content);
+      const res = await runCodeWrapper(activeFile.language, activeFile.content);
       const duration = ((performance.now() - t0) / 1000).toFixed(2);
       setExecTime(duration + 's');
       

@@ -22,13 +22,18 @@ export async function POST(req: NextRequest) {
 
     const languageId = languageMap[language.toLowerCase()] || 71;
 
+    let finalSource = source;
+    if (language.toLowerCase() === 'python' && source.includes('input(')) {
+      finalSource = `import sys\nfrom io import StringIO\nsys.stdin = StringIO('5\\n10\\n15\\n20\\nTrue\\nFalse\\nyes\\nno\\n')\n` + source;
+    }
+
     // 1. Submit code to Judge0
     const submitResponse = await fetch('https://ce.judge0.com/submissions?base64_encoded=false&wait=false', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         language_id: languageId,
-        source_code: source,
+        source_code: finalSource,
         stdin: ''
       })
     });

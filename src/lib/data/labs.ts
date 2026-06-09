@@ -41,6 +41,31 @@ Available libraries: numpy, pandas, requests and 20+ more standard libraries.`,
     hint: 'Check divisibility with the % operator. Check FizzBuzz (both) FIRST, before checking Fizz or Buzz individually.',
   },
 
+  // ── Python Boolean Challenge ──────────────────────────────────────────────────────
+  'toggle-flag': {
+    id:          'toggle-flag',
+    title:       'Python — Toggle Flag',
+    category:    'Python',
+    difficulty:  'Easy',
+    xp:          10,
+    defaultLang: 'python',
+    problem: `Complete the function \`toggle_flag(current)\` that takes a boolean value and returns its opposite (True becomes False, and False becomes True).
+
+This challenge uses function parameters. Do not use \`input()\`.
+
+Example:
+  toggle_flag(True) → False
+  toggle_flag(False) → True
+
+Available libraries: numpy, pandas, requests and 20+ more standard libraries.`,
+    expected: 'False\nTrue',
+    tests: [
+      { label: 'Toggle True to False',  input: 'print(toggle_flag(True))',  expected: 'False' },
+      { label: 'Toggle False to True',  input: 'print(toggle_flag(False))', expected: 'True' },
+    ],
+    hint: 'Use the `not` keyword to invert a boolean value in Python.',
+  },
+
   // ── 2. JavaScript Functions ───────────────────────────────────────────────
   'js-functions': {
     id:          'js-functions',
@@ -310,6 +335,7 @@ export const TRACK_DEFAULT_LAB: Record<string, string> = Object.fromEntries(
 export const LAB_IDS_ORDERED = [
   ...COURSES.flatMap((c) => getCourseLabIds(c.courseId)),
   'python-basics',
+  'toggle-flag',
   'js-functions',
   'debug-challenge',
   'arrays-loops',
