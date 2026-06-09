@@ -6,8 +6,9 @@ import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { db, storage } from '@/lib/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { FiUpload, FiCheck, FiUser, FiBookOpen, FiShield } from 'react-icons/fi';
+import { FiUpload, FiCheck, FiUser, FiBookOpen, FiShield, FiCamera } from 'react-icons/fi';
 import Image from 'next/image';
+import { toast } from '@/lib/toast';
 
 const S = {
   bg: '#FDF6EC',
@@ -54,6 +55,7 @@ export default function ProfileSettingsPage() {
   const [error, setError] = useState('');
   const [codeError, setCodeError] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [isHoveringImage, setIsHoveringImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -110,8 +112,13 @@ export default function ProfileSettingsPage() {
     if (!file || !user) return;
     
     // Quick validation
-    if (!file.type.startsWith('image/')) {
-      setError('Please select an image file');
+    if (!file.type.startsWith('image/jpeg') && !file.type.startsWith('image/png')) {
+      toast.error('Please select a JPG or PNG image file');
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('Image size must be less than 2MB');
       return;
     }
     
@@ -119,15 +126,41 @@ export default function ProfileSettingsPage() {
     setError('');
     
     try {
+      // Compress image using Canvas
+      const img = document.createElement('img');
+      img.src = URL.createObjectURL(file);
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
+
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) throw new Error('Could not get canvas context');
+
+      // 400x400
+      canvas.width = 400;
+      canvas.height = 400;
+
+      // Draw image to cover 400x400
+      const scale = Math.max(400 / img.width, 400 / img.height);
+      const x = (400 - img.width * scale) / 2;
+      const y = (400 - img.height * scale) / 2;
+      
+      ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+
+      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.85));
+      if (!blob) throw new Error('Could not create image blob');
+
       const storageRef = ref(storage, `profiles/${user.uid}.jpg`);
-      const uploadTask = uploadBytesResumable(storageRef, file);
+      const uploadTask = uploadBytesResumable(storageRef, blob);
       
       uploadTask.on(
         'state_changed',
         () => {}, // progress
         (err) => {
           setUploading(false);
-          setError('Failed to upload image');
+          toast.error('Failed to upload image');
         },
         async () => {
           const url = await getDownloadURL(uploadTask.snapshot.ref);
@@ -139,11 +172,13 @@ export default function ProfileSettingsPage() {
           });
           
           setUploading(false);
+          toast.success('Profile updated');
         }
       );
     } catch (err) {
+      console.error('Image processing error:', err);
       setUploading(false);
-      setError('Failed to upload image');
+      toast.error('Failed to process image');
     }
   };
 
@@ -193,8 +228,8 @@ export default function ProfileSettingsPage() {
         })
       });
 
-      // Need a success state/toast ideally, we'll just alert for now or show success message
-      alert('Profile updated successfully!');
+      // Show toast success message
+      toast.success('Profile updated');
     } catch (err) {
       console.error(err);
       setError('Failed to save profile');
@@ -216,12 +251,22 @@ export default function ProfileSettingsPage() {
           
           {/* Profile Picture */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginBottom: 32 }}>
-            <div style={{ width: 100, height: 100, borderRadius: 50, background: S.input, border: `2px solid ${S.border}`, overflow: 'hidden', position: 'relative' }}>
+            <div 
+              style={{ width: 100, height: 100, borderRadius: 50, background: S.input, border: `2px solid ${S.border}`, overflow: 'hidden', position: 'relative', cursor: 'pointer' }}
+              onMouseEnter={() => setIsHoveringImage(true)}
+              onMouseLeave={() => setIsHoveringImage(false)}
+              onClick={() => fileInputRef.current?.click()}
+            >
               {data.profileImageUrl ? (
                 <Image src={data.profileImageUrl} alt="Profile" fill style={{ objectFit: 'cover' }} />
               ) : (
                 <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: S.muted }}>
                   <FiUser size={40} />
+                </div>
+              )}
+              {isHoveringImage && !uploading && (
+                <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
+                  <FiCamera size={24} />
                 </div>
               )}
               {uploading && (
@@ -231,11 +276,11 @@ export default function ProfileSettingsPage() {
               )}
             </div>
             <div>
-              <input type="file" accept="image/*" ref={fileInputRef} style={{ display: 'none' }} onChange={handleImageUpload} />
+              <input type="file" accept="image/jpeg, image/png" ref={fileInputRef} style={{ display: 'none' }} onChange={handleImageUpload} />
               <button onClick={() => fileInputRef.current?.click()} style={{ padding: '10px 20px', background: S.input, border: `1px solid ${S.border}`, borderRadius: 10, fontSize: 13, fontWeight: 700, color: S.text, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
                 <FiUpload /> Upload Avatar
               </button>
-              <div style={{ fontSize: 12, color: S.muted, marginTop: 8 }}>Recommended: 400x400px</div>
+              <div style={{ fontSize: 12, color: S.muted, marginTop: 8 }}>Recommended: 400x400px (Max 2MB, JPG/PNG)</div>
             </div>
           </div>
 

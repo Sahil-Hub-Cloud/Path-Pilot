@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FiHome, FiUsers, FiSettings, FiLogOut, FiSearch, 
   FiXCircle, FiActivity, FiUser, FiMapPin, 
-  FiAward, FiCheckCircle, FiChevronRight, FiCopy, FiMail, FiBook, FiLayers, FiFileText, FiCalendar, FiPieChart, FiTrendingUp
+  FiAward, FiCheckCircle, FiChevronRight, FiCopy, FiMail, FiBook, FiLayers, FiFileText, FiCalendar, FiPieChart, FiTrendingUp, FiGrid, FiList
 } from 'react-icons/fi';
 import { useAuth } from '@/hooks/useAuth';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
@@ -34,6 +34,8 @@ export default function CollegeAdminDashboard() {
   const [filterLevel, setFilterLevel] = useState('All Levels');
   const [filterStatus, setFilterStatus] = useState('All Statuses');
   const [filterYear, setFilterYear] = useState('All Years');
+  const [filterCollege, setFilterCollege] = useState('All Colleges');
+  const [viewMode, setViewMode] = useState<'table' | 'cards'>('cards');
 
   // Modal State
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
@@ -95,6 +97,7 @@ export default function CollegeAdminDashboard() {
       diffDays,
       status,
       yearOfStudy: sd.yearOfStudy ? String(sd.yearOfStudy) : null,
+      collegeName: sd.collegeName ? String(sd.collegeName) : null,
       profileImageUrl: sd.showProfileToAdmins === false ? null : (sd.profileImageUrl || null),
       isPrivate: sd.showProfileToAdmins === false,
       completedTopics: Array.isArray(sd.completedTopics) ? sd.completedTopics : [],
@@ -242,6 +245,14 @@ export default function CollegeAdminDashboard() {
   }, [students]);
 
   // 3. Filtering
+  const uniqueColleges = useMemo(() => {
+    const colleges = new Set<string>();
+    students.forEach(s => {
+      if (s.collegeName) colleges.add(s.collegeName);
+    });
+    return Array.from(colleges).sort();
+  }, [students]);
+
   const filteredStudents = useMemo(() => {
     return students.filter(s => {
       const matchSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -249,10 +260,11 @@ export default function CollegeAdminDashboard() {
       const matchLevel = filterLevel === 'All Levels' || s.empLevel === filterLevel;
       const matchStatus = filterStatus === 'All Statuses' || s.status === filterStatus;
       const matchYear = filterYear === 'All Years' || s.yearOfStudy === filterYear;
+      const matchCollege = filterCollege === 'All Colleges' || s.collegeName === filterCollege;
       
-      return matchSearch && matchTrack && matchLevel && matchStatus && matchYear;
+      return matchSearch && matchTrack && matchLevel && matchStatus && matchYear && matchCollege;
     });
-  }, [students, searchQuery, filterTrack, filterLevel, filterStatus, filterYear]);
+  }, [students, searchQuery, filterTrack, filterLevel, filterStatus, filterYear, filterCollege]);
 
   // 4. Generate AI Summary
   useEffect(() => {
@@ -292,10 +304,10 @@ export default function CollegeAdminDashboard() {
 
   const handleExportCSV = () => {
     if (filteredStudents.length === 0) return;
-    const headers = ['Name', 'Email', 'Track', 'Score', 'Employability', 'Status', 'Last Active'];
+    const headers = ['Name', 'Email', 'Track', 'Year', 'College', 'Score', 'Employability', 'Status', 'Last Active', 'Profile Image'];
     const csvContent = [
       headers.join(','),
-      ...filteredStudents.map(s => `"${s.name}","${s.email}","${s.track}","${s.score}","${s.empLevel}","${s.status}","${s.lastActive}"`)
+      ...filteredStudents.map(s => `"${s.name}","${s.email}","${s.track}","${s.yearOfStudy || 'N/A'}","${s.collegeName || 'N/A'}","${s.score}","${s.empLevel}","${s.status}","${s.lastActive}","${s.profileImageUrl || 'N/A'}"`)
     ].join('\n');
     
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -440,11 +452,11 @@ export default function CollegeAdminDashboard() {
         {/* FILTER BAR */}
         <div style={{
           backgroundColor: 'var(--surface-raised)', borderRadius: 20, padding: '20px 24px', border: '2px solid rgba(180,140,90,0.25)',
-          marginBottom: 28, display: 'flex', gap: 16, alignItems: 'center', boxShadow: '0 4px 14px rgba(140,90,40,0.05)'
+          marginBottom: 28, display: 'flex', gap: 16, alignItems: 'center', boxShadow: '0 4px 14px rgba(140,90,40,0.05)', flexWrap: 'wrap'
         }}>
           <div style={{ 
             background: '#FDF6EC', border: '1.5px solid rgba(180,140,90,0.2)', borderRadius: 12, padding: '10px 16px', 
-            display: 'flex', alignItems: 'center', gap: 10, flex: 1 
+            display: 'flex', alignItems: 'center', gap: 10, flex: 1, minWidth: 200 
           }}>
             <FiSearch color="#8B6E52" />
             <input 
@@ -468,6 +480,21 @@ export default function CollegeAdminDashboard() {
             <option>All Statuses</option>
             {STATUSES.map(s => <option key={s}>{s}</option>)}
           </select>
+
+          <select value={filterYear} onChange={e => setFilterYear(e.target.value)} style={selectStyle}>
+            <option>All Years</option>
+            <option value="1">1st Year</option>
+            <option value="2">2nd Year</option>
+            <option value="3">3rd Year</option>
+            <option value="4">4th Year</option>
+          </select>
+
+          {uniqueColleges.length > 0 && (
+            <select value={filterCollege} onChange={e => setFilterCollege(e.target.value)} style={selectStyle}>
+              <option>All Colleges</option>
+              {uniqueColleges.map(c => <option key={c}>{c}</option>)}
+            </select>
+          )}
         </div>
 
         {/* BOTTOM SECTION: TABLE */}
@@ -538,19 +565,35 @@ export default function CollegeAdminDashboard() {
             <h1 style={{ fontSize: 28, fontWeight: 900, color: '#2C1A0E', letterSpacing: '-0.03em', marginBottom: 4 }}>Students Directory</h1>
             <p style={{ color: '#8B6E52', fontSize: 14, fontWeight: 500 }}>Browse and monitor all students linked to {profile?.collegeName || 'your institution'}.</p>
           </div>
-          <button onClick={handleExportCSV} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 16px', background: '#006B7A', color: 'white', borderRadius: 10, border: 'none', fontWeight: 800, cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,107,122,0.2)' }}>
-            <FiFileText /> Export CSV
-          </button>
+          <div style={{ display: 'flex', gap: 12 }}>
+            <div style={{ display: 'flex', background: '#FDF6EC', border: '1.5px solid rgba(180,140,90,0.2)', borderRadius: 10, padding: 2 }}>
+              <button 
+                onClick={() => setViewMode('cards')} 
+                style={{ padding: '8px 12px', background: viewMode === 'cards' ? '#006B7A' : 'transparent', color: viewMode === 'cards' ? 'white' : '#8B6E52', border: 'none', borderRadius: 8, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700 }}
+              >
+                <FiGrid /> Cards
+              </button>
+              <button 
+                onClick={() => setViewMode('table')} 
+                style={{ padding: '8px 12px', background: viewMode === 'table' ? '#006B7A' : 'transparent', color: viewMode === 'table' ? 'white' : '#8B6E52', border: 'none', borderRadius: 8, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700 }}
+              >
+                <FiList /> Table
+              </button>
+            </div>
+            <button onClick={handleExportCSV} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 16px', background: '#006B7A', color: 'white', borderRadius: 10, border: 'none', fontWeight: 800, cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,107,122,0.2)' }}>
+              <FiFileText /> Export CSV
+            </button>
+          </div>
         </div>
 
         {/* FILTER BAR */}
         <div style={{
           backgroundColor: 'var(--surface-raised)', borderRadius: 20, padding: '20px 24px', border: '2px solid rgba(180,140,90,0.25)',
-          marginBottom: 28, display: 'flex', gap: 16, alignItems: 'center', boxShadow: '0 4px 14px rgba(140,90,40,0.05)'
+          marginBottom: 28, display: 'flex', gap: 16, alignItems: 'center', boxShadow: '0 4px 14px rgba(140,90,40,0.05)', flexWrap: 'wrap'
         }}>
           <div style={{ 
             background: '#FDF6EC', border: '1.5px solid rgba(180,140,90,0.2)', borderRadius: 12, padding: '10px 16px', 
-            display: 'flex', alignItems: 'center', gap: 10, flex: 1 
+            display: 'flex', alignItems: 'center', gap: 10, flex: 1, minWidth: 200 
           }}>
             <FiSearch color="#8B6E52" />
             <input 
@@ -582,74 +625,135 @@ export default function CollegeAdminDashboard() {
             <option value="3">3rd Year</option>
             <option value="4">4th Year</option>
           </select>
-        </div>
 
-        {/* TABLE */}
-        <div style={{ ...cardStyle, padding: 0, overflow: 'hidden' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-            <thead>
-              <tr style={{ background: 'rgba(180,140,90,0.05)', borderBottom: '2px solid rgba(180,140,90,0.1)' }}>
-                <th style={thStyle}>Student</th>
-                <th style={thStyle}>Track</th>
-                <th style={thStyle}>Labs</th>
-                <th style={thStyle}>Score</th>
-                <th style={thStyle}>Employability</th>
-                <th style={thStyle}>Last Active</th>
-                <th style={thStyle}>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredStudents.map((s, i) => {
-                const empColor = s.empLevel === 'High — Job Ready' ? '#10B981' : s.empLevel === 'Medium' ? '#F59E0B' : '#6B7280';
-                const statColor = s.status === 'Active' ? '#10B981' : s.status === 'Idle' ? '#F59E0B' : '#EF4444';
-                
-                return (
-                  <tr key={s.id} onClick={() => handleOpenProfile(s)} style={{ 
-                    borderBottom: '1.5px solid rgba(180,140,90,0.1)',
-                    background: i % 2 === 0 ? 'transparent' : 'rgba(253,246,236,0.5)',
-                    cursor: 'pointer'
-                  }} className="hover:bg-amber-50/50 transition-colors">
-                    <td style={tdStyle}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg, #006B7A, #2E7D52)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 14, fontWeight: 900, overflow: 'hidden', position: 'relative' }}>
-                          {s.profileImageUrl ? (
-                            <Image src={s.profileImageUrl} alt="Profile" fill style={{ objectFit: 'cover' }} />
-                          ) : (
-                            s.initial ?? '?'
-                          )}
-                        </div>
-                        <div>
-                           <div style={{ fontWeight: 800, color: '#2C1A0E', fontSize: 14 }}>{s.isPrivate ? 'Private Student' : s.name}</div>
-                           <div style={{ fontSize: 11, color: '#8B6E52', fontWeight: 600 }}>{s.yearOfStudy ? `Year ${s.yearOfStudy}` : 'No Year'}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td style={tdStyle}>
-                      <span style={{ fontSize: 11, fontWeight: 800, color: '#006B7A', background: '#e0f2f1', padding: '2px 8px', borderRadius: 6 }}>{s.track}</span>
-                    </td>
-                    <td style={tdStyle}>{s.labs}</td>
-                    <td style={{ ...tdStyle, fontWeight: 900, color: '#006B7A' }}>{s.score}</td>
-                    <td style={tdStyle}>
-                     <span style={{ fontSize: 11, fontWeight: 800, color: empColor, background: `${empColor}15`, padding: '2px 8px', borderRadius: 6 }}>{s.empLevel}</span>
-                    </td>
-                    <td style={tdStyle}>{s.lastActive}</td>
-                    <td style={tdStyle}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 800, color: statColor }}>
-                         <div style={{ width: 8, height: 8, borderRadius: '50%', background: statColor }} />
-                         {s.status}
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-          {filteredStudents.length === 0 && (
-            students.length === 0
-              ? <EmptyStudentsState compact />
-              : <div style={{ padding: 60, textAlign: 'center', color: '#8B6E52', fontWeight: 600 }}>No students match the current criteria.</div>
+          {uniqueColleges.length > 0 && (
+            <select value={filterCollege} onChange={e => setFilterCollege(e.target.value)} style={selectStyle}>
+              <option>All Colleges</option>
+              {uniqueColleges.map(c => <option key={c}>{c}</option>)}
+            </select>
           )}
         </div>
+
+        {/* LIST / CARDS */}
+        {viewMode === 'cards' ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 20 }}>
+            {filteredStudents.map((s) => {
+              const statColor = s.status === 'Active' ? '#10B981' : s.status === 'Idle' ? '#F59E0B' : '#EF4444';
+              return (
+                <motion.div 
+                  key={s.id} 
+                  whileHover={{ y: -4, boxShadow: '0 12px 24px rgba(140,90,40,0.12)' }}
+                  onClick={() => handleOpenProfile(s)} 
+                  style={{ ...cardStyle, cursor: 'pointer', padding: 24, position: 'relative' }}
+                >
+                  <div style={{ position: 'absolute', top: 16, right: 16, display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, fontWeight: 800, color: statColor, background: `${statColor}15`, padding: '4px 10px', borderRadius: 12 }}>
+                    <div style={{ width: 6, height: 6, borderRadius: '50%', background: statColor }} />
+                    {s.status}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
+                    <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #006B7A, #2E7D52)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 20, fontWeight: 900, overflow: 'hidden', position: 'relative', flexShrink: 0, boxShadow: '0 4px 10px rgba(0,107,122,0.2)' }}>
+                      {s.profileImageUrl ? (
+                        <Image src={s.profileImageUrl} alt="Profile" fill style={{ objectFit: 'cover' }} />
+                      ) : (
+                        s.initial ?? '?'
+                      )}
+                    </div>
+                    <div>
+                      <div style={{ fontWeight: 900, color: '#2C1A0E', fontSize: 16, marginBottom: 2, paddingRight: 60 }}>{s.isPrivate ? 'Private Student' : s.name}</div>
+                      <div style={{ fontSize: 12, color: '#8B6E52', fontWeight: 600 }}>{s.yearOfStudy ? `Year ${s.yearOfStudy}` : 'No Year'} • {s.collegeName || 'Unknown College'}</div>
+                    </div>
+                  </div>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                    <span style={{ fontSize: 11, fontWeight: 800, color: '#006B7A', background: '#e0f2f1', padding: '4px 10px', borderRadius: 8 }}>{s.track}</span>
+                    <span style={{ fontSize: 12, fontWeight: 800, color: '#5C3D1E' }}>{s.labs} Labs Done</span>
+                  </div>
+
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, fontWeight: 800, color: '#8B6E52', marginBottom: 6, textTransform: 'uppercase' }}>
+                      <span>Course Progress</span>
+                      <span style={{ color: '#006B7A' }}>{s.score}/100</span>
+                    </div>
+                    <div style={{ height: 6, background: 'rgba(180,140,90,0.1)', borderRadius: 3, overflow: 'hidden' }}>
+                      <div style={{ height: '100%', width: `${Math.min(100, s.score)}%`, background: 'linear-gradient(90deg, #006B7A, #2E7D52)', borderRadius: 3 }} />
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+            {filteredStudents.length === 0 && (
+              students.length === 0
+                ? <div style={{ gridColumn: '1 / -1' }}><EmptyStudentsState compact /></div>
+                : <div style={{ gridColumn: '1 / -1', padding: 60, textAlign: 'center', color: '#8B6E52', fontWeight: 600 }}>No students match the current criteria.</div>
+            )}
+          </div>
+        ) : (
+          <div style={{ ...cardStyle, padding: 0, overflow: 'hidden' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+              <thead>
+                <tr style={{ background: 'rgba(180,140,90,0.05)', borderBottom: '2px solid rgba(180,140,90,0.1)' }}>
+                  <th style={thStyle}>Student</th>
+                  <th style={thStyle}>Track</th>
+                  <th style={thStyle}>Labs</th>
+                  <th style={thStyle}>Score</th>
+                  <th style={thStyle}>Employability</th>
+                  <th style={thStyle}>Last Active</th>
+                  <th style={thStyle}>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredStudents.map((s, i) => {
+                  const empColor = s.empLevel === 'High — Job Ready' ? '#10B981' : s.empLevel === 'Medium' ? '#F59E0B' : '#6B7280';
+                  const statColor = s.status === 'Active' ? '#10B981' : s.status === 'Idle' ? '#F59E0B' : '#EF4444';
+                  
+                  return (
+                    <tr key={s.id} onClick={() => handleOpenProfile(s)} style={{ 
+                      borderBottom: '1.5px solid rgba(180,140,90,0.1)',
+                      background: i % 2 === 0 ? 'transparent' : 'rgba(253,246,236,0.5)',
+                      cursor: 'pointer'
+                    }} className="hover:bg-amber-50/50 transition-colors">
+                      <td style={tdStyle}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg, #006B7A, #2E7D52)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 14, fontWeight: 900, overflow: 'hidden', position: 'relative' }}>
+                            {s.profileImageUrl ? (
+                              <Image src={s.profileImageUrl} alt="Profile" fill style={{ objectFit: 'cover' }} />
+                            ) : (
+                              s.initial ?? '?'
+                            )}
+                          </div>
+                          <div>
+                             <div style={{ fontWeight: 800, color: '#2C1A0E', fontSize: 14 }}>{s.isPrivate ? 'Private Student' : s.name}</div>
+                             <div style={{ fontSize: 11, color: '#8B6E52', fontWeight: 600 }}>{s.yearOfStudy ? `Year ${s.yearOfStudy}` : 'No Year'}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td style={tdStyle}>
+                        <span style={{ fontSize: 11, fontWeight: 800, color: '#006B7A', background: '#e0f2f1', padding: '2px 8px', borderRadius: 6 }}>{s.track}</span>
+                      </td>
+                      <td style={tdStyle}>{s.labs}</td>
+                      <td style={{ ...tdStyle, fontWeight: 900, color: '#006B7A' }}>{s.score}</td>
+                      <td style={tdStyle}>
+                       <span style={{ fontSize: 11, fontWeight: 800, color: empColor, background: `${empColor}15`, padding: '2px 8px', borderRadius: 6 }}>{s.empLevel}</span>
+                      </td>
+                      <td style={tdStyle}>{s.lastActive}</td>
+                      <td style={tdStyle}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 800, color: statColor }}>
+                           <div style={{ width: 8, height: 8, borderRadius: '50%', background: statColor }} />
+                           {s.status}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+            {filteredStudents.length === 0 && (
+              students.length === 0
+                ? <EmptyStudentsState compact />
+                : <div style={{ padding: 60, textAlign: 'center', color: '#8B6E52', fontWeight: 600 }}>No students match the current criteria.</div>
+            )}
+          </div>
+        )}
     </motion.div>
   );
 
@@ -906,8 +1010,12 @@ export default function CollegeAdminDashboard() {
               <div style={{ padding: '32px', overflowY: 'auto', height: 'calc(100vh - 80px)' }}>
                 {/* Header Info */}
                 <div style={{ display: 'flex', gap: 24, marginBottom: 32 }}>
-                   <div style={{ width: 80, height: 80, borderRadius: 24, background: 'linear-gradient(135deg, #006B7A, #2E7D52)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, fontWeight: 900, color: '#fff', boxShadow: '0 10px 20px rgba(0,107,122,0.2)', flexShrink: 0 }}>
-                     {selectedStudent.initial ?? selectedStudent.name?.charAt(0) ?? '?'}
+                   <div style={{ width: 80, height: 80, borderRadius: 24, background: 'linear-gradient(135deg, #006B7A, #2E7D52)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, fontWeight: 900, color: '#fff', boxShadow: '0 10px 20px rgba(0,107,122,0.2)', flexShrink: 0, overflow: 'hidden', position: 'relative' }}>
+                     {selectedStudent.profileImageUrl ? (
+                        <Image src={selectedStudent.profileImageUrl} alt="Profile" fill style={{ objectFit: 'cover' }} />
+                     ) : (
+                        selectedStudent.initial ?? selectedStudent.name?.charAt(0) ?? '?'
+                     )}
                    </div>
                    <div style={{ flex: 1 }}>
                      <h2 style={{ fontSize: 24, fontWeight: 900, color: '#2C1A0E', letterSpacing: '-0.02em', margin: '0 0 4px' }}>{selectedStudent.name}</h2>
