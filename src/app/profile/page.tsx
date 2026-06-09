@@ -231,10 +231,17 @@ function ProfilePageInner() {
                 async () => {
                     try {
                         const url = await getDownloadURL(uploadTask.snapshot.ref);
+                        console.log('Image uploaded to Storage:', url);
                         setProfileImageUrl(url);
                         setImageError(false);
-                        await updateDoc(doc(db, 'users', user.uid), { profileImageUrl: url });
+                        
+                        await updateDoc(doc(db, 'users', user.uid), { 
+                            profileImageUrl: url,
+                            photoURL: url
+                        });
+                        
                         await updateProfile(user, { photoURL: url });
+                        console.log('User profile updated with photoURL');
                     } catch (err) {
                         console.error('[Profile] Post-upload error:', err);
                     } finally {
