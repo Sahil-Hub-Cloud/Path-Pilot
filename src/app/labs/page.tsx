@@ -7,25 +7,54 @@ import { getCourseIdFromLabel } from '@/lib/data/course-map';
 import { useAuth } from '@/hooks/useAuth';
 import { db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import { FiTerminal, FiArrowRight, FiStar, FiArrowLeft } from 'react-icons/fi';
+import { FiTerminal, FiArrowRight, FiStar, FiArrowLeft, FiLock, FiCheckCircle } from 'react-icons/fi';
+
+// Helper to determine the prerequisite lab ID
+function getPreRequisiteLab(labId: string): string | null {
+  const match = labId.match(/(.+)-lab-(\d+)/);
+  if (match) {
+    const courseId = match[1];
+    const index = parseInt(match[2], 10);
+    if (index > 1) return `${courseId}-lab-${index - 1}`;
+    return null;
+  }
+  const legacyIds = [
+    'python-basics', 'toggle-flag', 'js-functions', 'debug-challenge',
+    'arrays-loops', 'lab-001', 'api-design', 'cloud-bash', 'cloud-yaml', 'cloud-cicd'
+  ];
+  const idx = legacyIds.indexOf(labId);
+  return idx > 0 ? legacyIds[idx - 1] : null;
+}
 
 export default function LabsListingPage() {
   const router = useRouter();
   const { user } = useAuth();
   const [courseId, setCourseId] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(false);
+  const [completedIds, setCompletedIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (!user) {
       setCourseId(null);
+      setCompletedIds([]);
       return;
     }
     getDoc(doc(db, 'users', user.uid))
       .then((snap) => {
-        const path = snap.exists() ? (snap.data().learningPath as string) : null;
-        setCourseId(getCourseIdFromLabel(path));
+        if (snap.exists()) {
+          const data = snap.data();
+          const path = data.learningPath as string;
+          setCourseId(getCourseIdFromLabel(path));
+          setCompletedIds(data.completedLabsList || []);
+        } else {
+          setCourseId(null);
+          setCompletedIds([]);
+        }
       })
-      .catch(() => setCourseId(null));
+      .catch(() => {
+        setCourseId(null);
+        setCompletedIds([]);
+      });
   }, [user]);
 
   const trackLabIds = courseId ? getCourseLabIds(courseId) : [];
@@ -90,19 +119,36 @@ export default function LabsListingPage() {
             const lab = LABS[id];
             if (!lab) return null;
 
+            const preReq = getPreRequisiteLab(id);
+            const isLocked = preReq !== null && !completedIds.includes(preReq) && user !== null;
+            const isCompleted = completedIds.includes(id);
+
             return (
               <div
                 key={id}
-                onClick={() => router.push(`/labs/${id}`)}
-                className="bg-[#FDF6EC] dark:bg-[#16161E] border-2 border-[#B48C5A]/20 dark:border-white/10 rounded-2xl p-6 cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all duration-300 flex flex-col group relative overflow-hidden"
+                onClick={() => {
+                  if (isLocked) {
+                    alert('🔒 You must complete the previous lab to unlock this one!');
+                  } else {
+                    router.push(`/labs/${id}`);
+                  }
+                }}
+                className={`border-2 rounded-2xl p-6 flex flex-col group relative overflow-hidden transition-all duration-300 ${
+                  isLocked
+                    ? 'bg-gray-100 dark:bg-[#0A0A0F] border-gray-200 dark:border-gray-800 opacity-60 cursor-not-allowed'
+                    : 'bg-[#FDF6EC] dark:bg-[#16161E] border-[#B48C5A]/20 dark:border-white/10 cursor-pointer hover:-translate-y-1 hover:shadow-xl'
+                }`}
               >
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[#006B7A]/5 dark:bg-cyan-500/5 rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform" />
+                {!isLocked && (
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#006B7A]/5 dark:bg-cyan-500/5 rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform" />
+                )}
 
                 <div className="flex justify-between items-start mb-4">
-                  <span className="px-3 py-1 bg-white dark:bg-gray-800 text-[10px] font-black uppercase tracking-widest rounded-lg border-2 border-[#B48C5A]/10 dark:border-gray-700">
+                  <span className="px-3 py-1 bg-white dark:bg-gray-800 text-[10px] font-black uppercase tracking-widest rounded-lg border-2 border-[#B48C5A]/10 dark:border-gray-700 flex items-center gap-2">
+                    {isLocked ? <FiLock size={10} className="text-red-500" /> : isCompleted ? <FiCheckCircle size={10} className="text-green-500" /> : null}
                     {lab.category}
                   </span>
-                  <div className="flex items-center gap-1 text-[#D95F2B] dark:text-[#F59E0B] text-xs font-black">
+                  <div className={`flex items-center gap-1 text-xs font-black ${isLocked ? 'text-gray-400' : 'text-[#D95F2B] dark:text-[#F59E0B]'}`}>
                     <FiStar /> {lab.xp} XP
                   </div>
                 </div>
@@ -128,8 +174,8 @@ export default function LabsListingPage() {
                   </span>
                 </div>
 
-                <div className="absolute bottom-6 right-6 opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[#006B7A] dark:text-cyan-400">
-                  <FiArrowRight size={20} />
+                <div className={`absolute bottom-6 right-6 transition-all ${isLocked ? 'text-gray-400' : 'opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 text-[#006B7A] dark:text-cyan-400'}`}>
+                  {isLocked ? <FiLock size={20} /> : <FiArrowRight size={20} />}
                 </div>
               </div>
             );

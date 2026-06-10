@@ -13,7 +13,7 @@ import { executeCode } from '@/lib/piston';
 import { executePythonClient, executePythonTestSuite } from '@/lib/pyodide-runner';
 import type { PyodideTestResult } from '@/lib/pyodide-runner';
 import { CHALLENGE_TESTS } from '@/lib/data/challenges';
-import { analyzeCode } from '@/lib/services/code-analysis';
+import { analyzeCode, AntiCheatMetrics } from '@/lib/services/code-analysis';
 import { useAuth } from '@/hooks/useAuth';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, updateDoc, increment, collection, addDoc, setDoc, serverTimestamp } from 'firebase/firestore';
@@ -67,6 +67,16 @@ function newFile(lang: string, name?: string): FileTab {
   };
 }
 
+function getStringHash(str: string) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
 // ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
 export default function LabPage() {
   const router = useRouter();
@@ -91,6 +101,32 @@ export default function LabPage() {
   const [newFileName, setNewFN]     = useState('');
   const [newFileLang, setNewFL]     = useState('python');
   const [showNewFile, setShowNF]    = useState(false);
+
+  // Anti-Cheat Metrics
+  const cheatMetrics = useRef({
+    pasteIncidentCount: 0,
+    hasSuspiciousPaste: false,
+    keystrokes: 0,
+    startTime: Date.now()
+  });
+
+  // Apply Variation if exists
+  const challengeConfig = CHALLENGE_TESTS[labId];
+  if (challengeConfig?.variations && challengeConfig.variations.length > 0 && user?.uid && !dynamicLab) {
+    const hash = getStringHash(user.uid + labId);
+    const variation = challengeConfig.variations[hash % challengeConfig.variations.length];
+    LAB.title = LAB.title + (variation.titleSuffix ? ` — ${variation.titleSuffix}` : '');
+    LAB.problem = variation.problem;
+    LAB.tests = variation.testCases.map((t, i) => ({
+      label: t.description || `Test ${i + 1}`,
+      input: t.input || '',
+      expected: t.expectedOutput
+    }));
+    if (variation.expectedOutput) LAB.expected = variation.expectedOutput as string;
+    if (variation.hints) LAB.hint = variation.hints[0] || LAB.hint;
+    // Overwrite the original config tests so analysis works correctly
+    challengeConfig.testCases = variation.testCases;
+  }
 
   // Execution
   const [output, setOutput]         = useState('');
@@ -284,8 +320,19 @@ export default function LabPage() {
         if (f.length > 0) { setFiles(f); setActive(f[0].id); return; }
       } catch {}
     }
+    
+    // Check variation starter
+    if (challengeConfig?.variations && challengeConfig.variations.length > 0 && user?.uid) {
+        const hash = getStringHash(user.uid + labId);
+        const variation = challengeConfig.variations[hash % challengeConfig.variations.length];
+        if (variation.starterCode) {
+            defaultFile.content = variation.starterCode;
+        }
+    }
+    
     setFiles([defaultFile]);
     setActive(defaultFile.id);
+    cheatMetrics.current.startTime = Date.now();
   }, [labId, user?.uid]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => { if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight; }, [aiMessages]);
@@ -294,7 +341,19 @@ export default function LabPage() {
   const activeFile = files.find(f => f.id === activeFileId) || files[0];
 
   const updateFile = (id: string, content: string) => {
-    setFiles(prev => prev.map(f => f.id === id ? { ...f, content, saved: false } : f));
+    setFiles(prev => prev.map(f => {
+      if (f.id === id) {
+        const lengthDiff = content.length - f.content.length;
+        if (lengthDiff > 200) {
+          cheatMetrics.current.pasteIncidentCount++;
+          cheatMetrics.current.hasSuspiciousPaste = true;
+        } else if (lengthDiff > 0 && lengthDiff < 10) {
+          cheatMetrics.current.keystrokes += lengthDiff;
+        }
+        return { ...f, content, saved: false };
+      }
+      return f;
+    }));
   };
 
   const saveAll = () => {
@@ -464,8 +523,17 @@ export default function LabPage() {
 
     try {
       // ── 1. Anti-cheat analysis ──
-      const challengeConfig = CHALLENGE_TESTS[labId];
-      const analysis = analyzeCode(activeFile.content, challengeConfig);
+      const timeSpentSeconds = Math.max(1, Math.floor((Date.now() - cheatMetrics.current.startTime) / 1000));
+      const charsPerSec = cheatMetrics.current.keystrokes / timeSpentSeconds;
+      
+      const metrics: AntiCheatMetrics = {
+        pasteIncidentCount: cheatMetrics.current.pasteIncidentCount,
+        hasSuspiciousPaste: cheatMetrics.current.hasSuspiciousPaste,
+        typingSpeedCharsPerSec: charsPerSec,
+        timeSpentSeconds
+      };
+
+      const analysis = analyzeCode(activeFile.content, challengeConfig, metrics);
       if (!analysis.isValid) {
         setOutput(`[BLOCKED] Submission Rejected\n\n${analysis.feedback}`);
         setIsSub(false);

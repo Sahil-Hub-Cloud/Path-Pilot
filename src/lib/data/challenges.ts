@@ -10,12 +10,24 @@ export interface ChallengeTestCase {
   timeout?: number;
 }
 
+export interface ChallengeVariation {
+  id: string;
+  problem: string;
+  titleSuffix?: string;
+  expectedOutput?: string | RegExp;
+  testCases: ChallengeTestCase[];
+  hints?: string[];
+  starterCode?: string;
+}
+
 export interface ChallengeConfig {
   labId: string;
   validationType: 'exact' | 'regex' | 'function';
   expectedOutput?: string | RegExp;
   testCases: ChallengeTestCase[];
   hints: string[];
+  referenceSolution?: string;
+  variations?: ChallengeVariation[];
   needsVerification?: boolean; // true = auto-generated, admin should review
 }
 
@@ -33,6 +45,40 @@ const MANUAL_TESTS: Record<string, ChallengeConfig> = {
     hints: [
       'Check divisibility with the % operator.',
       'Check FizzBuzz (both 3 and 5) FIRST, before checking Fizz or Buzz individually.'
+    ],
+    referenceSolution: `def fizzbuzz(n):
+    res = []
+    for i in range(1, n + 1):
+        if i % 3 == 0 and i % 5 == 0:
+            res.append("FizzBuzz")
+        elif i % 3 == 0:
+            res.append("Fizz")
+        elif i % 5 == 0:
+            res.append("Buzz")
+        else:
+            res.append(str(i))
+    return res`,
+    variations: [
+      {
+        id: 'python-basics-var-1',
+        titleSuffix: 'FizzBuzz Variation A',
+        problem: 'Write a function fizzbuzz(n) that returns a list of strings from 1 to n where multiples of 3 are "Fizz", multiples of 5 are "Buzz", and both are "FizzBuzz".\n\nExample: fizzbuzz(5) → ["1", "2", "Fizz", "4", "Buzz"]\n\nPrint the result list on a single line.',
+        starterCode: '# Complete this function\n\ndef fizzbuzz(n):\n    # Your code here\n    pass\n\n# Test automatically\nprint(fizzbuzz(5))',
+        testCases: [
+          { input: '5', expectedOutput: '["1", "2", "Fizz", "4", "Buzz"]', description: 'fizzbuzz(5)' },
+          { input: '15', expectedOutput: '"FizzBuzz"', description: 'fizzbuzz(15) last element' }
+        ]
+      },
+      {
+        id: 'python-basics-var-2',
+        titleSuffix: 'FizzBuzz Variation B',
+        problem: 'Write a function fizzbuzz_up_to(limit) that returns a list of strings from 1 to limit where multiples of 3 are "Fizz", multiples of 5 are "Buzz", and both are "FizzBuzz".\n\nExample: fizzbuzz_up_to(5) → ["1", "2", "Fizz", "4", "Buzz"]\n\nPrint the result list on a single line.',
+        starterCode: '# Complete this function\n\ndef fizzbuzz_up_to(limit):\n    # Your code here\n    pass\n\n# Test automatically\nprint(fizzbuzz_up_to(5))',
+        testCases: [
+          { input: '5', expectedOutput: '["1", "2", "Fizz", "4", "Buzz"]', description: 'fizzbuzz_up_to(5)' },
+          { input: '15', expectedOutput: '"FizzBuzz"', description: 'fizzbuzz_up_to(15) last element' }
+        ]
+      }
     ]
   },
   'toggle-flag': {
@@ -45,6 +91,29 @@ const MANUAL_TESTS: Record<string, ChallengeConfig> = {
     hints: [
       'Use: return not current',
       'Return the opposite boolean'
+    ],
+    referenceSolution: `def toggle_flag(current):\n    return not current`,
+    variations: [
+      {
+        id: 'toggle-flag-var-1',
+        titleSuffix: 'Toggle Flag A',
+        problem: 'Complete the function `toggle_flag(current)` that takes a boolean value and returns its opposite (True becomes False, and False becomes True).\n\nDo not use `input()`.',
+        starterCode: '# Complete this function\n\ndef toggle_flag(current):\n    # Your code here\n    pass\n\nprint(toggle_flag(True))\nprint(toggle_flag(False))',
+        testCases: [
+          { input: 'print(toggle_flag(True))', expectedOutput: 'False', description: 'toggle_flag(True)' },
+          { input: 'print(toggle_flag(False))', expectedOutput: 'True', description: 'toggle_flag(False)' }
+        ]
+      },
+      {
+        id: 'toggle-flag-var-2',
+        titleSuffix: 'Invert Boolean B',
+        problem: 'Complete the function `invert_boolean(value)` that takes a boolean value and returns its opposite.\n\nDo not use `input()`.',
+        starterCode: '# Complete this function\n\ndef invert_boolean(value):\n    # Your code here\n    pass\n\nprint(invert_boolean(True))\nprint(invert_boolean(False))',
+        testCases: [
+          { input: 'print(invert_boolean(True))', expectedOutput: 'False', description: 'invert_boolean(True)' },
+          { input: 'print(invert_boolean(False))', expectedOutput: 'True', description: 'invert_boolean(False)' }
+        ]
+      }
     ]
   },
   'debug-challenge': {
