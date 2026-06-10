@@ -10,7 +10,10 @@ import {
   FiCpu, FiSend, FiAlertTriangle, FiChevronDown, FiCode, FiTerminal, FiClock
 } from 'react-icons/fi';
 import { executeCode } from '@/lib/piston';
-import { executePythonClient } from '@/lib/pyodide-runner';
+import { executePythonClient, executePythonTestSuite } from '@/lib/pyodide-runner';
+import type { PyodideTestResult } from '@/lib/pyodide-runner';
+import { CHALLENGE_TESTS } from '@/lib/data/challenges';
+import { analyzeCode } from '@/lib/services/code-analysis';
 import { useAuth } from '@/hooks/useAuth';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, updateDoc, increment, collection, addDoc, setDoc, serverTimestamp } from 'firebase/firestore';
@@ -96,6 +99,8 @@ export default function LabPage() {
   const [runCount, setRunCount]     = useState(0);
   const [execTime, setExecTime]     = useState<string | null>(null);
   const [testResults, setTests]     = useState<{pass: boolean, label: string}[]>([]);
+  const [verificationResults, setVerificationResults] = useState<PyodideTestResult[]>([]);
+  const [verificationSummary, setVerificationSummary] = useState<{passed: number, total: number} | null>(null);
 
   // Panels
   const [left, setLeft]             = useState<'problem' | 'tests'>('problem');
@@ -452,52 +457,102 @@ export default function LabPage() {
     setIsSub(true);
     setSubmitBadge(null);
     setExecTime(null);
-    setOutput('⚡ Running test suite...\n');
+    setVerificationResults([]);
+    setVerificationSummary(null);
+    setOutput('⚡ Running universal test suite...\n');
     const t0 = performance.now();
+
     try {
-      const res = await runCodeWrapper(activeFile.language, activeFile.content);
-      const duration = ((performance.now() - t0) / 1000).toFixed(2);
-      setExecTime(duration + 's');
-      
-      if (res.run.code !== 0) {
-        setOutput(`[ERROR] Tests failed to run.\nStatus: ${res.run.signal}\n\n${res.run.output}`);
+      // ── 1. Anti-cheat analysis ──
+      const challengeConfig = CHALLENGE_TESTS[labId];
+      const analysis = analyzeCode(activeFile.content, challengeConfig);
+      if (!analysis.isValid) {
+        setOutput(`[BLOCKED] Submission Rejected\n\n${analysis.feedback}`);
         setIsSub(false);
         return;
       }
 
-      const out = res.run.output?.trim() || '';
-      // Compare normalized outputs for pass/fail
-      const normalizedOut = out.replace(/\s+/g, '').toLowerCase();
-      const results = LAB.tests.map((t: any) => {
-        const normalizedExpected = t.expected.replace(/\s+/g, '').toLowerCase();
-        const pass = normalizedOut.includes(normalizedExpected) && !res.run.stderr;
-        return { label: t.label, pass };
-      });
-      
-      console.log('--- Test Results ---');
-      results.forEach((r: any) => console.log(`${r.pass ? '✅ PASS' : '❌ FAIL'}: ${r.label}`));
-      
-      setTests(results);
-      const passedCount = results.filter((r: any) => r.pass).length;
-      const allPass     = passedCount === results.length;
-      
-      const pct = results.length > 0 ? (passedCount / results.length) * 100 : 0;
-      let tier = 'Needs Practice';
-      let tagColor = C.red;
-      if (pct >= 85) { tier = 'Excellent'; tagColor = C.green; }
-      else if (pct >= 71) { tier = 'Good Work'; tagColor = C.blue; }
-      else if (pct >= 41) { tier = 'Getting There'; tagColor = C.amber; }
+      // ── 2. Run universal test suite if available ──
+      if (challengeConfig && challengeConfig.testCases.length > 0 && activeFile.language === 'python') {
+        const suiteResult = await executePythonTestSuite(activeFile.content, challengeConfig.testCases);
+        const duration = ((performance.now() - t0) / 1000).toFixed(2);
+        setExecTime(duration + 's');
+        setVerificationResults(suiteResult.results);
+        setVerificationSummary({ passed: suiteResult.passedTests, total: suiteResult.totalTests });
 
-      setSubmitBadge({ tier, color: tagColor, pass: passedCount, total: results.length });
+        const legacyResults = suiteResult.results.map(r => ({ label: r.description, pass: r.passed }));
+        setTests(legacyResults);
 
-      setOutput(
-        res.run.output + '\n\n' +
-        (allPass
-          ? `✅ All tests passed!\n⏱️ Completed in ${formatTimeVerbose(elapsedSeconds)}\n🚀 Executed in ${duration}s\n🏆 +${LAB.xp} XP awarded to your profile.`
-          : `⚠️ ${passedCount}/${results.length} tests passed. Executed in ${duration}s. Review your logic and try again.`)
-      );
-      // Always save to Firestore after submission (even partial pass → partial skill score)
-      await saveLabResultToFirestore(passedCount, results.length, elapsedSeconds);
+        const passedCount = suiteResult.passedTests;
+        const allPass = passedCount === suiteResult.totalTests;
+
+        const pct = suiteResult.totalTests > 0 ? (passedCount / suiteResult.totalTests) * 100 : 0;
+        let tier = 'Needs Practice';
+        let tagColor = C.red;
+        if (pct >= 85) { tier = 'Excellent'; tagColor = C.green; }
+        else if (pct >= 71) { tier = 'Good Work'; tagColor = C.blue; }
+        else if (pct >= 41) { tier = 'Getting There'; tagColor = C.amber; }
+
+        setSubmitBadge({ tier, color: tagColor, pass: passedCount, total: suiteResult.totalTests });
+
+        // Build detailed output
+        let outputLines = suiteResult.results.map((r, i) =>
+          `${r.passed ? '✓' : '✗'} Test ${i + 1}: ${r.description} → Expected: ${r.expected}, Got: ${r.actual}`
+        ).join('\n');
+
+        if (allPass) {
+          outputLines += `\n\n✅ All ${suiteResult.totalTests} tests passed!\n⏱️ Completed in ${formatTimeVerbose(elapsedSeconds)}\n🚀 Executed in ${duration}s\n🏆 +${LAB.xp} XP awarded to your profile.`;
+        } else {
+          outputLines += `\n\n⚠️ ${passedCount}/${suiteResult.totalTests} tests passed. Executed in ${duration}s.`;
+          // Add hints from challenge config
+          if (challengeConfig.hints && challengeConfig.hints.length > 0) {
+            outputLines += `\n\n💡 Hint: ${challengeConfig.hints[0]}`;
+          }
+        }
+        setOutput(outputLines);
+        await saveLabResultToFirestore(passedCount, suiteResult.totalTests, elapsedSeconds);
+
+      } else {
+        // ── 3. Fallback: legacy comparison for non-Python or unconfigured labs ──
+        const res = await runCodeWrapper(activeFile.language, activeFile.content);
+        const duration = ((performance.now() - t0) / 1000).toFixed(2);
+        setExecTime(duration + 's');
+
+        if (res.run.code !== 0) {
+          setOutput(`[ERROR] Tests failed to run.\nStatus: ${res.run.signal}\n\n${res.run.output}`);
+          setIsSub(false);
+          return;
+        }
+
+        const out = res.run.output?.trim() || '';
+        const normalizedOut = out.replace(/\s+/g, '').toLowerCase();
+        const results = LAB.tests.map((t: any) => {
+          const normalizedExpected = t.expected.replace(/\s+/g, '').toLowerCase();
+          const pass = normalizedOut.includes(normalizedExpected) && !res.run.stderr;
+          return { label: t.label, pass };
+        });
+
+        setTests(results);
+        const passedCount = results.filter((r: any) => r.pass).length;
+        const allPass = passedCount === results.length;
+
+        const pct = results.length > 0 ? (passedCount / results.length) * 100 : 0;
+        let tier = 'Needs Practice';
+        let tagColor = C.red;
+        if (pct >= 85) { tier = 'Excellent'; tagColor = C.green; }
+        else if (pct >= 71) { tier = 'Good Work'; tagColor = C.blue; }
+        else if (pct >= 41) { tier = 'Getting There'; tagColor = C.amber; }
+
+        setSubmitBadge({ tier, color: tagColor, pass: passedCount, total: results.length });
+
+        setOutput(
+          res.run.output + '\n\n' +
+          (allPass
+            ? `✅ All tests passed!\n⏱️ Completed in ${formatTimeVerbose(elapsedSeconds)}\n🚀 Executed in ${duration}s\n🏆 +${LAB.xp} XP awarded to your profile.`
+            : `⚠️ ${passedCount}/${results.length} tests passed. Executed in ${duration}s. Review your logic and try again.`)
+        );
+        await saveLabResultToFirestore(passedCount, results.length, elapsedSeconds);
+      }
     } catch (e: any) {
       setOutput('[ERROR] Submission Failed\n' + e.message);
     } finally {
@@ -986,10 +1041,41 @@ Rules:
                       >.</motion.span>
                     </span>
                   </div>
-                  <div className="text-[#888899] text-[10px]">Processing via Judge0 cluster...</div>
+                  <div className="text-[#888899] text-[10px]">Processing via execution engine...</div>
                 </div>
               ) : (
-                output || <span className="text-[#444455]">$ awaiting execution...</span>
+                <>
+                  {output || <span className="text-[#444455]">$ awaiting execution...</span>}
+                  {verificationResults.length > 0 && (
+                    <div className="mt-4 border border-white/10 rounded-xl overflow-hidden">
+                      <div className="bg-white/[0.03] px-4 py-2.5 border-b border-white/10 flex items-center justify-between">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-[#888899]">Test Results</span>
+                        {verificationSummary && (
+                          <span className={`text-[10px] font-black ${verificationSummary.passed === verificationSummary.total ? 'text-[#10B981]' : 'text-[#F59E0B]'}`}>
+                            {verificationSummary.passed}/{verificationSummary.total} PASSED
+                          </span>
+                        )}
+                      </div>
+                      {verificationResults.map((r, i) => (
+                        <div key={i} className={`flex items-start gap-3 px-4 py-3 border-b border-white/5 last:border-b-0 ${r.passed ? 'bg-green-500/[0.03]' : 'bg-red-500/[0.03]'}`}>
+                          <span className="mt-0.5 flex-shrink-0">
+                            {r.passed
+                              ? <FiCheckCircle size={14} className="text-[#10B981]" />
+                              : <FiXCircle size={14} className="text-[#EF4444]" />
+                            }
+                          </span>
+                          <div className="flex-1 min-w-0">
+                            <div className="text-[11px] font-bold text-[#E2E2EE] mb-1">{r.description}</div>
+                            <div className="flex flex-col gap-0.5">
+                              <span className="text-[10px] text-[#888899]">Expected: <span className="text-[#10B981] font-mono">{r.expected}</span></span>
+                              <span className="text-[10px] text-[#888899]">Got: <span className={`font-mono ${r.passed ? 'text-[#10B981]' : 'text-[#EF4444]'}`}>{r.actual || '(empty)'}</span></span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
               )}
               <AnimatePresence>
                 {submitBadge && (

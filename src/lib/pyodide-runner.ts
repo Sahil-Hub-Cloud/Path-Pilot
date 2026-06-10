@@ -64,3 +64,60 @@ sys.stderr = io.StringIO()
     return { stdout: '', stderr: errorMessage, error: errorMessage };
   }
 }
+
+export interface PyodideTestResult {
+  description: string;
+  passed: boolean;
+  expected: string;
+  actual: string;
+}
+
+export async function executePythonTestSuite(
+  code: string,
+  testCases: Array<{ input?: string; expectedOutput: string; description?: string }>
+): Promise<{ results: PyodideTestResult[]; passedTests: number; totalTests: number }> {
+  const results: PyodideTestResult[] = [];
+  const pyodide = await getPyodide();
+
+  for (const test of testCases) {
+    try {
+      // Reset streams for each test
+      pyodide.runPython(`
+import sys
+import io
+sys.stdout = io.StringIO()
+sys.stderr = io.StringIO()
+      `);
+
+      let finalCode = code;
+      // Inject stdin if the test provides input
+      if (test.input) {
+        finalCode = `import sys\nfrom io import StringIO\nsys.stdin = StringIO('${test.input.replace(/'/g, "\\'")}\\n')\n` + finalCode;
+      }
+
+      await pyodide.loadPackagesFromImports(finalCode, { messageCallback: () => {}, errorCallback: () => {} });
+      await pyodide.runPythonAsync(finalCode);
+
+      const stdout = (pyodide.runPython("sys.stdout.getvalue()") as string).trim();
+      const expected = test.expectedOutput.trim();
+      const passed = stdout === expected;
+
+      results.push({
+        description: test.description || `Test`,
+        passed,
+        expected,
+        actual: stdout
+      });
+    } catch (err: any) {
+      results.push({
+        description: test.description || `Test`,
+        passed: false,
+        expected: test.expectedOutput.trim(),
+        actual: `Error: ${err.message?.split('\n').pop() || 'Unknown error'}`
+      });
+    }
+  }
+
+  const passedTests = results.filter(r => r.passed).length;
+  return { results, passedTests, totalTests: testCases.length };
+}

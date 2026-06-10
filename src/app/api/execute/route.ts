@@ -14,7 +14,7 @@ const languageMap: Record<string, number> = {
 
 export async function POST(req: NextRequest) {
   try {
-    const { language, source } = await req.json();
+    const { language, source, testCases } = await req.json();
 
     if (!language || !source) {
       return NextResponse.json({ error: 'Language and source code are required.' }, { status: 400 });
@@ -23,49 +23,57 @@ export async function POST(req: NextRequest) {
     const languageId = languageMap[language.toLowerCase()] || 71;
 
     let finalSource = source;
-    if (language.toLowerCase() === 'python' && source.includes('input(')) {
+    // Legacy support for Python input() injection if no testCases provided
+    if (language.toLowerCase() === 'python' && source.includes('input(') && !testCases) {
       finalSource = `import sys\nfrom io import StringIO\nsys.stdin = StringIO('5\\n10\\n15\\n20\\nTrue\\nFalse\\nyes\\nno\\n')\n` + source;
     }
 
-    // 1. Submit code to Judge0
-    const submitResponse = await fetch('https://ce.judge0.com/submissions?base64_encoded=false&wait=false', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        language_id: languageId,
-        source_code: finalSource,
-        stdin: ''
-      })
-    });
+    const runJudge0 = async (stdin: string) => {
+      const submitResponse = await fetch('https://ce.judge0.com/submissions?base64_encoded=false&wait=false', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          language_id: languageId,
+          source_code: finalSource,
+          stdin: stdin || ''
+        })
+      });
 
-    if (!submitResponse.ok) {
-      const errorText = await submitResponse.text();
-      return NextResponse.json({ error: `Judge0 Submission Failed: ${errorText}` }, { status: 500 });
-    }
-
-    const { token } = await submitResponse.json();
-
-    // 2. Poll for results
-    let retries = 13; // ~10 seconds total wait (13 * 800ms)
-    while (retries > 0) {
-      await new Promise(resolve => setTimeout(resolve, 800));
-      const resultResponse = await fetch(`https://ce.judge0.com/submissions/${token}?base64_encoded=false&fields=stdout,stderr,status,compile_output`);
-      
-      if (resultResponse.ok) {
-        const result = await resultResponse.json();
-        
-        // status.id => 1 (In Queue), 2 (Processing), >= 3 (Done/Error)
-        if (result.status.id >= 3) {
-          return NextResponse.json(result);
-        }
-      } else {
-          const errorText = await resultResponse.text();
-          return NextResponse.json({ error: `Judge0 Result Fetch Failed: ${errorText}` }, { status: 500 });
+      if (!submitResponse.ok) {
+        throw new Error(await submitResponse.text());
       }
-      retries--;
-    }
 
-    return NextResponse.json({ error: 'Code execution timed out. Try again or simplify your code.' }, { status: 504 });
+      const { token } = await submitResponse.json();
+
+      let retries = 15;
+      while (retries > 0) {
+        await new Promise(resolve => setTimeout(resolve, 800));
+        const resultResponse = await fetch(`https://ce.judge0.com/submissions/${token}?base64_encoded=false&fields=stdout,stderr,status,compile_output`);
+        
+        if (resultResponse.ok) {
+          const result = await resultResponse.json();
+          if (result.status.id >= 3) {
+            return result;
+          }
+        } else {
+            throw new Error(await resultResponse.text());
+        }
+        retries--;
+      }
+      throw new Error('Code execution timed out.');
+    };
+
+    if (testCases && Array.isArray(testCases) && testCases.length > 0) {
+      const results = [];
+      for (const input of testCases) {
+        const res = await runJudge0(input);
+        results.push(res);
+      }
+      return NextResponse.json({ results });
+    } else {
+      const res = await runJudge0('');
+      return NextResponse.json(res);
+    }
 
   } catch (error: any) {
     console.error('API Execute Error:', error);
