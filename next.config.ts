@@ -26,6 +26,10 @@ const nextConfig: NextConfig = {
             key: 'Cross-Origin-Opener-Policy',
             value: 'same-origin',
           },
+          {
+            key: 'Access-Control-Allow-Credentials',
+            value: 'true',
+          },
         ],
       },
     ];

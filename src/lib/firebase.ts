@@ -17,6 +17,9 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
+if (!firebaseConfig.apiKey) console.error("Missing NEXT_PUBLIC_FIREBASE_API_KEY");
+if (firebaseConfig.projectId !== 'path-pilot-11255') console.error(`Unexpected Project ID: ${firebaseConfig.projectId}. Expected 'path-pilot-11255'.`);
+
 if (
   !firebaseConfig.apiKey ||
   !firebaseConfig.authDomain ||
@@ -25,11 +28,12 @@ if (
   !firebaseConfig.messagingSenderId ||
   !firebaseConfig.appId
 ) {
-  throw new Error("Missing one or more required Firebase environment variables.");
+  console.error("Missing one or more required Firebase environment variables:", firebaseConfig);
 }
 
 // Only initialize once
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+console.log('Firebase initialized:', !!app);
 
 export const auth = getAuth(app);
 

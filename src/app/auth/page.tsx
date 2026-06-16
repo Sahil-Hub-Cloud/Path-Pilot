@@ -162,6 +162,14 @@ function AuthForm() {
 
   // Check for a pending redirect result on mount (only relevant after signInWithRedirect)
   useEffect(() => {
+    // Session token cleanup
+    try {
+      localStorage.removeItem('pathpilot_session');
+      localStorage.removeItem('firebase.auth.currentUser');
+    } catch (e) {
+      console.error('Failed to clear localStorage', e);
+    }
+
     const r = searchParams.get('role');
     const t = searchParams.get('type');
     if (r === 'company') setRole('company');
@@ -176,8 +184,20 @@ function AuthForm() {
     setRedirectProcessing(true);
     console.log("Auth: Checking for pending redirect result...");
 
+    let timeoutFired = false;
+    const timeoutId = setTimeout(() => {
+      timeoutFired = true;
+      console.error("Session timeout. Please clear browser cache and try again.");
+      showError("Session timeout. Please clear browser cache and try again.");
+      setRedirectProcessing(false);
+      localStorage.removeItem('pp_pending_redirect');
+    }, 5000);
+
     getRedirectResult(auth)
       .then(async (result) => {
+        if (timeoutFired) return;
+        clearTimeout(timeoutId);
+        
         if (result?.user) {
           console.log("Auth: Redirect success for", result.user.email);
           localStorage.removeItem('pp_pending_redirect');
@@ -189,6 +209,8 @@ function AuthForm() {
         }
       })
       .catch((err) => {
+        if (timeoutFired) return;
+        clearTimeout(timeoutId);
         console.error("Auth: Redirect check error:", err);
         localStorage.removeItem('pp_pending_redirect');
         if (err.code !== 'auth/no-redirect-operation' && err.code !== 'auth/null-user') {
@@ -468,6 +490,15 @@ function AuthForm() {
             <FiLoader className="spin" size={48} style={{ color: '#006B7A', marginBottom: 20 }} />
             <h3 style={{ color: '#2C1A0E', fontWeight: 800 }}>Establishing secure session...</h3>
             <p style={{ color: '#8B6E52', fontSize: 13 }}>Please do not refresh the page.</p>
+            <button 
+               onClick={() => {
+                 setRedirectProcessing(false);
+                 localStorage.removeItem('pp_pending_redirect');
+               }}
+               style={{ marginTop: 20, padding: '8px 16px', borderRadius: 8, backgroundColor: '#006B7A', color: 'white', border: 'none', cursor: 'pointer', fontWeight: 600 }}
+            >
+               Cancel & Retry Manual Login
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
