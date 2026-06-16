@@ -10,15 +10,18 @@ import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  authDomain: 'path-pilot-11255.firebaseapp.com',
+  projectId: 'path-pilot-11255',
+  storageBucket: 'path-pilot-11255.appspot.com',
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
+console.log('Firebase Project ID:', process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID);
+console.log('Auth Domain:', process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN);
+console.log('Using Project ID:', firebaseConfig.projectId);
+
 if (!firebaseConfig.apiKey) console.error("Missing NEXT_PUBLIC_FIREBASE_API_KEY");
-if (firebaseConfig.projectId !== 'path-pilot-11255') console.error(`Unexpected Project ID: ${firebaseConfig.projectId}. Expected 'path-pilot-11255'.`);
 
 if (
   !firebaseConfig.apiKey ||
@@ -29,6 +32,9 @@ if (
   !firebaseConfig.appId
 ) {
   console.error("Missing one or more required Firebase environment variables:", firebaseConfig);
+  if (typeof window !== 'undefined') {
+    alert("Missing one or more required Firebase environment variables.");
+  }
 }
 
 // Only initialize once

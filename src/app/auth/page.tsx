@@ -166,8 +166,9 @@ function AuthForm() {
     try {
       localStorage.removeItem('pathpilot_session');
       localStorage.removeItem('firebase.auth.currentUser');
+      sessionStorage.clear();
     } catch (e) {
-      console.error('Failed to clear localStorage', e);
+      console.error('Failed to clear storage', e);
     }
 
     const r = searchParams.get('role');
@@ -187,11 +188,11 @@ function AuthForm() {
     let timeoutFired = false;
     const timeoutId = setTimeout(() => {
       timeoutFired = true;
-      console.error("Session timeout. Please clear browser cache and try again.");
-      showError("Session timeout. Please clear browser cache and try again.");
+      console.error("Unable to connect to authentication server. Please refresh the page.");
+      showError("Unable to connect to authentication server. Please refresh the page.");
       setRedirectProcessing(false);
       localStorage.removeItem('pp_pending_redirect');
-    }, 5000);
+    }, 10000);
 
     getRedirectResult(auth)
       .then(async (result) => {
