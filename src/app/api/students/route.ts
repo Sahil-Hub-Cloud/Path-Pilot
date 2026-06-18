@@ -1,4 +1,5 @@
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 import { NextResponse } from "next/server";
 import { db } from "@/lib/firebase"; // Assuming server-side firebase admin is setup or using client-side lite if allowed, but for API routes we need admin usually.
 // In a real Next.js app, we'd use firebase-admin. For this spec, I will implement robust functional mocks or direct firestore if configured.

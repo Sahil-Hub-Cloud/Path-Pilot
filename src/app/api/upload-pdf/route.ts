@@ -1,5 +1,6 @@
-// IMPORTANT: This line must be present in ALL API routes to prevent Vercel build failures
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+// IMPORTANT: This line must be present in ALL API routes to prevent Vercel build failures
 
 import { NextRequest, NextResponse } from 'next/server';
 import pdfParse from 'pdf-parse';

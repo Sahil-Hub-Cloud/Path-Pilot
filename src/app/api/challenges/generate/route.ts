@@ -1,7 +1,8 @@
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 import { NextResponse } from 'next/server';
 import { generateTextWithFallback } from '@/lib/gemini-models';
 
-export const dynamic = 'force-dynamic';
 
 export interface Challenge {
   title: string;

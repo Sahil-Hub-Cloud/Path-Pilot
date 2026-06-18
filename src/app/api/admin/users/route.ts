@@ -1,4 +1,5 @@
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRole, assignRole } from '@/lib/rbac';
 import { CohortService } from '@/lib/services/cohort-service';
