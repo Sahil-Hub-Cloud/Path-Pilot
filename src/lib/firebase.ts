@@ -10,20 +10,17 @@ import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: 'path-pilot-11255.firebaseapp.com',
-  projectId: 'path-pilot-11255',
-  storageBucket: 'path-pilot-11255.appspot.com',
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
-console.log('🔥 FIREBASE CONFIG CHECK');
-console.log('API Key:', process.env.NEXT_PUBLIC_FIREBASE_API_KEY?.substring(0, 10) + '...');
-console.log('Project ID:', process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID);
-console.log('Auth Domain:', process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN);
-console.log('Storage Bucket:', process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET);
-console.log('Using hardcoded Project ID:', firebaseConfig.projectId);
-console.log('Using hardcoded Auth Domain:', firebaseConfig.authDomain);
+if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
+  console.error('🔥 FIREBASE API KEY MISSING IN ENV VARS');
+}
+console.log('🔥 FIREBASE CONFIG LOADED:', firebaseConfig);
 
 if (!firebaseConfig.apiKey) console.error("Missing NEXT_PUBLIC_FIREBASE_API_KEY");
 

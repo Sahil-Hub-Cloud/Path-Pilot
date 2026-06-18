@@ -217,13 +217,16 @@ function AuthForm() {
   // Check for a pending redirect result on mount (only relevant after signInWithRedirect)
   useEffect(() => {
     // Session token cleanup
-    try {
-      localStorage.removeItem('pathpilot_session');
-      localStorage.removeItem('firebase.auth.currentUser');
+    if (typeof window !== 'undefined') {
+      localStorage.clear();
       sessionStorage.clear();
-    } catch (e) {
-      console.error('Failed to clear storage', e);
+      console.log('🧹 Cleared cached auth state');
     }
+
+    console.log('📡 ENV CHECK:');
+    console.log('API Key (first 8):', process.env.NEXT_PUBLIC_FIREBASE_API_KEY?.slice(0,8));
+    console.log('Project ID:', process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID);
+    console.log('Auth Domain:', process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN);
 
     const r = searchParams.get('role');
     const t = searchParams.get('type');
