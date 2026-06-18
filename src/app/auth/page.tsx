@@ -38,6 +38,14 @@ function AuthForm() {
   const [validatedCollegeId, setValidatedCollegeId] = useState('');
   const [firebaseReady, setFirebaseReady] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
+  const [showEmergencyLogin, setShowEmergencyLogin] = useState(false);
+
+  useEffect(() => {
+    const emergencyTimeout = setTimeout(() => {
+      setShowEmergencyLogin(true);
+    }, 10000);
+    return () => clearTimeout(emergencyTimeout);
+  }, []);
 
   // Firebase connection test — verify auth is reachable before showing login form
   useEffect(() => {
@@ -493,6 +501,38 @@ function AuthForm() {
     }
   };
 
+  const handleEmergencyLogin = async () => {
+    if (!formData.email || !formData.password) {
+      showError('Email and password required for emergency login');
+      return;
+    }
+    
+    setLoading(true);
+    setError('');
+    
+    try {
+      const res = await fetch('/api/emergency-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: formData.email, password: formData.password })
+      });
+      
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || 'Emergency login failed');
+      }
+      
+      window.location.href = data.user.role === 'company' ? '/company/dashboard' 
+        : data.user.role === 'college' ? '/college/dashboard' 
+        : data.user.role === 'admin' ? '/admin/dashboard' 
+        : '/dashboard';
+    } catch (err: any) {
+      showError(err.message);
+      setLoading(false);
+    }
+  };
+
   const handleGoogleAuth = async () => {
     if (!auth) { showError('Authentication error. Please refresh.'); return; }
     setGoogleLoading(true);
@@ -798,6 +838,29 @@ function AuthForm() {
               </div>
             )}
           </button>
+          <AnimatePresence>
+            {showEmergencyLogin && (
+              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
+                <div style={{ marginTop: 12, padding: 12, background: 'rgba(217,95,43,0.1)', border: '1px dashed rgba(217,95,43,0.4)', borderRadius: 12, textAlign: 'center' }}>
+                  <p style={{ fontSize: 12, color: '#B04A1E', fontWeight: 600, marginBottom: 8 }}>
+                    Firebase Auth unreachable. You can use emergency mode with limited features.
+                  </p>
+                  <button 
+                    type="button" 
+                    onClick={handleEmergencyLogin}
+                    disabled={loading}
+                    style={{
+                      width: '100%', padding: '10px 0', fontSize: 13,
+                      background: 'transparent', color: '#B04A1E', border: '1.5px solid #B04A1E', borderRadius: 10, cursor: loading ? 'not-allowed' : 'pointer',
+                      fontWeight: 700
+                    }}
+                  >
+                    EMERGENCY LOGIN
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </form>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '20px 0', color: '#B89A7E', fontSize: 12, fontWeight: 700 }}>
