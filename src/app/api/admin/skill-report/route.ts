@@ -1,7 +1,30 @@
+// TOP OF FILE - NO IMPORTS THAT INITIALIZE FIREBASE
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
+
 import { NextResponse } from 'next/server';
-import { SkillMetricsService } from '@/lib/services/skill-metrics';
+
+// Lazy initialization - only runs when request comes in
+let db: any = null;
+
+async function getDb() {
+  if (db) return db;
+  
+  const admin = await import('firebase-admin');
+  
+  if (admin.apps.length === 0) {
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
+        privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+        clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
+      }),
+    });
+  }
+  
+  db = admin.firestore();
+  return db;
+}
 
 /**
  * HOD Skill Report API
@@ -11,6 +34,8 @@ import { SkillMetricsService } from '@/lib/services/skill-metrics';
  */
 export async function GET() {
     try {
+        const database = await getDb();
+        const { SkillMetricsService } = await import('@/lib/services/skill-metrics');
         const report = await SkillMetricsService.getClassReport();
 
         return NextResponse.json({

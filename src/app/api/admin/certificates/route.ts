@@ -1,13 +1,38 @@
+// TOP OF FILE - NO IMPORTS THAT INITIALIZE FIREBASE
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
+
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin as supabase } from '@/lib/supabase-admin';
+
+// Lazy initialization - only runs when request comes in
+let db: any = null;
+
+async function getDb() {
+  if (db) return db;
+  
+  const admin = await import('firebase-admin');
+  
+  if (admin.apps.length === 0) {
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
+        privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+        clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
+      }),
+    });
+  }
+  
+  db = admin.firestore();
+  return db;
+}
 
 /**
  * Certificates API — Issue and retrieve corporate training credentials
  */
 export async function POST(req: NextRequest) {
     try {
+        const database = await getDb();
+        const { supabaseAdmin: supabase } = await import('@/lib/supabase-admin');
         const { userId, cohortId, examId } = await req.json();
 
         if (!userId || !cohortId) {
@@ -47,6 +72,8 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
     try {
+        const database = await getDb();
+        const { supabaseAdmin: supabase } = await import('@/lib/supabase-admin');
         const { searchParams } = new URL(req.url);
         const userId = searchParams.get('userId');
 

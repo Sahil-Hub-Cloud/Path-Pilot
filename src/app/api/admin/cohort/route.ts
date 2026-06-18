@@ -1,14 +1,39 @@
+// TOP OF FILE - NO IMPORTS THAT INITIALIZE FIREBASE
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
+
 import { NextRequest, NextResponse } from 'next/server';
-import { requireRole } from '@/lib/rbac';
-import { CohortService } from '@/lib/services/cohort-service';
+
+// Lazy initialization - only runs when request comes in
+let db: any = null;
+
+async function getDb() {
+  if (db) return db;
+  
+  const admin = await import('firebase-admin');
+  
+  if (admin.apps.length === 0) {
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
+        privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+        clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
+      }),
+    });
+  }
+  
+  db = admin.firestore();
+  return db;
+}
 
 /**
  * Admin Cohort API — Create, list, update, delete cohorts
  */
 export async function POST(req: NextRequest) {
     try {
+        const database = await getDb();
+        const { requireRole } = await import('@/lib/rbac');
+        const { CohortService } = await import('@/lib/services/cohort-service');
         const { userId, name, courseId, description } = await req.json();
 
         const { authorized, institutionId } = await requireRole(userId, 'faculty', 'hod', 'admin');
@@ -34,6 +59,9 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
     try {
+        const database = await getDb();
+        const { requireRole } = await import('@/lib/rbac');
+        const { CohortService } = await import('@/lib/services/cohort-service');
         const { searchParams } = new URL(req.url);
         const userId = searchParams.get('userId');
 
@@ -51,6 +79,9 @@ export async function GET(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
     try {
+        const database = await getDb();
+        const { requireRole } = await import('@/lib/rbac');
+        const { CohortService } = await import('@/lib/services/cohort-service');
         const { userId, cohortId, name, courseId, description, isActive } = await req.json();
 
         const { authorized } = await requireRole(userId, 'faculty', 'hod', 'admin');
@@ -77,6 +108,9 @@ export async function PUT(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
     try {
+        const database = await getDb();
+        const { requireRole } = await import('@/lib/rbac');
+        const { CohortService } = await import('@/lib/services/cohort-service');
         const { userId, cohortId } = await req.json();
 
         const { authorized } = await requireRole(userId, 'hod', 'admin');

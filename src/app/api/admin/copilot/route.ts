@@ -1,8 +1,30 @@
+// TOP OF FILE - NO IMPORTS THAT INITIALIZE FIREBASE
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
+
 import { NextRequest, NextResponse } from 'next/server';
-import { requireRole } from '@/lib/rbac';
-import { CopilotService } from '@/lib/services/copilot-service';
+
+// Lazy initialization - only runs when request comes in
+let db: any = null;
+
+async function getDb() {
+  if (db) return db;
+  
+  const admin = await import('firebase-admin');
+  
+  if (admin.apps.length === 0) {
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
+        privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+        clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
+      }),
+    });
+  }
+  
+  db = admin.firestore();
+  return db;
+}
 
 /**
  * Admin Copilot API — AI-powered quiz and challenge generation for faculty
@@ -10,6 +32,9 @@ import { CopilotService } from '@/lib/services/copilot-service';
  */
 export async function POST(req: NextRequest) {
     try {
+        const database = await getDb();
+        const { requireRole } = await import('@/lib/rbac');
+        const { CopilotService } = await import('@/lib/services/copilot-service');
         const body = await req.json();
         const { userId, action, topic, difficulty, numQuestions, language, contentText } = body;
 

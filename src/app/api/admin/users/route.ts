@@ -1,15 +1,41 @@
+// TOP OF FILE - NO IMPORTS THAT INITIALIZE FIREBASE
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
+
 import { NextRequest, NextResponse } from 'next/server';
-import { requireRole, assignRole } from '@/lib/rbac';
-import { CohortService } from '@/lib/services/cohort-service';
-import { supabaseAdmin as supabase } from '@/lib/supabase-admin';
+
+// Lazy initialization - only runs when request comes in
+let db: any = null;
+
+async function getDb() {
+  if (db) return db;
+  
+  const admin = await import('firebase-admin');
+  
+  if (admin.apps.length === 0) {
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
+        privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+        clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
+      }),
+    });
+  }
+  
+  db = admin.firestore();
+  return db;
+}
 
 /**
  * Admin Users API — Bulk invite students, list users, manage membership
  */
 export async function POST(req: NextRequest) {
     try {
+        const database = await getDb();
+        const { requireRole, assignRole } = await import('@/lib/rbac');
+        const { CohortService } = await import('@/lib/services/cohort-service');
+        const { supabaseAdmin: supabase } = await import('@/lib/supabase-admin');
+
         const body = await req.json();
         const { userId, action } = body;
 
@@ -90,6 +116,10 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
     try {
+        const database = await getDb();
+        const { requireRole } = await import('@/lib/rbac');
+        const { supabaseAdmin: supabase } = await import('@/lib/supabase-admin');
+
         const { searchParams } = new URL(req.url);
         const userId = searchParams.get('userId');
 

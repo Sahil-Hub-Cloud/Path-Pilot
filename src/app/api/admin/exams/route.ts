@@ -1,13 +1,38 @@
+// TOP OF FILE - NO IMPORTS THAT INITIALIZE FIREBASE
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
+
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin as supabase } from '@/lib/supabase-admin';
+
+// Lazy initialization - only runs when request comes in
+let db: any = null;
+
+async function getDb() {
+  if (db) return db;
+  
+  const admin = await import('firebase-admin');
+  
+  if (admin.apps.length === 0) {
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
+        privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+        clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
+      }),
+    });
+  }
+  
+  db = admin.firestore();
+  return db;
+}
 
 /**
  * Exams API — Schedule and manage corporate assessments
  */
 export async function POST(req: NextRequest) {
     try {
+        const database = await getDb();
+        const { supabaseAdmin: supabase } = await import('@/lib/supabase-admin');
         const { institutionId, cohortId, title, description, scheduledAt, durationMinutes } = await req.json();
 
         if (!institutionId || !title || !scheduledAt) {
@@ -37,6 +62,8 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
     try {
+        const database = await getDb();
+        const { supabaseAdmin: supabase } = await import('@/lib/supabase-admin');
         const { searchParams } = new URL(req.url);
         const institutionId = searchParams.get('institutionId');
         const cohortId = searchParams.get('cohortId');

@@ -1,8 +1,30 @@
+// TOP OF FILE - NO IMPORTS THAT INITIALIZE FIREBASE
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
+
 import { NextRequest, NextResponse } from 'next/server';
-import { requireRole } from '@/lib/rbac';
-import { AnalyticsEngine } from '@/lib/services/analytics-engine';
+
+// Lazy initialization - only runs when request comes in
+let db: any = null;
+
+async function getDb() {
+  if (db) return db;
+  
+  const admin = await import('firebase-admin');
+  
+  if (admin.apps.length === 0) {
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
+        privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+        clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
+      }),
+    });
+  }
+  
+  db = admin.firestore();
+  return db;
+}
 
 /**
  * Admin Analytics API — Placement readiness scores, skill heatmaps, at-risk students
@@ -10,6 +32,10 @@ import { AnalyticsEngine } from '@/lib/services/analytics-engine';
  */
 export async function GET(req: NextRequest) {
     try {
+        const database = await getDb();
+        const { requireRole } = await import('@/lib/rbac');
+        const { AnalyticsEngine } = await import('@/lib/services/analytics-engine');
+        
         const { searchParams } = new URL(req.url);
         const userId = searchParams.get('userId');
         const cohortId = searchParams.get('cohortId');

@@ -1,14 +1,38 @@
+// TOP OF FILE - NO IMPORTS THAT INITIALIZE FIREBASE
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import { NextResponse } from 'next/server';
-import pdf from 'pdf-parse';
 
-// Initialize Gemini
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+import { NextResponse } from 'next/server';
+
+// Lazy initialization - only runs when request comes in
+let db: any = null;
+
+async function getDb() {
+  if (db) return db;
+  
+  const admin = await import('firebase-admin');
+  
+  if (admin.apps.length === 0) {
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
+        privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+        clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
+      }),
+    });
+  }
+  
+  db = admin.firestore();
+  return db;
+}
 
 export async function POST(req: Request) {
     try {
+        const database = await getDb();
+        const { GoogleGenerativeAI } = await import('@google/generative-ai');
+        // @ts-ignore
+        const pdf = (await import('pdf-parse')).default;
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
         if (!process.env.GEMINI_API_KEY) {
             return NextResponse.json({ error: "Gemini API key is not configured." }, { status: 500 });
         }
