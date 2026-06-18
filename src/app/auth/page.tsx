@@ -12,6 +12,7 @@ import {
   signInWithRedirect,
   signInWithPopup,
   getRedirectResult,
+  onAuthStateChanged,
   GoogleAuthProvider
 } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
@@ -35,6 +36,59 @@ function AuthForm() {
   const [collegeCodeStatus, setCollegeCodeStatus] = useState<'idle' | 'checking' | 'valid' | 'invalid'>('idle');
   const [validatedCollegeName, setValidatedCollegeName] = useState('');
   const [validatedCollegeId, setValidatedCollegeId] = useState('');
+  const [firebaseReady, setFirebaseReady] = useState(false);
+  const [connectionError, setConnectionError] = useState<string | null>(null);
+
+  // Firebase connection test — verify auth is reachable before showing login form
+  useEffect(() => {
+    if (!auth) {
+      console.error('Auth page: Firebase auth is null');
+      setConnectionError('Firebase failed to initialize. Check your environment variables.');
+      return;
+    }
+
+    let cancelled = false;
+    const connectionTimeout = setTimeout(() => {
+      if (!cancelled) {
+        console.error('Auth page: Firebase connection test timed out after 5 seconds');
+        setConnectionError('Unable to connect to authentication server. Check your network connection.');
+        setFirebaseReady(true); // Still show form so user can retry
+      }
+    }, 5000);
+
+    // Test: try to access auth state — this exercises the Firebase SDK connection
+    try {
+      // onAuthStateChanged will fire quickly if Firebase is reachable
+      const unsubscribe = onAuthStateChanged(auth, () => {
+        if (!cancelled) {
+          clearTimeout(connectionTimeout);
+          console.log('Auth page: Firebase connection verified ✓');
+          setConnectionError(null);
+          setFirebaseReady(true);
+        }
+        unsubscribe();
+      }, (error) => {
+        if (!cancelled) {
+          clearTimeout(connectionTimeout);
+          console.error('Auth page: Firebase connection test failed:', error);
+          setConnectionError(`Connection error: ${error.message}`);
+          setFirebaseReady(true); // Still show form
+        }
+        unsubscribe();
+      });
+
+      return () => {
+        cancelled = true;
+        clearTimeout(connectionTimeout);
+        unsubscribe();
+      };
+    } catch (error: any) {
+      clearTimeout(connectionTimeout);
+      console.error('Auth page: Firebase connection test threw:', error);
+      setConnectionError(`Firebase error: ${error.message}`);
+      setFirebaseReady(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (!isEnrolledInCollege || !collegeCode || !db) {
@@ -481,6 +535,50 @@ function AuthForm() {
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#FDF6EC', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+      {/* Connection error banner */}
+      <AnimatePresence>
+        {connectionError && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+            style={{
+              position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200,
+              background: 'linear-gradient(135deg, #B04A1E 0%, #8B3A15 100%)',
+              color: '#fff', padding: '14px 24px',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              fontSize: 14, fontWeight: 600,
+              boxShadow: '0 4px 16px rgba(0,0,0,0.3)'
+            }}
+          >
+            <span>⚠️ {connectionError}</span>
+            <button
+              onClick={() => {
+                setConnectionError(null);
+                setFirebaseReady(false);
+                window.location.reload();
+              }}
+              style={{
+                background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.4)',
+                color: '#fff', padding: '6px 16px', borderRadius: 8,
+                cursor: 'pointer', fontWeight: 700, fontSize: 13
+              }}
+            >
+              Retry
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Loading spinner while testing Firebase connection */}
+      {!firebaseReady && !connectionError && (
+        <motion.div
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}
+        >
+          <FiLoader className="spin" size={36} style={{ color: '#006B7A' }} />
+          <p style={{ color: '#5C3D1E', fontWeight: 600, fontSize: 14 }}>Connecting to Path Pilot...</p>
+        </motion.div>
+      )}
+      {firebaseReady && (<>
       {/* LOADING OVERLAY — only for in-flight redirect processing */}
       <AnimatePresence>
         {redirectProcessing && (
@@ -701,6 +799,7 @@ function AuthForm() {
           </button>
         </p>
       </motion.div>
+      </>)}
       
       <style jsx global>{`
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }

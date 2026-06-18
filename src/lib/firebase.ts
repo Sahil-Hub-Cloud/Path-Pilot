@@ -17,9 +17,13 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-console.log('Firebase Project ID:', process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID);
+console.log('🔥 FIREBASE CONFIG CHECK');
+console.log('API Key:', process.env.NEXT_PUBLIC_FIREBASE_API_KEY?.substring(0, 10) + '...');
+console.log('Project ID:', process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID);
 console.log('Auth Domain:', process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN);
-console.log('Using Project ID:', firebaseConfig.projectId);
+console.log('Storage Bucket:', process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET);
+console.log('Using hardcoded Project ID:', firebaseConfig.projectId);
+console.log('Using hardcoded Auth Domain:', firebaseConfig.authDomain);
 
 if (!firebaseConfig.apiKey) console.error("Missing NEXT_PUBLIC_FIREBASE_API_KEY");
 
