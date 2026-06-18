@@ -7,6 +7,9 @@ import { PersonaProvider } from "@/components/PersonaProvider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { RoleRouteGuard } from "@/components/RoleRouteGuard";
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 const plusJakartaSans = Plus_Jakarta_Sans({ 
   subsets: ['latin'], 
   variable: '--font-jakarta',
