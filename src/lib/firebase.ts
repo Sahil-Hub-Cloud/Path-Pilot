@@ -1,6 +1,6 @@
 // Firebase initialization — client-side only, always works
 import { initializeApp, getApps } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, connectAuthEmulator } from "firebase/auth";
 import {
   initializeFirestore,
   persistentLocalCache,
@@ -43,6 +43,11 @@ const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0
 console.log('Firebase initialized:', !!app);
 
 export const auth = getAuth(app);
+
+// Only in development
+if (process.env.NODE_ENV === 'development') {
+  connectAuthEmulator(auth, 'http://localhost:9099')
+}
 
 // Use persistent cache only in browser environments that support IndexedDB.
 // Falling back to memory cache avoids the SDK opening a background Write stream

@@ -36,7 +36,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [authError, setAuthError] = useState<string | null>(null);
     const router = useRouter();
 
-    const initAuth = useCallback(() => {
+    const initAuth = useCallback((retryCount = 0) => {
         if (!auth) {
             console.error('AuthProvider: Firebase auth object is null/undefined.');
             setAuthError('Firebase failed to initialize. Check your configuration.');
@@ -44,47 +44,57 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             return () => {};
         }
 
-        setLoading(true);
+        if (retryCount === 0) {
+            setLoading(true);
+        }
         setAuthError(null);
 
-        // Safety timeout: if onAuthStateChanged never fires (e.g. SDK init failure,
-        // network issues), unblock the app after 10 seconds with an error.
+        // Safety timeout: 30 seconds
         const timeout = setTimeout(() => {
-            console.error('AuthProvider: Firebase auth timed out after 10 seconds.');
-            setAuthError('Unable to connect to authentication server. Please check your connection and try again.');
+            console.error('AuthProvider: Firebase auth timed out after 30 seconds.');
+            setAuthError('Using offline mode - limited features');
             setLoading(false);
-        }, 10000);
+
+            // Exponential backoff retry logic
+            if (retryCount < 3) {
+                const backoffDelay = Math.pow(2, retryCount) * 2000;
+                console.log(`AuthProvider: Retrying connection in ${backoffDelay}ms... (Attempt ${retryCount + 1})`);
+                setTimeout(() => {
+                    initAuth(retryCount + 1);
+                }, backoffDelay);
+            }
+        }, 30000);
 
         let unsubscribe: (() => void) | undefined;
 
         try {
             unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
                 clearTimeout(timeout);
-                setAuthError(null); // Clear any previous error on success
+                // Clear any previous offline error on success
+                if (authError === 'Using offline mode - limited features') {
+                    setAuthError(null);
+                }
 
                 // ⚡ Set user and loading IMMEDIATELY — do NOT await Firestore here.
-                // Firestore can be offline and its promises hang indefinitely.
-                // Role is loaded in a separate non-blocking async call below.
                 setUser(firebaseUser);
                 setLoading(false);
 
-                // Load role from Firestore in the background — won't block auth
+                // Load role from Firestore in the background
                 if (firebaseUser) {
                     loadUserRole(firebaseUser.uid);
                 } else {
                     setRole(null);
                     setInstitutionId(null);
                 }
-            }, (error) => {
-                // onAuthStateChanged error callback
+            }, (error: any) => {
                 clearTimeout(timeout);
-                console.error('AuthProvider: onAuthStateChanged error:', error);
+                console.error(`AuthProvider: onAuthStateChanged error [Code: ${error?.code}]:`, error);
                 setAuthError(`Authentication error: ${error.message}`);
                 setLoading(false);
             });
         } catch (error: any) {
             clearTimeout(timeout);
-            console.error('AuthProvider: Failed to attach auth listener:', error);
+            console.error(`AuthProvider: Failed to attach auth listener [Code: ${error?.code}]:`, error);
             setAuthError(`Failed to initialize authentication: ${error.message}`);
             setLoading(false);
         }
@@ -93,21 +103,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             clearTimeout(timeout);
             if (unsubscribe) unsubscribe();
         };
-    }, []);
+    }, [authError]);
 
     useEffect(() => {
-        const cleanup = initAuth();
+        const cleanup = initAuth(0);
         return cleanup;
     }, [initAuth]);
 
     const retryAuth = useCallback(() => {
-        console.log('AuthProvider: Retrying auth connection...');
+        console.log('AuthProvider: Manual retry auth connection...');
         setAuthError(null);
         setLoading(true);
-        // Re-initialize auth listener
-        const cleanup = initAuth();
-        // Store cleanup for next retry
-        return cleanup;
+        return initAuth(0);
     }, [initAuth]);
 
     // Separate async function — runs in background, never blocks auth

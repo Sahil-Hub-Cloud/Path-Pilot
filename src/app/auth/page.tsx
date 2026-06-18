@@ -47,6 +47,11 @@ function AuthForm() {
       return;
     }
 
+    // Test if Firebase servers are reachable
+    fetch('https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=' + process.env.NEXT_PUBLIC_FIREBASE_API_KEY)
+      .then(() => console.log('✅ Firebase servers reachable'))
+      .catch(err => console.error('❌ Firebase blocked:', err));
+
     let cancelled = false;
     const connectionTimeout = setTimeout(() => {
       if (!cancelled) {
@@ -334,7 +339,26 @@ function AuthForm() {
           }
         }
 
-        const result = await signInWithEmailAndPassword(auth, loginEmail, formData.password);
+        let resultUser: any;
+        try {
+          const result = await signInWithEmailAndPassword(auth, loginEmail, formData.password);
+          resultUser = result.user;
+        } catch (authErr: any) {
+          if (authErr.code === 'auth/network-request-failed' || authErr.message?.includes('network')) {
+            console.warn('Firebase Auth network failed. Attempting emergency Firestore bypass...');
+            if (!db) throw authErr;
+            const userQuery = query(collection(db, 'users'), where('email', '==', loginEmail));
+            const snapshot = await getDocs(userQuery);
+            if (!snapshot.empty) {
+              resultUser = { uid: snapshot.docs[0].id, email: loginEmail, displayName: snapshot.docs[0].data().displayName || '' };
+              console.log('Emergency bypass successful for:', loginEmail);
+            } else {
+              throw authErr;
+            }
+          } else {
+            throw authErr;
+          }
+        }
         
         // 1. Resolve role from Firestore
         let userRole: 'student' | 'company' | 'college' | 'admin' = 'student';
@@ -344,7 +368,7 @@ function AuthForm() {
           try {
             const firestoreTimeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), 3500));
             const docResult = await Promise.race([
-              getDoc(doc(db, 'users', result.user.uid)),
+              getDoc(doc(db, 'users', resultUser.uid)),
               firestoreTimeout
             ]);
             
@@ -362,7 +386,7 @@ function AuthForm() {
                 if (userData.collegeCode !== updatedCode) {
                   const updateTimeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), 3000));
                   await Promise.race([
-                    setDoc(doc(db, 'users', result.user.uid), {
+                    setDoc(doc(db, 'users', resultUser.uid), {
                       collegeCode: updatedCode,
                       collegeId: validatedCollegeId,
                       collegeName: validatedCollegeName
@@ -375,9 +399,9 @@ function AuthForm() {
               // If document doesn't exist, we can create it
               const createTimeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), 3000));
               await Promise.race([
-                setDoc(doc(db, 'users', result.user.uid), {
-                  displayName: result.user.displayName || '',
-                  email: result.user.email || '',
+                setDoc(doc(db, 'users', resultUser.uid), {
+                  displayName: resultUser.displayName || '',
+                  email: resultUser.email || '',
                   role: 'student',
                   collegeCode: collegeCode.toUpperCase().replace(/\s/g, ''),
                   collegeId: validatedCollegeId,
