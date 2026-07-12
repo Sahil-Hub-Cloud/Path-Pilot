@@ -13211,106 +13211,329 @@ export const ROADMAPS: Record<string, Roadmap> = {
         chapters: [
             {
                 id: "ch1-cybersecurity",
-                title: "Ethical Hacking",
-                description: "Master the concepts of Ethical Hacking",
-                estimatedHours: 11,
+                title: "Introduction to Cyber Security",
+                description: "Master the concepts of Introduction to Cyber Security",
+                estimatedHours: 10,
                 topics: [
-                    { id: "topic_706", title: "Penetration testing methodology", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_707", title: "Reconnaissance", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_708", title: "Exploitation basics", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_709", title: "Metasploit framework", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_710", title: "Reporting", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_711", title: "Deep Dive: Exploitation basics", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_712", title: "Practical Reporting", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ }
+                    { id: "topic_what-is-cyber-security", title: "What is Cyber Security?", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_importance-of-cyber-security", title: "Importance of Cyber Security", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_cyber-security-domains", title: "Cyber Security Domains", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_cia-triad", title: "CIA Triad", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_vulnerability-threat-and-risk", title: "Vulnerability, Threat and Risk", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ }
                 ]
             },
             {
                 id: "ch2-cybersecurity",
-                title: "System Security",
-                description: "Master the concepts of System Security",
-                estimatedHours: 19,
+                title: "Linux Essentials",
+                description: "Master the concepts of Linux Essentials",
+                estimatedHours: 10,
                 topics: [
-                    { id: "topic_713", title: "Windows security", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_714", title: "Linux hardening", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_715", title: "File system permissions", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_716", title: "User management", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_717", title: "Patch management", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_718", title: "Project: File system permissions", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ }
+                    { id: "topic_history-and-features-of-linux", title: "History and Features of Linux", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_architecture-of-linux-os", title: "Architecture of Linux OS", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_linux-distributions", title: "Linux Distributions", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_linux-command-line", title: "Linux Command Line", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_software-package-management", title: "Software Package Management", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ }
                 ]
             },
             {
                 id: "ch3-cybersecurity",
-                title: "Web Security",
-                description: "Master the concepts of Web Security",
-                estimatedHours: 13,
+                title: "Linux Administration",
+                description: "Master the concepts of Linux Administration",
+                estimatedHours: 10,
                 topics: [
-                    { id: "topic_719", title: "OWASP Top 10", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_720", title: "SQL injection", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_721", title: "XSS and CSRF", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_722", title: "Burp Suite basics", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_723", title: "API security testing", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_724", title: "Advanced API security testing", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ }
+                    { id: "topic_file-system", title: "File System", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_users-and-groups", title: "Users and Groups", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_filefolder-permissions", title: "File/Folder Permissions", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_special-permissions", title: "Special Permissions", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_disk-management", title: "Disk Management", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_service-and-process-management", title: "Service and Process Management", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ }
                 ]
             },
             {
                 id: "ch4-cybersecurity",
-                title: "Network Security",
-                description: "Master the concepts of Network Security",
-                estimatedHours: 13,
+                title: "Networking Fundamentals",
+                description: "Master the concepts of Networking Fundamentals",
+                estimatedHours: 10,
                 topics: [
-                    { id: "topic_725", title: "TCP/IP deep dive", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_726", title: "Wireshark analysis", difficulty: "Hard", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_727", title: "Firewalls and IDS", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_728", title: "VPN and proxies", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_729", title: "Network scanning with Nmap", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_730", title: "Practical VPN and proxies", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ }
+                    { id: "topic_computer-networks-and-types-of-networks", title: "Computer Networks and Types of Networks", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_network-devices", title: "Network Devices", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_ip-and-mac-address", title: "IP and MAC Address", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_ipv4-and-ipv6-packet-structure", title: "IPv4 and IPV6 Packet Structure", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_addressing-and-subnetting", title: "Addressing and Subnetting", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_osi-model-and-tcpip-model", title: "OSI Model and TCP/IP Model", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_network-protocols-tcp-udp-icmp-arp", title: "Network Protocols (TCP, UDP, ICMP, ARP)", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_network-services-dns-dhcp-snmp-ftp", title: "Network Services (DNS, DHCP, SNMP, FTP)", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_packet-analysis-using-wireshark", title: "Packet Analysis using Wireshark", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ }
                 ]
             },
             {
                 id: "ch5-cybersecurity",
-                title: "Security Foundations",
-                description: "Master the concepts of Security Foundations",
-                estimatedHours: 19,
+                title: "Network Security",
+                description: "Master the concepts of Network Security",
+                estimatedHours: 10,
                 topics: [
-                    { id: "topic_731", title: "CIA triad", difficulty: "Intermediate", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_732", title: "Types of attacks", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_733", title: "Security mindset", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_734", title: "Linux for security", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_735", title: "Networking basics", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_736", title: "Deep Dive: CIA triad", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ }
+                    { id: "topic_internet-intranet-and-extranet", title: "Internet, Intranet, and Extranet", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_dmz", title: "DMZ", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_dnssec", title: "DNSSEC", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_firewalls", title: "Firewalls", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_ids-ips-and-idps", title: "IDS, IPS and IDPS", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_vpn-and-tunneling", title: "VPN and tunneling", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_network-address-translation-nat-and-pat", title: "Network Address Translation (NAT) and PAT", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_honeypots-deception-technology", title: "Honeypots & Deception Technology", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_practical-assignment-i", title: "Practical Assignment - I", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ }
                 ]
             },
             {
                 id: "ch6-cybersecurity",
-                title: "CTF and Practice",
-                description: "Master the concepts of CTF and Practice",
-                estimatedHours: 17,
+                title: "Vulnerability Management",
+                description: "Master the concepts of Vulnerability Management",
+                estimatedHours: 10,
                 topics: [
-                    { id: "topic_737", title: "TryHackMe challenges", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_738", title: "HackTheBox basics", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_739", title: "CTF methodology", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_740", title: "Write-up creation", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_741", title: "Building home lab", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_742", title: "Practical TryHackMe challenges", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_743", title: "Advanced Write-up creation", difficulty: "Hard", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ }
+                    { id: "topic_fundamentals-of-vulnerability-assessment-and-management", title: "Fundamentals of Vulnerability Assessment and Management", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_vulnerability-assessment-tool-deployment-strategy", title: "Vulnerability Assessment tool Deployment Strategy", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_scanning-methodologies", title: "Scanning Methodologies", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_authenticated-vs-non-authenticated-scanning", title: "Authenticated vs Non-Authenticated Scanning", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_planning-and-performing-infrastructure-security-assessment", title: "Planning and Performing Infrastructure Security Assessment", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_interpreting-and-calculating-cvss-score", title: "Interpreting and Calculating CVSS Score", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_risk-identification-and-categorization", title: "Risk Identification and Categorization", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_reporting", title: "Reporting", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_patches-and-updates", title: "Patches and Updates", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ }
                 ]
             },
             {
                 id: "ch7-cybersecurity",
-                title: "Career Path",
-                description: "Master the concepts of Career Path",
-                estimatedHours: 11,
+                title: "Network Penetration Testing",
+                description: "Master the concepts of Network Penetration Testing",
+                estimatedHours: 10,
                 topics: [
-                    { id: "topic_744", title: "CEH certification overview", difficulty: "Beginner", duration: "2 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_745", title: "CompTIA Security plus", difficulty: "Beginner", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_746", title: "Bug bounty basics", difficulty: "Intermediate", duration: "3 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_747", title: "Security career roadmap", difficulty: "Hard", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_748", title: "Portfolio building", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_749", title: "Deep Dive: CompTIA Security plus", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ },
-                    { id: "topic_750", title: "Project: CEH certification overview", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck / David Bombal */ }
+                    { id: "topic_introduction-to-penetration-testing", title: "Introduction to Penetration Testing", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_types-of-penetration-testing", title: "Types of Penetration Testing", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_pentesting-services", title: "Pentesting Services", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_penetration-testing-phases", title: "Penetration Testing Phases", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_pre-engagement-actions", title: "Pre-Engagement Actions", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_osint", title: "OSINT", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_exploitation-automated", title: "Exploitation (Automated)", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_password-cracking", title: "Password Cracking", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_red-team-vs-blue-team-operations", title: "Red Team Vs Blue Team Operations", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ }
+                ]
+            },
+            {
+                id: "ch8-cybersecurity",
+                title: "Advanced Network Pentesting",
+                description: "Master the concepts of Advanced Network Pentesting",
+                estimatedHours: 10,
+                topics: [
+                    { id: "topic_manual-exploitation-of-system-vulnerabilities", title: "Manual Exploitation of System Vulnerabilities", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_post-exploitation", title: "Post-Exploitation", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_privilege-escalation-linux-and-windows", title: "Privilege Escalation (Linux and Windows)", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_pivoting-and-double-pivoting", title: "Pivoting and Double Pivoting", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_cyber-kill-chain-mitre-attck", title: "Cyber Kill Chain, MITRE ATT&CK", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ }
+                ]
+            },
+            {
+                id: "ch9-cybersecurity",
+                title: "Cryptography",
+                description: "Master the concepts of Cryptography",
+                estimatedHours: 10,
+                topics: [
+                    { id: "topic_introduction-to-cryptography", title: "Introduction to Cryptography", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_symmetric-ciphers", title: "Symmetric Ciphers", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_asymmetric-ciphers", title: "Asymmetric Ciphers", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_building-ssl-certificates", title: "Building SSL certificates", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_digital-certificates-and-digital-signatures", title: "Digital Certificates and Digital Signatures", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_disk-encryption", title: "Disk Encryption", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_hashing", title: "Hashing", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_encoding", title: "Encoding", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_steganography", title: "Steganography", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ }
+                ]
+            },
+            {
+                id: "ch10-cybersecurity",
+                title: "Active Directory Basics",
+                description: "Master the concepts of Active Directory Basics",
+                estimatedHours: 10,
+                topics: [
+                    { id: "topic_introduction-to-active-directory", title: "Introduction to Active Directory", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_active-directory-setup", title: "Active Directory Setup", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_kerberos-authentication", title: "Kerberos Authentication", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ }
+                ]
+            },
+            {
+                id: "ch11-cybersecurity",
+                title: "Active Directory Pentesting",
+                description: "Master the concepts of Active Directory Pentesting",
+                estimatedHours: 10,
+                topics: [
+                    { id: "topic_active-directory-attack-vectors", title: "Active Directory Attack Vectors", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_active-directory-enumeration", title: "Active Directory Enumeration", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_active-directory-exploitation", title: "Active Directory Exploitation", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_active-directory-post-exploitation", title: "Active Directory Post Exploitation", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_ad-defense-detection", title: "AD Defense- Detection", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ }
+                ]
+            },
+            {
+                id: "ch12-cybersecurity",
+                title: "Cyber Security Compliance",
+                description: "Master the concepts of Cyber Security Compliance",
+                estimatedHours: 10,
+                topics: [
+                    { id: "topic_cyber-security-compliance-gdpr-hipaa-sox", title: "Cyber Security Compliance (GDPR, HIPAA, SOX)", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_iso-iec-27001iso-27002", title: "ISO IEC 27001/ISO 27002", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_pci-dss", title: "PCI-DSS", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_penetration-testing-standards-owasp-wasc-sans25-ptes-osstmm", title: "Penetration Testing Standards (OWASP, WASC, SANS25, PTES, OSSTMM)", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_risk-governance-risk-management", title: "Risk Governance & Risk Management", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_cyber-crime-classification-of-cyber-crimes", title: "Cyber Crime & Classification of Cyber Crimes", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_nist-cybersecurity-framework", title: "NIST Cybersecurity Framework", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_case-studies", title: "Case Studies", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_practical-assignment-ii-capture-the-flag-ctf-i", title: "Practical Assignment - II & Capture The Flag (CTF) - I", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ }
+                ]
+            },
+            {
+                id: "ch13-cybersecurity",
+                title: "Web Fundamentals",
+                description: "Master the concepts of Web Fundamentals",
+                estimatedHours: 10,
+                topics: [
+                    { id: "topic_web-application-technologies", title: "Web application Technologies", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_web-application-offence-and-defence", title: "Web Application offence and defence", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_web-reconnaissance", title: "Web Reconnaissance", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_web-application-vulnerability-assessment", title: "Web Application Vulnerability Assessment", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_cms-enumeration-and-exploitation", title: "CMS Enumeration and Exploitation", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_tools-nikto-owasp-zap-gobuster-wpscan", title: "Tools - Nikto, OWASP-Zap, gobuster, wpscan", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ }
+                ]
+            },
+            {
+                id: "ch14-cybersecurity",
+                title: "Web Application Pentesting",
+                description: "Master the concepts of Web Application Pentesting",
+                estimatedHours: 10,
+                topics: [
+                    { id: "topic_owasp-top-10-web-risks", title: "OWASP Top 10 Web Risks", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_web-application-pentesting-checklist", title: "Web Application Pentesting Checklist", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_authentication-authorization", title: "Authentication & Authorization", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_session-management", title: "Session Management", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_file-security", title: "File Security", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_web-application-firewalls", title: "Web Application Firewalls", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_tools-burpsuite-sqlmap-wafw00f", title: "Tools - BurpSuite, Sqlmap, wafw00f", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_practical-assignment-iii-capture-the-flag-ctf-ii", title: "Practical Assignment - III & Capture The Flag (CTF) - II", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ }
+                ]
+            },
+            {
+                id: "ch15-cybersecurity",
+                title: "Bug Bounty Insights",
+                description: "Master the concepts of Bug Bounty Insights",
+                estimatedHours: 10,
+                topics: [
+                    { id: "topic_introduction-to-bug-bounty", title: "Introduction to bug bounty", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_bug-bounty-hunting-vs-penetration-testing", title: "Bug Bounty Hunting vs Penetration Testing", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_bug-bounty-essentials-and-platforms", title: "Bug bounty essentials and platforms", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_mind-maps-and-recon", title: "Mind Maps and Recon", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_bug-bounty-report-writing", title: "Bug bounty report writing", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ }
+                ]
+            },
+            {
+                id: "ch16-cybersecurity",
+                title: "Mobile Application, IoT & Cloud Security",
+                description: "Master the concepts of Mobile Application, IoT & Cloud Security",
+                estimatedHours: 10,
+                topics: [
+                    { id: "topic_mobile-app-vulnerabilities-and-exploitation-techniques", title: "Mobile app vulnerabilities and exploitation techniques", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_iot-security", title: "IoT Security", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_cloud-security-architecture-concepts-and-security-considerations", title: "Cloud security architecture concepts and security considerations", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_threats-and-mitigation-strategies-for-cloud-data-security", title: "Threats and mitigation strategies for cloud data security", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_legal-and-compliance-aspects-of-cloud-security", title: "Legal and compliance aspects of cloud security", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ }
+                ]
+            },
+            {
+                id: "ch17-cybersecurity",
+                title: "Social Engineering & Wi-Fi Security Fundamentals",
+                description: "Master the concepts of Social Engineering & Wi-Fi Security Fundamentals",
+                estimatedHours: 10,
+                topics: [
+                    { id: "topic_different-social-engineering-attack-types-and-techniques", title: "Different social engineering attack types and techniques", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_defenses-against-social-engineering-attacks", title: "Defenses against social engineering attacks", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_wi-fi-security-protocols-and-their-weaknesses", title: "Wi-Fi security protocols and their weaknesses", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_common-wi-fi-attacks-aircrack-ng-rogue-aps-captive-portals", title: "Common Wi-Fi attacks (aircrack-ng, rogue APs, captive portals)", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_strategies-for-securing-mobile-apps-and-wi-fi-networks", title: "Strategies for securing mobile apps and Wi-Fi networks", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ }
+                ]
+            },
+            {
+                id: "ch18-cybersecurity",
+                title: "Scripting Basics for Pentesting",
+                description: "Master the concepts of Scripting Basics for Pentesting",
+                estimatedHours: 10,
+                topics: [
+                    { id: "topic_basics-of-shell-scripting", title: "Basics of Shell Scripting", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_basics-of-python-programming", title: "Basics of Python Programming", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_automating-pentesting-with-python", title: "Automating Pentesting with Python", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ }
+                ]
+            },
+            {
+                id: "ch19-cybersecurity",
+                title: "Threat Intelligence",
+                description: "Master the concepts of Threat Intelligence",
+                estimatedHours: 10,
+                topics: [
+                    { id: "topic_introduction-to-threat-intelligence", title: "Introduction to Threat Intelligence", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_indicators-of-compromiseioc", title: "Indicators of Compromise(IOC)", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_indicators-of-attackioa", title: "Indicators of Attack(IOA)", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_indicators-of-exposureioe", title: "Indicators of Exposure(IOE)", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_threat-hunting", title: "Threat Hunting", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ }
+                ]
+            },
+            {
+                id: "ch20-cybersecurity",
+                title: "Security Operations Fundamentals",
+                description: "Master the concepts of Security Operations Fundamentals",
+                estimatedHours: 10,
+                topics: [
+                    { id: "topic_introduction-to-siem", title: "Introduction to SIEM", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_enterprise-infrastructure", title: "Enterprise Infrastructure", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_security-operations-essentials", title: "Security Operations Essentials", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ }
+                ]
+            },
+            {
+                id: "ch21-cybersecurity",
+                title: "Security Operations with QRadar",
+                description: "Master the concepts of Security Operations with QRadar",
+                estimatedHours: 10,
+                topics: [
+                    { id: "topic_ibm-qradar-log-analysis", title: "IBM Qradar - Log Analysis", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_ibm-qradar-networkflow-analysis", title: "IBM Qradar - Network/Flow Analysis", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_offense-management", title: "Offense Management", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_aql", title: "AQL", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_assetdashboard-management", title: "Asset/Dashboard Management", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_dsm", title: "DSM", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_rule-management", title: "Rule Management", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ }
+                ]
+            },
+            {
+                id: "ch22-cybersecurity",
+                title: "Security Operations with Splunk",
+                description: "Master the concepts of Security Operations with Splunk",
+                estimatedHours: 10,
+                topics: [
+                    { id: "topic_soc-analysis-using-splunk", title: "SOC Analysis using Splunk", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_search-processing-language-basics", title: "Search Processing Language Basics", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_splunk-knowledge-objects", title: "Splunk Knowledge Objects", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_generating-alerts", title: "Generating Alerts", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_soar", title: "SOAR", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ }
+                ]
+            },
+            {
+                id: "ch23-cybersecurity",
+                title: "Enterprise Security Concepts",
+                description: "Master the concepts of Enterprise Security Concepts",
+                estimatedHours: 10,
+                topics: [
+                    { id: "topic_endpoint-security", title: "Endpoint Security", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_endpoint-detection-and-responseedrxdr", title: "Endpoint Detection and Response(EDR/XDR)", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_data-leakage-prevention", title: "Data Leakage Prevention", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ },
+                    { id: "topic_practical-assignment-iv", title: "Practical Assignment - IV", difficulty: "Intermediate", duration: "1.5 hours", videoUrl: "https://www.youtube.com/embed/a03XHaG26L8" /* NetworkChuck */ }
                 ]
             }
         ],
+        
         steps: [
           {
                     "week": 1,

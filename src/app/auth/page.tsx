@@ -19,6 +19,14 @@ import { auth, db } from '@/lib/firebase';
 import { setDoc, doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { fetchResilient } from '@/lib/firestore-resilience';
 
+const trendingTopics = [
+  { title: 'Zero-Day Vulnerability Found in Popular Linux Kernel', tag: 'Cyber Security', time: '2h ago', color: '#B04A1E' },
+  { title: 'Why Rust is Replacing C++ in System Programming', tag: 'Development', time: '5h ago', color: '#006B7A' },
+  { title: 'New OWASP Top 10 2024: What Changed?', tag: 'Web Security', time: '1d ago', color: '#2E7D52' },
+  { title: 'AI-Powered Phishing Attacks Rise by 300%', tag: 'AI & Security', time: '1d ago', color: '#8B3A15' },
+  { title: 'Splunk vs QRadar: Which SIEM is Right for You?', tag: 'SOC', time: '2d ago', color: '#5C3D1E' },
+];
+
 function AuthForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -675,12 +683,17 @@ function AuthForm() {
         backgroundSize: '32px 32px'
       }} />
 
+      <div style={{
+        position: 'relative', zIndex: 1,
+        width: '100%', maxWidth: 1000, margin: '0 auto',
+        display: 'flex', flexDirection: 'column', gap: 32,
+      }} className="lg:flex-row lg:items-stretch lg:justify-center">
+
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         style={{
-          position: 'relative', zIndex: 1,
-          width: '100%', maxWidth: 460,
+          width: '100%', maxWidth: 460, margin: '0 auto',
           backgroundColor: 'var(--surface-raised)',
           borderRadius: 28,
           border: '2px solid rgba(180,140,90,0.3)',
@@ -889,6 +902,73 @@ function AuthForm() {
           </button>
         </p>
       </motion.div>
+
+      {/* Trending Topics Panel */}
+      <motion.div
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.1 }}
+        style={{
+          flex: 1,
+          width: '100%', maxWidth: 460, margin: '0 auto',
+          backgroundColor: 'var(--surface-raised)',
+          borderRadius: 28,
+          border: '2px solid rgba(180,140,90,0.3)',
+          padding: '40px 32px',
+          boxShadow: '0 4px 0 rgba(255,255,255,0.9) inset, 0 20px 60px rgba(140,90,40,0.15)',
+          display: 'flex', flexDirection: 'column'
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28 }}>
+          <div style={{ padding: 10, background: 'rgba(217,95,43,0.1)', borderRadius: 12 }}>
+            <span style={{ fontSize: 20 }}>🔥</span>
+          </div>
+          <div>
+            <h3 style={{ fontWeight: 900, fontSize: 18, color: '#2C1A0E', letterSpacing: '-0.02em', margin: 0 }}>
+              Trending in Tech & Cyber
+            </h3>
+            <p style={{ color: '#8B6E52', fontSize: 13, fontWeight: 500, margin: '4px 0 0 0' }}>
+              What everyone is reading today
+            </p>
+          </div>
+        </div>
+        
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {trendingTopics.map((topic, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 + (i * 0.1) }}
+              whileHover={{ scale: 1.02, backgroundColor: 'rgba(255,255,255,0.5)' }}
+              style={{
+                padding: 16,
+                backgroundColor: 'rgba(255,255,255,0.3)',
+                borderRadius: 16,
+                border: '1px solid rgba(180,140,90,0.2)',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                <span style={{
+                  fontSize: 11, fontWeight: 800, letterSpacing: '0.04em', textTransform: 'uppercase',
+                  color: topic.color, backgroundColor: `${topic.color}15`,
+                  padding: '4px 10px', borderRadius: 20
+                }}>
+                  {topic.tag}
+                </span>
+                <span style={{ fontSize: 12, color: '#A08569', fontWeight: 600 }}>{topic.time}</span>
+              </div>
+              <h4 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: '#2C1A0E', lineHeight: 1.4 }}>
+                {topic.title}
+              </h4>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
+
+      </div>
       </>)}
       
       <style jsx global>{`
