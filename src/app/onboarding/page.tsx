@@ -43,6 +43,26 @@ const LEVELS = [
   { id: 'veteran',      label: 'Veteran',      sub: '5+ years',    emoji: '🔥', desc: 'Experienced, mastering & specialising' },
 ];
 
+const trendingTopics = [
+  { text: '🔥 Zero-Day Vulnerability in Linux Kernel', category: 'Security' },
+  { text: '🚀 Rust Programming Rising in 2024', category: 'Development' },
+  { text: '🛡️ New OWASP Top 10 Released', category: 'Web Security' },
+  { text: '🤖 AI-Powered Cyber Attacks Increase 300%', category: 'AI Security' },
+  { text: '💻 Splunk SIEM Demand Growing', category: 'SOC' },
+  { text: '🔐 Multi-Factor Authentication Now Mandatory', category: 'Security' },
+  { text: '⚡ Python 3.13 Performance Boost', category: 'Development' },
+  { text: '🌐 IPv6 Adoption Reaches 50%', category: 'Networking' },
+];
+
+const catColors: Record<string, string> = {
+  'Security': '#B04A1E',
+  'Development': '#006B7A',
+  'Web Security': '#2E7D52',
+  'AI Security': '#8B3A15',
+  'SOC': '#5C3D1E',
+  'Networking': '#2E7D52'
+};
+
 const S = {
   bg:     '#FDF6EC',
   card:   '#FFFFFF',
@@ -385,6 +405,23 @@ export default function OnboardingPage() {
                         Great to meet you, <strong style={{ color: S.teal }}>{details.fullName.split(' ')[0] || 'there'}</strong>! Which area excites you most? Your roadmap will be built around this.
                       </div>
                     </div>
+
+                    {/* Trending Marquee */}
+                    <div className="marquee-container" style={{ margin: '0 -28px 24px -28px', background: 'linear-gradient(90deg, rgba(237, 228, 211, 0) 0%, rgba(237, 228, 211, 0.4) 50%, rgba(237, 228, 211, 0) 100%)', padding: '12px 0', borderTop: `1px solid ${S.border}`, borderBottom: `1px solid ${S.border}` }}>
+                      <div className="marquee-content">
+                        {[...trendingTopics, ...trendingTopics, ...trendingTopics].map((topic, i) => (
+                          <div key={i} className="marquee-item" style={{ 
+                            display: 'inline-flex', alignItems: 'center', gap: 10, padding: '8px 16px', margin: '0 10px', 
+                            background: '#fff', borderRadius: 20, border: `1.5px solid ${S.border}`,
+                            boxShadow: '0 2px 8px rgba(140,90,40,0.06)'
+                          }}>
+                            <span style={{ fontSize: 13, fontWeight: 700, color: S.text }}>{topic.text}</span>
+                            <span style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', color: catColors[topic.category] || S.teal, backgroundColor: `${catColors[topic.category] || S.teal}15`, padding: '3px 8px', borderRadius: 12 }}>{topic.category}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
                     {/* Track grid */}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
                       {TRACKS.map((t, i) => (
@@ -481,6 +518,23 @@ export default function OnboardingPage() {
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(180,140,90,0.25); border-radius: 10px; }
+        
+        @keyframes scroll {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-33.33%); }
+        }
+        .marquee-container {
+          overflow: hidden;
+          white-space: nowrap;
+          width: calc(100% + 56px);
+        }
+        .marquee-content {
+          display: inline-flex;
+          animation: scroll 40s linear infinite;
+        }
+        .marquee-content:hover {
+          animation-play-state: paused;
+        }
       `}</style>
     </div>
   );
