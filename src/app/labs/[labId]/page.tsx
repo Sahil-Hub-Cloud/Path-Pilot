@@ -570,6 +570,9 @@ export default function LabPage() {
 
         if (allPass) {
           outputLines += `\n\n✅ All ${suiteResult.totalTests} tests passed!\n⏱️ Completed in ${formatTimeVerbose(elapsedSeconds)}\n🚀 Executed in ${duration}s\n🏆 +${LAB.xp} XP awarded to your profile.`;
+          if (isChallenge && topicIdParam) {
+            localStorage.setItem(`pp_lab_passed_${user?.uid || 'guest'}_${topicIdParam}`, 'true');
+          }
         } else {
           outputLines += `\n\n⚠️ ${passedCount}/${suiteResult.totalTests} tests passed. Executed in ${duration}s.`;
           // Add hints from challenge config
@@ -619,6 +622,9 @@ export default function LabPage() {
             ? `✅ All tests passed!\n⏱️ Completed in ${formatTimeVerbose(elapsedSeconds)}\n🚀 Executed in ${duration}s\n🏆 +${LAB.xp} XP awarded to your profile.`
             : `⚠️ ${passedCount}/${results.length} tests passed. Executed in ${duration}s. Review your logic and try again.`)
         );
+        if (allPass && isChallenge && topicIdParam) {
+          localStorage.setItem(`pp_lab_passed_${user?.uid || 'guest'}_${topicIdParam}`, 'true');
+        }
         await saveLabResultToFirestore(passedCount, results.length, elapsedSeconds);
       }
     } catch (e: any) {

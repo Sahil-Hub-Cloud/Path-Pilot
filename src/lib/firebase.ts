@@ -1,76 +1,63 @@
-// Firebase initialization — client-side only, always works
-import { initializeApp, getApps } from "firebase/app";
-import { getAuth, connectAuthEmulator } from "firebase/auth";
-import {
-  initializeFirestore,
-  persistentLocalCache,
-  memoryLocalCache,
-} from "firebase/firestore";
-import { getStorage } from "firebase/storage";
+import { initializeApp, getApps } from 'firebase/app';
+import { getAuth, connectAuthEmulator } from 'firebase/auth';
+import { getFirestore, connectFirestoreEmulator, enableIndexedDbPersistence } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
+import { getAnalytics, isSupported } from 'firebase/analytics';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || 'path-pilot-11255.firebaseapp.com',
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'path-pilot-11255',
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || 'path-pilot-11255.appspot.com',
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '866666251842',
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || '1:866666251842:web:d762282473f0b740f58fdb'
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
-  console.error('🔥 FIREBASE API KEY MISSING IN ENV VARS');
+// DO NOT log the config object. It contains the API key.
+// Firebase API keys are public identifiers but logging them
+// makes it trivially discoverable in browser consoles.
+
+let app;
+if (!getApps().length) {
+  app = initializeApp(firebaseConfig);
+} else {
+  app = getApps()[0];
 }
-console.log('🔥 FIREBASE CONFIG LOADED:', firebaseConfig);
 
-if (!firebaseConfig.apiKey) console.error("Missing NEXT_PUBLIC_FIREBASE_API_KEY");
+const auth = getAuth(app);
 
-if (
-  !firebaseConfig.apiKey ||
-  !firebaseConfig.authDomain ||
-  !firebaseConfig.projectId ||
-  !firebaseConfig.storageBucket ||
-  !firebaseConfig.messagingSenderId ||
-  !firebaseConfig.appId
-) {
-  console.error("Missing one or more required Firebase environment variables:", firebaseConfig);
-  if (typeof window !== 'undefined') {
-    alert("Missing one or more required Firebase environment variables.");
+// Connect to auth emulator in development
+if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST) {
+  try {
+    connectAuthEmulator(auth, process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST);
+  } catch {
+    // Already connected, ignore
   }
 }
 
-// Only initialize once
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-console.log('Firebase initialized:', !!app);
+const db = getFirestore(app);
 
-export const auth = getAuth(app);
-
-// Only in development
-if (process.env.NODE_ENV === 'development') {
-  connectAuthEmulator(auth, 'http://localhost:9099')
-}
-
-// Use persistent cache only in browser environments that support IndexedDB.
-// Falling back to memory cache avoids the SDK opening a background Write stream
-// before the user authenticates, which would produce a spurious PERMISSION_DENIED error.
-// NOTE: We intentionally do NOT pass persistentMultipleTabManager here — that tab manager
-// opens an immediate background stream even before auth, causing the spurious warning.
-// Single-tab persistence (default) is sufficient and does not have this side effect.
-function createFirestore() {
-  if (typeof window !== "undefined" && typeof indexedDB !== "undefined") {
-    try {
-      return initializeFirestore(app, {
-        localCache: persistentLocalCache(),
-      });
-    } catch {
-      // IndexedDB blocked (private mode, old browser, etc.) — fall through
+// Enable offline persistence
+if (typeof window !== 'undefined') {
+  enableIndexedDbPersistence(db).catch((err) => {
+    if (err.code === 'failed-precondition') {
+      console.warn('[Firebase] Multiple tabs open, persistence enabled in first tab only');
+    } else if (err.code === 'unimplemented') {
+      console.warn('[Firebase] Browser does not support IndexedDB persistence');
     }
-  }
-  return initializeFirestore(app, { localCache: memoryLocalCache() });
+  });
 }
 
-export const db = createFirestore();
-export const storage = getStorage(app);
+const storage = getStorage(app);
 
-// Legacy compat getters
-export const getFirebaseAuth = () => auth;
-export const getFirebaseDb = () => db;
+let analytics = null;
+if (typeof window !== 'undefined') {
+  isSupported().then((supported) => {
+    if (supported) {
+      analytics = getAnalytics(app);
+    }
+  });
+}
+
+export { auth, db, storage, analytics };

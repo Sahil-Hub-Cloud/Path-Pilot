@@ -2,6 +2,8 @@ export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/firebase-admin';
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
 
 export async function POST(req: NextRequest) {
   try {
@@ -9,10 +11,26 @@ export async function POST(req: NextRequest) {
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    let userId: string;
     try {
-      await auth.verifyIdToken(authHeader.split('Bearer ')[1]);
+      const decoded = await auth.verifyIdToken(authHeader.split('Bearer ')[1]);
+      userId = decoded.uid;
     } catch (e) {
       return NextResponse.json({ error: 'Unauthorized: Invalid token' }, { status: 401 });
+    }
+
+    const geminiRateLimiter = new Ratelimit({
+      redis: Redis.fromEnv(),
+      limiter: Ratelimit.slidingWindow(30, '1m'),
+      prefix: 'rl_gemini',
+    });
+
+    const { success: geminiAllowed } = await geminiRateLimiter.limit(userId);
+    if (!geminiAllowed) {
+      return NextResponse.json(
+        { error: 'Rate limit exceeded. Please wait before sending another request.' },
+        { status: 429 }
+      );
     }
 
     const { prompt } = await req.json();
@@ -66,9 +84,14 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ text });
 
-  } catch (error: any) {
-    console.error('Chatbot API Error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error) {
+    // Log the real error server-side
+    console.error('[Gemini API] Error:', (error as Error).message);
+    // Return only a generic message to the client — never leak internal details
+    return NextResponse.json(
+      { error: 'An error occurred while processing your request' },
+      { status: 500 }
+    );
   }
 }
 

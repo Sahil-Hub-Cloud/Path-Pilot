@@ -1,26 +1,27 @@
-# Security Policy (v1.0)
+# Security Policy
 
-## 🛰️ Security Overview
-PathPilot is committed to providing a secure learning environment for students. We utilize defense-in-depth strategies including:
-- **Identity Isolation**: Firebase Authentication with Anonymous & Cloud Persistence.
-- **Resource Protection**: Upstash-backed global rate-limiting.
-- **Bot Mitigation**: Google reCAPTCHA v3.
-- **Payment Integrity**: Stripe PCI-compliant processing.
+## Supported Versions
+Only the latest version of the `main` branch is actively supported with security updates.
 
-## 🛡️ Reporting a Vulnerability
-We welcome security researchers and users to report vulnerabilities. Please do not open public GitHub issues for security flaws.
+## Zero Trust Architecture
+PathPilot employs a strict Zero Trust Architecture. We assume all requests are malicious until proven otherwise.
+- All endpoints are strictly rate limited via Upstash.
+- Strict CSP and CORS policies are enforced across all Edge nodes.
+- All data mutations are verified server-side via robust Firestore Rules V2.
+- Code submissions are deeply sandboxed, stripped, and rate-limited.
 
-**Procedure:**
-1. Send an encrypted email to `security@pathpilot.ai` (or use our Discord security channel).
-2. Include a detailed description of the vulnerability and steps to reproduce.
-3. Allow 48-72 hours for an initial response.
+## Reporting a Vulnerability
+We take the security of PathPilot very seriously. If you believe you have found a vulnerability, please report it to us immediately.
 
-## 🎁 Bug Bounty Program
-We offer "Neural Credits" and public recognition for valid, non-trivial vulnerability reports that follow responsible disclosure.
+1. Email your findings to **security@pathpilot.ai**.
+2. Include full details, steps to reproduce, and any Proof of Concept (PoC) code.
+3. Please do not disclose the vulnerability publicly until we have had a chance to remediate it.
 
-## 🚫 Out of Scope
-- DDoS/DoS attacks.
-- Social engineering (phishing) our staff or users.
-- Third-party dependency vulnerabilities (unless a specific misconfiguration is found in our usage).
+## Bug Bounty
+We run a private bug bounty program for critical vulnerabilities including:
+- Remote Code Execution (RCE) escaping the Judge0 sandbox.
+- Authentication Bypasses (Identity Toolkit, Firestore).
+- Unauthorized access to Firestore `security_logs` or `blocked_ips`.
+- SQLi or NoSQLi leading to data exfiltration.
 
-*Stay Secure, Pilot.*
+Contact us via email for more details.

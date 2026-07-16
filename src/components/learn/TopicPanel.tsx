@@ -218,6 +218,19 @@ export default function TopicPanel({
   const [generatedChallenges, setGeneratedChallenges] = useState<any[] | null>(null);
   const [generatingChallenges, setGeneratingChallenges] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState<'telugu' | 'hindi' | 'english'>('english');
+  const [hasPassedLab, setHasPassedLab] = useState(false);
+
+  // Check if lab is passed
+  useEffect(() => {
+    if (!topic) return;
+    const checkPassed = () => {
+      const passed = localStorage.getItem(`pp_lab_passed_${user?.uid || 'guest'}_${topic.id}`);
+      setHasPassedLab(!!passed);
+    };
+    checkPassed();
+    window.addEventListener('focus', checkPassed);
+    return () => window.removeEventListener('focus', checkPassed);
+  }, [topic, user]);
 
   // Load preferred language from localStorage first, then Firestore user profile
   useEffect(() => {
@@ -1362,6 +1375,27 @@ IMPORTANT: Do NOT end with a question to the student. Just provide the notes.`;
             <FiCheckCircle size={16} />
             Completed
           </div>
+        ) : labType === 'judge0' && !hasPassedLab ? (
+          <motion.div
+            style={{
+              flex: 1,
+              minWidth: 140,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8,
+              padding: '13px 16px',
+              background: '#E5E7EB',
+              border: 'none',
+              borderRadius: 12,
+              color: '#9CA3AF',
+              fontWeight: 800,
+              fontSize: 12,
+              cursor: 'not-allowed',
+            }}
+          >
+            Complete Challenge First
+          </motion.div>
         ) : (
           <motion.button
             type="button"

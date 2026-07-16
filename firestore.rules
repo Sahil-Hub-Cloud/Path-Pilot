@@ -1,174 +1,163 @@
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ── Helper functions ──────────────────────────────────────────────────────
-
-    function isAuthenticated() {
-      return request.auth != null;
+    // ============================================
+    // AUTH HELPERS
+    // ============================================
+    function isLoggedIn() {
+      return request.auth != null && request.auth.uid != null;
     }
-
-    // True when the doc ID matches the caller's UID
     function isOwner(userId) {
-      return isAuthenticated() && request.auth.uid == userId;
+      return isLoggedIn() && request.auth.uid == userId;
+    }
+    function hasRole(role) {
+      return isLoggedIn()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == role;
+    }
+    function hasAnyRole(roles) {
+      return isLoggedIn()
+        && roles.hasAny([get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role]);
     }
 
-    // True when the *incoming* resource declares the caller as its owner
-    function isCreatingOwnedResource() {
-      return isAuthenticated() && request.resource.data.userId == request.auth.uid;
-    }
-
-    // True when the *existing* resource's userId matches the caller
-    function isExistingOwnedResource() {
-      return isAuthenticated() && resource.data.userId == request.auth.uid;
-    }
-
-    // Returns the caller's user document (cached by Firestore rules engine)
-    function callerDoc() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
-    }
-
-    // True when the authenticated caller is the college admin for collegeId
-    function isCollegeAdmin(collegeId) {
-      return isAuthenticated() && callerDoc().collegeId == collegeId && callerDoc().role == 'college';
-    }
-
-    // True when the authenticated caller is a student belonging to collegeId
-    function isCollegeStudent(collegeId) {
-      return isAuthenticated() && callerDoc().collegeId == collegeId;
-    }
-
-    // ── Users ──────────────────────────────────────────────────────────────────
+    // ============================================
+    // USERS COLLECTION
+    // ============================================
     match /users/{userId} {
-      allow read, list: if isAuthenticated();
-      allow create: if isOwner(userId);
-      allow update: if isAuthenticated() && (
-        isOwner(userId) ||
-        (
-          callerDoc().role == 'college' &&
-          (
-            (resource != null && resource.data.collegeCode == callerDoc().collegeCode) ||
-            (request.resource != null && request.resource.data.collegeCode == callerDoc().collegeCode)
-          )
-        )
-      );
-      allow delete: if isOwner(userId);
+      allow read: if isLoggedIn();
+      allow create: if isLoggedIn() && isOwner(userId);
+      allow update: if isLoggedIn() && isOwner(userId);
+      allow delete: if isLoggedIn() && hasRole('admin');
 
-      // Lab Submissions
       match /submissions/{submissionId} {
-        allow read, write: if isOwner(userId);
+        allow read: if isLoggedIn() && (isOwner(userId) || hasAnyRole(['admin', 'faculty', 'hod']));
+        allow create: if isLoggedIn() && isOwner(userId);
+        allow update: if isLoggedIn() && isOwner(userId);
+        allow delete: if isLoggedIn() && hasRole('admin');
       }
 
-      // Notifications
       match /notifications/{notificationId} {
-        allow read, write: if isOwner(userId);
+        allow read: if isLoggedIn() && isOwner(userId);
+        allow create: if isLoggedIn() && isOwner(userId);
+        allow update: if isLoggedIn() && isOwner(userId);
+        allow delete: if isLoggedIn() && isOwner(userId);
       }
 
-      // College Quiz Results stored under the user
       match /college_quizzes/{quizId} {
-        allow read, write: if isOwner(userId);
+        allow read: if isLoggedIn() && isOwner(userId);
+        allow create: if isLoggedIn() && isOwner(userId);
+        allow update: if isLoggedIn() && isOwner(userId);
+        allow delete: if isLoggedIn() && isOwner(userId);
       }
     }
 
-    // ── User Profiles ─────────────────────────────────────────────────────────
-    match /profiles/{userId} {
-      allow read, write: if isOwner(userId);
+    // ============================================
+    // STUDENTS
+    // ============================================
+    match /students/{studentId} {
+      allow read: if isLoggedIn();
+      allow write: if isLoggedIn() && isOwner(studentId);
     }
 
-    // ── Students (legacy) ─────────────────────────────────────────────────────
-    match /students/{userId} {
-      allow read, write: if isOwner(userId);
+    // ============================================
+    // LEADERBOARD
+    // ============================================
+    match /leaderboard/{entryId} {
+      allow read: if true;
+      allow write: if isLoggedIn() && hasRole('admin');
     }
 
-    // ── Sessions ──────────────────────────────────────────────────────────────
-    match /sessions/{sessionId} {
-      allow create: if isCreatingOwnedResource();
-      allow read, update, delete: if isExistingOwnedResource();
-    }
-
-    // ── Roadmaps ──────────────────────────────────────────────────────────────
-    match /roadmaps/{roadmapId} {
-      allow create: if isCreatingOwnedResource();
-      allow read, update, delete: if isExistingOwnedResource();
-    }
-
-    // ── Leaderboard ───────────────────────────────────────────────────────────
-    match /leaderboard/{entry} {
-      allow read: if isAuthenticated();
-      allow write: if false; // Cloud Functions only
-    }
-
-    // ── Certificates ──────────────────────────────────────────────────────────
+    // ============================================
+    // CERTIFICATES
+    // ============================================
     match /certificates/{certId} {
-      allow read: if isAuthenticated();
-      allow create: if isCreatingOwnedResource();
-      allow update, delete: if isExistingOwnedResource();
+      allow read: if isLoggedIn() && (isOwner(certId) || hasAnyRole(['admin', 'faculty', 'hod']));
+      allow create: if isLoggedIn() && (isOwner(certId) || hasRole('admin'));
+      allow update: if isLoggedIn() && (isOwner(certId) || hasRole('admin'));
+      allow delete: if isLoggedIn() && hasRole('admin');
     }
 
-    // ── Academic Brains ───────────────────────────────────────────────────────
-    match /academic_brains/{userId} {
-      allow read, write: if isOwner(userId);
-      match /ingestions/{ingestionId} {
-        allow read, write: if isOwner(userId);
-      }
+    // ============================================
+    // ACADEMIC BRAINS
+    // ============================================
+    match /academic_brains/{brainId} {
+      allow read: if isLoggedIn();
+      allow write: if isLoggedIn() && hasAnyRole(['admin', 'faculty', 'hod']);
     }
 
-    // ── Hiring Requests ───────────────────────────────────────────────────────
+    // ============================================
+    // HIRING REQUESTS
+    // ============================================
     match /hiring_requests/{requestId} {
-      allow create: if isAuthenticated();
-      allow read, update, delete: if isAuthenticated();
+      allow read: if isLoggedIn() && (hasAnyRole(['admin', 'recruiter']) || isOwner(requestId));
+      allow create: if isLoggedIn();
+      allow update: if isLoggedIn() && (hasAnyRole(['admin', 'recruiter']) || isOwner(requestId));
+      allow delete: if isLoggedIn() && hasRole('admin');
     }
 
-    // ── College Syllabi (legacy) ───────────────────────────────────────────────
-    match /college_syllabi/{collegeId} {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated();
-      match /{allPaths=**} {
-        allow read, write: if isAuthenticated();
-      }
+    // ============================================
+    // COLLEGE SYLLABI
+    // ============================================
+    match /college_syllabi/{syllabusId} {
+      allow read: if isLoggedIn();
+      allow write: if isLoggedIn() && hasAnyRole(['admin', 'faculty', 'hod']);
     }
 
-    // ── Exam Reminders (scheduling system) ────────────────────────────────────
+    // ============================================
+    // EXAM REMINDERS
+    // ============================================
     match /exam_reminders/{reminderId} {
-      allow read: if isAuthenticated();
-      allow create: if isAuthenticated();
-      allow update, delete: if isAuthenticated() && callerDoc().role == 'college';
+      allow read: if isLoggedIn();
+      allow create: if isLoggedIn() && isOwner(reminderId);
+      allow update: if isLoggedIn() && isOwner(reminderId);
+      allow delete: if isLoggedIn() && isOwner(reminderId);
     }
 
-    // ── Colleges — THE CORE ISOLATED STRUCTURE ────────────────────────────────
-    //
-    //   colleges/{collegeId}                   → college profile doc
-    //   colleges/{collegeId}/materials/{id}    → uploaded PDFs + AI content
-    //   colleges/{collegeId}/exams/{id}        → exam schedule
-    //   colleges/{collegeId}/students/{id}     → reference docs (future use)
-    //
+    // ============================================
+    // COLLEGES (with subcollections)
+    // ============================================
     match /colleges/{collegeId} {
-      allow read: if true;
-      allow create: if request.auth != null;
-      allow update, delete: if request.auth != null && request.auth.uid == collegeId;
-      
+      allow read: if isLoggedIn();
+      allow write: if isLoggedIn() && hasAnyRole(['admin', 'faculty', 'hod']);
+
       match /materials/{materialId} {
-        allow read, write: if request.auth != null;
+        allow read: if isLoggedIn();
+        allow write: if isLoggedIn() && hasAnyRole(['admin', 'faculty', 'hod']);
       }
+
       match /exams/{examId} {
-        allow read, write: if request.auth != null;
+        allow read: if isLoggedIn();
+        allow write: if isLoggedIn() && hasAnyRole(['admin', 'faculty', 'hod']);
       }
     }
 
-    // ── Notes Cache (permanent AI-generated notes — public read, server-write only) ──
-    match /notes_cache/{cacheId} {
-      allow read: if true;    // fast public reads — content is not sensitive
-      allow write: if false;  // only Firebase Admin SDK (server) can write
+    // ============================================
+    // ROADMAPS
+    // ============================================
+    match /roadmaps/{roadmapId} {
+      allow read: if true;
+      allow write: if isLoggedIn() && hasRole('admin');
     }
 
-    // ── Topic Notes (legacy cache — same policy) ────────────────────────────
-    match /topic_notes/{docId} {
-      allow read: if true;
+    // ============================================
+    // SECURITY LOGS
+    // ============================================
+    match /security_logs/{logId} {
+      allow read: if isLoggedIn() && hasRole('admin');
+      allow create: if isLoggedIn();
       allow write: if false;
     }
 
-    // ── Deny everything else ──────────────────────────────────────────────────
+    // ============================================
+    // ADMIN METADATA
+    // ============================================
+    match /admin/{docId} {
+      allow read, write: if isLoggedIn() && hasRole('admin');
+    }
+
+    // ============================================
+    // FALLBACK — DENY EVERYTHING ELSE
+    // ============================================
     match /{document=**} {
       allow read, write: if false;
     }
