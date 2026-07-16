@@ -1,11 +1,8 @@
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin as supabase } from '@/lib/supabase-admin';
+import { adminDb } from '@/lib/firebase-admin';
 
-/**
- * Company Link Node (Email) API
- */
 export async function POST(req: NextRequest) {
   try {
     const { studentId, subject, body: emailBody } = await req.json();
@@ -14,28 +11,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // In a production app with Resend:
-    /*
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    await resend.emails.send({
-      from: 'Path Pilot <hiring@pathpilot.net>',
-      to: studentEmail,
-      subject: subject,
-      text: emailBody
+    await adminDb.collection('hiring_emails').add({
+      student_id: studentId,
+      email_subject: subject,
+      email_body: emailBody,
+      status: 'sent',
+      created_at: new Date().toISOString()
     });
-    */
-
-    // Save to hiring_emails table
-    const { error } = await supabase
-      .from('hiring_emails')
-      .insert({
-        student_id: studentId,
-        email_subject: subject,
-        email_body: emailBody,
-        status: 'sent'
-      });
-
-    if (error) throw error;
 
     console.log(`[REAL_EMAIL_MOCK] Sent to ${studentId}: ${subject}`);
 
@@ -46,4 +28,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-

@@ -1,39 +1,29 @@
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin as supabase } from '@/lib/supabase-admin';
+import { adminDb } from '@/lib/firebase-admin';
 
-/**
- * Get Students for Companies API
- */
 export async function GET(req: NextRequest) {
   try {
-    // Return students where course_completed = true and visible
-    const { data, error } = await supabase
-      .from('student_skills')
-      .select(`
-        id,
-        ai_score,
-        completion_speed,
-        github_username,
-        course_completed,
-        users (
-          display_name,
-          email,
-          avatar_url
-        )
-      `)
-      .eq('course_completed', true)
-      .eq('is_visible_to_companies', true)
-      .order('ai_score', { ascending: false });
+    const snapshot = await adminDb.collection('student_skills')
+      .where('course_completed', '==', true)
+      .where('is_visible_to_companies', '==', true)
+      .orderBy('ai_score', 'desc')
+      .get();
 
-    if (error) throw error;
+    const students = await Promise.all(snapshot.docs.map(async (doc) => {
+      const data = doc.data();
+      let users = null;
+      if (data.user_id) {
+          const userDoc = await adminDb.collection('users').doc(data.user_id).get();
+          if (userDoc.exists) users = userDoc.data();
+      }
+      return { id: doc.id, ...data, users };
+    }));
 
-    return NextResponse.json({ students: data });
-
+    return NextResponse.json({ students });
   } catch (error: any) {
     console.error('Get Students Error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-

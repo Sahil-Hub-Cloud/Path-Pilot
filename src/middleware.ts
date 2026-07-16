@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
-import { logSecurityEvent } from '@/lib/security-logger';
 
 const rateLimiters = {
   auth: new Ratelimit({
@@ -62,13 +61,7 @@ export async function middleware(request: NextRequest) {
     if (path.startsWith('/api/auth/') || path === '/api/auth') {
       const { success } = await rateLimiters.auth.limit(key);
       if (!success) {
-        await logSecurityEvent({
-          type: 'rate_limit_breach',
-          severity: 'medium',
-          ip,
-          path,
-          details: { reason: 'Auth rate limit exceeded' },
-        });
+        console.warn(`[Security] Rate limit breach (auth) by IP: ${ip} for path: ${path}`);
         return new NextResponse(JSON.stringify({ error: 'Too many auth attempts' }), {
           status: 429,
           headers: { 'Content-Type': 'application/json', 'Retry-After': '60' },
@@ -77,13 +70,7 @@ export async function middleware(request: NextRequest) {
     } else if (path.startsWith('/api/')) {
       const { success } = await rateLimiters.general.limit(key);
       if (!success) {
-        await logSecurityEvent({
-          type: 'rate_limit_breach',
-          severity: 'low',
-          ip,
-          path,
-          details: { reason: 'General rate limit exceeded' },
-        });
+        console.warn(`[Security] Rate limit breach (general) by IP: ${ip} for path: ${path}`);
         return new NextResponse(JSON.stringify({ error: 'Rate limit exceeded' }), {
           status: 429,
           headers: { 'Content-Type': 'application/json', 'Retry-After': '60' },
@@ -91,13 +78,7 @@ export async function middleware(request: NextRequest) {
       }
     }
   } catch (err) {
-    await logSecurityEvent({
-      type: 'system_error',
-      severity: 'high',
-      ip,
-      path,
-      details: { error: (err as Error).message, context: 'middleware rate limiting' },
-    });
+    console.error(`[Security] Rate limiter system error: ${(err as Error).message}`);
   }
 
   return response;

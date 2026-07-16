@@ -1,11 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Disable ALL static generation
-  experimental: {
-    forceStatic: false,
-  },
-  
   // Force dynamic rendering for all pages
   async rewrites() {
     return []

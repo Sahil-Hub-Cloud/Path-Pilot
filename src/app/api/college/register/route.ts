@@ -1,8 +1,7 @@
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin as supabase } from '@/lib/supabase-admin';
-import { auth as adminAuth, db as adminDb } from '@/lib/firebase-admin';
+import { adminAuth, adminDb } from '@/lib/firebase-admin';
 import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -24,14 +23,10 @@ async function generateUniqueCode(collegeName: string) {
     const digits = Math.floor(100 + Math.random() * 900).toString(); // 3 random digits
     code = `${prefix}${digits}`;
 
-    // Check if it exists in Supabase colleges table
-    const { data, error } = await supabase
-      .from('colleges')
-      .select('college_code')
-      .eq('college_code', code)
-      .maybeSingle();
+    // Check if it exists in Firebase colleges collection
+    const snapshot = await adminDb.collection('colleges').where('college_code', '==', code).limit(1).get();
 
-    if (!data && !error) {
+    if (snapshot.empty) {
       exists = false;
     }
   }
@@ -51,24 +46,8 @@ export async function POST(req: NextRequest) {
     const collegeCode = await generateUniqueCode(collegeName);
     console.log(`Generated college code for ${collegeName}: ${collegeCode}`);
 
-    // 2. Save to Supabase 'colleges' table
-    const { data: collegeData, error: dbError } = await supabase
-      .from('colleges')
-      .insert({
-        college_name: collegeName,
-        location,
-        contact_email: contactEmail,
-        student_count: parseInt(studentCount, 10),
-        college_code: collegeCode
-      })
-      .select()
-      .single();
-
-    if (dbError) {
-      console.error('Supabase save error:', dbError);
-      return NextResponse.json({ error: 'Failed to save college to database: ' + dbError.message }, { status: 500 });
-    }
-
+    // 2. Save to Firebase 'colleges' collection temporarily, or maybe just wait for the user to be created first
+    // It's safer to create auth user first so we have the uid.
     // 3. Create Firebase user for the college admin
     let userRecord;
     try {
@@ -80,10 +59,26 @@ export async function POST(req: NextRequest) {
       console.log('Firebase user created for college admin:', userRecord.uid);
     } catch (authError: any) {
       console.error('Firebase Auth creation error:', authError);
-      // Clean up Supabase record on failure to keep consistency
-      await supabase.from('colleges').delete().eq('college_code', collegeCode);
       return NextResponse.json({ error: 'Auth failed: ' + (authError.message || 'Email might be in use') }, { status: 400 });
     }
+
+    // Now save to colleges collection using the new user's uid
+    try {
+      await adminDb.collection('colleges').doc(userRecord.uid).set({
+        id: userRecord.uid,
+        college_name: collegeName,
+        location,
+        contact_email: contactEmail,
+        student_count: parseInt(studentCount, 10),
+        college_code: collegeCode
+      });
+    } catch (dbError: any) {
+      console.error('Firebase save college error:', dbError);
+      await adminAuth.deleteUser(userRecord.uid); // Cleanup
+      return NextResponse.json({ error: 'Failed to save college to database: ' + dbError.message }, { status: 500 });
+    }
+
+
 
     // 4. Save/Update user profile in Firestore
     try {
@@ -135,7 +130,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       collegeCode,
-      collegeId: collegeData.id,
+      collegeId: userRecord.uid,
       userId: userRecord.uid
     });
 

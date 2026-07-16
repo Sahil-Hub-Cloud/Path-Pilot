@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 import { NextResponse } from 'next/server';
-import { supabaseAdmin as supabase } from '@/lib/supabase-admin';
+import { adminDb } from '@/lib/firebase-admin';
 
 export async function GET(req: Request) {
   try {
@@ -12,26 +12,19 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Code parameter is required' }, { status: 400 });
     }
 
-    console.log(`API check-code: Querying Supabase for collegeCode = ${code}`);
+    console.log(`API check-code: Querying Firebase for collegeCode = ${code}`);
     
-    const { data, error } = await supabase
-      .from('colleges')
-      .select('id, college_name, college_code')
-      .eq('college_code', code)
-      .maybeSingle();
+    const snapshot = await adminDb.collection('colleges').where('college_code', '==', code).limit(1).get();
 
-    if (error) {
-      console.error('Supabase error checking college code:', error);
-      throw error;
-    }
-
-    if (!data) {
+    if (snapshot.empty) {
       return NextResponse.json({ available: true, exists: false });
     } else {
+      const doc = snapshot.docs[0];
+      const data = doc.data();
       return NextResponse.json({
         available: false,
         exists: true,
-        collegeId: data.id,
+        collegeId: doc.id,
         collegeName: data.college_name
       });
     }

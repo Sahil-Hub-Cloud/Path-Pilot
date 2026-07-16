@@ -1,12 +1,8 @@
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin as supabase } from '@/lib/supabase-admin';
+import { adminDb } from '@/lib/firebase-admin';
 
-/**
- * IDENTITY BRIDGE API
- * Securely links a newly registered Firebase UID with an existing "Invite Placeholder"
- */
 export async function POST(req: NextRequest) {
     try {
         const { userId, email } = await req.json();
@@ -15,56 +11,40 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Missing userId or email' }, { status: 400 });
         }
 
-        // 1. Find the invite record
-        const { data: inviteRecord, error: findError } = await supabase
-            .from('user_roles')
-            .select('*')
-            .eq('invited_email', email)
-            .like('user_id', 'invite_%')
-            .maybeSingle();
-
-        if (findError) throw findError;
+        const rolesRef = adminDb.collection('user_roles');
+        const snapshot = await rolesRef.where('invited_email', '==', email).get();
+        let inviteRecord = null;
+        
+        for (const doc of snapshot.docs) {
+            if (doc.id.startsWith('invite_')) {
+                inviteRecord = { id: doc.id, ...doc.data() };
+                break;
+            }
+        }
 
         if (!inviteRecord) {
             return NextResponse.json({ success: true, message: 'No invite found, skipping linkage.' });
         }
 
-        const placeholderId = inviteRecord.user_id;
+        const placeholderId = inviteRecord.id;
 
-        // 2. Atomically migrate the identity
-        // We use the service role to perform these updates
+        const batch = adminDb.batch();
         
-        // Update user_roles to the real UID
-        const { error: roleError } = await supabase
-            .from('user_roles')
-            .update({ user_id: userId })
-            .eq('user_id', placeholderId);
+        const newRoleRef = rolesRef.doc(userId);
+        batch.set(newRoleRef, inviteRecord);
+        batch.delete(rolesRef.doc(placeholderId));
 
-        if (roleError) {
-            // Handle unique constraint violation (if user already has a role)
-            if (roleError.code === '23505') {
-                 // User already exists, we might want to merge or just delete the placeholder
-                 console.log('User already has a role, cleaning up placeholder.');
-                 await supabase.from('user_roles').delete().eq('user_id', placeholderId);
-            } else {
-                throw roleError;
-            }
-        }
+        const cohortMembersRef = adminDb.collection('cohort_members');
+        const memberSnapshot = await cohortMembersRef.where('user_id', '==', placeholderId).get();
+        
+        memberSnapshot.docs.forEach(doc => {
+            const data = doc.data();
+            const newMemberRef = cohortMembersRef.doc();
+            batch.set(newMemberRef, { ...data, user_id: userId });
+            batch.delete(doc.ref);
+        });
 
-        // 3. Move cohort memberships
-        const { error: memberError } = await supabase
-            .from('cohort_members')
-            .update({ user_id: userId })
-            .eq('user_id', placeholderId);
-
-        if (memberError) {
-            // If already a member of these cohorts, we can ignore duplicates or delete placeholders
-             if (memberError.code === '23505') {
-                 await supabase.from('cohort_members').delete().eq('user_id', placeholderId);
-             } else {
-                throw memberError;
-             }
-        }
+        await batch.commit();
 
         return NextResponse.json({ 
             success: true, 
@@ -78,4 +58,3 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
-
