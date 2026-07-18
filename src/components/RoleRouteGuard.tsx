@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { useAuth } from '@/components/AuthProvider';
+import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/lib/toast';
 
 export function RoleRouteGuard({ children }: { children: React.ReactNode }) {

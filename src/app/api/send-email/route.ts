@@ -4,7 +4,7 @@ export const runtime = 'nodejs';
 
 import { NextResponse } from "next/server";
 import { Resend } from 'resend';
-import { auth } from '@/lib/firebase-admin';
+import { adminAuth as auth } from '@/lib/firebase-admin';
 
 const resendClient = new Resend(process.env.RESEND_API_KEY);
 

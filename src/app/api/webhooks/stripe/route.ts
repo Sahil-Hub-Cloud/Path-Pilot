@@ -3,8 +3,7 @@ export const runtime = 'nodejs';
 import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { headers } from 'next/headers';
-import { getFirebaseDb } from '@/lib/firebase';
-import { doc, updateDoc } from 'firebase/firestore';
+import { adminDb } from '@/lib/firebase-admin';
 
 export async function POST(req: Request) {
     const body = await req.text();
@@ -29,19 +28,13 @@ export async function POST(req: Request) {
         const userId = session.metadata?.userId;
 
         if (userId) {
-            // Update Firestore directly (Server-Side Authority)
-            const db = getFirebaseDb();
-            if (db) {
-                try {
-                    await updateDoc(doc(db, 'profiles', userId), {
-                        isPremium: true
-                    });
-                    console.log(`[Stripe] User ${userId} upgraded to Premium.`);
-                } catch (e) {
-                    console.error(`[Stripe] Failed to update Firestore for ${userId}:`, e);
-                }
-            } else {
-                console.error('[Stripe] DB Connection failed during webhook.');
+            try {
+                await adminDb.collection('profiles').doc(userId).update({
+                    isPremium: true
+                });
+                console.log(`[Stripe] User ${userId} upgraded to Premium.`);
+            } catch (e) {
+                console.error(`[Stripe] Failed to update Firestore for ${userId}:`, e);
             }
         }
     }

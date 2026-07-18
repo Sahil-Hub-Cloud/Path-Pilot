@@ -24,8 +24,28 @@ function initFirebaseAdmin() {
   });
 }
 
-const adminApp = initFirebaseAdmin();
-const adminAuth = admin.auth(adminApp);
-const adminDb = admin.firestore(adminApp);
+// Lazy initialization — only initialize when actually used at runtime,
+// not during Next.js build-time static analysis
+let _adminApp: admin.app.App | null = null;
 
-export { adminApp, adminAuth, adminDb };
+function getAdminApp() {
+  if (!_adminApp) {
+    _adminApp = initFirebaseAdmin();
+  }
+  return _adminApp;
+}
+
+// Use getters so the admin SDK is only initialized when these are accessed
+export const adminAuth = new Proxy({} as admin.auth.Auth, {
+  get(_, prop) {
+    return (admin.auth(getAdminApp()) as any)[prop];
+  }
+});
+
+export const adminDb = new Proxy({} as admin.firestore.Firestore, {
+  get(_, prop) {
+    return (admin.firestore(getAdminApp()) as any)[prop];
+  }
+});
+
+export { getAdminApp as adminApp };

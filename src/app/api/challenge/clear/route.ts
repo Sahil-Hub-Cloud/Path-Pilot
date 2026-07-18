@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/firebase-admin';
+import { adminDb as db } from '@/lib/firebase-admin';
 
 /** DELETE all cached challenges under challenges/{courseId}/topics/{topicId} */
 export async function DELETE(req: NextRequest) {

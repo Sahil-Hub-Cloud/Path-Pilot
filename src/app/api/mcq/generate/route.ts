@@ -4,7 +4,7 @@ export const runtime = 'nodejs';
 
 import { NextResponse } from 'next/server';
 import { generateWithResilience } from '@/lib/gemini-resilience';
-import { auth } from '@/lib/firebase-admin';
+import { adminAuth as auth } from '@/lib/firebase-admin';
 
 
 

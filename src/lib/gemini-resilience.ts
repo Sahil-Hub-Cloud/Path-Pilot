@@ -5,7 +5,7 @@
  * per-feature daily quota tracking (usage_limits), and usage logging.
  */
 
-import { db } from '@/lib/firebase-admin';
+import { adminDb as db } from '@/lib/firebase-admin';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // ─── Model routing ────────────────────────────────────────────────────────────
