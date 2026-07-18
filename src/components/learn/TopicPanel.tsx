@@ -16,6 +16,7 @@ import {
 } from 'react-icons/fi';
 import { GeminiNotes } from './GeminiNotes';
 import { TheoryMCQ } from './TheoryMCQ';
+import { MCQQuiz } from './MCQQuiz';
 import { getTopicResource } from '@/lib/data/topic-resources';
 import { type VideoLanguage } from '@/lib/data/videos';
 import { getTopicResourcesForId, type ResourceLink } from '@/lib/data/resources';
@@ -51,7 +52,7 @@ interface TopicPanelProps {
   compact?: boolean;
 }
 
-type TabId = 'notes' | 'video' | 'resources' | 'challenge';
+type TabId = 'notes' | 'video' | 'resources' | 'challenge' | 'quiz';
 
 const DIFF_CONFIG: Record<string, { color: string; bg: string; label: string }> = {
   Beginner:     { color: '#16A34A', bg: 'rgba(34,197,94,0.1)',   label: 'Beginner' },
@@ -226,6 +227,20 @@ export default function TopicPanel({
     const checkPassed = () => {
       const passed = localStorage.getItem(`pp_lab_passed_${user?.uid || 'guest'}_${topic.id}`);
       setHasPassedLab(!!passed);
+    };
+    checkPassed();
+    window.addEventListener('focus', checkPassed);
+    return () => window.removeEventListener('focus', checkPassed);
+  }, [topic, user]);
+
+  const [hasPassedMcq, setHasPassedMcq] = useState(false);
+
+  // Check if mcq is passed
+  useEffect(() => {
+    if (!topic) return;
+    const checkPassed = () => {
+      const passed = localStorage.getItem(`pp_mcq_passed_${user?.uid || 'guest'}_${topic.id}`);
+      setHasPassedMcq(!!passed);
     };
     checkPassed();
     window.addEventListener('focus', checkPassed);
@@ -553,6 +568,7 @@ IMPORTANT: Do NOT end with a question to the student. Just provide the notes.`;
     { id: 'video',     label: 'Video',     icon: '🎬' },
     { id: 'resources', label: 'Resources', icon: '🔗' },
     { id: 'challenge', label: 'Challenge', icon: '⚡' },
+    { id: 'quiz',      label: 'Quiz',      icon: '🧠' },
   ];
 
   return (
@@ -1309,6 +1325,21 @@ IMPORTANT: Do NOT end with a question to the student. Just provide the notes.`;
               </div>
             )}
 
+            {/* QUIZ TAB */}
+            {activeTab === 'quiz' && (
+              <div>
+                <MCQQuiz 
+                  topicId={topic.id} 
+                  topicName={topic.title} 
+                  courseName={courseTitle || courseIdParam} 
+                  onPass={() => {
+                    localStorage.setItem(`pp_mcq_passed_${user?.uid || 'guest'}_${topic.id}`, 'true');
+                    setHasPassedMcq(true);
+                  }} 
+                />
+              </div>
+            )}
+
           </motion.div>
         </AnimatePresence>
       </div>
@@ -1375,7 +1406,7 @@ IMPORTANT: Do NOT end with a question to the student. Just provide the notes.`;
             <FiCheckCircle size={16} />
             Completed
           </div>
-        ) : labType === 'judge0' && !hasPassedLab ? (
+        ) : (labType === 'judge0' && !hasPassedLab) || !hasPassedMcq ? (
           <motion.div
             style={{
               flex: 1,
@@ -1394,7 +1425,7 @@ IMPORTANT: Do NOT end with a question to the student. Just provide the notes.`;
               cursor: 'not-allowed',
             }}
           >
-            Complete Challenge First
+            {(!hasPassedLab && labType === 'judge0') ? 'Complete Challenge First' : 'Pass Quiz First'}
           </motion.div>
         ) : (
           <motion.button
