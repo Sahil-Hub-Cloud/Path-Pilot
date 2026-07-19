@@ -23,6 +23,8 @@
 # misc
 .DS_Store
 *.pem
+*.pdf
+PASSPORT.pdf
 
 # debug
 npm-debug.log*
