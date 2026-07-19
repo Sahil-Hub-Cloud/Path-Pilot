@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { adminAuth, adminDb } from '@/lib/firebase-admin';
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Resend initialization moved inside POST to prevent build crashes
 
 async function generateUniqueCode(collegeName: string) {
   // Take first 3 letters of collegeName, capitalized, fallback to 'COL'
@@ -100,6 +100,7 @@ export async function POST(req: NextRequest) {
     // 5. Email the code using Resend
     if (process.env.RESEND_API_KEY) {
       try {
+        const resend = new Resend(process.env.RESEND_API_KEY);
         await resend.emails.send({
           from: 'Path Pilot <onboarding@resend.dev>',
           to: [contactEmail],

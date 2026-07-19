@@ -3,7 +3,7 @@ export const runtime = 'nodejs';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+// GenAI initialization moved inside POST
 const MODEL_PRIORITY = ['gemini-2.0-flash', 'gemini-1.5-flash-latest', 'gemini-1.5-flash'];
 
 export async function POST(req: Request) {
@@ -24,8 +24,10 @@ export async function POST(req: Request) {
     Code:
     ${code}`;
 
-    let responseText = '';
+    let responseText = null;
     let lastErr: any = null;
+
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
     for (const modelName of MODEL_PRIORITY) {
       try {

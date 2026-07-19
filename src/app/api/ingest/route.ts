@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server';
 import pdf from 'pdf-parse';
 
 // Initialize Gemini
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+// GenAI initialization moved inside POST
 
 export async function POST(req: Request) {
     try {
@@ -99,6 +99,7 @@ export async function POST(req: Request) {
         for (const modelName of MODEL_PRIORITY) {
             try {
                 console.log(`[/api/ingest] Trying model: ${modelName}`);
+                const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
                 const model = genAI.getGenerativeModel({ model: modelName });
                 const result = await model.generateContent(prompt);
                 textResponse = result.response.text();

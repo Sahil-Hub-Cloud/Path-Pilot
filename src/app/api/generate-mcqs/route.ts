@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server';
 import { adminAuth, adminDb } from '@/lib/firebase-admin';
 import Groq from 'groq-sdk';
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+// Groq initialization moved inside POST
 
 export async function POST(request: Request) {
   try {
@@ -24,6 +24,7 @@ export async function POST(request: Request) {
 
     const systemPrompt = `You are an expert engineering professor. Generate exactly 20 multiple-choice questions for ${topicName}. Output ONLY a valid JSON array. Each object must have: "question" (string), "options" (array of 4 strings), and "correctAnswerIndex" (number 0-3).`;
 
+    const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
     const chatCompletion = await groq.chat.completions.create({
       messages: [
         {

@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 import { Resend } from 'resend';
 import { adminAuth as auth } from '@/lib/firebase-admin';
 
-const resendClient = new Resend(process.env.RESEND_API_KEY);
+// Resend initialization moved inside POST
 
 export async function POST(req: Request) {
   try {
@@ -32,6 +32,7 @@ export async function POST(req: Request) {
 
     console.log(`[MAILER] Transmitting engagement to ${targetEmail}: ${subject}`);
 
+    const resendClient = new Resend(process.env.RESEND_API_KEY);
     const { data, error } = await resendClient.emails.send({
       from: 'Path Pilot <onboarding@resend.dev>',
       to: [targetEmail],
