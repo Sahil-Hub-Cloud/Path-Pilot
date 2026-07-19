@@ -55,6 +55,7 @@ export function MCQQuiz({ topicId, topicName, courseName, onPass }: MCQQuizProps
     try {
       // Try to fetch from Firestore
       const topicRef = doc(db, 'topics', topicId);
+      console.log(`[MCQQuiz] Attempting to access Firestore path: topics/${topicId}`);
       const docSnap = await getDoc(topicRef);
       let mcqBank: MCQ[] = [];
 

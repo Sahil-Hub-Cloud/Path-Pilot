@@ -61,6 +61,7 @@ export async function POST(request: Request) {
 
     // Save to Firestore
     const topicRef = adminDb.collection('topics').doc(topicId);
+    console.log(`[generate-mcqs API] Attempting to write MCQs to Firestore path: topics/${topicId}`);
     await topicRef.set({ mcq_bank: mcqBank }, { merge: true });
 
     return NextResponse.json({ mcqs: mcqBank });
