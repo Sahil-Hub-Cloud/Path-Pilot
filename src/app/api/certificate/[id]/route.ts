@@ -3,15 +3,17 @@ export const runtime = 'nodejs';
 // IMPORTANT: This line must be present in ALL API routes to prevent Vercel build failures
 
 import { NextResponse } from "next/server";
-import { db, auth } from "@/lib/firebase";
-import { doc, getDoc } from "firebase/firestore";
-import { signInAnonymously } from "firebase/auth";
 
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    // Dynamically import Firebase to prevent Vercel build crash
+    const { db, auth } = await import("@/lib/firebase");
+    const { doc, getDoc } = await import("firebase/firestore");
+    const { signInAnonymously } = await import("firebase/auth");
+
     if (!db) {
       return NextResponse.json({ error: "Database temporarily unavailable" }, { status: 503 });
     }

@@ -156,6 +156,14 @@ service cloud.firestore {
     }
 
     // ============================================
+    // TOPICS (MCQs, etc)
+    // ============================================
+    match /topics/{topicId} {
+      allow read: if isLoggedIn();
+      allow write: if isLoggedIn() && hasRole('admin');
+    }
+
+    // ============================================
     // FALLBACK — DENY EVERYTHING ELSE
     // ============================================
     match /{document=**} {
