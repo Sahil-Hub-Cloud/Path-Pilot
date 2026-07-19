@@ -39,7 +39,7 @@ function shuffleMCQs(mcqs: MCQ[], count: number): MCQ[] {
 }
 
 export function MCQQuiz({ topicId, topicName, courseName, onPass }: MCQQuizProps) {
-  const { user } = useAuth();
+  const { user, role } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [quizQuestions, setQuizQuestions] = useState<MCQ[]>([]);
@@ -63,6 +63,13 @@ export function MCQQuiz({ topicId, topicName, courseName, onPass }: MCQQuizProps
         mcqBank = docSnap.data().mcq_bank;
       } else {
         // Generate via API
+        if (role !== 'admin') {
+          setError('Admin access required to generate MCQs.');
+          setLoading(false);
+          return;
+        }
+
+        console.log("Attempting to save MCQs to collection:", "topics");
         const token = await user.getIdToken();
         const res = await fetch('/api/generate-mcqs', {
           method: 'POST',

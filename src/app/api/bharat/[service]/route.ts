@@ -1,16 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { hub } from '@/lib/services';
-
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-const validServices = ['vernacular'];
+import { NextRequest, NextResponse } from 'next/server';
 
 // Next.js 15: params is a Promise
 export async function POST(
     req: NextRequest,
     context: { params: Promise<{ service: string }> }
 ) {
+    const validServices = ['vernacular'];
+    
     // 1. Await params
     const { service } = await context.params;
 
@@ -27,6 +26,9 @@ export async function POST(
     }
 
     try {
+        // Dynamically import hub to prevent top-level execution during Vercel build
+        const { hub } = await import('@/lib/services');
+
         switch (service) {
             case 'vernacular':
                 if (body.action === 'detect') {
