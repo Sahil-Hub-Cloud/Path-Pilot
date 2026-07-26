@@ -1,4 +1,4 @@
-import { Redis } from "@upstash/redis";
+import { Redis } from "@upstash/redis/cloudflare";
 import { Ratelimit } from "@upstash/ratelimit";
 
 // Lazy-initialize Redis and Ratelimit only when env vars are available

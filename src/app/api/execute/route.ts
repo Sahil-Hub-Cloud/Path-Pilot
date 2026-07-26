@@ -3,7 +3,7 @@ import { adminAuth } from '@/lib/firebase-admin';
 import { isCodeMalicious, hardenCode, judge0SandboxConfig } from '@/lib/api-security';
 import { logSecurityEvent } from '@/lib/security-logger';
 import { Ratelimit } from '@upstash/ratelimit';
-import { Redis } from '@upstash/redis';
+import { Redis } from '@upstash/redis/cloudflare';
 
 const JUDGE0_URL = process.env.JUDGE0_URL || 'https://ce.judge0.com';
 const JUDGE0_KEY = process.env.JUDGE0_API_KEY || '';
