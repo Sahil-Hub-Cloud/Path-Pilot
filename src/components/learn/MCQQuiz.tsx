@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { db } from '@/lib/firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useAuth } from '@/hooks/useAuth';
 
 interface MCQ {
@@ -166,7 +166,7 @@ export function MCQQuiz({ topicId, topicName, courseName, onPass }: MCQQuizProps
     fetchOrGenerateMCQs();
   }, [fetchOrGenerateMCQs]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     let s = 0;
     quizQuestions.forEach((mcq, idx) => {
       if (answers[idx] === mcq.correctAnswerIndex) s++;
@@ -175,6 +175,14 @@ export function MCQQuiz({ topicId, topicName, courseName, onPass }: MCQQuizProps
     setSubmitted(true);
     // Mastery: Must get all 5 correct
     if (s === 5) {
+      if (user) {
+        try {
+          const progressRef = doc(db, 'users', user.uid, 'progress', topicId);
+          await setDoc(progressRef, { mcqPassed: true, updatedAt: new Date().toISOString() }, { merge: true });
+        } catch (err) {
+          console.error('[MCQQuiz] Error saving progress:', err);
+        }
+      }
       setTimeout(() => {
         onPass();
       }, 1500);

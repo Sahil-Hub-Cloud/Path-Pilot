@@ -49,6 +49,11 @@ service cloud.firestore {
         allow update: if isLoggedIn() && isOwner(userId);
         allow delete: if isLoggedIn() && isOwner(userId);
       }
+
+      match /progress/{topicId} {
+        allow read: if isLoggedIn() && isOwner(userId);
+        allow write: if isLoggedIn() && isOwner(userId);
+      }
     }
 
     // ============================================

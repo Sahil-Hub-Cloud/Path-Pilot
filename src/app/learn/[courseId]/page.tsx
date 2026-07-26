@@ -15,7 +15,7 @@ import {
   FiX,
 } from 'react-icons/fi';
 import { db } from '@/lib/firebase';
-import { doc, updateDoc, arrayUnion, increment, getDoc } from 'firebase/firestore';
+import { doc, updateDoc, arrayUnion, increment, getDoc, collection, onSnapshot } from 'firebase/firestore';
 import { calculateTopicPriority } from '@/lib/services/recommendation';
 
 const CHAT_S = {
@@ -148,6 +148,23 @@ export default function LearningPage() {
     });
   }, [roadmapId, user?.uid, storageKey, allTopics.length]);
 
+  const [topicProgress, setTopicProgress] = useState<Record<string, { mcqPassed?: boolean, labPassed?: boolean }>>({});
+
+  useEffect(() => {
+    if (!user?.uid || !db) return;
+    const progRef = collection(db, 'users', user.uid, 'progress');
+    const unsub = onSnapshot(progRef, (snap) => {
+      const map: Record<string, any> = {};
+      snap.forEach(doc => {
+        map[doc.id] = doc.data();
+      });
+      setTopicProgress(map);
+    }, (err) => {
+      console.warn('Failed to listen to topic progress', err);
+    });
+    return () => unsub();
+  }, [user?.uid]);
+
   useEffect(() => {
     if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight;
   }, [messages]);
@@ -156,11 +173,22 @@ export default function LearningPage() {
     (topicId: string, globalIndex: number): NodeStatus => {
       if (completedIds.has(topicId)) return 'completed';
       if (globalIndex === 0) return 'current';
+      
       const prev = allTopics[globalIndex - 1];
-      if (prev && completedIds.has(prev.id)) return 'current';
+      if (!prev) return 'locked';
+
+      const prevProg = topicProgress[prev.id];
+      const isJudge0 = (ROADMAPS[roadmapId]?.labType || 'judge0') === 'judge0';
+      const prevMcqPassed = !!prevProg?.mcqPassed;
+      const prevLabPassed = isJudge0 ? !!prevProg?.labPassed : true;
+      
+      if ((prevMcqPassed && prevLabPassed) || completedIds.has(prev.id)) {
+        return 'current';
+      }
+
       return 'locked';
     },
-    [completedIds, allTopics]
+    [completedIds, allTopics, topicProgress, roadmapId]
   );
 
   const activeTopic = allTopics.find((t) => t.id === activeTopicId);
@@ -367,6 +395,8 @@ export default function LearningPage() {
             defaultLabId={defaultLabId}
             onMarkComplete={markComplete}
             onAskTutor={() => setShowChat(true)}
+            isTopicMcqPassed={activeTopic ? !!topicProgress[activeTopic.id]?.mcqPassed : false}
+            isTopicLabPassed={activeTopic ? !!topicProgress[activeTopic.id]?.labPassed : false}
           />
         </main>
 
@@ -436,6 +466,8 @@ export default function LearningPage() {
                     setShowChat(true);
                   }}
                   compact
+                  isTopicMcqPassed={!!topicProgress[activeTopic.id]?.mcqPassed}
+                  isTopicLabPassed={!!topicProgress[activeTopic.id]?.labPassed}
                 />
               </div>
             </motion.div>

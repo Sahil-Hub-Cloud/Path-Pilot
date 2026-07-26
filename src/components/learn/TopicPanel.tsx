@@ -50,6 +50,8 @@ interface TopicPanelProps {
   onMarkComplete: () => void;
   onAskTutor: () => void;
   compact?: boolean;
+  isTopicMcqPassed?: boolean;
+  isTopicLabPassed?: boolean;
 }
 
 type TabId = 'notes' | 'video' | 'resources' | 'challenge' | 'quiz';
@@ -209,6 +211,8 @@ export default function TopicPanel({
   onMarkComplete,
   onAskTutor,
   compact,
+  isTopicMcqPassed,
+  isTopicLabPassed,
 }: TopicPanelProps) {
   const [activeTab, setActiveTab] = useState<TabId>('notes');
   const [geminiNotes, setGeminiNotes] = useState('');
@@ -226,12 +230,12 @@ export default function TopicPanel({
     if (!topic) return;
     const checkPassed = () => {
       const passed = localStorage.getItem(`pp_lab_passed_${user?.uid || 'guest'}_${topic.id}`);
-      setHasPassedLab(!!passed);
+      setHasPassedLab(!!passed || !!isTopicLabPassed);
     };
     checkPassed();
     window.addEventListener('focus', checkPassed);
     return () => window.removeEventListener('focus', checkPassed);
-  }, [topic, user]);
+  }, [topic, user, isTopicLabPassed]);
 
   const [hasPassedMcq, setHasPassedMcq] = useState(false);
 
@@ -240,12 +244,12 @@ export default function TopicPanel({
     if (!topic) return;
     const checkPassed = () => {
       const passed = localStorage.getItem(`pp_mcq_passed_${user?.uid || 'guest'}_${topic.id}`);
-      setHasPassedMcq(!!passed);
+      setHasPassedMcq(!!passed || !!isTopicMcqPassed);
     };
     checkPassed();
     window.addEventListener('focus', checkPassed);
     return () => window.removeEventListener('focus', checkPassed);
-  }, [topic, user]);
+  }, [topic, user, isTopicMcqPassed]);
 
   // Load preferred language from localStorage first, then Firestore user profile
   useEffect(() => {

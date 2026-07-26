@@ -572,6 +572,10 @@ export default function LabPage() {
           outputLines += `\n\n✅ All ${suiteResult.totalTests} tests passed!\n⏱️ Completed in ${formatTimeVerbose(elapsedSeconds)}\n🚀 Executed in ${duration}s\n🏆 +${LAB.xp} XP awarded to your profile.`;
           if (isChallenge && topicIdParam) {
             localStorage.setItem(`pp_lab_passed_${user?.uid || 'guest'}_${topicIdParam}`, 'true');
+            if (user?.uid && db) {
+              const progressRef = doc(db, 'users', user.uid, 'progress', topicIdParam);
+              setDoc(progressRef, { labPassed: true, updatedAt: new Date().toISOString() }, { merge: true }).catch(e => console.error(e));
+            }
           }
         } else {
           outputLines += `\n\n⚠️ ${passedCount}/${suiteResult.totalTests} tests passed. Executed in ${duration}s.`;
@@ -624,6 +628,10 @@ export default function LabPage() {
         );
         if (allPass && isChallenge && topicIdParam) {
           localStorage.setItem(`pp_lab_passed_${user?.uid || 'guest'}_${topicIdParam}`, 'true');
+          if (user?.uid && db) {
+            const progressRef = doc(db, 'users', user.uid, 'progress', topicIdParam);
+            setDoc(progressRef, { labPassed: true, updatedAt: new Date().toISOString() }, { merge: true }).catch(e => console.error(e));
+          }
         }
         await saveLabResultToFirestore(passedCount, results.length, elapsedSeconds);
       }

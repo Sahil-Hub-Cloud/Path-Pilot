@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef, useState } from 'react';
+import { motion, useAnimation } from 'framer-motion';
 import { FiCheck, FiLock, FiPlay } from 'react-icons/fi';
 
 export type NodeStatus = 'completed' | 'current' | 'locked';
@@ -119,6 +119,24 @@ function MapNode({
       ? '0 0 0 6px rgba(13,140,122,0.22), 0 8px 28px rgba(13,140,122,0.32)'
       : '0 2px 8px rgba(0,0,0,0.08)';
 
+  const controls = useAnimation();
+  const [prevStatus, setPrevStatus] = useState(status);
+
+  useEffect(() => {
+    if (prevStatus === 'locked' && current) {
+      controls.start({
+        scale: [1, 1.15, 0.95, 1.05, 1],
+        boxShadow: [
+          '0 0 0 0px rgba(13,140,122,0.8)',
+          '0 0 0 15px rgba(13,140,122,0)',
+          '0 0 0 0px rgba(13,140,122,0)'
+        ],
+        transition: { duration: 0.8, ease: 'easeOut' }
+      });
+    }
+    setPrevStatus(status);
+  }, [status, current, prevStatus, controls]);
+
   return (
     <motion.button
       ref={nodeRef as React.RefObject<HTMLButtonElement>}
@@ -183,7 +201,7 @@ function MapNode({
       {/* Node circle */}
       <motion.div
         initial={false}
-        animate={{ scale: 1 }}
+        animate={controls}
         style={{
           width: size,
           height: size,
