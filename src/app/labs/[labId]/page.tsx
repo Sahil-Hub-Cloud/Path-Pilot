@@ -782,6 +782,15 @@ export default function LabPage() {
   };
 
   // ── Keyboard Shortcuts (must be after handleRun/handleSubmit) ────────────
+  const handleExportZip = useCallback(async () => {
+    const JSZip = (await import('jszip')).default;
+    const { saveAs } = await import('file-saver');
+    const zip = new JSZip();
+    files.forEach(f => zip.file(f.name, f.content));
+    const blob = await zip.generateAsync({ type: 'blob' });
+    saveAs(blob, `${labId}-code.zip`);
+  }, [files, labId]);
+
   const handleSave = useCallback(() => {
     const saved = files.map(f => ({ ...f, saved: true }));
     setFiles(saved);
