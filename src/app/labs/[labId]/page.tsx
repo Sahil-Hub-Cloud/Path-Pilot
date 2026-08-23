@@ -1,13 +1,14 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import Editor from '@monaco-editor/react';
 import {
   FiArrowLeft, FiPlay, FiZap, FiSearch, FiXCircle, FiCheckCircle,
   FiActivity, FiHelpCircle, FiPlus, FiX, FiSave, FiFile,
-  FiCpu, FiSend, FiAlertTriangle, FiChevronDown, FiCode, FiTerminal, FiClock
+  FiCpu, FiSend, FiAlertTriangle, FiChevronDown, FiCode, FiTerminal, FiClock,
+  FiGitBranch, FiMaximize2, FiMinimize2, FiSidebar, FiDownload, FiClipboard
 } from 'react-icons/fi';
 import { executeCode } from '@/lib/piston';
 import { executePythonClient, executePythonTestSuite } from '@/lib/pyodide-runner';
@@ -21,6 +22,17 @@ import { calculateTopicPriority } from '@/lib/services/recommendation';
 import { fetchResilient } from '@/lib/firestore-resilience';
 import { addNotification } from '@/lib/notifications';
 import { LABS } from '@/lib/data/labs';
+import { createPasteTracker, trackPaste, getPasteStats, shouldBlockSubmission, type PasteTracker } from '@/lib/paste-tracker';
+import { saveLabCode, loadLabCode, saveTerminalHistory, loadTerminalHistory, savePasteEvents, loadPasteEvents } from '@/lib/offline-storage';
+import { getFileIcon, getLanguageFromExtension } from '@/lib/file-icons';
+import { useKeyboardShortcuts, DEFAULT_SHORTCUTS_INFO } from '@/hooks/useKeyboardShortcuts';
+import PasteIndicator, { PasteToast } from '@/components/ide/PasteIndicator';
+import AchievementPopup, { LabCompletePopup } from '@/components/ide/AchievementPopup';
+import CommandPalette, { buildCommands } from '@/components/ide/CommandPalette';
+import CodeReview from '@/components/ide/CodeReview';
+import CodeTimeline from '@/components/ide/CodeTimeline';
+import OfflineBanner from '@/components/ide/OfflineBanner';
+import SplitPane from '@/components/ide/SplitPane';
 
 // ─── TYPES ───────────────────────────────────────────────────────────────────
 interface FileTab { id: string; name: string; language: string; content: string; saved: boolean; }
@@ -29,13 +41,18 @@ interface AIMessage { role: 'ai' | 'user'; content: string; isBlocked?: boolean;
 
 // ─── LANGUAGE CONFIG ──────────────────────────────────────────────────────────
 const LANGS: Record<string, { ext: string; label: string; starter: string; monacoId: string }> = {
-  python:     { ext: 'py',  label: 'Python',     monacoId: 'python',     starter: '# Complete this function\n\ndef solution():\n    # Your code here\n    pass\n\n# Test automatically (do not modify)\nprint(solution())' },
-  javascript: { ext: 'js',  label: 'JavaScript', monacoId: 'javascript', starter: '// Write your solution here\n\nfunction solution() {\n  \n}\n\nconsole.log(solution());' },
-  typescript: { ext: 'ts',  label: 'TypeScript', monacoId: 'typescript', starter: '// Write your solution here\n\nfunction solution(): void {\n  \n}\n\nconsole.log(solution());' },
-  java:       { ext: 'java',label: 'Java',       monacoId: 'java',       starter: 'public class Solution {\n    public static void main(String[] args) {\n        System.out.println("Hello!");\n    }\n}' },
-  cpp:        { ext: 'cpp', label: 'C++',        monacoId: 'cpp',        starter: '#include<iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello!" << endl;\n    return 0;\n}' },
-  go:         { ext: 'go',  label: 'Go',         monacoId: 'go',         starter: 'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hello!")\n}' },
-  rust:       { ext: 'rs',  label: 'Rust',       monacoId: 'rust',       starter: 'fn main() {\n    println!("Hello!");\n}' },
+  python:     { ext: 'py',    label: 'Python',     monacoId: 'python',     starter: '# Complete this function\n\ndef solution():\n    # Your code here\n    pass\n\n# Test automatically (do not modify)\nprint(solution())' },
+  javascript: { ext: 'js',    label: 'JavaScript', monacoId: 'javascript', starter: '// Write your solution here\n\nfunction solution() {\n  \n}\n\nconsole.log(solution());' },
+  typescript: { ext: 'ts',    label: 'TypeScript', monacoId: 'typescript', starter: '// Write your solution here\n\nfunction solution(): void {\n  \n}\n\nconsole.log(solution());' },
+  java:       { ext: 'java',  label: 'Java',       monacoId: 'java',       starter: 'public class Solution {\n    public static void main(String[] args) {\n        System.out.println("Hello!");\n    }\n}' },
+  cpp:        { ext: 'cpp',   label: 'C++',        monacoId: 'cpp',        starter: '#include<iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello!" << endl;\n    return 0;\n}' },
+  c:          { ext: 'c',     label: 'C',          monacoId: 'c',          starter: '#include <stdio.h>\n\nint main() {\n    printf("Hello!\\n");\n    return 0;\n}' },
+  go:         { ext: 'go',    label: 'Go',         monacoId: 'go',         starter: 'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hello!")\n}' },
+  rust:       { ext: 'rs',    label: 'Rust',       monacoId: 'rust',       starter: 'fn main() {\n    println!("Hello!");\n}' },
+  ruby:       { ext: 'rb',    label: 'Ruby',       monacoId: 'ruby',       starter: '# Write your solution here\n\ndef solution\n  # Your code here\nend\n\nputs solution' },
+  php:        { ext: 'php',   label: 'PHP',        monacoId: 'php',        starter: '<?php\n\nfunction solution() {\n    // Your code here\n    return "Hello!";\n}\n\necho solution();\n?>' },
+  kotlin:     { ext: 'kt',    label: 'Kotlin',     monacoId: 'kotlin',     starter: 'fun main() {\n    println("Hello!")\n}' },
+  swift:      { ext: 'swift', label: 'Swift',      monacoId: 'swift',      starter: 'import Foundation\n\nprint("Hello!")' },
 };
 
 // ─── LABS DATA is now loaded from @/lib/data/labs ────────────────────────────
@@ -171,6 +188,27 @@ export default function LabPage() {
   const [isMobile, setIsMobile] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
   const [showOnlineToast, setShowOnlineToast] = useState(false);
+
+  // Enhanced IDE state
+  const pasteTrackerRef = useRef<PasteTracker>(createPasteTracker());
+  const [pasteCount, setPasteCount] = useState(0);
+  const [pasteXPLost, setPasteXPLost] = useState(0);
+  const [pasteRisk, setPasteRisk] = useState<'low' | 'medium' | 'high'>('low');
+  const [pasteToastMsg, setPasteToastMsg] = useState('');
+  const [showPasteToast, setShowPasteToast] = useState(false);
+  const [showCommandPalette, setShowCommandPalette] = useState(false);
+  const [showCodeReview, setShowCodeReview] = useState(false);
+  const [showTimeline, setShowTimeline] = useState(false);
+  const [showSplit, setShowSplit] = useState(false);
+  const [showTerminal, setShowTerminal] = useState(true);
+  const [showSidebar, setShowSidebar] = useState(true);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [codeSnapshots, setCodeSnapshots] = useState<{ timestamp: number; content: string; label: string }[]>([]);
+  const [showAchievement, setShowAchievement] = useState(false);
+  const [achievementData, setAchievementData] = useState({ title: '', description: '', badge: '', xp: 0 });
+  const [referenceCode, setReferenceCode] = useState<string | undefined>();
+  const [renamingFile, setRenamingFile] = useState<string | null>(null);
+  const [renameValue, setRenameValue] = useState('');
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -337,6 +375,102 @@ export default function LabPage() {
 
   useEffect(() => { if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight; }, [aiMessages]);
 
+  // ── Code snapshots for timeline ──────────────────────────────────────────
+  useEffect(() => {
+    if (!activeFile) return;
+    const timer = setTimeout(() => {
+      setCodeSnapshots(prev => {
+        const newSnap = { timestamp: Date.now(), content: activeFile.content, label: activeFile.name };
+        const lastSnap = prev[prev.length - 1];
+        if (lastSnap && lastSnap.content === activeFile.content) return prev;
+        const updated = [...prev, newSnap];
+        return updated.length > 50 ? updated.slice(-50) : updated;
+      });
+    }, 10000);
+    return () => clearTimeout(timer);
+  }, [activeFile?.content, activeFile?.name]);
+
+  // ── IndexedDB persistence ────────────────────────────────────────────────
+  useEffect(() => {
+    if (!user?.uid || !labId) return;
+    const loadFromIDB = async () => {
+      const savedFiles = await loadLabCode(user.uid, labId);
+      if (savedFiles && Array.isArray(savedFiles) && savedFiles.length > 0) {
+        setFiles(savedFiles as FileTab[]);
+        setActive((savedFiles as FileTab[])[0].id);
+      }
+      const savedHistory = await loadTerminalHistory(user.uid, labId);
+      if (savedHistory) setOutput(savedHistory);
+      const savedEvents = await loadPasteEvents(user.uid, labId);
+      if (savedEvents && Array.isArray(savedEvents)) {
+        pasteTrackerRef.current.events = savedEvents as any;
+        pasteTrackerRef.current.totalPasteCount = savedEvents.length;
+        setPasteCount(savedEvents.length);
+      }
+    };
+    loadFromIDB();
+  }, [user?.uid, labId]);
+
+  // ── Auto-save to IndexedDB ──────────────────────────────────────────────
+  useEffect(() => {
+    if (!user?.uid || !labId || files.length === 0) return;
+    const timer = setTimeout(() => {
+      saveLabCode(user.uid, labId, files);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [files, user?.uid, labId]);
+
+  // ── Auto-save terminal history ──────────────────────────────────────────
+  useEffect(() => {
+    if (!user?.uid || !labId || !output) return;
+    const timer = setTimeout(() => {
+      saveTerminalHistory(user.uid, labId, output);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [output, user?.uid, labId]);
+
+  // ── Keyboard Shortcuts ──────────────────────────────────────────────────
+  const handleSave = useCallback(() => {
+    const saved = files.map(f => ({ ...f, saved: true }));
+    setFiles(saved);
+    localStorage.setItem(labStorageKey, JSON.stringify(saved));
+    if (user?.uid && labId) saveLabCode(user.uid, labId, saved);
+  }, [files, labStorageKey, user?.uid, labId]);
+
+  const handleNewFile = useCallback(() => setShowNF(true), []);
+  const handleCloseTab = useCallback(() => {
+    if (files.length > 1 && activeFileId) {
+      removeFile(activeFileId);
+    }
+  }, [files.length, activeFileId]);
+
+  const shortcuts = [
+    { key: 's', ctrl: true, description: 'Save', handler: handleSave },
+    { key: 'Enter', ctrl: true, description: 'Run', handler: handleRun },
+    { key: 'Enter', ctrl: true, shift: true, description: 'Submit', handler: handleSubmit },
+    { key: 'n', ctrl: true, description: 'New file', handler: handleNewFile },
+    { key: 'w', ctrl: true, description: 'Close tab', handler: handleCloseTab },
+    { key: '`', ctrl: true, description: 'Toggle terminal', handler: () => setShowTerminal(p => !p) },
+    { key: 'b', ctrl: true, description: 'Toggle sidebar', handler: () => setShowSidebar(p => !p) },
+    { key: '\\', ctrl: true, description: 'Split', handler: () => setShowSplit(p => !p) },
+    { key: 'F1', description: 'Command palette', handler: () => setShowCommandPalette(true) },
+  ];
+  useKeyboardShortcuts(shortcuts);
+
+  // ── Command palette commands ────────────────────────────────────────────
+  const commands = buildCommands({
+    onRun: handleRun,
+    onSubmit: handleSubmit,
+    onSave: handleSave,
+    onNewFile: handleNewFile,
+    onCloseTab: handleCloseTab,
+    onToggleTerminal: () => setShowTerminal(p => !p),
+    onToggleSidebar: () => setShowSidebar(p => !p),
+    onToggleSplit: () => setShowSplit(p => !p),
+    onFullscreen: () => { setIsFullscreen(p => !p); },
+    onExport: handleExportZip,
+  });
+
   // ── Helpers ──────────────────────────────────────────────────────────────
   const activeFile = files.find(f => f.id === activeFileId) || files[0];
 
@@ -344,12 +478,36 @@ export default function LabPage() {
     setFiles(prev => prev.map(f => {
       if (f.id === id) {
         const lengthDiff = content.length - f.content.length;
-        if (lengthDiff > 200) {
+
+        // Paste tracking: only trigger on meaningful content additions
+        if (lengthDiff > 50) {
+          const fileName = f.name || 'unknown';
+          const result = trackPaste(pasteTrackerRef.current, lengthDiff, fileName);
+          pasteTrackerRef.current = result.tracker;
+          setPasteCount(result.tracker.totalPasteCount);
+          setPasteXPLost(result.tracker.totalXPDeducted);
+          setPasteRisk(getPasteStats(result.tracker).riskLevel);
+          if (result.message) {
+            setPasteToastMsg(result.message);
+            setShowPasteToast(true);
+            setTimeout(() => setShowPasteToast(false), 3000);
+            // Deduct XP from Firestore
+            if (user?.uid && db && result.xpDeducted > 0) {
+              const userRef = doc(db, 'users', user.uid);
+              fetchResilient(userRef).then(snap => {
+                if (snap && snap.exists()) {
+                  const currentXP = snap.data().xp || 0;
+                  updateDoc(userRef, { xp: Math.max(0, currentXP - result.xpDeducted) });
+                }
+              }).catch(() => {});
+            }
+          }
           cheatMetrics.current.pasteIncidentCount++;
           cheatMetrics.current.hasSuspiciousPaste = true;
         } else if (lengthDiff > 0 && lengthDiff < 10) {
           cheatMetrics.current.keystrokes += lengthDiff;
         }
+
         return { ...f, content, saved: false };
       }
       return f;
@@ -378,6 +536,15 @@ export default function LabPage() {
     const next = files.filter(f => f.id !== id);
     setFiles(next);
     if (activeFileId === id) setActive(next[0].id);
+  };
+
+  const renameFile = (id: string, newName: string) => {
+    if (!newName.trim()) return;
+    const cfg = LANGS[activeFile?.language || 'python'];
+    const finalName = newName.includes('.') ? newName : newName + '.' + (cfg?.ext || 'py');
+    setFiles(prev => prev.map(f => f.id === id ? { ...f, name: finalName } : f));
+    setRenamingFile(null);
+    setRenameValue('');
   };
 
   // ── Run ──────────────────────────────────────────────────────────────────
@@ -639,6 +806,20 @@ export default function LabPage() {
       setOutput('[ERROR] Submission Failed\n' + e.message);
     } finally {
       setIsSub(false);
+      // Show achievement popup
+      if (submitBadge) {
+        setAchievementData({
+          title: submitBadge.tier,
+          description: `${submitBadge.pass}/${submitBadge.total} tests passed`,
+          badge: submitBadge.pass === submitBadge.total ? '🏆' : submitBadge.pass / submitBadge.total >= 0.7 ? '⭐' : '💪',
+          xp: LAB.xp,
+        });
+        setShowAchievement(true);
+      }
+      // Set reference code for code review
+      if (challengeConfig?.referenceSolution) {
+        setReferenceCode(challengeConfig.referenceSolution);
+      }
     }
   };
 
@@ -881,10 +1062,11 @@ Rules:
               <span className="text-[#444455]">|</span>
               <span className="text-[#888899] flex items-center gap-1 whitespace-nowrap"><FiClock size={10} /> {formatTime(elapsedSeconds)}</span>
             </div>
+            <PasteIndicator pasteCount={pasteCount} totalXPLost={pasteXPLost} riskLevel={pasteRisk} lastPasteMessage={pasteToastMsg} visible={pasteCount > 0} />
           </div>
         </div>
 
-        <div className="flex items-center gap-2 md:gap-4 ml-2">
+        <div className="flex items-center gap-2 md:gap-3 ml-2">
           {/* Desktop actions (Run/Submit) */}
           <div className="hidden md:flex items-center gap-2">
             <button onClick={handleRun} disabled={isRunning || isSubmitting || isOffline}
@@ -901,17 +1083,30 @@ Rules:
           </div>
 
           {/* Panel toggles */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-2">
             <button onClick={() => { handleAnalyze(); setRight('analyzer'); }}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg cursor-pointer text-[11px] font-bold transition-all ${rightPanel === 'analyzer' ? 'bg-blue-500/15 border border-blue-500/40 text-blue-400' : 'bg-white dark:bg-gray-800/5 border border-white/10 dark:border-gray-700 text-[#888899] dark:text-gray-300 hover:bg-white dark:bg-gray-800/10'}`}
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg cursor-pointer text-[10px] font-bold transition-all ${rightPanel === 'analyzer' ? 'bg-blue-500/15 border border-blue-500/40 text-blue-400' : 'bg-white dark:bg-gray-800/5 border border-white/10 dark:border-gray-700 text-[#888899] dark:text-gray-300 hover:bg-white dark:bg-gray-800/10'}`}
             >
-              <FiSearch size={12} /> Analyze
+              <FiSearch size={11} /> Analyze
             </button>
 
             <button onClick={() => setRight(p => p === 'ai' ? 'none' : 'ai')}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg cursor-pointer text-[11px] font-bold transition-all ${rightPanel === 'ai' ? 'bg-[#7C3AED]/15 border border-[#7C3AED]/40 text-[#A78BFA]' : 'bg-white dark:bg-gray-800/5 border border-white/10 dark:border-gray-700 text-[#888899] dark:text-gray-300 hover:bg-white dark:bg-gray-800/10'}`}
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg cursor-pointer text-[10px] font-bold transition-all ${rightPanel === 'ai' ? 'bg-[#7C3AED]/15 border border-[#7C3AED]/40 text-[#A78BFA]' : 'bg-white dark:bg-gray-800/5 border border-white/10 dark:border-gray-700 text-[#888899] dark:text-gray-300 hover:bg-white dark:bg-gray-800/10'}`}
             >
-              <FiCpu size={12} /> AI Assist
+              <FiCpu size={11} /> AI
+            </button>
+
+            <button onClick={() => setShowTimeline(true)}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg cursor-pointer text-[10px] font-bold bg-white dark:bg-gray-800/5 border border-white/10 dark:border-gray-700 text-[#888899] hover:bg-white dark:bg-gray-800/10 transition-all"
+            >
+              <FiClock size={11} />
+            </button>
+
+            <button onClick={() => setShowCommandPalette(true)}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg cursor-pointer text-[10px] font-bold bg-white dark:bg-gray-800/5 border border-white/10 dark:border-gray-700 text-[#888899] hover:bg-white dark:bg-gray-800/10 transition-all"
+              title="Command Palette (F1)"
+            >
+              <FiMaximize2 size={11} />
             </button>
           </div>
           
@@ -942,11 +1137,12 @@ Rules:
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
 
         {/* ─ LEFT: Problem panel ─ */}
-        <aside className={`
-          ${isMobile ? (activeMobileTab === 'problem' ? 'flex' : 'hidden') : 'flex'}
-          w-full md:w-[320px] bg-[#13131A] md:border-r border-white/10 flex-col flex-shrink-0
-          overflow-hidden h-full
-        `}>
+        {showSidebar && (
+          <aside className={`
+            ${isMobile ? (activeMobileTab === 'problem' ? 'flex' : 'hidden') : 'flex'}
+            w-full md:w-[320px] bg-[#13131A] md:border-r border-white/10 flex-col flex-shrink-0
+            overflow-hidden h-full
+          `}>
           <div className="flex-1 overflow-y-auto p-5 md:p-6 no-scrollbar pb-16 md:pb-6">
             <div className="flex flex-col gap-8 mb-10">
               <section>
@@ -997,6 +1193,7 @@ Rules:
             </div>
           </div>
         </aside>
+        )}
 
         {/* ─ CENTER: Editor + Terminal ─ */}
         <main className={`
@@ -1006,26 +1203,43 @@ Rules:
 
           {/* File tabs bar */}
           <div className="h-10 bg-[#13131A] border-b border-white/10 flex items-center overflow-x-auto flex-shrink-0 no-scrollbar">
-            {files.map(f => (
-              <button key={f.id} onClick={() => setActive(f.id)} 
-                className={`flex items-center gap-2.5 px-4 h-full border-none border-r border-white/10 cursor-pointer text-xs font-bold transition-all flex-shrink-0
-                ${activeFileId === f.id ? 'bg-[#0D0D0F] text-[#E2E2EE] border-b-2 border-[#7C3AED]' : 'bg-transparent text-[#444455] hover:text-[#888899]'}`}
-              >
-                <FiFile size={11} className="opacity-70" />
-                {f.name}
-                {!f.saved && <div className="w-1.5 h-1.5 rounded-full bg-amber-500 ml-1 shadow-sm shadow-amber-500/50" />}
-                {files.length > 1 && (
-                  <span onClick={e => { e.stopPropagation(); removeFile(f.id); }} className="ml-2 hover:text-[#EF4444] transition-colors"><FiX size={11} /></span>
-                )}
-              </button>
-            ))}
+            {files.map(f => {
+              const fileIcon = getFileIcon(f.name);
+              return (
+                <button key={f.id} onClick={() => setActive(f.id)} onDoubleClick={() => { setRenamingFile(f.id); setRenameValue(f.name); }}
+                  className={`flex items-center gap-2 px-3 h-full border-r border-white/10 cursor-pointer text-xs font-bold transition-all flex-shrink-0
+                  ${activeFileId === f.id ? 'bg-[#0D0D0F] text-[#E2E2EE] border-b-2 border-[#7C3AED]' : 'bg-transparent text-[#444455] hover:text-[#888899]'}`}
+                >
+                  {renamingFile === f.id ? (
+                    <input
+                      autoFocus
+                      value={renameValue}
+                      onChange={e => setRenameValue(e.target.value)}
+                      onBlur={() => renameFile(f.id, renameValue)}
+                      onKeyDown={e => { if (e.key === 'Enter') renameFile(f.id, renameValue); if (e.key === 'Escape') { setRenamingFile(null); setRenameValue(''); } }}
+                      onClick={e => e.stopPropagation()}
+                      className="w-24 text-xs bg-white/10 border border-white/20 rounded px-1.5 py-0.5 outline-none text-[#E2E2EE]"
+                    />
+                  ) : (
+                    <>
+                      <span style={{ color: fileIcon.color }} className="opacity-70">{fileIcon.icon || <FiFile size={11} />}</span>
+                      {f.name}
+                    </>
+                  )}
+                  {!f.saved && <div className="w-1.5 h-1.5 rounded-full bg-amber-500 ml-1 shadow-sm shadow-amber-500/50" />}
+                  {files.length > 1 && (
+                    <span onClick={e => { e.stopPropagation(); removeFile(f.id); }} className="ml-1 hover:text-[#EF4444] transition-colors opacity-50 hover:opacity-100"><FiX size={11} /></span>
+                  )}
+                </button>
+              );
+            })}
 
             {/* Add file */}
-            <button onClick={() => setShowNF(p => !p)} className="flex items-center gap-1 px-4 h-full border-none border-r border-white/10 bg-transparent cursor-pointer text-[#444455] hover:text-[#888899] transition-colors flex-shrink-0">
+            <button onClick={() => setShowNF(p => !p)} className="flex items-center gap-1 px-3 h-full border-none border-r border-white/10 bg-transparent cursor-pointer text-[#444455] hover:text-[#888899] transition-colors flex-shrink-0">
               <FiPlus size={14} />
             </button>
 
-            {/* Language selector for active file - hidden on very small screens */}
+            {/* Language selector for active file */}
             <div className="hidden sm:flex ml-auto items-center gap-2 px-4 border-l border-white/10 h-full flex-shrink-0 bg-white dark:bg-gray-800/5">
               <FiCode size={11} className="text-[#888899]" />
               <select value={activeFile?.language || 'python'}
@@ -1088,15 +1302,30 @@ Rules:
             )}
           </div>
 
-          {/* Terminal */}
-          <div className={`${isMobile ? 'h-[30vh]' : 'h-48 md:h-64'} bg-[#0A0A0E] border-t border-white/10 flex flex-col flex-shrink-0 shadow-[0_-8px_30px_rgb(0,0,0,0.5)]`}>
-            <div className="h-9 border-b border-white/10 flex items-center justify-between px-4 flex-shrink-0 bg-black/40">
-              <div className="flex items-center gap-2.5">
-                <FiTerminal size={11} className="text-[#2DD4BF]" />
-                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#444455]">Terminal Output</span>
-              </div>
-              {execTime && <span className="text-[9px] font-bold text-[#444455] bg-white dark:bg-gray-800/5 px-2 py-0.5 rounded-full">⏱ {execTime}</span>}
+          {/* Terminal toggle button when terminal is hidden */}
+          {!showTerminal && (
+            <div className="h-9 bg-[#0A0A0E] border-t border-white/10 flex items-center justify-center flex-shrink-0">
+              <button onClick={() => setShowTerminal(true)} className="flex items-center gap-2 text-[10px] font-bold text-[#444455] hover:text-[#888899] transition-colors">
+                <FiTerminal size={11} /> Show Terminal
+              </button>
             </div>
+          )}
+
+          {/* Terminal */}
+          {showTerminal && (
+            <div className={`${isMobile ? 'h-[30vh]' : 'h-48 md:h-64'} bg-[#0A0A0E] border-t border-white/10 flex flex-col flex-shrink-0 shadow-[0_-8px_30px_rgb(0,0,0,0.5)]`}>
+              <div className="h-9 border-b border-white/10 flex items-center justify-between px-4 flex-shrink-0 bg-black/40">
+                <div className="flex items-center gap-2.5">
+                  <FiTerminal size={11} className="text-[#2DD4BF]" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#444455]">Terminal Output</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  {execTime && <span className="text-[9px] font-bold text-[#444455] bg-white dark:bg-gray-800/5 px-2 py-0.5 rounded-full">⏱ {execTime}</span>}
+                  <button onClick={() => setShowTerminal(false)} className="text-[#444455] hover:text-[#888899] transition-colors p-1">
+                    <FiX size={12} />
+                  </button>
+                </div>
+              </div>
             <div className={`flex-1 p-4 font-mono text-[11px] md:text-xs overflow-y-auto whitespace-pre-wrap leading-relaxed ${(output.includes('[ERROR]') || output.includes('failed')) ? 'text-[#EF4444]' : 'text-[#A7E3C4]'}`}>
               {(isRunning || isSubmitting) ? (
                 <div className="flex flex-col gap-2">
@@ -1176,6 +1405,7 @@ Rules:
               </AnimatePresence>
             </div>
           </div>
+          )}
         </main>
 
         {/* ─ MOBILE BOTTOM BAR ─ */}
@@ -1297,6 +1527,40 @@ Rules:
         </AnimatePresence>
 
       </div>
+
+      {/* ── Overlays ── */}
+      <PasteToast message={pasteToastMsg} visible={showPasteToast} isSuspicious={pasteRisk === 'high'} />
+      
+      <LabCompletePopup
+        visible={showAchievement}
+        labTitle={LAB?.title || ''}
+        xpEarned={achievementData.xp}
+        passed={submitBadge?.pass || 0}
+        total={submitBadge?.total || 0}
+        timeSpent={formatTimeVerbose(elapsedSeconds)}
+        onClose={() => setShowAchievement(false)}
+      />
+
+      <CommandPalette
+        visible={showCommandPalette}
+        onClose={() => setShowCommandPalette(false)}
+        commands={commands}
+      />
+
+      <CodeReview
+        visible={showCodeReview}
+        onClose={() => setShowCodeReview(false)}
+        currentCode={activeFile?.content || ''}
+        referenceCode={referenceCode}
+        labTitle={LAB?.title || ''}
+      />
+
+      <CodeTimeline
+        visible={showTimeline}
+        onClose={() => setShowTimeline(false)}
+        snapshots={codeSnapshots}
+        onRestore={(content) => { if (activeFile) updateFile(activeFile.id, content); }}
+      />
     </div>
   );
 }
