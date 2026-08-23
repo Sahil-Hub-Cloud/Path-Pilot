@@ -305,7 +305,7 @@ app.listen(port, () => {
       zip.file(name, content);
     }
     const blob = await zip.generateAsync({ type: 'blob' });
-    saveAs(blob, \`\${labId}-project.zip\`);
+    saveAs(blob, `${labId}-project.zip`);
   };
 
   const runInstall = async () => {
@@ -376,7 +376,7 @@ app.listen(port, () => {
               <button
                 key={filename}
                 onClick={() => setActiveFile(filename)}
-                className={\`flex items-center gap-2 w-full px-2 py-1.5 text-left text-sm rounded-md transition-colors \${activeFile === filename ? 'bg-[#7C3AED]/20 text-[#A78BFA]' : 'text-gray-400 hover:bg-white/5'}\`}
+                className={`flex items-center gap-2 w-full px-2 py-1.5 text-left text-sm rounded-md transition-colors ${activeFile === filename ? 'bg-[#7C3AED]/20 text-[#A78BFA]' : 'text-gray-400 hover:bg-white/5'}`}
               >
                 <FiFile size={14} />
                 {filename}

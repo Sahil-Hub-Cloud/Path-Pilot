@@ -3,18 +3,40 @@ import type { NextRequest } from 'next/server';
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis/cloudflare';
 
-const rateLimiters = {
-  auth: new Ratelimit({
-    redis: Redis.fromEnv(),
-    limiter: Ratelimit.slidingWindow(5, '1m'),
-    prefix: 'rl_auth',
-  }),
-  general: new Ratelimit({
-    redis: Redis.fromEnv(),
-    limiter: Ratelimit.slidingWindow(100, '1m'),
-    prefix: 'rl_general',
-  }),
-};
+// Lazy-initialize Redis rate limiters only when env vars are available.
+// This prevents crashes when UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN are not set.
+let rateLimiters: { auth: Ratelimit; general: Ratelimit } | null = null;
+
+function getRateLimiters() {
+  if (rateLimiters) return rateLimiters;
+
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+
+  if (!url || !token) {
+    return null;
+  }
+
+  try {
+    const redis = new Redis({ url, token });
+    rateLimiters = {
+      auth: new Ratelimit({
+        redis,
+        limiter: Ratelimit.slidingWindow(5, '1m'),
+        prefix: 'rl_auth',
+      }),
+      general: new Ratelimit({
+        redis,
+        limiter: Ratelimit.slidingWindow(100, '1m'),
+        prefix: 'rl_general',
+      }),
+    };
+    return rateLimiters;
+  } catch (e) {
+    console.warn('[Security] Failed to initialize Upstash Redis rate limiter:', e);
+    return null;
+  }
+}
 
 export async function middleware(request: NextRequest) {
   // Handle OPTIONS preflight IMMEDIATELY
@@ -53,32 +75,35 @@ export async function middleware(request: NextRequest) {
     response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   }
 
-  // Rate limiting
-  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
-  const key = `${ip}:${path}`;
+  // Rate limiting (skip if Upstash Redis is not configured)
+  const limiters = getRateLimiters();
+  if (limiters) {
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+    const key = `${ip}:${path}`;
 
-  try {
-    if (path.startsWith('/api/auth/') || path === '/api/auth') {
-      const { success } = await rateLimiters.auth.limit(key);
-      if (!success) {
-        console.warn(`[Security] Rate limit breach (auth) by IP: ${ip} for path: ${path}`);
-        return new NextResponse(JSON.stringify({ error: 'Too many auth attempts' }), {
-          status: 429,
-          headers: { 'Content-Type': 'application/json', 'Retry-After': '60' },
-        });
+    try {
+      if (path.startsWith('/api/auth/') || path === '/api/auth') {
+        const { success } = await limiters.auth.limit(key);
+        if (!success) {
+          console.warn(`[Security] Rate limit breach (auth) by IP: ${ip} for path: ${path}`);
+          return new NextResponse(JSON.stringify({ error: 'Too many auth attempts' }), {
+            status: 429,
+            headers: { 'Content-Type': 'application/json', 'Retry-After': '60' },
+          });
+        }
+      } else if (path.startsWith('/api/')) {
+        const { success } = await limiters.general.limit(key);
+        if (!success) {
+          console.warn(`[Security] Rate limit breach (general) by IP: ${ip} for path: ${path}`);
+          return new NextResponse(JSON.stringify({ error: 'Rate limit exceeded' }), {
+            status: 429,
+            headers: { 'Content-Type': 'application/json', 'Retry-After': '60' },
+          });
+        }
       }
-    } else if (path.startsWith('/api/')) {
-      const { success } = await rateLimiters.general.limit(key);
-      if (!success) {
-        console.warn(`[Security] Rate limit breach (general) by IP: ${ip} for path: ${path}`);
-        return new NextResponse(JSON.stringify({ error: 'Rate limit exceeded' }), {
-          status: 429,
-          headers: { 'Content-Type': 'application/json', 'Retry-After': '60' },
-        });
-      }
+    } catch (err) {
+      console.error(`[Security] Rate limiter system error: ${(err as Error).message}`);
     }
-  } catch (err) {
-    console.error(`[Security] Rate limiter system error: ${(err as Error).message}`);
   }
 
   return response;

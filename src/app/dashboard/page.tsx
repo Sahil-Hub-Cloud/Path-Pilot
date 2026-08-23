@@ -13,11 +13,13 @@ import {
 import { useAuth } from '@/hooks/useAuth';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { db } from '@/lib/firebase';
-import { doc, getDoc, updateDoc, serverTimestamp, collection, getDocs } from 'firebase/firestore';
+import { doc, setDoc, updateDoc, serverTimestamp, collection, getDocs } from 'firebase/firestore';
 import { fetchResilient } from '@/lib/firestore-resilience';
 import { addNotification } from '@/lib/notifications';
 import SkillGraph from '@/components/dashboard/SkillGraph';
 import NotificationBell from '@/components/NotificationBell';
+import GamifiedProgress from '@/components/GamifiedProgress';
+import { BADGE_MAP, computeLevel, computeXP, evaluateBadges } from '@/lib/gamification';
 import { TRACK_DEFAULT_LAB } from '@/lib/data/labs';
 import { ROADMAPS, COURSE_SLUG_MAP } from '@/lib/data/roadmaps';
 import { getCourseIdFromLabel } from '@/lib/data/course-map';
@@ -39,6 +41,9 @@ interface UserProfile {
   recommendationReason?: string;
   collegeId?: string;
   collegeCode?: string;
+  badges?: string[];
+  xp?: number;
+  level?: string;
 }
 
 export default function DashboardPage() {
@@ -93,7 +98,7 @@ export default function DashboardPage() {
     }
   };
 
-  const syncStreak = async (uid: string, currentStreak: number, lastActive: string | undefined) => {
+  const syncStreak = async (uid: string, currentStreak: number, lastActive: string | undefined): Promise<number> => {
     const todayStr = getTodayIST();
     let newStreak = currentStreak;
 
@@ -154,6 +159,42 @@ export default function DashboardPage() {
     } catch (err) {
       console.warn('Dashboard: streak update failed:', err);
     }
+
+    return newStreak;
+  };
+
+  const persistGamification = async (uid: string, baseProfile: UserProfile, currentStreak: number) => {
+    if (!db) return;
+
+    try {
+      const stats = {
+        streakDays: currentStreak,
+        labsCompleted: baseProfile.labsCompleted ?? 0,
+        skillScore: baseProfile.skillScore ?? 0,
+        employabilityScore: baseProfile.employabilityScore ?? 0,
+      };
+      const earnedBadges = evaluateBadges(stats);
+      const previousBadges = Array.isArray(baseProfile.badges) ? baseProfile.badges : [];
+      const freshBadges = earnedBadges.filter(id => !previousBadges.includes(id));
+      const xp = computeXP(stats);
+
+      await setDoc(doc(db, 'users', uid), {
+        badges: earnedBadges,
+        xp,
+        level: computeLevel(xp),
+      }, { merge: true });
+
+      await Promise.all(freshBadges.map(async badgeId => {
+        const badge = BADGE_MAP[badgeId];
+        if (badge) {
+          await addNotification(uid, 'streak', `Badge unlocked: ${badge.label}`, badge.description);
+        }
+      }));
+
+      setProfile(prev => prev ? { ...prev, badges: earnedBadges, xp, level: computeLevel(xp) } : prev);
+    } catch (err) {
+      console.warn('Dashboard: gamification sync failed:', err);
+    }
   };
 
   // Load real user profile from Firestore (with localStorage fallback for offline)
@@ -191,11 +232,13 @@ export default function DashboardPage() {
             // streakDays / lastActiveDate handle migration
             const existingStreak = (data as any).streakDays ?? (data as any).streak ?? 0;
             const lastActiveDate = (data as any).lastActiveDate ?? (data as any).lastActive;
-            await syncStreak(user.uid, existingStreak, lastActiveDate);
+            const syncedStreak = await syncStreak(user.uid, existingStreak, lastActiveDate);
+            await persistGamification(user.uid, data, syncedStreak);
           } else {
             // Doc doesn't exist yet — first load after sign-up
             setStreakDays(1);
             await syncStreak(user.uid, 0, undefined);
+            await persistGamification(user.uid, {}, 1);
           }
         }
       } catch (err) {
@@ -375,6 +418,16 @@ export default function DashboardPage() {
           </div>
           {user && <NotificationBell uid={user.uid} />}
         </div>
+
+        <GamifiedProgress
+          isLoading={profileLoading}
+          streak={streak}
+          labsCompleted={labsCompleted}
+          skillScore={skillScore}
+          employabilityScore={employabilityScore}
+          badges={profile?.badges ?? []}
+          className="mb-8"
+        />
 
         {/* YOUR NEXT MISSION */}
         {profile?.nextRecommendedTopic && (

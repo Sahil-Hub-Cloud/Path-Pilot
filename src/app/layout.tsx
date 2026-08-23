@@ -6,6 +6,7 @@ import { AuthProvider } from "@/components/AuthProvider";
 import { PersonaProvider } from "@/components/PersonaProvider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { RoleRouteGuard } from "@/components/RoleRouteGuard";
+import Navbar from "@/components/Navbar";
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -54,12 +55,13 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="font-sans antialiased">
+      <body className="font-sans antialiased bg-[var(--bg-cream)] text-[var(--text-dark)]">
         <ErrorBoundary>
           <PersonaProvider>
             <AuthProvider>
               <RoleRouteGuard>
                 <CSPostHogProvider>
+                  <Navbar />
                   {children}
                 </CSPostHogProvider>
               </RoleRouteGuard>
