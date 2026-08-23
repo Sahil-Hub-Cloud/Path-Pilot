@@ -9,7 +9,6 @@ import { useAuth } from '@/hooks/useAuth';
 const publicLinks = [
   { href: '/leaderboard', label: 'Leaderboard' },
   { href: '/labs', label: 'Labs' },
-  { href: '/hackathon', label: 'Hackathons' },
 ];
 
 export default function Navbar() {
