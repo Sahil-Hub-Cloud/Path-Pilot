@@ -429,48 +429,6 @@ export default function LabPage() {
     return () => clearTimeout(timer);
   }, [output, user?.uid, labId]);
 
-  // ── Keyboard Shortcuts ──────────────────────────────────────────────────
-  const handleSave = useCallback(() => {
-    const saved = files.map(f => ({ ...f, saved: true }));
-    setFiles(saved);
-    localStorage.setItem(labStorageKey, JSON.stringify(saved));
-    if (user?.uid && labId) saveLabCode(user.uid, labId, saved);
-  }, [files, labStorageKey, user?.uid, labId]);
-
-  const handleNewFile = useCallback(() => setShowNF(true), []);
-  const handleCloseTab = useCallback(() => {
-    if (files.length > 1 && activeFileId) {
-      removeFile(activeFileId);
-    }
-  }, [files.length, activeFileId]);
-
-  const shortcuts = [
-    { key: 's', ctrl: true, description: 'Save', handler: handleSave },
-    { key: 'Enter', ctrl: true, description: 'Run', handler: handleRun },
-    { key: 'Enter', ctrl: true, shift: true, description: 'Submit', handler: handleSubmit },
-    { key: 'n', ctrl: true, description: 'New file', handler: handleNewFile },
-    { key: 'w', ctrl: true, description: 'Close tab', handler: handleCloseTab },
-    { key: '`', ctrl: true, description: 'Toggle terminal', handler: () => setShowTerminal(p => !p) },
-    { key: 'b', ctrl: true, description: 'Toggle sidebar', handler: () => setShowSidebar(p => !p) },
-    { key: '\\', ctrl: true, description: 'Split', handler: () => setShowSplit(p => !p) },
-    { key: 'F1', description: 'Command palette', handler: () => setShowCommandPalette(true) },
-  ];
-  useKeyboardShortcuts(shortcuts);
-
-  // ── Command palette commands ────────────────────────────────────────────
-  const commands = buildCommands({
-    onRun: handleRun,
-    onSubmit: handleSubmit,
-    onSave: handleSave,
-    onNewFile: handleNewFile,
-    onCloseTab: handleCloseTab,
-    onToggleTerminal: () => setShowTerminal(p => !p),
-    onToggleSidebar: () => setShowSidebar(p => !p),
-    onToggleSplit: () => setShowSplit(p => !p),
-    onFullscreen: () => { setIsFullscreen(p => !p); },
-    onExport: handleExportZip,
-  });
-
   // ── Helpers ──────────────────────────────────────────────────────────────
   const activeFile = files.find(f => f.id === activeFileId) || files[0];
 
@@ -822,6 +780,48 @@ export default function LabPage() {
       }
     }
   };
+
+  // ── Keyboard Shortcuts (must be after handleRun/handleSubmit) ────────────
+  const handleSave = useCallback(() => {
+    const saved = files.map(f => ({ ...f, saved: true }));
+    setFiles(saved);
+    localStorage.setItem(labStorageKey, JSON.stringify(saved));
+    if (user?.uid && labId) saveLabCode(user.uid, labId, saved);
+  }, [files, labStorageKey, user?.uid, labId]);
+
+  const handleNewFile = useCallback(() => setShowNF(true), []);
+  const handleCloseTab = useCallback(() => {
+    if (files.length > 1 && activeFileId) {
+      removeFile(activeFileId);
+    }
+  }, [files.length, activeFileId]);
+
+  const shortcuts = [
+    { key: 's', ctrl: true, description: 'Save', handler: handleSave },
+    { key: 'Enter', ctrl: true, description: 'Run', handler: handleRun },
+    { key: 'Enter', ctrl: true, shift: true, description: 'Submit', handler: handleSubmit },
+    { key: 'n', ctrl: true, description: 'New file', handler: handleNewFile },
+    { key: 'w', ctrl: true, description: 'Close tab', handler: handleCloseTab },
+    { key: '`', ctrl: true, description: 'Toggle terminal', handler: () => setShowTerminal(p => !p) },
+    { key: 'b', ctrl: true, description: 'Toggle sidebar', handler: () => setShowSidebar(p => !p) },
+    { key: '\\', ctrl: true, description: 'Split', handler: () => setShowSplit(p => !p) },
+    { key: 'F1', description: 'Command palette', handler: () => setShowCommandPalette(true) },
+  ];
+  useKeyboardShortcuts(shortcuts);
+
+  // ── Command palette commands ────────────────────────────────────────────
+  const commands = buildCommands({
+    onRun: handleRun,
+    onSubmit: handleSubmit,
+    onSave: handleSave,
+    onNewFile: handleNewFile,
+    onCloseTab: handleCloseTab,
+    onToggleTerminal: () => setShowTerminal(p => !p),
+    onToggleSidebar: () => setShowSidebar(p => !p),
+    onToggleSplit: () => setShowSplit(p => !p),
+    onFullscreen: () => { setIsFullscreen(p => !p); },
+    onExport: handleExportZip,
+  });
 
   // ── Show Hint — deduct 5 XP from Firestore (once per lab session) ──────────
   const handleShowHint = async () => {
