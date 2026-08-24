@@ -102,41 +102,49 @@ Respond as the ${personalityMode} persona. Keep responses concise (under 300 wor
             ];
         }
 
-        const GROQ_MODELS = ['llama-3.3-70b-versatile', 'llama-3.1-70b-versatile', 'llama-3.1-8b-instant'];
+        const GROQ_MODELS = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'openai/gpt-oss-20b'];
         let lastError = '';
         for (const model of GROQ_MODELS) {
-            const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${GROQ_API_KEY}`
-                },
-                body: JSON.stringify({
-                    model,
-                    messages: groqMessages,
-                    temperature: 0.7,
-                    max_tokens: 1000,
-                })
-            });
+            try {
+                const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${GROQ_API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model,
+                        messages: groqMessages,
+                        temperature: 0.7,
+                        max_tokens: 1000,
+                    })
+                });
 
-            if (response.ok) {
-                const data = await response.json();
-                const text = data.choices?.[0]?.message?.content || "";
-                return NextResponse.json({ text });
-            }
+                if (response.ok) {
+                    const data = await response.json();
+                    const text = data.choices?.[0]?.message?.content || "";
+                    console.log(`[Groq] Success with model: ${model}`);
+                    return NextResponse.json({ text });
+                }
 
-            const err = await response.json().catch(() => ({ error: { message: 'Unknown error' } }));
-            lastError = err.error?.message || `HTTP ${response.status}`;
+                const err = await response.json().catch(() => ({ error: { message: 'Unknown error' } }));
+                lastError = err.error?.message || `HTTP ${response.status}`;
+                console.warn(`[Groq] Model ${model} failed (${response.status}): ${lastError}`);
 
-            if (response.status === 429) {
-                return NextResponse.json({ message: "AI is busy. Please try again in a moment.", error: lastError }, { status: 429 });
-            }
+                if (response.status === 429) {
+                    return NextResponse.json({ message: "AI is busy. Please try again in a moment.", error: lastError }, { status: 429 });
+                }
 
-            if (response.status !== 404) {
-                break;
+                if (response.status === 401) {
+                    break;
+                }
+            } catch (fetchErr: any) {
+                lastError = fetchErr.message || 'Network error';
+                console.warn(`[Groq] Model ${model} fetch error: ${lastError}`);
             }
         }
 
+        console.error(`[Groq] All models failed. Last error: ${lastError}`);
         throw new Error(lastError || 'All Groq models unavailable');
     } catch (error: any) {
         console.error('Groq API Error:', error);
