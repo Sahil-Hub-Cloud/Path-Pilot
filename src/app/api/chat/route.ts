@@ -102,7 +102,7 @@ Respond as the ${personalityMode} persona. Keep responses concise (under 300 wor
             ];
         }
 
-        const GROQ_MODELS = ['llama-3.3-70b-versatile', 'llama3-70b-8192', 'llama3-8b-8192'];
+        const GROQ_MODELS = ['llama-3.3-70b-versatile', 'llama-3.1-70b-versatile', 'llama-3.1-8b-instant'];
         let lastError = '';
         for (const model of GROQ_MODELS) {
             const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {

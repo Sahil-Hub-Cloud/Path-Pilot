@@ -269,7 +269,11 @@ export default function LearningPage() {
         }),
       });
       const data = await res.json();
-      setMessages((p) => [...p, { role: 'ai', content: data.text || 'Try rephrasing your question!' }]);
+      if (!res.ok) {
+        setMessages((p) => [...p, { role: 'ai', content: data.message || data.error || 'AI is temporarily unavailable. Please try again.' }]);
+      } else {
+        setMessages((p) => [...p, { role: 'ai', content: data.text || 'Try rephrasing your question!' }]);
+      }
     } catch {
       setMessages((p) => [...p, { role: 'ai', content: 'Could not reach the AI. Check your connection.' }]);
     } finally {

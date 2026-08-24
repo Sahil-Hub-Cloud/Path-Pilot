@@ -78,11 +78,16 @@ function ChatContent() {
         timestamp: new Date()
       }]);
     } catch (err: any) {
+      const errorMsg = err?.message?.includes('CONFIG_ERROR')
+        ? "AI Tutor isn't configured yet. Ask the admin to add the GROQ_API_KEY."
+        : err?.message?.includes('decommissioned')
+          ? "AI model is being updated. Please try again in a moment."
+          : err?.message?.includes('rate')
+            ? "AI is busy right now. Please wait a moment and try again."
+            : `Something went wrong: ${err?.message || 'unknown error'}. Check your connection and try again.`;
       setMessages(prev => [...prev, {
         id: 'err-' + Date.now(), sender: 'ai',
-        text: err?.message?.includes('CONFIG_ERROR')
-          ? "⚠️ AI Tutor isn't configured yet. Ask the admin to add the GROQ_API_KEY."
-          : "Oops! Something went wrong. Check your connection and try again. 😅",
+        text: errorMsg,
         timestamp: new Date()
       }]);
     } finally {

@@ -374,6 +374,9 @@ export default function LabPage() {
 
   useEffect(() => { if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight; }, [aiMessages]);
 
+  // ── Derived (must be before any useEffect that references activeFile) ──────
+  const activeFile = files.find(f => f.id === activeFileId) || files[0];
+
   // ── Code snapshots for timeline ──────────────────────────────────────────
   useEffect(() => {
     if (!activeFile) return;
@@ -429,7 +432,6 @@ export default function LabPage() {
   }, [output, user?.uid, labId]);
 
   // ── Helpers ──────────────────────────────────────────────────────────────
-  const activeFile = files.find(f => f.id === activeFileId) || files[0];
 
   const updateFile = (id: string, content: string) => {
     setFiles(prev => prev.map(f => {
