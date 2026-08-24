@@ -1,14 +1,14 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import Editor from '@monaco-editor/react';
 import {
   FiArrowLeft, FiPlay, FiZap, FiSearch, FiXCircle, FiCheckCircle,
-  FiActivity, FiHelpCircle, FiPlus, FiX, FiSave, FiFile,
+  FiActivity, FiHelpCircle, FiPlus, FiX, FiSave, FiFile, FiFilePlus,
   FiCpu, FiSend, FiAlertTriangle, FiChevronDown, FiCode, FiTerminal, FiClock,
-  FiGitBranch, FiMaximize2, FiMinimize2, FiSidebar, FiDownload, FiClipboard
+  FiGitBranch, FiMaximize, FiMinimize2, FiSidebar, FiDownload, FiClipboard
 } from 'react-icons/fi';
 import { executeCode } from '@/lib/piston';
 import { executePythonClient, executePythonTestSuite } from '@/lib/pyodide-runner';
@@ -25,10 +25,9 @@ import { LABS } from '@/lib/data/labs';
 import { createPasteTracker, trackPaste, getPasteStats, shouldBlockSubmission, type PasteTracker } from '@/lib/paste-tracker';
 import { saveLabCode, loadLabCode, saveTerminalHistory, loadTerminalHistory, savePasteEvents, loadPasteEvents } from '@/lib/offline-storage';
 import { getFileIcon, getLanguageFromExtension } from '@/lib/file-icons';
-import { useKeyboardShortcuts, DEFAULT_SHORTCUTS_INFO } from '@/hooks/useKeyboardShortcuts';
 import PasteIndicator, { PasteToast } from '@/components/ide/PasteIndicator';
 import AchievementPopup, { LabCompletePopup } from '@/components/ide/AchievementPopup';
-import CommandPalette, { buildCommands } from '@/components/ide/CommandPalette';
+import CommandPalette from '@/components/ide/CommandPalette';
 import CodeReview from '@/components/ide/CodeReview';
 import CodeTimeline from '@/components/ide/CodeTimeline';
 import OfflineBanner from '@/components/ide/OfflineBanner';
@@ -781,63 +780,80 @@ export default function LabPage() {
     }
   };
 
-  // ── Keyboard Shortcuts (must be after handleRun/handleSubmit) ────────────
-  const handleExportZip = useCallback(async () => {
-    const JSZip = (await import('jszip')).default;
-    const { saveAs } = await import('file-saver');
-    const zip = new JSZip();
-    files.forEach(f => zip.file(f.name, f.content));
-    const blob = await zip.generateAsync({ type: 'blob' });
-    saveAs(blob, `${labId}-code.zip`);
-  }, [files, labId]);
+  // ── Keyboard Shortcuts (inline useEffect — avoids TDZ from useCallback chain) ──
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
+      const ctrl = e.ctrlKey || e.metaKey;
 
-  const handleSave = useCallback(() => {
-    const saved = files.map(f => ({ ...f, saved: true }));
-    setFiles(saved);
-    localStorage.setItem(labStorageKey, JSON.stringify(saved));
-    if (user?.uid && labId) saveLabCode(user.uid, labId, saved);
-  }, [files, labStorageKey, user?.uid, labId]);
-
-  const handleNewFile = useCallback(() => setShowNF(true), []);
-  const handleCloseTab = useCallback(() => {
-    if (files.length > 1 && activeFileId) {
-      removeFile(activeFileId);
-    }
-  }, [files.length, activeFileId]);
-
-  const shortcuts = [
-    { key: 's', ctrl: true, description: 'Save', handler: handleSave },
-    { key: 'Enter', ctrl: true, description: 'Run', handler: handleRun },
-    { key: 'Enter', ctrl: true, shift: true, description: 'Submit', handler: handleSubmit },
-    { key: 'n', ctrl: true, description: 'New file', handler: handleNewFile },
-    { key: 'w', ctrl: true, description: 'Close tab', handler: handleCloseTab },
-    { key: '`', ctrl: true, description: 'Toggle terminal', handler: () => setShowTerminal(p => !p) },
-    { key: 'b', ctrl: true, description: 'Toggle sidebar', handler: () => setShowSidebar(p => !p) },
-    { key: '\\', ctrl: true, description: 'Split', handler: () => setShowSplit(p => !p) },
-    { key: 'F1', description: 'Command palette', handler: () => setShowCommandPalette(true) },
-  ];
-  useKeyboardShortcuts(shortcuts);
+      if (ctrl && e.key === 's') {
+        e.preventDefault();
+        const saved = files.map(f => ({ ...f, saved: true }));
+        setFiles(saved);
+        localStorage.setItem(labStorageKey, JSON.stringify(saved));
+        if (user?.uid && labId) saveLabCode(user.uid, labId, saved);
+      } else if (ctrl && !e.shiftKey && e.key === 'Enter') {
+        e.preventDefault();
+        if (!isRunning && !isSubmitting && !isOffline) handleRun();
+      } else if (ctrl && e.shiftKey && e.key === 'Enter') {
+        e.preventDefault();
+        if (!isRunning && !isSubmitting && !isOffline) handleSubmit();
+      } else if (ctrl && e.key === 'n') {
+        e.preventDefault();
+        setShowNF(true);
+      } else if (ctrl && e.key === 'w') {
+        e.preventDefault();
+        if (files.length > 1 && activeFileId) removeFile(activeFileId);
+      } else if (ctrl && e.key === '`') {
+        e.preventDefault();
+        setShowTerminal(p => !p);
+      } else if (ctrl && e.key === 'b') {
+        e.preventDefault();
+        setShowSidebar(p => !p);
+      } else if (ctrl && e.key === '\\') {
+        e.preventDefault();
+        setShowSplit(p => !p);
+      } else if (e.key === 'F1') {
+        e.preventDefault();
+        setShowCommandPalette(true);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown, true);
+    return () => window.removeEventListener('keydown', handleKeyDown, true);
+  }, [files, labStorageKey, user?.uid, labId, isRunning, isSubmitting, isOffline, activeFileId, handleRun, handleSubmit]);
 
   // ── Command palette commands ────────────────────────────────────────────
-  const commands = buildCommands({
-    onRun: handleRun,
-    onSubmit: handleSubmit,
-    onSave: handleSave,
-    onNewFile: handleNewFile,
-    onCloseTab: handleCloseTab,
-    onToggleTerminal: () => setShowTerminal(p => !p),
-    onToggleSidebar: () => setShowSidebar(p => !p),
-    onToggleSplit: () => setShowSplit(p => !p),
-    onFullscreen: () => { setIsFullscreen(p => !p); },
-    onExport: handleExportZip,
-  });
+  const commands = React.useMemo(() => [
+    { id: 'run', label: 'Run Code', shortcut: 'Ctrl+Enter', icon: <FiPlay size={14} />, action: handleRun, category: 'run' as const },
+    { id: 'submit', label: 'Submit Solution', shortcut: 'Ctrl+Shift+Enter', icon: <FiZap size={14} />, action: handleSubmit, category: 'run' as const },
+    { id: 'save', label: 'Save All Files', shortcut: 'Ctrl+S', icon: <FiSave size={14} />, action: () => {
+      const saved = files.map(f => ({ ...f, saved: true }));
+      setFiles(saved);
+      localStorage.setItem(labStorageKey, JSON.stringify(saved));
+      if (user?.uid && labId) saveLabCode(user.uid, labId, saved);
+    }, category: 'editor' as const },
+    { id: 'new-file', label: 'New File', shortcut: 'Ctrl+N', icon: <FiFilePlus size={14} />, action: () => setShowNF(true), category: 'file' as const },
+    { id: 'close-tab', label: 'Close Tab', shortcut: 'Ctrl+W', icon: <FiX size={14} />, action: () => { if (files.length > 1 && activeFileId) removeFile(activeFileId); }, category: 'file' as const },
+    { id: 'toggle-terminal', label: 'Toggle Terminal', shortcut: 'Ctrl+`', icon: <FiTerminal size={14} />, action: () => setShowTerminal(p => !p), category: 'terminal' as const },
+    { id: 'toggle-sidebar', label: 'Toggle Sidebar', shortcut: 'Ctrl+B', icon: <FiSidebar size={14} />, action: () => setShowSidebar(p => !p), category: 'view' as const },
+    { id: 'toggle-split', label: 'Split Editor', shortcut: 'Ctrl+\\', icon: <FiCode size={14} />, action: () => setShowSplit(p => !p), category: 'view' as const },
+    { id: 'fullscreen', label: 'Fullscreen Editor', shortcut: 'F11', icon: <FiMaximize size={14} />, action: () => setIsFullscreen(p => !p), category: 'view' as const },
+    { id: 'export', label: 'Export as ZIP', icon: <FiDownload size={14} />, action: async () => {
+      const JSZip = (await import('jszip')).default;
+      const { saveAs } = await import('file-saver');
+      const zip = new JSZip();
+      files.forEach(f => zip.file(f.name, f.content));
+      const blob = await zip.generateAsync({ type: 'blob' });
+      saveAs(blob, `${labId}-code.zip`);
+    }, category: 'file' as const },
+  ], [handleRun, handleSubmit, files, labStorageKey, user?.uid, labId, activeFileId]);
 
   // ── Show Hint — deduct 5 XP from Firestore (once per lab session) ──────────
   const handleShowHint = async () => {
-    // Toggle hide/show without charging again if already used
     if (showHint) { setHint(false); return; }
     setHint(true);
-    if (hintUsed || !user?.uid || !db) return;  // guard: already charged or no auth
+    if (hintUsed || !user?.uid || !db) return;
 
     setHintUsed(true);
     try {
@@ -845,18 +861,15 @@ export default function LabPage() {
       const snap    = await fetchResilient(userRef);
       if (snap && snap.exists()) {
         const currentXP = typeof snap.data().xp === 'number' ? snap.data().xp : 0;
-        const newXP     = Math.max(0, currentXP - 5);  // never go below 0
+        const newXP     = Math.max(0, currentXP - 5);
         await updateDoc(userRef, { xp: newXP });
       } else {
-        // Doc doesn't exist yet — nothing to deduct, but create with 0 xp
         await setDoc(userRef, { xp: 0 }, { merge: true });
       }
-      // Show confirmation toast
       setHintToast(true);
       setTimeout(() => setHintToast(false), 2200);
     } catch (err) {
       console.warn('Lab: hint XP deduction failed (offline?):', err);
-      // Still show the hint even if write failed — don't block learning
     }
   };
 
@@ -886,28 +899,25 @@ export default function LabPage() {
     const q = aiInput.trim();
     setAIIn('');
 
-    // Check if student is asking AI to just write solution (lazy shortcut)
     const lazyPhrases = ['write my code', 'write the solution', 'give me the answer', 'solve it for me', 'just write it', 'do it for me'];
     const isLazy = lazyPhrases.some(p => q.toLowerCase().includes(p));
 
     if (isLazy) {
       setAIMsg(p => [...p,
         { role: 'user', content: q },
-        { role: 'ai', content: "🚫 I can't write the solution for you — that defeats the purpose of learning! But I can guide you. Tell me: what's your current approach? What have you tried so far?", isBlocked: true }
+        { role: 'ai', content: "I can't write the solution for you — that defeats the purpose of learning! But I can guide you. Tell me: what's your current approach? What have you tried so far?", isBlocked: true }
       ]);
       return;
     }
 
-    // If student hasn't run code yet, nudge them first (but don't hard-block)
     if (attemptsBeforeAI === 0) {
       setAIMsg(p => [...p,
         { role: 'user', content: q },
-        { role: 'ai', content: "Before I guide you — have you tried writing anything yet? Even a rough attempt helps! Write something in the editor, hit ▶ Run, and then come back and tell me what happened. I'll be much more helpful once you've made a first attempt.", isBlocked: true }
+        { role: 'ai', content: "Before I guide you — have you tried writing anything yet? Even a rough attempt helps! Write something in the editor, hit Run, and then come back and tell me what happened. I'll be much more helpful once you've made a first attempt.", isBlocked: true }
       ]);
       return;
     }
 
-    // Real AI guidance
     setAIMsg(p => [...p, { role: 'user', content: q }]);
     setAILoad(true);
     try {
@@ -1115,7 +1125,7 @@ Rules:
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg cursor-pointer text-[10px] font-bold bg-white dark:bg-gray-800/5 border border-white/10 dark:border-gray-700 text-[#888899] hover:bg-white dark:bg-gray-800/10 transition-all"
               title="Command Palette (F1)"
             >
-              <FiMaximize2 size={11} />
+              <FiMaximize size={11} />
             </button>
           </div>
           

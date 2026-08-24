@@ -102,31 +102,48 @@ Respond as the ${personalityMode} persona. Keep responses concise (under 300 wor
             ];
         }
 
-        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${GROQ_API_KEY}`
-            },
-            body: JSON.stringify({
-                model: 'llama-3.3-70b-versatile',
-                messages: groqMessages,
-                temperature: 0.7,
-                max_tokens: 1000,
-            })
-        });
+        const GROQ_MODELS = ['llama-3.3-70b-versatile', 'llama3-70b-8192', 'llama3-8b-8192'];
+        let lastError = '';
+        for (const model of GROQ_MODELS) {
+            const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${GROQ_API_KEY}`
+                },
+                body: JSON.stringify({
+                    model,
+                    messages: groqMessages,
+                    temperature: 0.7,
+                    max_tokens: 1000,
+                })
+            });
 
-        if (!response.ok) {
-            const err = await response.json();
-            throw new Error(err.error?.message || "Groq API Error");
+            if (response.ok) {
+                const data = await response.json();
+                const text = data.choices?.[0]?.message?.content || "";
+                return NextResponse.json({ text });
+            }
+
+            const err = await response.json().catch(() => ({ error: { message: 'Unknown error' } }));
+            lastError = err.error?.message || `HTTP ${response.status}`;
+
+            if (response.status === 429) {
+                return NextResponse.json({ message: "AI is busy. Please try again in a moment.", error: lastError }, { status: 429 });
+            }
+
+            if (response.status !== 404) {
+                break;
+            }
         }
 
-        const data = await response.json();
-        const text = data.choices?.[0]?.message?.content || "";
-
-        return NextResponse.json({ text });
+        throw new Error(lastError || 'All Groq models unavailable');
     } catch (error: any) {
         console.error('Groq API Error:', error);
-        return NextResponse.json({ message: "Neural Link Interference.", error: error.message }, { status: 500 });
+        const msg = error.message?.includes('401') ? 'AI authentication failed. Check API key.'
+            : error.message?.includes('429') ? 'AI is rate-limited. Try again shortly.'
+            : error.message?.includes('ECONNREFUSED') || error.message?.includes('fetch') ? 'Cannot reach AI service. Network issue.'
+            : `AI temporarily unavailable: ${error.message || 'unknown error'}`;
+        return NextResponse.json({ message: msg, error: error.message }, { status: 500 });
     }
 }
