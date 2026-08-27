@@ -31,15 +31,22 @@ export async function executeCode(language: string, source: string, idToken?: st
     const stdout = result.stdout || '';
     const stderr = result.stderr || result.compile_output || '';
     const output = [stdout, stderr].filter(Boolean).join('\n');
-    
+
+    // Judge0 status 3 = Accepted. Also treat as success if exit_code is 0 or stdout exists with no stderr.
+    const statusId = typeof result.status === 'object' ? result.status?.id : null;
+    const statusDesc = typeof result.status === 'object' ? result.status?.description : String(result.status || '');
+    const isSuccess = statusId === 3
+      || result.exit_code === 0
+      || (stdout.length > 0 && !stderr);
+
     return {
       language,
       version: 'judge0',
       run: {
         stdout,
         stderr,
-        code: result.status?.id === 3 ? 0 : 1,
-        signal: result.status?.description || 'Unknown',
+        code: isSuccess ? 0 : 1,
+        signal: statusDesc || 'Unknown',
         output
       }
     };
@@ -72,14 +79,19 @@ export async function executeTestSuite(language: string, source: string, testCas
       const stdout = result.stdout || '';
       const stderr = result.stderr || result.compile_output || '';
       const output = [stdout, stderr].filter(Boolean).join('\n');
+      const statusId = typeof result.status === 'object' ? result.status?.id : null;
+      const statusDesc = typeof result.status === 'object' ? result.status?.description : String(result.status || '');
+      const isSuccess = statusId === 3
+        || result.exit_code === 0
+        || (stdout.length > 0 && !stderr);
       return {
         language,
         version: 'judge0',
         run: {
           stdout,
           stderr,
-          code: result.status?.id === 3 ? 0 : 1,
-          signal: result.status?.description || 'Unknown',
+          code: isSuccess ? 0 : 1,
+          signal: statusDesc || 'Unknown',
           output
         }
       };

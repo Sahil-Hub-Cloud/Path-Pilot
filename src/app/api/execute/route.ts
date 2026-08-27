@@ -151,7 +151,7 @@ export async function POST(request: NextRequest) {
       time: result.time,
       memory: result.memory,
       exit_code: result.exit_code,
-      status: result.status?.description || 'Unknown',
+      status: result.status || { id: 1, description: 'Unknown' },
     });
 
   } catch (error) {
