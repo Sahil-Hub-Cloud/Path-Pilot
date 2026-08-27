@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     try {
         const database = await getDb();
         const { GoogleGenerativeAI } = await import('@google/generative-ai');
-        // @ts-ignore
+        // @ts-expect-error pdf-parse has no default export types
         const pdf = (await import('pdf-parse')).default;
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
         if (!process.env.GEMINI_API_KEY) {

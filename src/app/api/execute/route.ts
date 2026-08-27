@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
     }
 
     // === HARDEN CODE ===
-    const hardenedCode = hardenCode(code, language);
+    const hardenedCode = hardenCode(code);
 
     // === BUILD JUDGE0 SUBMISSION WITH SANDBOX CONFIG ===
     const submissionPayload = {

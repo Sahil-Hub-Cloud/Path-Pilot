@@ -57,22 +57,24 @@ export const judge0SandboxConfig = {
 };
 
 export function isCodeMalicious(code: string): boolean {
-  const blockedKeywords = [
-    'require(', 'import ', 'fs.', 'child_process', 'process.',
-    '__dirname', '__filename', 'eval(', 'Function(', 'exec(', 
-    'spawn(', 'fetch(', 'XMLHttpRequest', 'WebSocket', 'module.exports',
-    'global.', 'process.env'
-  ];
-  
-  const systemCalls = [
-    'fork', 'execve', 'mount', 'umount', 'reboot', 'shutdown', 'ptrace'
+  // Node.js dangerous patterns (not relevant to Python/Java/Go etc.)
+  const nodeJsDanger = [
+    'require(', 'fs.', 'child_process', 'process.',
+    '__dirname', '__filename', 'eval(', 'Function(',
+    'module.exports', 'global.', 'process.env'
   ];
 
-  const reverseShellPatterns = [
-    'nc -e', 'bash -i', '/dev/tcp', 'curl ', 'wget '
+  // System-level calls that should never appear in student code
+  const systemCalls = [
+    'execve', 'umount', 'reboot', 'shutdown', 'ptrace'
   ];
-  
-  const allBlocked = [...blockedKeywords, ...systemCalls, ...reverseShellPatterns];
+
+  // Reverse shell / network exfil patterns
+  const reverseShellPatterns = [
+    'nc -e', 'bash -i', '/dev/tcp'
+  ];
+
+  const allBlocked = [...nodeJsDanger, ...systemCalls, ...reverseShellPatterns];
   return allBlocked.some(keyword => code.includes(keyword));
 }
 

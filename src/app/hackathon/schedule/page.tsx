@@ -241,10 +241,11 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({ time, title, description, i
   // Styles based on item type
   const borderTealGlow = "hover:border-teal-500 hover:shadow-[0_0_20px_rgba(13,140,122,0.25)]";
   
-  const typeStyles = {
+  const typeStyles: Record<string, string> = {
     masterclass: "border-l-4 border-l-teal-500",
     execution: "border-l-4 border-l-indigo-500",
     general: "border-l-4 border-l-cyan-500",
+    activity: "border-l-4 border-l-amber-500",
   };
 
   const activeBorder = type ? typeStyles[type] || "border-l-4 border-l-transparent" : "border-l-4 border-l-transparent";

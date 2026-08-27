@@ -35,7 +35,7 @@ const DEFAULT_PROFILE: UserProfile = {
     joinDate: new Date().toISOString().split('T')[0]
 };
 
-import { getFirebaseDb } from './firebase';
+import { db } from './firebase';
 import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
 
 export const useCyberneticProfile = (userId: string) => {
@@ -48,7 +48,6 @@ export const useCyberneticProfile = (userId: string) => {
     useEffect(() => {
         if (!userId || typeof window === 'undefined') return;
 
-        const db = getFirebaseDb();
         let unsubscribe: (() => void) | undefined;
 
         const loadProfile = async () => {
@@ -149,7 +148,6 @@ export const useCyberneticProfile = (userId: string) => {
         }
 
         // Try Firestore sync in background (non-blocking)
-        const db = getFirebaseDb();
         if (db && userId && !userId.startsWith('off_')) {
             try {
                 await setDoc(doc(db, 'profiles', userId), newProfile, { merge: true });

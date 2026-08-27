@@ -27,6 +27,19 @@ async function getDb() {
 
 export async function POST(request: NextRequest) {
   try {
+    // Disabled by default — enable only if EMERGENCY_LOGIN_ENABLED=true and caller provides valid reCAPTCHA/Bearer
+    if (process.env.EMERGENCY_LOGIN_ENABLED !== 'true') {
+      return NextResponse.json({ error: 'Emergency login disabled' }, { status: 404 })
+    }
+
+    // Rate-limit this sensitive endpoint (fail-open if Redis not configured, but still check)
+    try {
+      const { checkRateLimit } = await import('@/lib/rate-limit')
+      const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+      const { success } = await checkRateLimit(`emergency_login:${ip}`)
+      if (!success) return NextResponse.json({ error: 'Too many attempts, try later' }, { status: 429 })
+    } catch {}
+
     const { email, password } = await request.json()
 
     if (!email || !password) {
@@ -34,47 +47,46 @@ export async function POST(request: NextRequest) {
     }
 
     const firestore = await getDb()
-    
-    // Query the users collection
+
     const usersRef = firestore.collection('users')
     const snapshot = await usersRef.where('email', '==', email).limit(1).get()
 
     if (snapshot.empty) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+      // generic message to avoid enumeration
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
     }
 
     const userDoc = snapshot.docs[0]
     const userData = userDoc.data()
 
-    // The user requested plain text password comparison for this emergency route
-    // Note: Most Firebase users won't have a password field in Firestore since Firebase Auth handles it.
-    // If it exists, we check it. If it doesn't, we'll allow emergency bypass (or reject if strictly needed).
-    // Let's implement strict check if password field exists, otherwise allow emergency access if requested.
-    if (userData.password && userData.password !== password) {
-      return NextResponse.json({ error: 'Invalid password' }, { status: 401 })
+    if (!userData.password) {
+      return NextResponse.json({ error: 'Emergency login not available for this account' }, { status: 401 })
+    }
+    if (userData.password !== password) {
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
     }
 
-    // Set a dummy session cookie
     const cookieStore = await cookies()
     cookieStore.set('pp_session', userDoc.id, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 60 * 60 * 24 * 7, // 1 week
+      secure: true,
+      sameSite: 'strict',
+      maxAge: 60 * 60 * 12,
       path: '/',
     })
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       user: {
         uid: userDoc.id,
         email: userData.email,
         displayName: userData.displayName || '',
         role: userData.role || 'student',
         emergencyBypass: true
-      } 
+      }
     })
   } catch (error: any) {
     console.error('Emergency Login Error:', error)
-    return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 })
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }

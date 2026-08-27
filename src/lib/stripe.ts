@@ -1,9 +1,10 @@
-import { loadStripe, type Stripe } from '@stripe/stripe-js';
-import Stripe from 'stripe';
+import { loadStripe } from '@stripe/stripe-js';
+import type { Stripe as StripeClient } from '@stripe/stripe-js';
+import StripeServer from 'stripe';
 
-let serverClient: Stripe | null = null;
+let serverClient: StripeServer | null = null;
 
-function getServerClient(): Stripe {
+function getServerClient(): StripeServer {
   if (serverClient) return serverClient;
 
   const secretKey = process.env.STRIPE_SECRET_KEY;
@@ -11,7 +12,7 @@ function getServerClient(): Stripe {
     throw new Error('STRIPE_SECRET_KEY is not configured');
   }
 
-  serverClient = new Stripe(secretKey, {
+  serverClient = new StripeServer(secretKey, {
     apiVersion: '2025-12-15.clover' as any,
     typescript: true,
   });
@@ -19,7 +20,7 @@ function getServerClient(): Stripe {
   return serverClient;
 }
 
-export const stripe = new Proxy({} as Stripe, {
+export const stripe = new Proxy({} as StripeServer, {
   get(_target, prop) {
     const client = getServerClient();
     const value = Reflect.get(client as object, prop, client);
@@ -27,6 +28,6 @@ export const stripe = new Proxy({} as Stripe, {
   },
 });
 
-export const getStripe = (publishableKey: string) => {
+export const getStripe = (publishableKey: string): Promise<StripeClient | null> => {
   return loadStripe(publishableKey);
 };

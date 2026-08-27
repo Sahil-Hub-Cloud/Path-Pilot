@@ -32,9 +32,18 @@ async function getDb() {
  * Returns aggregated class-wide skill data for college administrators.
  * This is the B2B data visibility layer — what colleges pay for.
  */
-export async function GET() {
+export async function GET(req: Request) {
     try {
+        const { verifyRequestAuth, requireAuthResponse } = await import('@/lib/server-auth');
+        const auth = await verifyRequestAuth(req as any);
+        if (!auth) return requireAuthResponse();
+        // Verify role via Firestore user doc (hod/admin/faculty)
         const database = await getDb();
+        const userSnap = await database.collection('users').doc(auth.uid).get();
+        const role = userSnap.data()?.role;
+        if (!['admin', 'hod', 'faculty'].includes(role)) {
+            return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+        }
         const { SkillMetricsService } = await import('@/lib/services/skill-metrics');
         const report = await SkillMetricsService.getClassReport();
 

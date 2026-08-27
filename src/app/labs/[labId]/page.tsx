@@ -663,6 +663,14 @@ export default function LabPage() {
       return showError("You must run your code at least once to verify it works before submitting.");
     }
 
+    // Check paste tracker block rules
+    if (pasteTrackerRef.current) {
+      const blockCheck = shouldBlockSubmission(pasteTrackerRef.current);
+      if (blockCheck.blocked) {
+        return showError(blockCheck.reason);
+      }
+    }
+
     setIsSub(true);
     setSubmitBadge(null);
     setExecTime(null);
@@ -728,8 +736,26 @@ export default function LabPage() {
             }
           }
         } else {
-          outputLines += `\n\n⚠️ ${passedCount}/${suiteResult.totalTests} tests passed. Executed in ${duration}s.`;
-          // Add hints from challenge config
+          const xpEarned = Math.round((passedCount / suiteResult.totalTests) * LAB.xp);
+          const xpDeducted = pasteXPLost || 0;
+          const xpNet = Math.max(0, xpEarned - xpDeducted);
+          const meetsMinimum = passedCount > 0;
+
+          outputLines += `\n\n${meetsMinimum ? '⚠️' : '❌'} ${passedCount}/${suiteResult.totalTests} tests passed.`;
+          if (!meetsMinimum) {
+            outputLines += `\nMinimum requirement: At least 1 test must pass to earn XP.`;
+          }
+          outputLines += `\n⏱️ Executed in ${duration}s.`;
+
+          // XP breakdown
+          outputLines += `\n\n📊 XP Breakdown:`;
+          outputLines += `\n  Base XP (if all passed): +${LAB.xp}`;
+          outputLines += `\n  Partial XP earned: +${xpEarned}`;
+          if (xpDeducted > 0) {
+            outputLines += `\n  Paste penalty: -${xpDeducted} XP`;
+          }
+          outputLines += `\n  Net XP: +${xpNet}`;
+
           if (challengeConfig.hints && challengeConfig.hints.length > 0) {
             outputLines += `\n\n💡 Hint: ${challengeConfig.hints[0]}`;
           }
@@ -774,7 +800,24 @@ export default function LabPage() {
           res.run.output + '\n\n' +
           (allPass
             ? `✅ All tests passed!\n⏱️ Completed in ${formatTimeVerbose(elapsedSeconds)}\n🚀 Executed in ${duration}s\n🏆 +${LAB.xp} XP awarded to your profile.`
-            : `⚠️ ${passedCount}/${results.length} tests passed. Executed in ${duration}s. Review your logic and try again.`)
+            : (() => {
+                const meetsMinimum = passedCount > 0;
+                const xpEarned = Math.round((passedCount / results.length) * LAB.xp);
+                const xpDeducted = pasteXPLost || 0;
+                const xpNet = Math.max(0, xpEarned - xpDeducted);
+                let msg = `${meetsMinimum ? '⚠️' : '❌'} ${passedCount}/${results.length} tests passed.`;
+                if (!meetsMinimum) {
+                  msg += `\nMinimum requirement: At least 1 test must pass to earn XP.`;
+                }
+                msg += `\n⏱️ Executed in ${duration}s.`;
+                msg += `\n\n📊 XP Breakdown:`;
+                msg += `\n  Partial XP earned: +${xpEarned}`;
+                if (xpDeducted > 0) {
+                  msg += `\n  Paste penalty: -${xpDeducted} XP`;
+                }
+                msg += `\n  Net XP: +${xpNet}`;
+                return msg;
+              })())
         );
         if (allPass && isChallenge && topicIdParam) {
           localStorage.setItem(`pp_lab_passed_${user?.uid || 'guest'}_${topicIdParam}`, 'true');

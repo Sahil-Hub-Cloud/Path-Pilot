@@ -7,7 +7,7 @@ import { FiSearch, FiX, FiArrowUp, FiArrowDown } from 'react-icons/fi';
 interface TerminalSearchProps {
   visible: boolean;
   onClose: () => void;
-  terminalRef: React.RefObject<{ buffer: { active: { interpreter: { getSelection(): string; selectAll(): void } } } | null>;
+  terminalRef: React.RefObject<{ buffer: { active: { lines: string[] } } } | null>;
 }
 
 export default function TerminalSearch({ visible, onClose, terminalRef }: TerminalSearchProps) {

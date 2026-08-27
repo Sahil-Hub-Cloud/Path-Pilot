@@ -94,9 +94,9 @@ app.listen(port, () => {
           
           // flatten for editor state
           const contents: Record<string, string> = {};
-          for (const key in loaded) {
-            if (loaded[key]?.file?.contents) {
-              contents[key] = loaded[key].file.contents;
+          for (const key of Object.keys(loaded)) {
+            if ((loaded as Record<string, any>)[key]?.file?.contents) {
+              contents[key] = (loaded as Record<string, any>)[key].file.contents;
             }
           }
           setFileContents(contents);
@@ -108,9 +108,9 @@ app.listen(port, () => {
           const filesToUse = initialFiles || defaultFiles;
           setFileSystem(filesToUse);
           const contents: Record<string, string> = {};
-          for (const key in filesToUse) {
-            if (filesToUse[key]?.file?.contents) {
-              contents[key] = filesToUse[key].file.contents;
+          for (const key of Object.keys(filesToUse)) {
+            if ((filesToUse as Record<string, any>)[key]?.file?.contents) {
+              contents[key] = (filesToUse as Record<string, any>)[key].file.contents;
             }
           }
           setFileContents(contents);
