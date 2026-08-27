@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
-import * as d3 from 'd3';
+import { select, scaleLinear, lineRadial, curveLinearClosed } from 'd3';
 
 interface SkillData {
   axis: string;
@@ -21,19 +21,26 @@ export default function SkillGraph() {
 
   useEffect(() => {
     if (!svgRef.current) return;
-
-    const width = 300, height = 300;
+    const svgEl = svgRef.current;
+    // cleanup previous render
+    select(svgEl).selectAll('*').remove();
+    const rect = svgEl.getBoundingClientRect();
+    const width = Math.min(340, rect.width || 300);
+    const height = width;
     const margin = 40;
     const radius = Math.min(width, height) / 2 - margin;
-    
-    const svg = d3.select(svgRef.current)
-      .attr("width", width)
-      .attr("height", height)
-      .append("g")
-      .attr("transform", `translate(${width / 2}, ${height / 2})`);
+
+    const svg = select(svgEl)
+      .attr('width', width)
+      .attr('height', height)
+      .attr('viewBox', `0 0 ${width} ${height}`)
+      .attr('role', 'img')
+      .attr('aria-label', 'Skill proficiency radar')
+      .append('g')
+      .attr('transform', `translate(${width / 2}, ${height / 2})`);
 
     const angleSlice = (Math.PI * 2) / data.length;
-    const rScale = d3.scaleLinear().domain([0, 100]).range([0, radius]);
+    const rScale = scaleLinear().domain([0, 100]).range([0, radius]);
 
     // Draw grid
     const levels = 5;
@@ -48,22 +55,22 @@ export default function SkillGraph() {
         .attr("x2", (d, i) => levelFactor * Math.cos(angleSlice * (i + 1) - Math.PI / 2))
         .attr("y2", (d, i) => levelFactor * Math.sin(angleSlice * (i + 1) - Math.PI / 2))
         .attr("class", "line")
-        .style("stroke", "#2D2D4E")
+        .style('stroke', 'var(--border-clay, #B48C5A)')
         .style("stroke-width", "1px");
     }
 
     // Draw area
-    const radarLine = d3.lineRadial<SkillData>()
+    const radarLine = lineRadial<SkillData>()
       .radius(d => rScale(d.value))
       .angle((d, i) => i * angleSlice)
-      .curve(d3.curveLinearClosed);
+      .curve(curveLinearClosed);
 
     svg.append("path")
       .datum(data)
       .attr("d", radarLine)
-      .style("fill", "rgba(124, 58, 237, 0.4)")
-      .style("stroke", "#7C3AED")
-      .style("stroke-width", "2px");
+      .style('fill', 'rgba(0, 107, 122, 0.18)')
+      .style('stroke', 'var(--peacock-blue, #006B7A)')
+      .style('stroke-width', '2px');
 
     // Labels
     svg.selectAll(".label")
@@ -75,10 +82,10 @@ export default function SkillGraph() {
       .attr("text-anchor", "middle")
       .attr("font-size", "10px")
       .attr("font-weight", "black")
-      .attr("fill", "#94A3B8")
+      .attr('fill', 'var(--text-muted, #8B6E52)')
       .text(d => d.axis.toUpperCase());
 
   }, []);
 
-  return <svg ref={svgRef} className="mx-auto"></svg>;
+  return <svg ref={svgRef} className="mx-auto w-full max-w-[340px]" style={{ display: 'block' }}><title>Skill Radar</title></svg>;
 }

@@ -30,8 +30,8 @@ export async function POST(req: Request) {
     try {
         const database = await getDb();
         const { GoogleGenerativeAI } = await import('@google/generative-ai');
-        // @ts-expect-error pdf-parse has no default export types
-        const pdf = (await import('pdf-parse')).default;
+        const pdfModule: any = await import('pdf-parse');
+        const pdf = pdfModule.default || pdfModule;
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
         if (!process.env.GEMINI_API_KEY) {
             return NextResponse.json({ error: "Gemini API key is not configured." }, { status: 500 });

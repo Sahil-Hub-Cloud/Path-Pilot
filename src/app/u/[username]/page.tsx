@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { db } from '@/lib/firebase';
 import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
@@ -188,13 +189,13 @@ export default function PublicPortfolioPage() {
             </button>
             <span className="font-bold text-sm">Public Portfolio</span>
           </div>
-          <a
+          <Link
             href="/"
             className="text-xs font-bold"
             style={{ color: 'var(--peacock-blue)' }}
           >
             Path Pilot
-          </a>
+          </Link>
         </div>
       </nav>
 
@@ -380,7 +381,7 @@ export default function PublicPortfolioPage() {
         {/* Footer */}
         <div className="text-center py-6 border-t" style={{ borderColor: 'var(--border-medium)' }}>
           <p className="text-xs font-bold" style={{ color: 'var(--text-tertiary)' }}>
-            Built with Path Pilot • <a href="/" className="hover:underline" style={{ color: 'var(--peacock-blue)' }}>path-pilot.vercel.app</a>
+            Built with Path Pilot • <Link href="/" className="hover:underline" style={{ color: 'var(--peacock-blue)' }}>path-pilot.vercel.app</Link>
           </p>
         </div>
       </div>
