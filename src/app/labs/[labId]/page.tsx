@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import Editor from '@monaco-editor/react';
+import CodeEditor from '@/components/ide/CodeEditor';
 import {
   FiArrowLeft, FiPlay, FiZap, FiSearch, FiXCircle, FiCheckCircle,
   FiActivity, FiHelpCircle, FiPlus, FiX, FiSave, FiFile, FiFilePlus,
@@ -1289,36 +1289,17 @@ Rules:
             )}
           </AnimatePresence>
 
-          {/* Monaco Editor */}
+          {/* Code Editor */}
           <div className={`${isMobile ? 'h-[60vh]' : 'flex-1'} relative overflow-hidden bg-[#0D0D0F]`}>
             {activeFile && (!isMobile || activeMobileTab === 'code') && (
-              <Editor
+              <CodeEditor
                 key={activeFile.id}
                 height="100%"
-                language={LANGS[activeFile.language]?.monacoId || 'python'}
-                theme="vs-dark"
+                language={activeFile.language || 'python'}
                 value={activeFile.content}
                 onChange={v => updateFile(activeFile.id, v || '')}
-                options={{
-                  fontSize: 14,
-                  padding: { top: 16 },
-                  minimap: { enabled: false },
-                  fontFamily: "'JetBrains Mono', 'Fira Code', Consolas, monospace",
-                  renderLineHighlight: 'all',
-                  cursorBlinking: 'phase',
-                  smoothScrolling: true,
-                  wordWrap: 'on',
-                  bracketPairColorization: { enabled: true },
-                  lineNumbers: 'on',
-                  folding: true,
-                  autoClosingBrackets: 'always',
-                  formatOnPaste: true,
-                  tabSize: 4,
-                  scrollbar: {
-                    vertical: 'hidden',
-                    horizontal: 'hidden'
-                  }
-                }}
+                fontSize={14}
+                tabSize={4}
               />
             )}
           </div>

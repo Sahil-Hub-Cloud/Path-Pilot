@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import Editor from '@monaco-editor/react';
+import CodeEditor from '@/components/ide/CodeEditor';
 import { FiX, FiGitBranch, FiClock, FiCheck, FiX as FiXIcon } from 'react-icons/fi';
 
 interface CodeVersion {
@@ -80,12 +80,12 @@ export default function CodeReview({ visible, onClose, currentCode, referenceCod
                     <FiCheck size={10} className="text-[#10B981]" /> Your Code
                   </div>
                   <div className="flex-1">
-                    <Editor
+                    <CodeEditor
                       height="100%"
                       language="python"
-                      theme="vs-dark"
                       value={currentCode}
-                      options={{ readOnly: true, minimap: { enabled: false }, fontSize: 13, padding: { top: 12 } }}
+                      readOnly
+                      fontSize={13}
                     />
                   </div>
                 </div>
@@ -95,12 +95,12 @@ export default function CodeReview({ visible, onClose, currentCode, referenceCod
                       <FiGitBranch size={10} className="text-[#7C3AED]" /> Reference Solution
                     </div>
                     <div className="flex-1">
-                      <Editor
+                      <CodeEditor
                         height="100%"
                         language="python"
-                        theme="vs-dark"
                         value={referenceCode}
-                        options={{ readOnly: true, minimap: { enabled: false }, fontSize: 13, padding: { top: 12 } }}
+                        readOnly
+                        fontSize={13}
                       />
                     </div>
                   </div>
@@ -110,24 +110,24 @@ export default function CodeReview({ visible, onClose, currentCode, referenceCod
 
             {viewMode === 'reference' && referenceCode && (
               <div className="flex-1">
-                <Editor
+                <CodeEditor
                   height="100%"
                   language="python"
-                  theme="vs-dark"
                   value={referenceCode}
-                  options={{ readOnly: true, minimap: { enabled: false }, fontSize: 13, padding: { top: 12 } }}
+                  readOnly
+                  fontSize={13}
                 />
               </div>
             )}
 
             {viewMode === 'diff' && referenceCode && (
               <div className="flex-1">
-                <Editor
+                <CodeEditor
                   height="100%"
                   language="python"
-                  theme="vs-dark"
                   value={currentCode}
-                  options={{ readOnly: true, minimap: { enabled: false }, fontSize: 13, padding: { top: 12 } }}
+                  readOnly
+                  fontSize={13}
                 />
               </div>
             )}

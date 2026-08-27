@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { WebContainer } from '@webcontainer/api';
-import Editor from '@monaco-editor/react';
+import CodeEditor from '@/components/ide/CodeEditor';
 import { Terminal } from 'xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import 'xterm/css/xterm.css';
@@ -405,21 +405,12 @@ app.listen(port, () => {
                 </div>
               </div>
             ) : (
-              <Editor
+              <CodeEditor
                 height="100%"
                 language={getLanguage(activeFile)}
-                theme="vs-dark"
                 value={fileContents[activeFile] || ''}
                 onChange={handleEditorChange}
-                options={{
-                  minimap: { enabled: false },
-                  fontSize: 14,
-                  fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
-                  padding: { top: 16 },
-                  scrollBeyondLastLine: false,
-                  smoothScrolling: true,
-                  cursorBlinking: "smooth",
-                }}
+                fontSize={14}
               />
             )}
           </div>

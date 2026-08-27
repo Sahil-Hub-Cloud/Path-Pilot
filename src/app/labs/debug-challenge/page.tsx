@@ -2,16 +2,11 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import Editor, { loader } from '@monaco-editor/react';
+import CodeEditor from '@/components/ide/CodeEditor';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getRandomChallenge, BrokenCodeChallenge } from '@/lib/data/broken-code-challenges';
 import { calculateDebuggingDelta } from '@/lib/scoring-engine';
 import { SkillMetricsService } from '@/lib/services/skill-metrics';
-
-// Configure Monaco loader
-if (typeof window !== 'undefined') {
-    loader.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/vs' } });
-}
 
 export default function DebugChallengePage() {
     const router = useRouter();
@@ -237,22 +232,12 @@ export default function DebugChallengePage() {
                         </span>
                     </div>
                     <div className="flex-1 py-4">
-                        <Editor
+                        <CodeEditor
                             height="100%"
-                            theme="vs-dark"
                             language={challenge?.language || 'javascript'}
                             value={code}
-                            loading={<div className="text-red-400 p-8 text-xs">LOADING_DEBUGGER...</div>}
                             onChange={(val) => setCode(val || '')}
-                            options={{
-                                minimap: { enabled: false },
-                                fontSize: 13,
-                                fontFamily: 'JetBrains Mono, Menlo, Monaco, Courier New, monospace',
-                                scrollBeyondLastLine: false,
-                                lineNumbers: 'on',
-                                padding: { top: 10, bottom: 10 },
-                                automaticLayout: true
-                            }}
+                            fontSize={13}
                         />
                     </div>
                 </div>

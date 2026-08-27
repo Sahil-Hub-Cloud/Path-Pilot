@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiClock, FiX, FiRotateCcw } from 'react-icons/fi';
-import Editor from '@monaco-editor/react';
+import CodeEditor from '@/components/ide/CodeEditor';
 
 interface CodeSnapshot {
   timestamp: number;
@@ -104,12 +104,12 @@ export default function CodeTimeline({ snapshots, visible, onClose, onRestore }:
                           exit={{ height: 0, opacity: 0 }}
                           className="mt-2 rounded-xl border border-white/10 overflow-hidden"
                         >
-                          <Editor
+                          <CodeEditor
                             height="100%"
                             language="python"
-                            theme="vs-dark"
                             value={snap.content}
-                            options={{ readOnly: true, minimap: { enabled: false }, fontSize: 11, padding: { top: 8 } }}
+                            readOnly
+                            fontSize={11}
                           />
                           <div className="flex gap-2 p-2 bg-[#0D0D0F] border-t border-white/10">
                             <button
