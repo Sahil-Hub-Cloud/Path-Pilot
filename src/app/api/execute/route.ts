@@ -20,42 +20,46 @@ const LANG_MAP: Record<string, number> = {
 
 const MAX_CODE_LENGTH = 50000;
 
-const rateLimiter = new Ratelimit({
+const hasUpstash = !!(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN);
+const rateLimiter = hasUpstash ? new Ratelimit({
   redis: Redis.fromEnv(),
   limiter: Ratelimit.slidingWindow(10, '1m'),
   prefix: 'rl_execute',
-});
+}) : null;
 
 export async function POST(request: NextRequest) {
   try {
-    // === AUTH CHECK ===
+    // === AUTH CHECK (optional — falls back to IP-based rate limit) ===
+    let userId = 'anonymous';
     const authHeader = request.headers.get('Authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
-    }
-
-    let userId: string;
-    try {
-      const token = authHeader.split('Bearer ')[1];
-      const decoded = await adminAuth.verifyIdToken(token);
-      userId = decoded.uid;
-    } catch {
-      return NextResponse.json({ error: 'Invalid or expired token' }, { status: 401 });
+    if (authHeader?.startsWith('Bearer ')) {
+      try {
+        const token = authHeader.split('Bearer ')[1];
+        const decoded = await adminAuth.verifyIdToken(token);
+        userId = decoded.uid;
+      } catch {
+        // Token invalid/expired — continue as anonymous, rate limit by IP
+        userId = 'anon_' + (request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown');
+      }
+    } else {
+      userId = 'anon_' + (request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown');
     }
 
     // === PER-USER RATE LIMITING ===
     const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
-    const { success, remaining } = await rateLimiter.limit(`${userId}:${ip}`);
-    if (!success) {
-      await logSecurityEvent({
-        type: 'rate_limit_breach',
-        severity: 'medium',
-        userId,
-        ip,
-        path: '/api/execute',
-        details: { reason: 'Rate limit exceeded on code execution' },
-      });
-      return NextResponse.json({ error: 'Too many execution requests', retryAfter: 60 }, { status: 429 });
+    if (rateLimiter) {
+      const { success } = await rateLimiter.limit(`${userId}:${ip}`);
+      if (!success) {
+        await logSecurityEvent({
+          type: 'rate_limit_breach',
+          severity: 'medium',
+          userId,
+          ip,
+          path: '/api/execute',
+          details: { reason: 'Rate limit exceeded on code execution' },
+        });
+        return NextResponse.json({ error: 'Too many execution requests', retryAfter: 60 }, { status: 429 });
+      }
     }
 
     // === PARSE & VALIDATE BODY ===
