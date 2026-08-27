@@ -509,17 +509,41 @@ export default function LabPage() {
   // ── Run ──────────────────────────────────────────────────────────────────
   const runCodeWrapper = async (language: string, content: string) => {
     if (language === 'python') {
-      const pyRes = await executePythonClient(content);
-      return {
-        run: {
-          code: pyRes.error ? 1 : 0,
-          signal: pyRes.error ? 'Error' : null,
-          output: [pyRes.stdout, pyRes.stderr].filter(Boolean).join('\\n').trim(),
-          stderr: pyRes.stderr
+      // Try local Pyodide WASM first
+      try {
+        const pyRes = await executePythonClient(content);
+        // If Pyodide succeeded (no error), return
+        if (!pyRes.error) {
+          return {
+            run: {
+              code: 0,
+              signal: null,
+              output: [pyRes.stdout, pyRes.stderr].filter(Boolean).join('\n').trim(),
+              stderr: pyRes.stderr
+            }
+          };
         }
-      };
+        // Pyodide had an error — fall through to Piston API
+      } catch {
+        // Pyodide CDN blocked or failed — fall through to Piston API
+      }
+      // Fallback: use Piston API for Python
+      try {
+        const token = user ? await user.getIdToken() : undefined;
+        return await executeCode('python', content, token);
+      } catch (pistonErr: any) {
+        return {
+          run: {
+            code: 1,
+            signal: 'Error',
+            output: pistonErr.message || 'Failed to execute Python code. Check your code and try again.',
+            stderr: pistonErr.message || 'Execution failed'
+          }
+        };
+      }
     }
-    return await executeCode(language, content);
+    const token = user ? await user.getIdToken() : undefined;
+    return await executeCode(language, content, token);
   };
 
   const handleRun = async () => {
@@ -543,7 +567,7 @@ export default function LabPage() {
       }
       setStat(p => p + 1);
     } catch (e: any) {
-      setOutput(`[ERROR] Execution timeout. Try again or simplify your code.\n\n${e.message}`);
+      setOutput(`[ERROR] Execution failed.\n\n${e.message || 'Unknown error. Please try again.'}`);
     } finally {
       setIsRunning(false);
     }

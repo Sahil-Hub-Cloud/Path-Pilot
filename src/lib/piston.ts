@@ -10,12 +10,15 @@ export interface PistonResponse {
   };
 }
 
-export async function executeCode(language: string, source: string): Promise<PistonResponse> {
+export async function executeCode(language: string, source: string, idToken?: string): Promise<PistonResponse> {
   try {
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (idToken) headers['Authorization'] = `Bearer ${idToken}`;
+
     const response = await fetch('/api/execute', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ language, source })
+      headers,
+      body: JSON.stringify({ language, code: source })
     });
 
     if (!response.ok) {
@@ -25,7 +28,6 @@ export async function executeCode(language: string, source: string): Promise<Pis
 
     const result = await response.json();
     
-    // Judge0 result processing
     const stdout = result.stdout || '';
     const stderr = result.stderr || result.compile_output || '';
     const output = [stdout, stderr].filter(Boolean).join('\n');
@@ -47,12 +49,15 @@ export async function executeCode(language: string, source: string): Promise<Pis
   }
 }
 
-export async function executeTestSuite(language: string, source: string, testCases: string[]): Promise<PistonResponse[]> {
+export async function executeTestSuite(language: string, source: string, testCases: string[], idToken?: string): Promise<PistonResponse[]> {
   try {
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (idToken) headers['Authorization'] = `Bearer ${idToken}`;
+
     const response = await fetch('/api/execute', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ language, source, testCases })
+      headers,
+      body: JSON.stringify({ language, code: source, testCases })
     });
 
     if (!response.ok) {
