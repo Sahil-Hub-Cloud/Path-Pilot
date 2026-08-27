@@ -353,7 +353,8 @@ IMPORTANT: Do NOT end with a question to the student. Just provide the notes.`;
           body: JSON.stringify({
             message: prompt,
             mode: 'notes',
-            userId: user?.uid || 'guest'
+            userId: user?.uid || 'guest',
+            language: selectedLanguage
           }),
         });
 
@@ -806,7 +807,8 @@ IMPORTANT: Do NOT end with a question to the student. Just provide the notes.`;
                             body: JSON.stringify({
                               message: prompt,
                               mode: 'notes',
-                              userId: user?.uid || 'guest'
+                              userId: user?.uid || 'guest',
+                              language: selectedLanguage
                             }),
                           });
                           const d = await res.json();

@@ -54,7 +54,8 @@ export async function POST(request: NextRequest) {
             studentContext,
             userId,
             message,
-            mode
+            mode,
+            language
         } = body;
 
         // Rate Limiting
@@ -70,10 +71,13 @@ export async function POST(request: NextRequest) {
 
         let groqMessages;
         if (mode === 'notes') {
+            const langInstruction = language && language !== 'english'
+                ? `\n\nIMPORTANT: Generate ALL content in ${language === 'hindi' ? 'Hindi (Devanagari script)' : 'Telugu (Telugu script)'}. Only code examples should remain in English.`
+                : '';
             groqMessages = [
                 {
                     role: 'system',
-                    content: 'ACT AS A STUDY GUIDE GENERATOR. Do not chat. Do not ask questions. Generate structured notes. Format notes exactly as requested. Do not end with any question or follow-up.'
+                    content: 'ACT AS A STUDY GUIDE GENERATOR. Do not chat. Do not ask questions. Generate structured notes. Format notes exactly as requested. Do not end with any question or follow-up.' + langInstruction
                 },
                 {
                     role: 'user',

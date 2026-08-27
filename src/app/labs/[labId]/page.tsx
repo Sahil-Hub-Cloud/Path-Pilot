@@ -1291,7 +1291,7 @@ Rules:
 
           {/* Monaco Editor */}
           <div className={`${isMobile ? 'h-[60vh]' : 'flex-1'} relative overflow-hidden bg-[#0D0D0F]`}>
-            {activeFile && (
+            {activeFile && (!isMobile || activeMobileTab === 'code') && (
               <Editor
                 key={activeFile.id}
                 height="100%"
