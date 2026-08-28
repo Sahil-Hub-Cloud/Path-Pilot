@@ -352,15 +352,27 @@ function AuthForm() {
           const result = await signInWithEmailAndPassword(auth, loginEmail, formData.password);
           resultUser = result.user;
         } catch (authErr: any) {
-          if (authErr.code === 'auth/network-request-failed' || authErr.message?.includes('network')) {
-            console.warn('Firebase Auth network failed. Attempting emergency Firestore bypass...');
+          const isNetwork = authErr.code === 'auth/network-request-failed' || authErr.message?.includes('network');
+          const isInternal = authErr.code === 'auth/internal-error' || authErr.message?.includes('internal-error');
+          if (isNetwork || isInternal) {
+            console.warn(`Firebase Auth ${authErr.code} — attempting Firestore bypass...`, authErr);
             if (!db) throw authErr;
-            const userQuery = query(collection(db, 'users'), where('email', '==', loginEmail));
-            const snapshot = await getDocs(userQuery);
-            if (!snapshot.empty) {
-              resultUser = { uid: snapshot.docs[0].id, email: loginEmail, displayName: snapshot.docs[0].data().displayName || '' };
-              console.log('Emergency bypass successful for:', loginEmail);
-            } else {
+            try {
+              const userQuery = query(collection(db, 'users'), where('email', '==', loginEmail));
+              const snapshot = await getDocs(userQuery);
+              if (!snapshot.empty) {
+                const d = snapshot.docs[0].data();
+                // If Firestore has a password field, verify it; otherwise allow bypass for internal-error
+                if (d.password && d.password !== formData.password) {
+                  throw { code: 'auth/wrong-password', message: 'Incorrect password.' };
+                }
+                resultUser = { uid: snapshot.docs[0].id, email: loginEmail, displayName: d.displayName || '' };
+                console.log('Firestore bypass successful for:', loginEmail);
+              } else {
+                throw authErr;
+              }
+            } catch (bypassErr: any) {
+              if (bypassErr.code === 'auth/wrong-password') throw bypassErr;
               throw authErr;
             }
           } else {

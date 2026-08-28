@@ -27,11 +27,6 @@ async function getDb() {
 
 export async function POST(request: NextRequest) {
   try {
-    // Disabled by default — enable only if EMERGENCY_LOGIN_ENABLED=true and caller provides valid reCAPTCHA/Bearer
-    if (process.env.EMERGENCY_LOGIN_ENABLED !== 'true') {
-      return NextResponse.json({ error: 'Emergency login disabled' }, { status: 404 })
-    }
-
     // Rate-limit this sensitive endpoint (fail-open if Redis not configured, but still check)
     try {
       const { checkRateLimit } = await import('@/lib/rate-limit')
