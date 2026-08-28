@@ -43,7 +43,7 @@ function AuthForm() {
   useEffect(() => {
     const emergencyTimeout = setTimeout(() => {
       setShowEmergencyLogin(true);
-    }, 10000);
+    }, 3000);
     return () => clearTimeout(emergencyTimeout);
   }, []);
 
@@ -486,6 +486,8 @@ function AuthForm() {
       console.error("Auth: Email/Code error:", err);
       setLoading(false); // Immediate unlock on error
       
+      // Ensure emergency login is visible on any auth failure
+      setShowEmergencyLogin(true);
       const msg =
         err.code === 'custom/role-mismatch' ? err.message
         : err.code === 'custom/invalid-college-code' ? err.message
@@ -494,6 +496,7 @@ function AuthForm() {
         : err.code === 'auth/email-already-in-use' ? 'Email already registered. Try switching to Sign In mode.'
         : err.code === 'auth/weak-password' ? 'Password must be at least 6 characters.'
         : err.code === 'auth/network-request-failed' ? 'Connection lost. Check your internet or VPN.'
+        : err.code === 'auth/internal-error' ? 'Authentication service error. This usually means Firebase env vars are missing on Vercel — check Settings → Environment Variables, or use Emergency Login below.'
         : err.message || 'Login failed. Please verify your credentials.';
       showError(msg);
     } finally {

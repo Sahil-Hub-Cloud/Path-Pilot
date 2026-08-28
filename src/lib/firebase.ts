@@ -14,6 +14,14 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
+// Validate config at runtime — helps diagnose auth/internal-error on Vercel when env vars are missing
+if (typeof window !== 'undefined') {
+  const missing = Object.entries(firebaseConfig).filter(([, v]) => !v).map(([k]) => k);
+  if (missing.length) {
+    console.error('[Firebase] Missing env vars:', missing.join(', '), '— auth will fail with internal-error. Check Vercel Settings → Environment Variables.');
+  }
+}
+
 // DO NOT log the config object. It contains the API key.
 // Firebase API keys are public identifiers but logging them
 // makes it trivially discoverable in browser consoles.
