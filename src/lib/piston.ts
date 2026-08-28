@@ -64,7 +64,7 @@ export async function executeTestSuite(language: string, source: string, testCas
     const response = await fetch('/api/execute', {
       method: 'POST',
       headers,
-      body: JSON.stringify({ language, code: source, testCases })
+      body: JSON.stringify({ language, code: source, testSuite: testCases })
     });
 
     if (!response.ok) {

@@ -8,7 +8,7 @@ import { adminDb } from '@/lib/firebase-admin';
 export async function POST(req: Request) {
     const body = await req.text();
     const headerList = await headers();
-    const signature = headerList.get('Stripe-Signature') as string;
+    const signature = headerList.get('stripe-signature') as string;
 
     let event;
 
@@ -16,11 +16,11 @@ export async function POST(req: Request) {
         event = stripe.webhooks.constructEvent(
             body,
             signature,
-            process.env.STRIPE_WEBHOOK_SECRET || ''
+            process.env.STRIPE_WEBHOOK_SECRET as string
         );
     } catch (err: any) {
         console.error('Webhook Error:', err.message);
-        return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
+        return NextResponse.json({ error: 'Webhook signature verification failed' }, { status: 400 });
     }
 
     if (event.type === 'checkout.session.completed') {
