@@ -1,11 +1,16 @@
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { verifyRequestAuth, requireAuthResponse } from '@/lib/server-auth';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
+        const auth = await verifyRequestAuth(req as any); if (!auth) return requireAuthResponse();
+        const { success } = await checkRateLimit(`rl_socratic:${auth.uid}`);
+        if (!success) return NextResponse.json({ message: 'Rate limit exceeded. Try again later.' }, { status: 429 });
         const { topic, context } = await req.json();
 
         if (!GROQ_API_KEY) {

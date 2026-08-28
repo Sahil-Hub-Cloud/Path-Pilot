@@ -1,9 +1,11 @@
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-import { NextResponse } from 'next/server';
-import { adminAuth, adminDb } from '@/lib/firebase-admin';
+import { NextRequest, NextResponse } from 'next/server';
+import { adminDb } from '@/lib/firebase-admin';
 import Groq from 'groq-sdk';
+import { verifyRequestAuth, requireAuthResponse } from '@/lib/server-auth';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 function getFallbackMCQs(topicName: string, courseName: string) {
   return [
@@ -60,17 +62,11 @@ function getFallbackMCQs(topicName: string, courseName: string) {
   ];
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const authHeader = request.headers.get('authorization');
-    if (authHeader?.startsWith('Bearer ')) {
-      const token = authHeader.split('Bearer ')[1];
-      try {
-        await adminAuth.verifyIdToken(token);
-      } catch (e) {
-        console.warn('ID token verification skipped or failed:', e);
-      }
-    }
+    const auth = await verifyRequestAuth(request as any); if (!auth) return requireAuthResponse();
+    const { success } = await checkRateLimit(`rl_generate_mcqs:${auth.uid}`);
+    if (!success) return NextResponse.json({ error: 'Rate limit exceeded. Try again later.' }, { status: 429 });
 
     const body = await request.json().catch(() => ({}));
     const topicName = body.topicName || 'Topic';

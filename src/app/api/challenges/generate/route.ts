@@ -1,7 +1,9 @@
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { generateTextWithFallback } from '@/lib/gemini-models';
+import { verifyRequestAuth, requireAuthResponse } from '@/lib/server-auth';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 
 export interface Challenge {
@@ -12,8 +14,11 @@ export interface Challenge {
   testCases: { input: string; expectedOutput: string }[];
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   console.log('[/api/challenges/generate] POST received');
+  const auth = await verifyRequestAuth(request as any); if (!auth) return requireAuthResponse();
+  const { success } = await checkRateLimit(`rl_challenges_generate:${auth.uid}`);
+  if (!success) return NextResponse.json({ error: 'Rate limit exceeded. Try again later.' }, { status: 429 });
 
   const apiKey = process.env.GEMINI_API_KEY;
   console.log('[/api/challenges/generate] GEMINI_API_KEY configured:', !!apiKey);

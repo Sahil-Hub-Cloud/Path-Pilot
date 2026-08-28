@@ -684,6 +684,9 @@ IMPORTANT: Do NOT end with a question to the student. Just provide the notes.`;
           <button
             key={id}
             type="button"
+            role="tab"
+            aria-selected={activeTab === id}
+            aria-controls={`panel-${id}`}
             onClick={() => setActiveTab(id)}
             style={{
               flex: 1,

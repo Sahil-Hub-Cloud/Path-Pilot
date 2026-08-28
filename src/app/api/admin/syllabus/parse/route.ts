@@ -28,6 +28,17 @@ async function getDb() {
 
 export async function POST(req: Request) {
     try {
+        const { verifyRequestAuth, requireAuthResponse } = await import('@/lib/server-auth');
+        const auth = await verifyRequestAuth(req as any);
+        if (!auth) return requireAuthResponse();
+
+        const { requireRole } = await import('@/lib/rbac');
+        const { authorized } = await requireRole(auth.uid, 'faculty', 'hod', 'admin');
+        if (!authorized) {
+            const { NextResponse } = await import('next/server');
+            return NextResponse.json({ error: 'Unauthorized. Faculty or above required.' }, { status: 403 });
+        }
+
         const database = await getDb();
         const { GoogleGenerativeAI } = await import('@google/generative-ai');
         const pdfModule: any = await import('pdf-parse');

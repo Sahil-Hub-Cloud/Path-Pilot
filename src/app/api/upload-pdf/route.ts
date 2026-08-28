@@ -5,9 +5,14 @@ export const runtime = 'nodejs';
 import { NextRequest, NextResponse } from 'next/server';
 import pdfParse from 'pdf-parse';
 import { generateWithResilience, MODELS_HEAVY, MODELS_LIGHT } from '@/lib/gemini-resilience';
+import { verifyRequestAuth, requireAuthResponse } from '@/lib/server-auth';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 export async function POST(req: NextRequest) {
   try {
+    const auth = await verifyRequestAuth(req); if (!auth) return requireAuthResponse();
+    const { success } = await checkRateLimit(`rl_upload_pdf:${auth.uid}`);
+    if (!success) return NextResponse.json({ error: 'Rate limit exceeded. Try again later.' }, { status: 429 });
     const formData = await req.formData();
     const file = formData.get('file') as File;
     const collegeId = (formData.get('collegeId') as string) || 'unknown';

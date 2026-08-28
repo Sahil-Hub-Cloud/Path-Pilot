@@ -3,15 +3,17 @@ export const runtime = 'nodejs';
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { GeminiBrain } from '@/lib/gemini';
+import { verifyRequestAuth, requireAuthResponse } from '@/lib/server-auth';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
     try {
+        const auth = await verifyRequestAuth(request); if (!auth) return requireAuthResponse();
+        const { success } = await checkRateLimit(`rl_vector:${auth.uid}`);
+        if (!success) return NextResponse.json({ message: 'Rate limit exceeded. Try again later.' }, { status: 429 });
         const body = await request.json();
-        const { action, userId, text, moduleId, queryText } = body;
-
-        if (!userId) {
-            return NextResponse.json({ message: "userId required." }, { status: 400 });
-        }
+        const { action, text, moduleId, queryText } = body;
+        const userId = auth.uid;
 
         if (action === 'index') {
             if (!text) return NextResponse.json({ message: "text required for indexing." }, { status: 400 });

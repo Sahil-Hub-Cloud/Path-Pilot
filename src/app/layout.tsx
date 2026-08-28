@@ -56,6 +56,7 @@ export default function RootLayout({
             `,
           }}
         />
+        <script dangerouslySetInnerHTML={{ __html: `if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}))}` }} />
       </head>
       <body className="font-sans antialiased bg-[var(--bg-cream)] text-[var(--text-dark)]">
         <ErrorBoundary>

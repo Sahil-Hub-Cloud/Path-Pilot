@@ -1,37 +1,20 @@
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 import { NextRequest, NextResponse } from 'next/server';
-import { adminAuth as auth } from '@/lib/firebase-admin';
-import { Ratelimit } from '@upstash/ratelimit';
-import { Redis } from '@upstash/redis/cloudflare';
+import { verifyRequestAuth, requireAuthResponse } from '@/lib/server-auth';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 export async function POST(req: NextRequest) {
   try {
-    const authHeader = req.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-    let userId: string;
-    try {
-      const decoded = await auth.verifyIdToken(authHeader.split('Bearer ')[1]);
-      userId = decoded.uid;
-    } catch (e) {
-      return NextResponse.json({ error: 'Unauthorized: Invalid token' }, { status: 401 });
-    }
-
-    const geminiRateLimiter = new Ratelimit({
-      redis: Redis.fromEnv(),
-      limiter: Ratelimit.slidingWindow(30, '1m'),
-      prefix: 'rl_gemini',
-    });
-
-    const { success: geminiAllowed } = await geminiRateLimiter.limit(userId);
+    const auth = await verifyRequestAuth(req); if (!auth) return requireAuthResponse();
+    const { success: geminiAllowed } = await checkRateLimit(`rl_gemini:${auth.uid}`);
     if (!geminiAllowed) {
       return NextResponse.json(
         { error: 'Rate limit exceeded. Please wait before sending another request.' },
         { status: 429 }
       );
     }
+    const userId = auth.uid;
 
     const { prompt } = await req.json();
 

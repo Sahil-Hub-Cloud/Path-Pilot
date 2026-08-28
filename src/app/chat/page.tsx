@@ -143,7 +143,7 @@ function ChatContent() {
         {/* Hinglish toggle */}
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{ fontSize: 11, fontWeight: 700, color: STYLE.textSub }}>Hinglish</span>
-          <button onClick={() => setIsVernacular(!isVernacular)} style={{
+          <button role="switch" aria-checked={isVernacular} aria-label="Toggle Hinglish" onClick={() => setIsVernacular(!isVernacular)} style={{
             width: 40, height: 22, borderRadius: 999, position: 'relative', border: 'none',
             cursor: 'pointer', padding: 3, transition: 'all 0.2s',
             background: isVernacular ? STYLE.teal : 'rgba(180,140,90,0.25)'

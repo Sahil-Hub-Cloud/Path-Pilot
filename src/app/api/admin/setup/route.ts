@@ -2,10 +2,21 @@ export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDb as db } from '@/lib/firebase-admin';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 export async function POST(req: NextRequest) {
     try {
-        const { userId, email, institutionName } = await req.json();
+        const { verifyRequestAuth, requireAuthResponse } = await import('@/lib/server-auth');
+        const auth = await verifyRequestAuth(req);
+        if (!auth) return requireAuthResponse();
+        {
+          const { success } = await checkRateLimit(`rl_admin_setup:${auth.uid}`);
+          if (!success) return NextResponse.json({ error: 'Rate limit exceeded. Try again later.' }, { status: 429 });
+        }
+
+        const { institutionName } = await req.json();
+        const userId = auth.uid;
+        const email = auth.email || '';
 
         if (!userId || !email || !institutionName) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });

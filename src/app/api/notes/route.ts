@@ -1,10 +1,15 @@
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
+import { verifyRequestAuth, requireAuthResponse } from '@/lib/server-auth';
+import { checkRateLimit } from '@/lib/rate-limit';
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+    const auth = await verifyRequestAuth(request as any); if (!auth) return requireAuthResponse();
+    const { success } = await checkRateLimit(`rl_notes:${auth.uid}`);
+    if (!success) return NextResponse.json({ error: 'Rate limit exceeded. Try again later.' }, { status: 429 });
     const body = await request.json()
     const { topicName = 'this topic', courseName = 'this course', language = 'English' } = body
 

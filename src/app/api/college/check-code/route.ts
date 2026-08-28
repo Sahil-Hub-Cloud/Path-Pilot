@@ -1,10 +1,14 @@
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
+import { checkRateLimit } from '@/lib/rate-limit';
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   try {
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || (req as any).ip || 'anonymous';
+    const { success } = await checkRateLimit(`rl_college_check_code:${ip}`);
+    if (!success) return NextResponse.json({ error: 'Rate limit exceeded. Try again later.' }, { status: 429 });
     const { searchParams } = new URL(req.url);
     const code = searchParams.get('code');
 

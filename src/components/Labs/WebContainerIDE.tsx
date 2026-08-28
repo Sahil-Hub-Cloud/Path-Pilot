@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import dynamic from 'next/dynamic';
 import { WebContainer } from '@webcontainer/api';
-import CodeEditor from '@/components/ide/CodeEditor';
+const CodeEditor = dynamic(() => import('@/components/ide/CodeEditor'), { ssr: false, loading: () => null });
 import { Terminal } from 'xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import 'xterm/css/xterm.css';

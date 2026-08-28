@@ -2,9 +2,16 @@ export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDb as db } from '@/lib/firebase-admin';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 export async function POST(req: NextRequest) {
     try {
+        const { verifyRequestAuth, requireAuthResponse } = await import('@/lib/server-auth');
+        const auth = await verifyRequestAuth(req);
+        if (!auth) return requireAuthResponse();
+        const { success } = await checkRateLimit(`rl_admin_certificates:${auth.uid}`);
+        if (!success) return NextResponse.json({ error: 'Rate limit exceeded. Try again later.' }, { status: 429 });
+
         const { userId, cohortId, examId } = await req.json();
 
         if (!userId || !cohortId) {
@@ -39,8 +46,16 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
     try {
+        const { verifyRequestAuth, requireAuthResponse } = await import('@/lib/server-auth');
+        const auth = await verifyRequestAuth(req);
+        if (!auth) return requireAuthResponse();
+        {
+          const { success: rlSuccess } = await checkRateLimit(`rl_admin_certificates:${auth.uid}`);
+          if (!rlSuccess) return NextResponse.json({ error: 'Rate limit exceeded. Try again later.' }, { status: 429 });
+        }
+
         const { searchParams } = new URL(req.url);
-        const userId = searchParams.get('userId');
+        const userId = searchParams.get('userId') || auth.uid;
 
         if (!userId) {
             return NextResponse.json({ error: 'userId required' }, { status: 400 });

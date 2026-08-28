@@ -3,6 +3,7 @@ export const runtime = 'nodejs';
 import { NextRequest, NextResponse } from 'next/server';
 import { adminAuth, adminDb } from '@/lib/firebase-admin';
 import { Resend } from 'resend';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 // Resend initialization moved inside POST to prevent build crashes
 
@@ -36,6 +37,9 @@ async function generateUniqueCode(collegeName: string) {
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || (req as any).ip || 'anonymous';
+    const { success } = await checkRateLimit(`rl_college_register:${ip}`);
+    if (!success) return NextResponse.json({ error: 'Rate limit exceeded. Try again later.' }, { status: 429 });
     const { collegeName, location, contactEmail, studentCount, password } = await req.json();
 
     if (!collegeName || !location || !contactEmail || !studentCount || !password) {

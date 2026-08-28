@@ -1,13 +1,18 @@
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { verifyRequestAuth, requireAuthResponse } from '@/lib/server-auth';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 // GenAI initialization moved inside POST
 const MODEL_PRIORITY = ['gemini-2.0-flash', 'gemini-1.5-flash-latest', 'gemini-1.5-flash'];
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
+    const auth = await verifyRequestAuth(req as any); if (!auth) return requireAuthResponse();
+    const { success } = await checkRateLimit(`rl_code_analyze:${auth.uid}`);
+    if (!success) return NextResponse.json({ error: 'Rate limit exceeded. Try again later.' }, { status: 429 });
     const { code, language, problemId } = await req.json();
     console.log('[/api/code/analyze] API Key exists:', !!process.env.GEMINI_API_KEY);
 

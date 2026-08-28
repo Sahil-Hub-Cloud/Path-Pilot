@@ -5,11 +5,12 @@ import { adminDb } from '@/lib/firebase-admin';
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId, email, fullName, collegeCode, collegeName, yearOfStudy, profileImageUrl, showProfileToAdmins } = await req.json();
+    const { verifyRequestAuth, requireAuthResponse } = await import('@/lib/server-auth');
+    const auth = await verifyRequestAuth(req);
+    if (!auth) return requireAuthResponse();
 
-    if (!userId) {
-      return NextResponse.json({ error: 'Missing userId' }, { status: 400 });
-    }
+    const { email, fullName, collegeCode, collegeName, yearOfStudy, profileImageUrl, showProfileToAdmins } = await req.json();
+    const userId = auth.uid;
 
     // Upsert into users table in Firestore
     await adminDb.collection('users').doc(userId).set({

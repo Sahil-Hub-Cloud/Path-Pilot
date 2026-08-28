@@ -1,11 +1,16 @@
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 import { NextRequest, NextResponse } from 'next/server';
+import { verifyRequestAuth, requireAuthResponse } from '@/lib/server-auth';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 export async function POST(request: NextRequest) {
     try {
+        const auth = await verifyRequestAuth(request); if (!auth) return requireAuthResponse();
+        const { success } = await checkRateLimit(`rl_gemini_embed:${auth.uid}`);
+        if (!success) return NextResponse.json({ message: 'Rate limit exceeded. Try again later.' }, { status: 429 });
         const { text } = await request.json();
 
         if (!text) {
