@@ -58,8 +58,10 @@ export async function POST(request: NextRequest) {
             language
         } = body;
 
-        // Rate Limiting
-        const identifier = userId || request.headers.get('x-forwarded-for') || 'anonymous';
+        // Rate Limiting — prefer authenticated uid over client-supplied userId
+        const { verifyRequestAuth } = await import('@/lib/server-auth');
+        const auth = await verifyRequestAuth(request);
+        const identifier = auth?.uid || userId || request.headers.get('x-forwarded-for') || 'anonymous';
         const { success } = await checkRateLimit(`groq_${identifier}`);
         if (!success) {
             return NextResponse.json({ message: "Rate limit exceeded.", error: "Too many requests" }, { status: 429 });
