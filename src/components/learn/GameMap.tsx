@@ -159,10 +159,12 @@ function MapNode({
         position: 'relative',
         outline: 'none',
       }}
+      className="game-map-node focus-visible:ring-2 focus-visible:ring-[#0D8C7A] focus-visible:ring-offset-2"
     >
       {/* Outer pulsing ring for active/current node */}
       {current && (
         <motion.span
+          aria-hidden="true"
           animate={{ scale: [1, 1.25, 1], opacity: [0.6, 0.1, 0.6] }}
           transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
           style={{
@@ -352,10 +354,11 @@ export default function GameMap({
 
                   {/* Node positioned at zigzag offset */}
                   <div
+                    className="game-map-node-row"
                     style={{
                       display: 'flex',
                       justifyContent: 'flex-start',
-                      paddingLeft: `calc(${alignPct}% - 44px)`,
+                      paddingLeft: `clamp(8px, calc(${alignPct}% - 44px), calc(100% - 88px))`,
                       paddingBottom: 4,
                     }}
                   >

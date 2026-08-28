@@ -422,8 +422,8 @@ export default function OnboardingPage() {
                       </div>
                     </div>
 
-                    {/* Track grid */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+                    {/* Track grid — responsive: 1 col mobile, 2 col tablet, 3 col desktop */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5" style={{ display: 'grid', gap: 10 }}>
                       {TRACKS.map((t, i) => (
                         <motion.button key={t.id} onClick={() => handleTrackSelect(t.id)}
                           initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
@@ -534,6 +534,12 @@ export default function OnboardingPage() {
         }
         .marquee-content:hover {
           animation-play-state: paused;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .marquee-content { animation: none; }
+        }
+        @media (max-width: 640px) {
+          .marquee-container { width: 100%; }
         }
       `}</style>
     </div>
