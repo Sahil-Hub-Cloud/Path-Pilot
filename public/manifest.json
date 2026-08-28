@@ -1,0 +1,13 @@
+{
+  "name": "Path Pilot — Learn. Code. Get Hired.",
+  "short_name": "PathPilot",
+  "description": "India's learning OS for Tier 2/3 engineers — labs, roadmaps, AI tutor, offline-first.",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#FDF6EC",
+  "theme_color": "#006B7A",
+  "icons": [
+    { "src": "/logo.webp", "sizes": "192x192", "type": "image/webp" },
+    { "src": "/favicon.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
