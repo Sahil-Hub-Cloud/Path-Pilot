@@ -6,9 +6,15 @@ const nextConfig: NextConfig = {
     return []
   },
   
-  // Headers — WebContainer isolation only on /labs (CORS handled by middleware allowlist)
+  // Headers — immutable cache for chunks + WebContainer isolation on /labs
   async headers() {
     return [
+      {
+        source: '/_next/static/(.*)',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+        ],
+      },
       {
         source: '/labs/(.*)',
         headers: [
