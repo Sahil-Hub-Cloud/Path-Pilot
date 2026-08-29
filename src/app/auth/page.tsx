@@ -229,10 +229,10 @@ function AuthForm() {
 
   // Check for a pending redirect result on mount (only relevant after signInWithRedirect)
   useEffect(() => {
-    // Session token cleanup
+    // Session token cleanup — only clear Path-Pilot keys, not all localStorage
     if (typeof window !== 'undefined') {
-      localStorage.clear();
-      sessionStorage.clear();
+      const keysToRemove = Object.keys(localStorage).filter(k => k.startsWith('pp_') || k.startsWith('firebase'));
+      keysToRemove.forEach(k => localStorage.removeItem(k));
       console.log('🧹 Cleared cached auth state');
     }
 
