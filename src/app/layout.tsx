@@ -56,6 +56,25 @@ export default function RootLayout({
             `,
           }}
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                var reloading = false;
+                window.addEventListener('error', function(e) {
+                  var t = e.target || e.srcElement;
+                  if (t && t.tagName === 'SCRIPT' && !reloading) {
+                    var src = t.src || '';
+                    if (src.indexOf('/_next/static/chunks/') !== -1) {
+                      reloading = true;
+                      window.location.reload();
+                    }
+                  }
+                }, true);
+              })();
+            `,
+          }}
+        />
         <script dangerouslySetInnerHTML={{ __html: `if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}))}` }} />
       </head>
       <body className="font-sans antialiased bg-[var(--bg-cream)] text-[var(--text-dark)]">
